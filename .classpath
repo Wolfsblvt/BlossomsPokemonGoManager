@@ -17,6 +17,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/Corries Util Library v2"/>
-	<classpathentry kind="lib" path="E:/Corrie&apos;s Shit/Code/Java/jars/Apache_Commons_Lang.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

@@ -74,7 +74,7 @@ public class PokemonTab extends JPanel {
 		if(confirmOperation("Transfer", selection)) {
 			MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
 			selection.forEach(poke -> {
-				System.out.println("Doing Operation " + total.get() + " of " + selection.size());
+				System.out.println("Doing Operation " + total.getValue() + " of " + selection.size());
 				total.increment();
 				try {
 					int candies = poke.getCandy();
@@ -100,7 +100,7 @@ public class PokemonTab extends JPanel {
 				e.printStackTrace();
 			}
 			SwingUtilities.invokeLater(this::refreshList);
-			JOptionPane.showMessageDialog(null, "Pokemon batch transfer complete!\nPokemon total: " + selection.size() + "\nSuccessful Transfers: " +success.get() + (err.get() > 0 ? "\nErrors: " + err.get() :""));
+			JOptionPane.showMessageDialog(null, "Pokemon batch transfer complete!\nPokemon total: " + selection.size() + "\nSuccessful Transfers: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
 		}
 	}
 	
@@ -110,7 +110,7 @@ public class PokemonTab extends JPanel {
 			if(confirmOperation("Evolve", selection)) {
 				MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
 				selection.forEach(poke -> {
-					System.out.println("Doing Operation " + total.get() + " of " + selection.size());
+					System.out.println("Doing Operation " + total.getValue() + " of " + selection.size());
 					total.increment();
 					try {
 						int candies = poke.getCandy();
@@ -141,7 +141,7 @@ public class PokemonTab extends JPanel {
 					e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(this::refreshList);
-				JOptionPane.showMessageDialog(null, "Pokemon batch evolve complete!\nPokemon total: " + selection.size() + "\nSuccessful evolves: " +success.get() + (err.get() > 0 ? "\nErrors: " + err.get() :""));
+				JOptionPane.showMessageDialog(null, "Pokemon batch evolve complete!\nPokemon total: " + selection.size() + "\nSuccessful evolves: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
 			}
 		}
 	}
@@ -153,7 +153,7 @@ public class PokemonTab extends JPanel {
 				MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
 				selection.forEach(poke -> {
 					try {
-						System.out.println("Doing Operation " + total.get() + " of " + selection.size());
+						System.out.println("Doing Operation " + total.getValue() + " of " + selection.size());
 						total.increment();
 						int candies = poke.getCandy();
 						int cp = poke.getCp();
@@ -184,7 +184,7 @@ public class PokemonTab extends JPanel {
 					e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(this::refreshList);
-				JOptionPane.showMessageDialog(null, "Pokemon batch powerup complete!\nPokemon total: " + selection.size() + "\nSuccessful powerups: " +success.get() + (err.get() > 0 ? "\nErrors: " + err.get() :""));
+				JOptionPane.showMessageDialog(null, "Pokemon batch powerup complete!\nPokemon total: " + selection.size() + "\nSuccessful powerups: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
 			}
 		}
 	}
@@ -308,21 +308,21 @@ public class PokemonTab extends JPanel {
 			this.pt = pt;
 			MutableInt i = new MutableInt();
 			pokes.forEach(p -> {
-				pokeCol.add(i.get(), p);
-				nickCol.add(i.get(), p.getNickname());
-				numIdCol.add(i.get(), p.getMeta().getNumber());
-				speciesCol.add(i.get(), StringUtils.capitalize(p.getPokemonId().toString().toLowerCase().replaceAll("_male", "♂").replaceAll("_female", "♀")));
-				ivCol.add(i.get(), Math.round(p.getIvRatio() * 10000) / 100.00);
-				type1Col.add(i.get(), StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()));
-				type2Col.add(i.get(), StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
-				move1Col.add(i.get(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")));
-				move2Col.add(i.get(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")));
-				cpCol.add(i.get(), p.getCp());
-				hpCol.add(i.get(), p.getStamina());
-				candiesCol.add(i.get(), p.getCandy());
-				candies2EvlvCol.add(i.get(), p.getCandiesToEvolve());
-				dustToLevelCol.add(i.get(), p.getStardustCostsForPowerup());
-				pokeballCol.add(i.get(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
+				pokeCol.add(i.getValue(), p);
+				nickCol.add(i.getValue(), p.getNickname());
+				numIdCol.add(i.getValue(), p.getMeta().getNumber());
+				speciesCol.add(i.getValue(), StringUtils.capitalize(p.getPokemonId().toString().toLowerCase().replaceAll("_male", "♂").replaceAll("_female", "♀")));
+				ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
+				type1Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()));
+				type2Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
+				move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")));
+				move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")));
+				cpCol.add(i.getValue(), p.getCp());
+				hpCol.add(i.getValue(), p.getStamina());
+				candiesCol.add(i.getValue(), p.getCandy());
+				candies2EvlvCol.add(i.getValue(), p.getCandiesToEvolve());
+				dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
+				pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
 				i.increment();
 			});
 		}
