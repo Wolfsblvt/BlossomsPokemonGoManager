@@ -28,5 +28,15 @@
   			<artifactId>PokeGOAPI-Java</artifactId>
   			<version>3df35dad26</version>
   		</dependency>
+		 <dependency>
+			<groupId>org.json</groupId>
+  			<artifactId>json</artifactId>
+  			<version>20160212</version>
+  		</dependency>
+  		<dependency>
+  			<groupId>org.apache.commons</groupId>
+  			<artifactId>commons-lang3</artifactId>
+  			<version>3.4</version>
+  		</dependency>
   	</dependencies>
 </project>
