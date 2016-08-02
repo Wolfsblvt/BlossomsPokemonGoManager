@@ -13,7 +13,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
-import com.blossompone.utils.MutableInt;
+import org.apache.commons.lang3.mutable.MutableInt;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
