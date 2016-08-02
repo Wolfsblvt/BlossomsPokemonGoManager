@@ -9,11 +9,11 @@ import javax.swing.*;
 
 import org.json.JSONObject;
 
-import com.blossompone.utils.Console;
-import com.blossompone.utils.Utilities;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.auth.*;
 
+import me.corriekay.pokegoutil.utils.Console;
+import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
 
@@ -25,12 +25,8 @@ public class BlossomsPoGoManager {
 	
 	public static void main(String[] args) throws Exception {
 		Utilities.setNativeLookAndFeel();
-//		PrintStream out = System.out; 
-//		PrintStream err = System.err;
 		console = new Console("Console", 0, 0, true);
 		console.setVisible(false);
-//		System.setOut(out);
-//		System.setErr(err);
 		if(!file.exists()) {
 			file.createNewFile();
 			config = new JSONObject("{\"login\":{},\"options\":{}}");

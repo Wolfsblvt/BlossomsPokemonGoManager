@@ -11,9 +11,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.text.WordUtils;
 
-import org.apache.commons.lang3.mutable.MutableInt;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
@@ -160,7 +160,6 @@ public class PokemonTab extends JPanel {
 						int hp = poke.getMaxStamina();
 						int stardustUsed = poke.getStardustCostsForPowerup();
 						UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result result = poke.powerUp();
-						//go.getInventories().updateInventories(true);
 						go.getPlayerProfile().updateProfile();
 						if(result == UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result.SUCCESS) {
 							int newCandies = poke.getCandy();
@@ -289,20 +288,20 @@ public class PokemonTab extends JPanel {
 		PokemonTable pt;
 
 		private final ArrayList<Pokemon> pokeCol = new ArrayList<>();
-		private final ArrayList<String> nickCol = new ArrayList<>();//0
+		private final ArrayList<String>  nickCol = new ArrayList<>();//0
 		private final ArrayList<Integer> numIdCol = new ArrayList<>();//1
-		private final ArrayList<String> speciesCol = new ArrayList<>();//2
-		private final ArrayList<Double> ivCol = new ArrayList<>();//3
-		private final ArrayList<String> type1Col = new ArrayList<>(),//4
-										type2Col = new ArrayList<>(),//5
-										move1Col = new ArrayList<>(),//6
-										move2Col = new ArrayList<>();//7
+		private final ArrayList<String>  speciesCol = new ArrayList<>();//2
+		private final ArrayList<Double>  ivCol = new ArrayList<>();//3
+		private final ArrayList<String>  type1Col = new ArrayList<>(),//4
+										 type2Col = new ArrayList<>(),//5
+										 move1Col = new ArrayList<>(),//6
+										 move2Col = new ArrayList<>();//7
 		private final ArrayList<Integer> cpCol = new ArrayList<>(),//8
 										 hpCol = new ArrayList<>();//9
 		private final ArrayList<Integer> candiesCol = new ArrayList<>(),//10
 										 candies2EvlvCol = new ArrayList<>(),//11
 										 dustToLevelCol = new ArrayList<>();//12
-		private final ArrayList<String> pokeballCol = new ArrayList<>();//13
+		private final ArrayList<String>  pokeballCol = new ArrayList<>();//13
 		
 		public PokemonTableModel(List<Pokemon> pokes, PokemonTable pt) {
 			this.pt = pt;
@@ -336,22 +335,6 @@ public class PokemonTab extends JPanel {
 			}
 		}
 
-		/**
-		 * data types:
-		 * 0 String - Nickname
-		 * 1 Integer - Pokemon Number
-		 * 2 String - Type / Pokemon
-		 * 3 Double - IV %
-		 * 4 String - Type 1
-		 * 5 String - Type 2
-		 * 6 String - Move 1
-		 * 7 String - Move 2
-		 * 8 Integer - CP
-		 * 9 Integer - HP
-		 * 10 Integer - Candies of type
-		 * 11 Integer - Candies to Evolve
-		 * 12 Integer - Star Dust to level
-		 */
 		@Override
 		public String getColumnName(int columnIndex) {
 			switch(columnIndex) {

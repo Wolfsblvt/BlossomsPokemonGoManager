@@ -8,9 +8,10 @@ import javax.swing.JTabbedPane;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.blossompone.utils.Console;
-import com.blossompone.utils.Utilities;
 import com.pokegoapi.api.PokemonGo;
+
+import me.corriekay.pokegoutil.utils.Console;
+import me.corriekay.pokegoutil.utils.Utilities;
 
 @SuppressWarnings("serial")
 public class PokemonGoMainWindow extends JFrame {
