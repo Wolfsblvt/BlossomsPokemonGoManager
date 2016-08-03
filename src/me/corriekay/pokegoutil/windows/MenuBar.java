@@ -25,8 +25,7 @@ public class MenuBar extends JMenuBar {
 					displayTrainerStats();
 				} catch(Exception e) {e.printStackTrace();}
 			});
-		
-		
+
 		file.add(trainerStats);
 		
 		JMenuItem logout = new JMenuItem("Logout");
@@ -35,9 +34,19 @@ public class MenuBar extends JMenuBar {
 				logout();
 			} catch(Exception e) {e.printStackTrace();}
 		});
-	
-	
+
 		file.add(logout);
+
+		JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer after evolve");
+		tAfterE.setSelected(PokemonTab.tAfterE);
+		tAfterE.addItemListener(e -> {
+			if(tAfterE.isSelected())
+				PokemonTab.tAfterE = true;
+			else
+				PokemonTab.tAfterE = false;
+		});
+
+		file.add(tAfterE);
 		
 		add(file);
 		
@@ -54,6 +63,8 @@ public class MenuBar extends JMenuBar {
 	private void logout() throws Exception {
 		BlossomsPoGoManager.logOff();
 	}
+
+
 
 	private void displayTrainerStats() throws Exception {
 		go.getInventories().updateInventories(true);

@@ -28,6 +28,7 @@ public class PokemonTab extends JPanel {
 	private final PokemonGo go;
 	private final PokemonTable pt = new PokemonTable();
 	private final JTextField searchBar = new JTextField("");
+	public static boolean tAfterE = false;
 	
 	public PokemonTab(PokemonGo go) {
 		setLayout(new BorderLayout());
@@ -204,7 +205,7 @@ public class PokemonTab extends JPanel {
 		
 		JScrollPane scroll = new JScrollPane(innerPanel);
 		scroll.setAlignmentX(CENTER_ALIGNMENT);
-		scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+		scroll.setMaximumSize(new Dimension(150, 150));
 		
 		pokes.forEach(p -> {
 			String str = StringUtils.capitalize(p.getPokemonId() + "") + " - CP: " + p.getCp() + ", IV: " + (Math.round(p.getIvRatio() * 10000)/100) + "%";
