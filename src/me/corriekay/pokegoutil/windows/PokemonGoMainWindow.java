@@ -1,49 +1,62 @@
 package me.corriekay.pokegoutil.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.pokegoapi.api.PokemonGo;
-
+import com.pokegoapi.api.player.PlayerProfile;
+import com.pokegoapi.exceptions.InvalidCurrencyException;
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.swing.*;
+import java.awt.*;
+import java.text.NumberFormat;
 
 @SuppressWarnings("serial")
 public class PokemonGoMainWindow extends JFrame {
-	
+
 	private final PokemonGo go;
-	
+	private final PlayerProfile p;
+	public static PokemonGoMainWindow window = null;
+
 	public PokemonGo getPoGo() { return go; }
-	
+
 	private final JTabbedPane tab = new JTabbedPane();
-	
+
 	public PokemonGoMainWindow(PokemonGo pkmngo, Console console){
 		go = pkmngo;
+		p = go.getPlayerProfile();
+
 		console.clearAllLines();
-		System.out.println("Successfully logged in. Welcome, " + go.getPlayerProfile().getUsername() + ".");
-		System.out.println("Stats: Lvl " + go.getPlayerProfile().getStats().getLevel() + " " + StringUtils.capitalize(go.getPlayerProfile().getTeam().toString().toLowerCase().replaceAll("team_", "") + " player."));
-		System.out.println("Pokedex - Types Caught: " + go.getPlayerProfile().getStats().getUniquePokedexEntries() + ", Total Pokemon Caught: " + go.getPlayerProfile().getStats().getPokemonsCaptured() + ", Total Current Pokemon: " + go.getInventories().getPokebank().getPokemons().size());
+		System.out.println("Successfully logged in. Welcome, " + p.getUsername() + ".");
+		System.out.println("Stats: Lvl " + p.getStats().getLevel() + " " + StringUtils.capitalize(p.getTeam().toString().toLowerCase().replaceAll("team_", "") + " player."));
+		System.out.println("Pokedex - Types Caught: " + p.getStats().getUniquePokedexEntries() + ", Total Pokemon Caught: " + p.getStats().getPokemonsCaptured() + ", Total Current Pokemon: " + go.getInventories().getPokebank().getPokemons().size());
 		setLayout(new BorderLayout());
-		setTitle("Blossom's Pokemon Go Manager");
+		refreshTitle();
 		setIconImage(Utilities.loadImage("PokeBall-icon.png"));
-		setBounds(0, 0, 600, 550);
+		setBounds(0, 0, 800, 650);
 		Utilities.setLocationMidScreen(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(new MenuBar(go));
 		tab.add("Pokemon", new PokemonTab(go));
-		
+
 		add(tab, BorderLayout.CENTER);
-		
+
 		console.setVisible(false);
 		console.jsp.setPreferredSize(new Dimension(Integer.MAX_VALUE, 150));
 		add(console.jsp, BorderLayout.SOUTH);
+
+		window = this;
 	}
-	
+
+	public void refreshTitle() {
+		try {
+			NumberFormat f = NumberFormat.getInstance();
+			setTitle(String.format("%s - Stardust: %s - Blossom's Pokemon Go Manager", p.getUsername(), f.format(p.getCurrency(PlayerProfile.Currency.STARDUST))));
+		} catch (InvalidCurrencyException e) {
+			setTitle("Blossom's Pokemon Go Manager");
+		}
+	}
+
 	public void start() {
 		//pack();
 		setVisible(true);
