@@ -347,20 +347,21 @@ public class PokemonTab extends JPanel {
 		private final ArrayList<Integer> numIdCol = new ArrayList<>();//1
 		private final ArrayList<String>  speciesCol = new ArrayList<>();//2
 		private final ArrayList<Double>  ivCol = new ArrayList<>();//3
-		private final ArrayList<Integer> atkCol = new ArrayList<>();//4
-		private final ArrayList<Integer> defCol = new ArrayList<>();//5
-		private final ArrayList<Integer> stamCol = new ArrayList<>();//6
-		private final ArrayList<String>  type1Col = new ArrayList<>(),//7
-										 type2Col = new ArrayList<>(),//8
-										 move1Col = new ArrayList<>(),//9
-										 move2Col = new ArrayList<>();//10
-		private final ArrayList<Integer> cpCol = new ArrayList<>(),//11
-										 hpCol = new ArrayList<>();//12
-		private final ArrayList<Integer> candiesCol = new ArrayList<>();//13
-		private final ArrayList<String> candies2EvlvCol = new ArrayList<>();//14
-		private final ArrayList<Integer> dustToLevelCol = new ArrayList<>();//15
-		private final ArrayList<String>  pokeballCol = new ArrayList<>();//16
-        private final ArrayList<Integer>  levelCol = new ArrayList<>();//17
+		private final ArrayList<Integer>  levelCol = new ArrayList<>();//4
+		private final ArrayList<Integer> atkCol = new ArrayList<>();//5
+		private final ArrayList<Integer> defCol = new ArrayList<>();//6
+		private final ArrayList<Integer> stamCol = new ArrayList<>();//7
+		private final ArrayList<String>  type1Col = new ArrayList<>(),//8
+										 type2Col = new ArrayList<>(),//9
+										 move1Col = new ArrayList<>(),//10
+										 move2Col = new ArrayList<>();//11
+		private final ArrayList<Integer> cpCol = new ArrayList<>(),//12
+										 hpCol = new ArrayList<>();//13
+		private final ArrayList<Integer> candiesCol = new ArrayList<>();//14
+		private final ArrayList<String> candies2EvlvCol = new ArrayList<>();//15
+		private final ArrayList<Integer> dustToLevelCol = new ArrayList<>();//16
+		private final ArrayList<String>  pokeballCol = new ArrayList<>();//17
+        
 		
 		private PokemonTableModel(List<Pokemon> pokes, PokemonTable pt) {
 			this.pt = pt;
