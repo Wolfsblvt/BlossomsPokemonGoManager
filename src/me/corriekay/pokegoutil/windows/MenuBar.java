@@ -53,7 +53,7 @@ public class MenuBar extends JMenuBar {
 	}
 	
 	private void logout() throws Exception {
-		BlossomsPoGoManager.logOff();		
+		BlossomsPoGoManager.logOff();
 	}
 
 	private void displayTrainerStats() throws Exception {
