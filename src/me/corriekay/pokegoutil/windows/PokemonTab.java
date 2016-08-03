@@ -244,7 +244,7 @@ public class PokemonTab extends JPanel {
 		}
 	}
 	
-	public static class PokemonTable extends JTable {
+	private static class PokemonTable extends JTable {
 		
 		/**
 		 * data types:
@@ -265,19 +265,19 @@ public class PokemonTab extends JPanel {
 		 */
 		int sortColIndex = 1;
 		SortOrder so = SortOrder.ASCENDING;
-		public PokemonTable() {
+		private PokemonTable() {
 			setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			setAutoResizeMode(AUTO_RESIZE_OFF);
 		}
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public void constructNewTableModel(PokemonGo go, List<Pokemon> pokes) {
+		private void constructNewTableModel(PokemonGo go, List<Pokemon> pokes) {
 			PokemonTableModel ptm = new PokemonTableModel(pokes, this);
 			setModel(ptm);
 			TableRowSorter trs = new TableRowSorter(getModel());
-			Comparator<Integer> c = (i1, i2) -> { return Math.round(i1 - i2); };
+			Comparator<Integer> c = (i1, i2) -> Math.round(i1 - i2);
 			trs.setComparator(1, c);
-			trs.setComparator(3, (d1, d2) -> {return (int)((double)d1 - (double)d2);});
+			trs.setComparator(3, (d1, d2) -> (int)((double)d1 - (double)d2));
 			trs.setComparator(8, c);
 			trs.setComparator(9, c);
 			trs.setComparator(10, c);
@@ -290,7 +290,7 @@ public class PokemonTab extends JPanel {
 			trs.setSortKeys(sortKeys);
 		}
 	}
-	public static class PokemonTableModel extends AbstractTableModel {
+	private static class PokemonTableModel extends AbstractTableModel {
 		
 		PokemonTable pt;
 
@@ -310,7 +310,7 @@ public class PokemonTab extends JPanel {
 										 dustToLevelCol = new ArrayList<>();//12
 		private final ArrayList<String>  pokeballCol = new ArrayList<>();//13
 		
-		public PokemonTableModel(List<Pokemon> pokes, PokemonTable pt) {
+		private PokemonTableModel(List<Pokemon> pokes, PokemonTable pt) {
 			this.pt = pt;
 			MutableInt i = new MutableInt();
 			pokes.forEach(p -> {
@@ -333,7 +333,7 @@ public class PokemonTab extends JPanel {
 			});
 		}
 		
-		public Pokemon getPokemonByIndex(int i) {
+		private Pokemon getPokemonByIndex(int i) {
 			try {
 				return pokeCol.get(pt.convertRowIndexToModel(i));
 			} catch (Exception e) {
