@@ -264,7 +264,7 @@ public class PokemonTab extends JPanel {
 		 * 13 String - Pokeball Type
          * 14 Integer - Level
 		 */
-		int sortColIndex = 1;
+		int sortColIndex = 0;
 		SortOrder so = SortOrder.ASCENDING;
 		private PokemonTable() {
 			setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -308,9 +308,9 @@ public class PokemonTab extends JPanel {
 										 move2Col = new ArrayList<>();//7
 		private final ArrayList<Integer> cpCol = new ArrayList<>(),//8
 										 hpCol = new ArrayList<>();//9
-		private final ArrayList<Integer> candiesCol = new ArrayList<>(),//10
-										 candies2EvlvCol = new ArrayList<>(),//11
-										 dustToLevelCol = new ArrayList<>();//12
+		private final ArrayList<Integer> candiesCol = new ArrayList<>();//10
+        private final ArrayList<String> candies2EvlvCol = new ArrayList<>();//11
+        private final ArrayList<Integer> dustToLevelCol = new ArrayList<>();//12
 		private final ArrayList<String>  pokeballCol = new ArrayList<>();//13
         private final ArrayList<Integer>  levelCol = new ArrayList<>();
 		
@@ -319,21 +319,24 @@ public class PokemonTab extends JPanel {
 			MutableInt i = new MutableInt();
 			pokes.forEach(p -> {
 				pokeCol.add(i.getValue(), p);
+                numIdCol.add(i.getValue(), p.getMeta().getNumber());
 				nickCol.add(i.getValue(), p.getNickname());
-				numIdCol.add(i.getValue(), p.getMeta().getNumber());
 				speciesCol.add(i.getValue(), StringUtils.capitalize(p.getPokemonId().toString().toLowerCase().replaceAll("_male", "♂").replaceAll("_female", "♀")));
-				ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
+                levelCol.add(i.getValue(), Math.round(p.getLevel()));
+                ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
+                cpCol.add(i.getValue(), p.getCp());
 				type1Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()));
 				type2Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
 				move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")));
 				move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")));
-				cpCol.add(i.getValue(), p.getCp());
 				hpCol.add(i.getValue(), p.getStamina());
 				candiesCol.add(i.getValue(), p.getCandy());
-				candies2EvlvCol.add(i.getValue(), p.getCandiesToEvolve());
+                if(p.getCandiesToEvolve() != 0)
+				    candies2EvlvCol.add(i.getValue(), String.valueOf(p.getCandiesToEvolve()));
+                else
+                    candies2EvlvCol.add(i.getValue(), "-");
 				dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
 				pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
-				levelCol.add(i.getValue(), Math.round(p.getLevel()));
                 i.increment();
 			});
 		}
@@ -350,21 +353,21 @@ public class PokemonTab extends JPanel {
 		@Override
 		public String getColumnName(int columnIndex) {
 			switch(columnIndex) {
-				case 0: return "Nickname";
-				case 1: return "Id";
+                case 0: return "Id";
+				case 1: return "Nickname";
 				case 2: return "Species";
-				case 3: return "IV %";
-				case 4: return "Type 1";
-				case 5: return "Type 2";
-				case 6: return "Move 1";
-				case 7: return "Move 2";
-				case 8: return "CP";
-				case 9: return "HP";
-				case 10: return "Candies";
-				case 11: return "To Evolve";
-				case 12: return "Stardust";
-				case 13: return "Caught With";
-                case 14: return "Level";
+                case 3: return "Lvl";
+				case 4: return "IV %";
+                case 5: return "CP";
+				case 6: return "Type 1";
+				case 7: return "Type 2";
+				case 8: return "Move 1";
+				case 9: return "Move 2";
+				case 10: return "HP";
+				case 11: return "Candies";
+				case 12: return "To Evolve";
+				case 13: return "Stardust";
+				case 14: return "Caught With";
 				default: return "UNKNOWN?";
 			}
 		}
@@ -382,21 +385,21 @@ public class PokemonTab extends JPanel {
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			switch(columnIndex) {
-				case 0: return nickCol.get(rowIndex);
-				case 1: return numIdCol.get(rowIndex);
+                case 0: return numIdCol.get(rowIndex);
+				case 1: return nickCol.get(rowIndex);
 				case 2: return speciesCol.get(rowIndex);
-				case 3: return ivCol.get(rowIndex);
-				case 4: return type1Col.get(rowIndex);
-				case 5: return type2Col.get(rowIndex);
-				case 6: return move1Col.get(rowIndex);
-				case 7: return move2Col.get(rowIndex);
-				case 8: return cpCol.get(rowIndex);
-				case 9: return hpCol.get(rowIndex);
-				case 10: return candiesCol.get(rowIndex);
-				case 11: return candies2EvlvCol.get(rowIndex);
-				case 12: return dustToLevelCol.get(rowIndex);
-				case 13: return pokeballCol.get(rowIndex);
-                case 14: return levelCol.get(rowIndex);
+                case 3: return levelCol.get(rowIndex);
+				case 4: return ivCol.get(rowIndex);
+                case 5: return cpCol.get(rowIndex);
+				case 6: return type1Col.get(rowIndex);
+				case 7: return type2Col.get(rowIndex);
+				case 8: return move1Col.get(rowIndex);
+				case 9: return move2Col.get(rowIndex);
+				case 10: return hpCol.get(rowIndex);
+				case 11: return candiesCol.get(rowIndex);
+				case 12: return candies2EvlvCol.get(rowIndex);
+				case 13: return dustToLevelCol.get(rowIndex);
+				case 14: return pokeballCol.get(rowIndex);
 				default: return null;
 			}
 		}
