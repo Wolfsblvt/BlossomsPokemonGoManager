@@ -39,12 +39,7 @@ public class MenuBar extends JMenuBar {
 
 		JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer after evolve");
 		tAfterE.setSelected(PokemonTab.tAfterE);
-		tAfterE.addItemListener(e -> {
-			if(tAfterE.isSelected())
-				PokemonTab.tAfterE = true;
-			else
-				PokemonTab.tAfterE = false;
-		});
+		tAfterE.addItemListener(e -> PokemonTab.tAfterE = tAfterE.isSelected());
 
 		file.add(tAfterE);
 		
@@ -63,7 +58,6 @@ public class MenuBar extends JMenuBar {
 	private void logout() throws Exception {
 		BlossomsPoGoManager.logOff();
 	}
-
 
 
 	private void displayTrainerStats() throws Exception {

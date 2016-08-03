@@ -43,7 +43,7 @@ public class BlossomsPoGoManager {
 		logOn();
 	}
 
-	public static void logOn() throws Exception {
+	private static void logOn() throws Exception {
 		OkHttpClient http;
 		CredentialProvider cp;
 		PokemonGo go = null;
