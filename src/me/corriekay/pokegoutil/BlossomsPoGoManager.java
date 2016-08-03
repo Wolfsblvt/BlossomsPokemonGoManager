@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.net.URI;
+import java.nio.file.FileAlreadyExistsException;
 
 import javax.swing.*;
 
@@ -28,7 +29,10 @@ public class BlossomsPoGoManager {
 		console = new Console("Console", 0, 0, true);
 		console.setVisible(false);
 		if(!file.exists()) {
-			file.createNewFile();
+
+			if (!file.createNewFile()) {
+				throw new FileAlreadyExistsException(file.getName());
+			}
 			config = new JSONObject("{\"login\":{},\"options\":{}}");
 			Utilities.saveFile(file, config.toString(4));
 		} else {
@@ -37,7 +41,7 @@ public class BlossomsPoGoManager {
 		
 		boolean logged = false;
 		OkHttpClient http;
-		CredentialProvider cp = null;
+		CredentialProvider cp;
 		PokemonGo go = null;
 		while(!logged) {
 			//BEGIN LOGIN WINDOW
@@ -68,8 +72,7 @@ public class BlossomsPoGoManager {
 				//Using PTC, remove Google infos
 				config.remove("GoogleAuthToken");
 				try {
-					PtcCredentialProvider provider = new PtcCredentialProvider(http, username.getText(), password.getText());
-					cp = provider;
+					cp = new PtcCredentialProvider(http, username.getText(), password.getText());
 					config.put("PTCUsername", username.getText());
 					if(checkSaveAuth()) {
 						config.put("PTCPassword", password.getText());
@@ -129,8 +132,11 @@ public class BlossomsPoGoManager {
 			UIManager.put("OptionPane.okButtonText", "Ok");
 			UIManager.put("OptionPane.cancelButtonText", "Cancel");
 
-			go = new PokemonGo(cp, http);
-			Utilities.saveFile(file, config.toString(4));
+            if (cp != null)
+                go = new PokemonGo(cp, http);
+            else
+                throw new IllegalStateException();
+            Utilities.saveFile(file, config.toString(4));
 			logged = true;
 		}
 		new PokemonGoMainWindow(go, console).start();
