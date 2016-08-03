@@ -1,9 +1,10 @@
 package me.corriekay.pokegoutil.windows;
 
-import javax.swing.*;
-
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
+import me.corriekay.pokegoutil.BlossomsPoGoManager;
+
+import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class MenuBar extends JMenuBar {
@@ -28,6 +29,16 @@ public class MenuBar extends JMenuBar {
 		
 		file.add(trainerStats);
 		
+		JMenuItem logout = new JMenuItem("Logout");
+		logout.addActionListener(al->{
+			try {
+				logout();
+			} catch(Exception e) {e.printStackTrace();}
+		});
+	
+	
+		file.add(logout);
+		
 		add(file);
 		
 		help = new JMenu("Help");
@@ -40,6 +51,10 @@ public class MenuBar extends JMenuBar {
 		add(help);
 	}
 	
+	private void logout() throws Exception {
+		BlossomsPoGoManager.logOff();
+	}
+
 	private void displayTrainerStats() throws Exception {
 		go.getInventories().updateInventories(true);
 		Object[] tstats = {
