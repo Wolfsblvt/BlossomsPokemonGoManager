@@ -271,15 +271,21 @@ public class PokemonTab extends JPanel {
 			setModel(ptm);
 			TableRowSorter trs = new TableRowSorter(getModel());
 			Comparator<Integer> c = (i1, i2) -> Math.round(i1 - i2);
-			trs.setComparator(1, c);
-			trs.setComparator(3, (d1, d2) -> (int)((double)d1 - (double)d2));
-			trs.setComparator(8, c);
-			trs.setComparator(9, c);
+            trs.setComparator(0, c);
+            trs.setComparator(3, c);
+			trs.setComparator(4, (d1, d2) -> (int)((double)d1 - (double)d2));
+            trs.setComparator(5, c);
 			trs.setComparator(10, c);
-			trs.setComparator(11, c);
-			trs.setComparator(12, c);
+            //TODO: needs to be fixed/debugged
+			trs.setComparator(11, (e1, e2) -> {
+			    if(e1.equals("-"))
+			        e1 = "0";
+                if(e2.equals("-"))
+                    e2 = "0";
+                return Math.round(Float.parseFloat((String) e1) - Float.parseFloat((String) e2));
+			});
+			//trs.setComparator(12, c);
             trs.setComparator(13, c);
-            trs.setComparator(14, c);
 			setRowSorter(trs);
 			trs.toggleSortOrder(sortColIndex);
 			List<SortKey> sortKeys = new ArrayList<>();
