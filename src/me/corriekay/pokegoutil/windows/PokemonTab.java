@@ -4,12 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -22,11 +25,14 @@ import javax.swing.SortOrder;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.text.WordUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
@@ -37,6 +43,7 @@ import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
+import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.utils.GhostText;
 import me.corriekay.pokegoutil.utils.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.LDocumentListener;
@@ -82,6 +89,21 @@ public class PokemonTab extends JPanel {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		topPanel.add(searchBar, gbc);
 		
+		// pokemon name language drop down
+		String[] locales = { "en", "de", "fr", "ru", "zh_CN", "zh_HK" };
+		JComboBox<String> pokelang = new JComboBox<String>(locales);
+		pokelang.setSelectedIndex(0);
+		pokelang.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				@SuppressWarnings("unchecked")
+				JComboBox<String> pokelang = (JComboBox<String>)e.getSource();
+				String lang = (String)pokelang.getSelectedItem();
+				changeLanguage(lang);
+			}
+		});
+		topPanel.add(pokelang);
+		
 		LDocumentListener.addChangeListener(searchBar, e -> refreshList());
 		new GhostText(searchBar, "Search Pokemon...");
 		
@@ -89,6 +111,22 @@ public class PokemonTab extends JPanel {
 		JScrollPane sp = new JScrollPane(pt);
 		sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(sp, BorderLayout.CENTER);
+	}
+	
+	private void changeLanguage(String langCode) {
+		JSONObject opts;
+		try {
+			opts = BlossomsPoGoManager.config.getJSONObject("options");
+			opts.put("lang", langCode);
+		}
+		catch (JSONException jsone) {
+			opts = new JSONObject();
+			opts.put("lang", langCode);
+			BlossomsPoGoManager.config.put("options", opts);
+		}
+		BlossomsPoGoManager.saveConfig();
+		
+		refreshPkmn();
 	}
 	
 	private void refreshPkmn() {
@@ -120,11 +158,11 @@ public class PokemonTab extends JPanel {
 					go.getInventories().updateInventories(true);
 					if(result == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
 						int newCandies = poke.getCandy();
-						System.out.println("Transferring " + StringUtils.capitalize(poke.getPokemonId().toString().toLowerCase()) + ", Result: Success!");
+						System.out.println("Transferring " + BlossomsPoGoManager.getPokemonName(poke) + ", Result: Success!");
 						System.out.println("Stat changes: (Candies : " + newCandies + "[+" + (newCandies - candies) + "])");
 						success.increment();						
 					} else {
-						System.out.println("Error transferring " + StringUtils.capitalize(poke.getPokemonId().toString().toLowerCase()) + ", result: " + result);
+						System.out.println("Error transferring " + BlossomsPoGoManager.getPokemonName(poke) + ", result: " + result);
 						err.increment();
 					}
 				} catch (Exception e) {
@@ -162,7 +200,7 @@ public class PokemonTab extends JPanel {
 							int newcandies = newpoke.getCandy();
 							int newcp = newpoke.getCp();
 							int newhp = newpoke.getStamina();
-							System.out.println("Evolving " + StringUtils.capitalize(poke.getPokemonId().toString().toLowerCase()) + ". Evolve result: Success!");
+							System.out.println("Evolving " + BlossomsPoGoManager.getPokemonName(poke) + ". Evolve result: Success!");
 							System.out.println("Stat changes: (Candies: " + newcandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newcp + "[+" + (newcp - cp) + "], HP: " + newhp + "[+" + (newhp - hp) +"])");
 							success.increment();
 						} else {
@@ -204,12 +242,12 @@ public class PokemonTab extends JPanel {
 							int newCandies = poke.getCandy();
 							int newCp = poke.getCp();
 							int newHp = poke.getMaxStamina();
-							System.out.println("Powering Up " + StringUtils.capitalize(poke.getPokemonId().toString().toLowerCase()) + ", Result: Success!");
+							System.out.println("Powering Up " + BlossomsPoGoManager.getPokemonName(poke) + ", Result: Success!");
 							System.out.println("Stat changes: (Candies : " + newCandies + "[-" + (newCandies - candies) + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]) Stardust used " + stardustUsed + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
 							success.increment();
 						} else {
 							err.increment();
-							System.out.println("Error powering up " + StringUtils.capitalize(poke.getPokemonId().toString().toLowerCase()) + ", result: " + result);
+							System.out.println("Error powering up " + BlossomsPoGoManager.getPokemonName(poke) + ", result: " + result);
 						}
 					} catch (Exception e) {
 						err.increment();
@@ -241,7 +279,7 @@ public class PokemonTab extends JPanel {
 		scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 		
 		pokes.forEach(p -> {
-			String str = StringUtils.capitalize(p.getPokemonId() + "") + " - CP: " + p.getCp() + ", IV: " + (Math.round(p.getIvRatio() * 10000)/100) + "%";
+			String str = BlossomsPoGoManager.getPokemonName(p) + " - CP: " + p.getCp() + ", IV: " + (Math.round(p.getIvRatio() * 10000)/100) + "%";
 			innerPanel.add(new JLabel(str));
 		});
 		panel.add(scroll);
@@ -312,7 +350,7 @@ public class PokemonTab extends JPanel {
 		private void constructNewTableModel(PokemonGo go, List<Pokemon> pokes) {
 			PokemonTableModel ptm = new PokemonTableModel(pokes, this);
 			setModel(ptm);
-			TableRowSorter trs = new TableRowSorter(getModel());
+			TableRowSorter<TableModel> trs = new TableRowSorter<TableModel>(getModel());
 			Comparator<Integer> c = (i1, i2) -> Math.round(i1 - i2);
             trs.setComparator(0, c);
             trs.setComparator(3, c);
@@ -367,7 +405,7 @@ public class PokemonTab extends JPanel {
 				pokeCol.add(i.getValue(), p);
                 numIdCol.add(i.getValue(), p.getMeta().getNumber());
 				nickCol.add(i.getValue(), p.getNickname());
-				speciesCol.add(i.getValue(), StringUtils.capitalize(p.getPokemonId().toString().toLowerCase().replaceAll("_male", "♂").replaceAll("_female", "♀")));
+				speciesCol.add(i.getValue(), BlossomsPoGoManager.getPokemonName(p).replaceAll("_male", "♂").replaceAll("_female", "♀"));
                 levelCol.add(i.getValue(), Math.round(p.getLevel()));
                 ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
                 cpCol.add(i.getValue(), p.getCp());
