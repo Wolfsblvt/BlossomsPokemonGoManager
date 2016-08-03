@@ -114,6 +114,7 @@ public class PokemonTab extends JPanel {
 					total.increment();
 					try {
 						int candies = poke.getCandy();
+						int candiesToEvolve = poke.getCandiesToEvolve();
 						int cp = poke.getCp();
 						int hp = poke.getMaxStamina();
 						EvolutionResult er = poke.evolve();
@@ -124,7 +125,7 @@ public class PokemonTab extends JPanel {
 							int newcp = newpoke.getCp();
 							int newhp = newpoke.getStamina();
 							System.out.println("Evolving " + StringUtils.capitalize(poke.getPokemonId().toString().toLowerCase()) + ". Evolve result: Success!");
-							System.out.println("Stat changes: (Candies: " + newcandies + "[" + (newcandies - candies) + "], CP: " + newcp + "[+" + (newcp - cp) + "], HP: " + newhp + "[+" + (newhp - hp) +"])");
+							System.out.println("Stat changes: (Candies: " + newcandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newcp + "[+" + (newcp - cp) + "], HP: " + newhp + "[+" + (newhp - hp) +"])");
 							success.increment();
 						} else {
 							err.increment();
