@@ -1,16 +1,25 @@
 package me.corriekay.pokegoutil;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Desktop;
+import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.net.URI;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 import org.json.JSONObject;
 
 import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.auth.*;
+import com.pokegoapi.auth.CredentialProvider;
+import com.pokegoapi.auth.GoogleUserCredentialProvider;
+import com.pokegoapi.auth.PtcCredentialProvider;
 
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
@@ -22,6 +31,8 @@ public class BlossomsPoGoManager {
 	private static final File file = new File(System.getProperty("user.dir"), "config.json");
 	private static JSONObject config;
 	private static Console console;
+	private static boolean logged = false;
+	private static PokemonGoMainWindow mainWindow = null;
 	
 	public static void main(String[] args) throws Exception {
 		Utilities.setNativeLookAndFeel();
@@ -35,7 +46,10 @@ public class BlossomsPoGoManager {
 			config = new JSONObject(Utilities.readFile(file));
 		}
 		
-		boolean logged = false;
+		logOn();
+	}
+	
+	public static void logOn() throws Exception {
 		OkHttpClient http;
 		CredentialProvider cp = null;
 		PokemonGo go = null;
@@ -108,7 +122,6 @@ public class BlossomsPoGoManager {
 					//The user should have the auth code now. Lets get it.
 					authCode = JOptionPane.showInputDialog(null, "Please provide the authentication code", "Google Auth", JOptionPane.PLAIN_MESSAGE);
 				} else {
-					JOptionPane.showMessageDialog(null, "Logging in using cached google auth token!", "Google Auth", JOptionPane.PLAIN_MESSAGE);
 					refresh = true;
 				}
 				try {
@@ -139,7 +152,16 @@ public class BlossomsPoGoManager {
 			Utilities.saveFile(file, BlossomsPoGoManager.config.toString(4));
 			logged = true;
 		}
-		new PokemonGoMainWindow(go, console).start();
+		mainWindow = new PokemonGoMainWindow(go, console);
+		mainWindow.start();
+	}
+	
+	public static void logOff() throws Exception {
+		logged = false;
+		mainWindow.setVisible(false);
+		mainWindow.dispose();
+		mainWindow = null;
+		logOn();
 	}
 	
 	private static void alertFailedLogin() {
