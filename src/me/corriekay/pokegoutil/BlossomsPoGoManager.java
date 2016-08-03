@@ -41,6 +41,7 @@ public class BlossomsPoGoManager {
 		PokemonGo go = null;
 		while(!logged) {
 			//BEGIN LOGIN WINDOW
+			JSONObject config = BlossomsPoGoManager.config.getJSONObject("login");
 			go = null;
 			cp = null;
 			http = new OkHttpClient();
@@ -71,10 +72,12 @@ public class BlossomsPoGoManager {
 					PtcCredentialProvider provider = new PtcCredentialProvider(http, username.getText(), password.getText());
 					cp = provider;
 					config.put("PTCUsername", username.getText());
-					if(checkSaveAuth()) {
+					if(config.optBoolean("SaveAuth", false) || checkSaveAuth()) {
 						config.put("PTCPassword", password.getText());
+						config.put("SaveAuth", true);
 					} else {
 						config.remove("PTCPassword");
+						config.remove("SaveAuth");
 					}
 				} catch(Exception e){
 					alertFailedLogin();
@@ -113,10 +116,12 @@ public class BlossomsPoGoManager {
 					if(refresh) provider.refreshToken(authCode);
 					else provider.login(authCode); 
 					cp = provider;
-					if(checkSaveAuth()){
+					if(config.optBoolean("SaveAuth", false) || checkSaveAuth()){
 						if(!refresh) config.put("GoogleAuthToken", provider.getRefreshToken());
+						config.put("SaveAuth", true);
 					} else {
 						config.remove("GoogleAuthToken");
+						config.remove("SaveAuth");
 					}
 				} catch (Exception e) {
 					alertFailedLogin();
@@ -130,7 +135,8 @@ public class BlossomsPoGoManager {
 			UIManager.put("OptionPane.cancelButtonText", "Cancel");
 
 			go = new PokemonGo(cp, http);
-			Utilities.saveFile(file, config.toString(4));
+			BlossomsPoGoManager.config.put("login", config);
+			Utilities.saveFile(file, BlossomsPoGoManager.config.toString(4));
 			logged = true;
 		}
 		new PokemonGoMainWindow(go, console).start();
