@@ -76,6 +76,11 @@ public class PokemonTab extends JPanel {
 			selection.forEach(poke -> {
 				System.out.println("Doing Operation " + total.getValue() + " of " + selection.size());
 				total.increment();
+				if (poke.isFavorite()){
+					System.out.println("Pokemon is favorite, not transferring.");
+					err.increment();
+					return;
+				}
 				try {
 					int candies = poke.getCandy();
 					ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = poke.transferPokemon();
