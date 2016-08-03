@@ -38,7 +38,7 @@ public class PokemonGoMainWindow extends JFrame {
 		setLayout(new BorderLayout());
 		refreshTitle();
 		setIconImage(Utilities.loadImage("PokeBall-icon.png"));
-		setBounds(0, 0, 600, 550);
+		setBounds(0, 0, 800, 650);
 		Utilities.setLocationMidScreen(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(new MenuBar(go));
