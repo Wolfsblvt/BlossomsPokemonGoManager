@@ -318,16 +318,19 @@ public class PokemonTab extends JPanel {
 		private final ArrayList<Integer> numIdCol = new ArrayList<>();//1
 		private final ArrayList<String>  speciesCol = new ArrayList<>();//2
 		private final ArrayList<Double>  ivCol = new ArrayList<>();//3
-		private final ArrayList<String>  type1Col = new ArrayList<>(),//4
-										 type2Col = new ArrayList<>(),//5
-										 move1Col = new ArrayList<>(),//6
-										 move2Col = new ArrayList<>();//7
-		private final ArrayList<Integer> cpCol = new ArrayList<>(),//8
-										 hpCol = new ArrayList<>();//9
-		private final ArrayList<Integer> candiesCol = new ArrayList<>(),//10
-										 candies2EvlvCol = new ArrayList<>(),//11
-										 dustToLevelCol = new ArrayList<>();//12
-		private final ArrayList<String>  pokeballCol = new ArrayList<>();//13
+		private final ArrayList<Integer> atkCol = new ArrayList<>();//4
+		private final ArrayList<Integer> defCol = new ArrayList<>();//5
+		private final ArrayList<Integer> stamCol = new ArrayList<>();//6
+		private final ArrayList<String>  type1Col = new ArrayList<>(),//7
+										 type2Col = new ArrayList<>(),//8
+										 move1Col = new ArrayList<>(),//9
+										 move2Col = new ArrayList<>();//10
+		private final ArrayList<Integer> cpCol = new ArrayList<>(),//11
+										 hpCol = new ArrayList<>();//12
+		private final ArrayList<Integer> candiesCol = new ArrayList<>(),//13
+										 candies2EvlvCol = new ArrayList<>(),//14
+										 dustToLevelCol = new ArrayList<>();//15
+		private final ArrayList<String>  pokeballCol = new ArrayList<>();//16
 		
 		public PokemonTableModel(List<Pokemon> pokes, PokemonTable pt) {
 			this.pt = pt;
@@ -338,6 +341,9 @@ public class PokemonTab extends JPanel {
 				numIdCol.add(i.getValue(), p.getMeta().getNumber());
 				speciesCol.add(i.getValue(), StringUtils.capitalize(p.getPokemonId().toString().toLowerCase().replaceAll("_male", "♂").replaceAll("_female", "♀")));
 				ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
+				atkCol.add(i.getValue(), p.getIndividualAttack());
+				defCol.add(i.getValue(), p.getIndividualDefense());
+				stamCol.add(i.getValue(), p.getIndividualStamina());
 				type1Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()));
 				type2Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
 				move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")));
@@ -372,23 +378,26 @@ public class PokemonTab extends JPanel {
 				case 1: return "Id";
 				case 2: return "Species";
 				case 3: return "IV %";
-				case 4: return "Type 1";
-				case 5: return "Type 2";
-				case 6: return "Move 1";
-				case 7: return "Move 2";
-				case 8: return "CP";
-				case 9: return "HP";
-				case 10: return "Candies";
-				case 11: return "To Evolve";
-				case 12: return "Stardust";
-				case 13: return "Caught With";
+				case 4: return "Atk";
+				case 5: return "Def";
+				case 6: return "Stam";
+				case 7: return "Type 1";
+				case 8: return "Type 2";
+				case 9: return "Move 1";
+				case 10: return "Move 2";
+				case 11: return "CP";
+				case 12: return "HP";
+				case 13: return "Candies";
+				case 14: return "To Evolve";
+				case 15: return "Stardust";
+				case 16: return "Caught With";
 				default: return "UNKNOWN?";
 			}
 		}
 
 		@Override
 		public int getColumnCount() {
-			return 14;
+			return 17;
 		}
 
 		@Override
@@ -403,16 +412,19 @@ public class PokemonTab extends JPanel {
 				case 1: return numIdCol.get(rowIndex);
 				case 2: return speciesCol.get(rowIndex);
 				case 3: return ivCol.get(rowIndex);
-				case 4: return type1Col.get(rowIndex);
-				case 5: return type2Col.get(rowIndex);
-				case 6: return move1Col.get(rowIndex);
-				case 7: return move2Col.get(rowIndex);
-				case 8: return cpCol.get(rowIndex);
-				case 9: return hpCol.get(rowIndex);
-				case 10: return candiesCol.get(rowIndex);
-				case 11: return candies2EvlvCol.get(rowIndex);
-				case 12: return dustToLevelCol.get(rowIndex);
-				case 13: return pokeballCol.get(rowIndex);
+				case 4: return atkCol.get(rowIndex);
+				case 5: return defCol.get(rowIndex);
+				case 6: return stamCol.get(rowIndex);
+				case 7: return type1Col.get(rowIndex);
+				case 8: return type2Col.get(rowIndex);
+				case 9: return move1Col.get(rowIndex);
+				case 10: return move2Col.get(rowIndex);
+				case 11: return cpCol.get(rowIndex);
+				case 12: return hpCol.get(rowIndex);
+				case 13: return candiesCol.get(rowIndex);
+				case 14: return candies2EvlvCol.get(rowIndex);
+				case 15: return dustToLevelCol.get(rowIndex);
+				case 16: return pokeballCol.get(rowIndex);
 				default: return null;
 			}
 		}
