@@ -1,6 +1,7 @@
 package me.corriekay.pokegoutil.windows;
 
 import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 
@@ -57,12 +58,13 @@ public class MenuBar extends JMenuBar {
 
 	private void displayTrainerStats() throws Exception {
 		go.getInventories().updateInventories(true);
+		PlayerProfile pp = go.getPlayerProfile();
 		Object[] tstats = {
-				"Trainer Name: " + go.getPlayerProfile().getUsername(),
-				"Team: " + go.getPlayerProfile().getTeam().toString(),
-				"Level: " + go.getPlayerProfile().getStats().getLevel(),
-				"XP: " + go.getPlayerProfile().getStats().getExperience() + " (" + go.getPlayerProfile().getStats().getNextLevelXp() + " to next level)",
-				"Stardust: " + go.getPlayerProfile().getCurrency(Currency.STARDUST)
+				"Trainer Name: " + pp.getUsername(),
+				"Team: " + pp.getTeam().toString(),
+				"Level: " + pp.getStats().getLevel(),
+				"XP: " + pp.getStats().getExperience() + " (" + go.getPlayerProfile().getStats().getNextLevelXp() + " to next level)",
+				"Stardust: " + pp.getCurrency(Currency.STARDUST)
 		};
 		JOptionPane.showMessageDialog(null, tstats, "Trainer Stats", JOptionPane.PLAIN_MESSAGE);
 	}
