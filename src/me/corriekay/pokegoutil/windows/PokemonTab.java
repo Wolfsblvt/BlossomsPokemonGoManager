@@ -232,7 +232,7 @@ public class PokemonTab extends JPanel {
 		List<Pokemon> pokes = new ArrayList<>();
 		String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans").toLowerCase();
 		go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-			String searchme = poke.getPokemonId() + "" + poke.getPokemonFamily() + poke.getNickname() + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2() + poke.getPokeball();
+			String searchme = poke.getPokemonId() + "" + poke.getPokemonFamily() + poke.getNickname() + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2() + poke.getPokeball() + poke.getLevel();
 			searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
 			if(searchme.contains(search)) {
 				pokes.add(poke);
@@ -262,6 +262,7 @@ public class PokemonTab extends JPanel {
 		 * 11 Integer - Candies to Evolve
 		 * 12 Integer - Star Dust to level
 		 * 13 String - Pokeball Type
+         * 14 Integer - Level
 		 */
 		int sortColIndex = 1;
 		SortOrder so = SortOrder.ASCENDING;
@@ -283,6 +284,8 @@ public class PokemonTab extends JPanel {
 			trs.setComparator(10, c);
 			trs.setComparator(11, c);
 			trs.setComparator(12, c);
+            trs.setComparator(13, c);
+            trs.setComparator(14, c);
 			setRowSorter(trs);
 			trs.toggleSortOrder(sortColIndex);
 			List<SortKey> sortKeys = new ArrayList<>();
@@ -309,6 +312,7 @@ public class PokemonTab extends JPanel {
 										 candies2EvlvCol = new ArrayList<>(),//11
 										 dustToLevelCol = new ArrayList<>();//12
 		private final ArrayList<String>  pokeballCol = new ArrayList<>();//13
+        private final ArrayList<Integer>  levelCol = new ArrayList<>();
 		
 		private PokemonTableModel(List<Pokemon> pokes, PokemonTable pt) {
 			this.pt = pt;
@@ -329,7 +333,8 @@ public class PokemonTab extends JPanel {
 				candies2EvlvCol.add(i.getValue(), p.getCandiesToEvolve());
 				dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
 				pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
-				i.increment();
+				levelCol.add(i.getValue(), Math.round(p.getLevel()));
+                i.increment();
 			});
 		}
 		
@@ -359,13 +364,14 @@ public class PokemonTab extends JPanel {
 				case 11: return "To Evolve";
 				case 12: return "Stardust";
 				case 13: return "Caught With";
+                case 14: return "Level";
 				default: return "UNKNOWN?";
 			}
 		}
 
 		@Override
 		public int getColumnCount() {
-			return 14;
+			return 15;
 		}
 
 		@Override
@@ -390,6 +396,7 @@ public class PokemonTab extends JPanel {
 				case 11: return candies2EvlvCol.get(rowIndex);
 				case 12: return dustToLevelCol.get(rowIndex);
 				case 13: return pokeballCol.get(rowIndex);
+                case 14: return levelCol.get(rowIndex);
 				default: return null;
 			}
 		}
