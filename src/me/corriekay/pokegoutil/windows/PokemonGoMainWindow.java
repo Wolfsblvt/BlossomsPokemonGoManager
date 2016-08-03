@@ -26,7 +26,7 @@ public class PokemonGoMainWindow extends JFrame {
 		go = pkmngo;
 		p = go.getPlayerProfile();
 
-		console.clearAllLines();
+		//console.clearAllLines();
 		System.out.println("Successfully logged in. Welcome, " + p.getUsername() + ".");
 		System.out.println("Stats: Lvl " + p.getStats().getLevel() + " " + StringUtils.capitalize(p.getTeam().toString().toLowerCase().replaceAll("team_", "") + " player."));
 		System.out.println("Pokedex - Types Caught: " + p.getStats().getUniquePokedexEntries() + ", Total Pokemon Caught: " + p.getStats().getPokemonsCaptured() + ", Total Current Pokemon: " + go.getInventories().getPokebank().getPokemons().size());
@@ -41,9 +41,9 @@ public class PokemonGoMainWindow extends JFrame {
 
 		add(tab, BorderLayout.CENTER);
 
-		console.setVisible(false);
-		console.jsp.setPreferredSize(new Dimension(Integer.MAX_VALUE, 150));
-		add(console.jsp, BorderLayout.SOUTH);
+		//console.setVisible(false);
+		//console.jsp.setPreferredSize(new Dimension(Integer.MAX_VALUE, 150));
+		//add(console.jsp, BorderLayout.SOUTH);
 
 		window = this;
 	}
