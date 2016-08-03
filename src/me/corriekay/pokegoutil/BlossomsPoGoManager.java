@@ -27,8 +27,8 @@ public class BlossomsPoGoManager {
 
 	public static void main(String[] args) throws Exception {
 		Utilities.setNativeLookAndFeel();
-		//console = new Console("Console", 0, 0, true);
-		//console.setVisible(false);
+		console = new Console("Console", 0, 0, true);
+		console.setVisible(false);
 		if(!file.exists()) {
 
 			if (!file.createNewFile()) {
