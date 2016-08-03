@@ -289,17 +289,21 @@ public class PokemonTab extends JPanel {
 		 * 1 Integer - Pokemon Number
 		 * 2 String - Type / Pokemon
 		 * 3 Double - IV %
-		 * 4 String - Type 1
-		 * 5 String - Type 2
-		 * 6 String - Move 1
-		 * 7 String - Move 2
-		 * 8 Integer - CP
-		 * 9 Integer - HP
-		 * 10 Integer - Candies of type
-		 * 11 Integer - Candies to Evolve
-		 * 12 Integer - Star Dust to level
-		 * 13 String - Pokeball Type
-         * 14 Integer - Level
+		 * 4 Integer - Level
+		 * 5 Integer - Attack
+		 * 6 Integer - Defense
+		 * 7 Integer - Stamina
+		 * 8 String - Type 1
+		 * 9 String - Type 2
+		 * 10 String - Move 1
+		 * 11 String - Move 2
+		 * 12 Integer - CP
+		 * 13 Integer - HP
+		 * 14 Integer - Candies of type
+		 * 15 Integer - Candies to Evolve
+		 * 16 Integer - Star Dust to level
+		 * 17 String - Pokeball Type
+
 		 */
 		int sortColIndex = 0;
 		SortOrder so = SortOrder.ASCENDING;
@@ -315,20 +319,18 @@ public class PokemonTab extends JPanel {
 			TableRowSorter trs = new TableRowSorter(getModel());
 			Comparator<Integer> c = (i1, i2) -> Math.round(i1 - i2);
             trs.setComparator(0, c);
-            trs.setComparator(3, c);
-			trs.setComparator(4, (d1, d2) -> (int)((double)d1 - (double)d2));
-            trs.setComparator(5, c);
-			trs.setComparator(10, c);
+            //trs.setComparator(3, c);
+			trs.setComparator(3, (d1, d2) -> (int)((double)d1 - (double)d2));
+            trs.setComparator(12, c);
+			trs.setComparator(14, c);
             //TODO: needs to be fixed/debugged
-			trs.setComparator(11, (e1, e2) -> {
+			trs.setComparator(16, (e1, e2) -> {
 			    if(e1.equals("-"))
-			        e1 = "0";
+			        e1 = 0;
                 if(e2.equals("-"))
-                    e2 = "0";
-                return Math.round(Float.parseFloat((String) e1) - Float.parseFloat((String) e2));
+                    e2 = 0;
+                return Math.round((int)e1 - (int)e2);
 			});
-			//trs.setComparator(12, c);
-            trs.setComparator(13, c);
 			setRowSorter(trs);
 			trs.toggleSortOrder(sortColIndex);
 			List<SortKey> sortKeys = new ArrayList<>();
@@ -358,7 +360,7 @@ public class PokemonTab extends JPanel {
 		private final ArrayList<String> candies2EvlvCol = new ArrayList<>();//14
 		private final ArrayList<Integer> dustToLevelCol = new ArrayList<>();//15
 		private final ArrayList<String>  pokeballCol = new ArrayList<>();//16
-        private final ArrayList<Integer>  levelCol = new ArrayList<>();
+        private final ArrayList<Integer>  levelCol = new ArrayList<>();//17
 		
 		private PokemonTableModel(List<Pokemon> pokes, PokemonTable pt) {
 			this.pt = pt;
@@ -415,26 +417,27 @@ public class PokemonTab extends JPanel {
 				case 1: return "Nickname";
 				case 2: return "Species";
 				case 3: return "IV %";
-				case 4: return "Atk";
-				case 5: return "Def";
-				case 6: return "Stam";
-				case 7: return "Type 1";
-				case 8: return "Type 2";
-				case 9: return "Move 1";
-				case 10: return "Move 2";
-				case 11: return "CP";
-				case 12: return "HP";
-				case 13: return "Candies";
-				case 14: return "To Evolve";
-				case 15: return "Stardust";
-				case 16: return "Caught With";
+				case 4: return "Lvl";
+				case 5: return "Atk";
+				case 6: return "Def";
+				case 7: return "Stam";
+				case 8: return "Type 1";
+				case 9: return "Type 2";
+				case 10: return "Move 1";
+				case 11: return "Move 2";
+				case 12: return "CP";
+				case 13: return "HP";
+				case 14: return "Candies";
+				case 15: return "To Evolve";
+				case 16: return "Stardust";
+				case 17: return "Caught With";
 				default: return "UNKNOWN?";
 			}
 		}
 
 		@Override
 		public int getColumnCount() {
-			return 17;
+			return 18;
 		}
 
 		@Override
@@ -449,19 +452,20 @@ public class PokemonTab extends JPanel {
 				case 1: return nickCol.get(rowIndex);
 				case 2: return speciesCol.get(rowIndex);
 				case 3: return ivCol.get(rowIndex);
-				case 4: return atkCol.get(rowIndex);
-				case 5: return defCol.get(rowIndex);
-				case 6: return stamCol.get(rowIndex);
-				case 7: return type1Col.get(rowIndex);
-				case 8: return type2Col.get(rowIndex);
-				case 9: return move1Col.get(rowIndex);
-				case 10: return move2Col.get(rowIndex);
-				case 11: return cpCol.get(rowIndex);
-				case 12: return hpCol.get(rowIndex);
-				case 13: return candiesCol.get(rowIndex);
-				case 14: return candies2EvlvCol.get(rowIndex);
-				case 15: return dustToLevelCol.get(rowIndex);
-				case 16: return pokeballCol.get(rowIndex);
+				case 4: return levelCol.get(rowIndex);
+				case 5: return atkCol.get(rowIndex);
+				case 6: return defCol.get(rowIndex);
+				case 7: return stamCol.get(rowIndex);
+				case 8: return type1Col.get(rowIndex);
+				case 9: return type2Col.get(rowIndex);
+				case 10: return move1Col.get(rowIndex);
+				case 11: return move2Col.get(rowIndex);
+				case 12: return cpCol.get(rowIndex);
+				case 13: return hpCol.get(rowIndex);
+				case 14: return candiesCol.get(rowIndex);
+				case 15: return candies2EvlvCol.get(rowIndex);
+				case 16: return dustToLevelCol.get(rowIndex);
+				case 17: return pokeballCol.get(rowIndex);
 				default: return null;
 			}
 		}
