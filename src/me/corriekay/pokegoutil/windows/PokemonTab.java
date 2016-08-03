@@ -47,6 +47,7 @@ public class PokemonTab extends JPanel {
 	private final PokemonGo go;
 	private final PokemonTable pt = new PokemonTable();
 	private final JTextField searchBar = new JTextField("");
+	static boolean tAfterE = false;
 	
 	public PokemonTab(PokemonGo go) {
 		setLayout(new BorderLayout());
@@ -157,13 +158,19 @@ public class PokemonTab extends JPanel {
 						int hp = poke.getMaxStamina();
 						EvolutionResult er = poke.evolve();
 						if(er.isSuccessful()) {
-							go.getInventories().updateInventories(true);
 							Pokemon newpoke = er.getEvolvedPokemon();
 							int newcandies = newpoke.getCandy();
 							int newcp = newpoke.getCp();
 							int newhp = newpoke.getStamina();
 							System.out.println("Evolving " + StringUtils.capitalize(poke.getPokemonId().toString().toLowerCase()) + ". Evolve result: Success!");
-							System.out.println("Stat changes: (Candies: " + newcandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newcp + "[+" + (newcp - cp) + "], HP: " + newhp + "[+" + (newhp - hp) +"])");
+							if(tAfterE) {
+								ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newpoke.transferPokemon();
+								System.out.println("Transferring " + StringUtils.capitalize(newpoke.getPokemonId().toString().toLowerCase()) + ", Result: Success!");
+								System.out.println("Stat changes: (Candies: " + newcandies + "[" + candies + "-" + candiesToEvolve + "]");
+							} else {
+								System.out.println("Stat changes: (Candies: " + newcandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newcp + "[+" + (newcp - cp) + "], HP: " + newhp + "[+" + (newhp - hp) +"])");
+							}
+							go.getInventories().updateInventories(true);
 							success.increment();
 						} else {
 							err.increment();
@@ -231,6 +238,7 @@ public class PokemonTab extends JPanel {
 	private boolean confirmOperation(String operation, ArrayList<Pokemon> pokes) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		panel.setMaximumSize(panel.getSize());
 		
 		JPanel innerPanel = new JPanel();
 		innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
@@ -239,7 +247,9 @@ public class PokemonTab extends JPanel {
 		JScrollPane scroll = new JScrollPane(innerPanel);
 		scroll.setAlignmentX(CENTER_ALIGNMENT);
 		scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-		
+
+		panel.setMaximumSize(panel.getSize());
+
 		pokes.forEach(p -> {
 			String str = StringUtils.capitalize(p.getPokemonId() + "") + " - CP: " + p.getCp() + ", IV: " + (Math.round(p.getIvRatio() * 10000)/100) + "%";
 			innerPanel.add(new JLabel(str));
