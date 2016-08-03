@@ -16,7 +16,7 @@ public class PokemonGoMainWindow extends JFrame {
 
 	private final PokemonGo go;
 	private final PlayerProfile p;
-	private static PokemonGoMainWindow window = null;
+	public static PokemonGoMainWindow window = null;
 
 	public PokemonGo getPoGo() { return go; }
 
