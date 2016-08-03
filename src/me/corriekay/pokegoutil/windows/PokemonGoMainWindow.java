@@ -1,27 +1,22 @@
 package me.corriekay.pokegoutil.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.text.NumberFormat;
-
-import javax.swing.JFrame;
-import javax.swing.JTabbedPane;
-
+import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.exceptions.InvalidCurrencyException;
-import org.apache.commons.lang3.StringUtils;
-
-import com.pokegoapi.api.PokemonGo;
-
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.swing.*;
+import java.awt.*;
+import java.text.NumberFormat;
 
 @SuppressWarnings("serial")
 public class PokemonGoMainWindow extends JFrame {
 
 	private final PokemonGo go;
 	private final PlayerProfile p;
-	public static PokemonGoMainWindow window = null;
+	private static PokemonGoMainWindow window = null;
 
 	public PokemonGo getPoGo() { return go; }
 
