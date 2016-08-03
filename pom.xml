@@ -7,6 +7,25 @@
     <sourceDirectory>src</sourceDirectory>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.5.1</version>
         <configuration>
@@ -14,29 +33,42 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+              <mainClass>me.corriekay.pokegoutil.BlossomsPoGoManager</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
-  	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories> 
-  	<dependencies>
-  		<dependency>
-  			<groupId>com.github.Grover-c13</groupId>
-  			<artifactId>PokeGOAPI-Java</artifactId>
-  			<version>0.3</version>
-  		</dependency>
-		 <dependency>
-			<groupId>org.json</groupId>
-  			<artifactId>json</artifactId>
-  			<version>20160212</version>
-  		</dependency>
-  		<dependency>
-  			<groupId>org.apache.commons</groupId>
-  			<artifactId>commons-lang3</artifactId>
-  			<version>3.4</version>
-  		</dependency>
-  	</dependencies>
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories> 
+  <dependencies>
+    <dependency>
+      <groupId>com.github.Grover-c13</groupId>
+      <artifactId>PokeGOAPI-Java</artifactId>
+      <version>3df35dad26</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20160212</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.4</version>
+    </dependency>
+  </dependencies>
 </project>

@@ -32,6 +32,8 @@ import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.api.pokemon.PokemonMoveMeta;
+import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
@@ -50,12 +52,17 @@ public class PokemonTab extends JPanel {
 		setLayout(new BorderLayout());
 		this.go = go;
 		JPanel topPanel = new JPanel(new GridBagLayout());
-		JButton transferSelected, evolveSelected, powerUpSelected;
+		JButton refreshPkmn, transferSelected, evolveSelected, powerUpSelected;
+		refreshPkmn = new JButton("Refresh Pokémon");
 		transferSelected = new JButton("Transfer Selected");
 		evolveSelected = new JButton("Evolve Selected");
 		powerUpSelected = new JButton("Power Up Selected");
 
 		GridBagConstraints gbc = new GridBagConstraints();
+		topPanel.add(refreshPkmn, gbc);
+		refreshPkmn.addActionListener(l-> new SwingWorker<Void, Void>(){
+			protected Void doInBackground() throws Exception { refreshPkmn(); return null; }
+		}.execute());
 		topPanel.add(transferSelected, gbc);
 		transferSelected.addActionListener(l-> new SwingWorker<Void, Void>(){
 			protected Void doInBackground() throws Exception { transferSelected(); return null; }
@@ -82,6 +89,16 @@ public class PokemonTab extends JPanel {
 		JScrollPane sp = new JScrollPane(pt);
 		sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(sp, BorderLayout.CENTER);
+	}
+	
+	private void refreshPkmn() {
+		try {
+			go.getInventories().updateInventories(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		SwingUtilities.invokeLater(this::refreshList);
+		System.out.println("Done refreshing Pokémon list");
 	}
 	
 	private void transferSelected() {
@@ -112,7 +129,7 @@ public class PokemonTab extends JPanel {
 					}
 				} catch (Exception e) {
 					err.increment();
-					System.out.println("Error transferring pokemon! " + e.getMessage());
+					System.out.println("Error transferring Pokémon! " + e.getMessage());
 				}
 			});
 			try {
@@ -121,7 +138,7 @@ public class PokemonTab extends JPanel {
 				e.printStackTrace();
 			}
 			SwingUtilities.invokeLater(this::refreshList);
-			JOptionPane.showMessageDialog(null, "Pokemon batch transfer complete!\nPokemon total: " + selection.size() + "\nSuccessful Transfers: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+			JOptionPane.showMessageDialog(null, "Pokémon batch transfer complete!\nPokémon total: " + selection.size() + "\nSuccessful Transfers: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
 		}
 	}
 	
@@ -154,7 +171,7 @@ public class PokemonTab extends JPanel {
 						}
 					} catch (Exception e) {
 						err.increment();
-						System.out.println("Error evolving pokemon! " + e.getMessage());
+						System.out.println("Error evolving Pokémon! " + e.getMessage());
 					}
 				});
 				try {
@@ -163,7 +180,7 @@ public class PokemonTab extends JPanel {
 					e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(this::refreshList);
-				JOptionPane.showMessageDialog(null, "Pokemon batch evolve complete!\nPokemon total: " + selection.size() + "\nSuccessful evolves: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+				JOptionPane.showMessageDialog(null, "Pokémon batch evolve complete!\nPokémon total: " + selection.size() + "\nSuccessful evolves: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
 			}
 		}
 	}
@@ -196,16 +213,17 @@ public class PokemonTab extends JPanel {
 						}
 					} catch (Exception e) {
 						err.increment();
-						System.out.println("Error powering up pokemon! " + e.getMessage());
+						System.out.println("Error powering up Pokémon! " + e.getMessage());
 					}
 				});
 				try {
 					go.getInventories().updateInventories(true);
+					PokemonGoMainWindow.window.refreshTitle();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(this::refreshList);
-				JOptionPane.showMessageDialog(null, "Pokemon batch powerup complete!\nPokemon total: " + selection.size() + "\nSuccessful powerups: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+				JOptionPane.showMessageDialog(null, "Pokémon batch powerup complete!\nPokémon total: " + selection.size() + "\nSuccessful powerups: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
 			}
 		}
 	}
@@ -227,7 +245,7 @@ public class PokemonTab extends JPanel {
 			innerPanel.add(new JLabel(str));
 		});
 		panel.add(scroll);
-		int response = JOptionPane.showConfirmDialog(null, panel, "Please confirm " + operation + " of " + pokes.size() + " pokemon", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int response = JOptionPane.showConfirmDialog(null, panel, "Please confirm " + operation + " of " + pokes.size() + " Pokémon", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		return response == JOptionPane.OK_OPTION;
 	}
 	
@@ -263,7 +281,7 @@ public class PokemonTab extends JPanel {
 		}
 	}
 	
-	public static class PokemonTable extends JTable {
+	private static class PokemonTable extends JTable {
 		
 		/**
 		 * data types:
@@ -281,27 +299,36 @@ public class PokemonTab extends JPanel {
 		 * 11 Integer - Candies to Evolve
 		 * 12 Integer - Star Dust to level
 		 * 13 String - Pokeball Type
+         * 14 Integer - Level
 		 */
-		int sortColIndex = 1;
+		int sortColIndex = 0;
 		SortOrder so = SortOrder.ASCENDING;
-		public PokemonTable() {
+		private PokemonTable() {
 			setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			setAutoResizeMode(AUTO_RESIZE_OFF);
 		}
 
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		public void constructNewTableModel(PokemonGo go, List<Pokemon> pokes) {
+		private void constructNewTableModel(PokemonGo go, List<Pokemon> pokes) {
 			PokemonTableModel ptm = new PokemonTableModel(pokes, this);
 			setModel(ptm);
 			TableRowSorter trs = new TableRowSorter(getModel());
-			Comparator<Integer> c = (i1, i2) -> { return Math.round(i1 - i2); };
-			trs.setComparator(1, c);
-			trs.setComparator(3, (d1, d2) -> {return (int)((double)d1 - (double)d2);});
-			trs.setComparator(8, c);
-			trs.setComparator(9, c);
+			Comparator<Integer> c = (i1, i2) -> Math.round(i1 - i2);
+            trs.setComparator(0, c);
+            trs.setComparator(3, c);
+			trs.setComparator(4, (d1, d2) -> (int)((double)d1 - (double)d2));
+            trs.setComparator(5, c);
 			trs.setComparator(10, c);
-			trs.setComparator(11, c);
-			trs.setComparator(12, c);
+            //TODO: needs to be fixed/debugged
+			trs.setComparator(11, (e1, e2) -> {
+			    if(e1.equals("-"))
+			        e1 = "0";
+                if(e2.equals("-"))
+                    e2 = "0";
+                return Math.round(Float.parseFloat((String) e1) - Float.parseFloat((String) e2));
+			});
+			//trs.setComparator(12, c);
+            trs.setComparator(13, c);
 			setRowSorter(trs);
 			trs.toggleSortOrder(sortColIndex);
 			List<SortKey> sortKeys = new ArrayList<>();
@@ -309,7 +336,7 @@ public class PokemonTab extends JPanel {
 			trs.setSortKeys(sortKeys);
 		}
 	}
-	public static class PokemonTableModel extends AbstractTableModel {
+	private static class PokemonTableModel extends AbstractTableModel {
 		
 		PokemonTable pt;
 
@@ -327,42 +354,52 @@ public class PokemonTab extends JPanel {
 										 move2Col = new ArrayList<>();//10
 		private final ArrayList<Integer> cpCol = new ArrayList<>(),//11
 										 hpCol = new ArrayList<>();//12
-		private final ArrayList<Integer> candiesCol = new ArrayList<>(),//13
-										 candies2EvlvCol = new ArrayList<>(),//14
-										 dustToLevelCol = new ArrayList<>();//15
+		private final ArrayList<Integer> candiesCol = new ArrayList<>();//13
+		private final ArrayList<String> candies2EvlvCol = new ArrayList<>();//14
+		private final ArrayList<Integer> dustToLevelCol = new ArrayList<>();//15
 		private final ArrayList<String>  pokeballCol = new ArrayList<>();//16
+        private final ArrayList<Integer>  levelCol = new ArrayList<>();
 		
-		public PokemonTableModel(List<Pokemon> pokes, PokemonTable pt) {
+		private PokemonTableModel(List<Pokemon> pokes, PokemonTable pt) {
 			this.pt = pt;
 			MutableInt i = new MutableInt();
 			pokes.forEach(p -> {
 				pokeCol.add(i.getValue(), p);
+                numIdCol.add(i.getValue(), p.getMeta().getNumber());
 				nickCol.add(i.getValue(), p.getNickname());
-				numIdCol.add(i.getValue(), p.getMeta().getNumber());
 				speciesCol.add(i.getValue(), StringUtils.capitalize(p.getPokemonId().toString().toLowerCase().replaceAll("_male", "♂").replaceAll("_female", "♀")));
-				ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
+                levelCol.add(i.getValue(), Math.round(p.getLevel()));
+                ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
+                cpCol.add(i.getValue(), p.getCp());
 				atkCol.add(i.getValue(), p.getIndividualAttack());
 				defCol.add(i.getValue(), p.getIndividualDefense());
 				stamCol.add(i.getValue(), p.getIndividualStamina());
 				type1Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()));
 				type2Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
-				move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")));
-				move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")));
-				cpCol.add(i.getValue(), p.getCp());
+
+				PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
+				PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
+				Double dps1 = Double.valueOf(pm1.getPower())/Double.valueOf(pm1.getTime())*1000;
+				Double dps2 = Double.valueOf(pm2.getPower())/Double.valueOf(pm2.getTime())*1000;				
+				move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1.doubleValue()) + "dps)");
+				move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " "))+ " (" + String.format("%.2f", dps2.doubleValue()) + "dps)");
 				hpCol.add(i.getValue(), p.getStamina());
 				try {
 					candiesCol.add(i.getValue(), p.getCandy());
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				candies2EvlvCol.add(i.getValue(), p.getCandiesToEvolve());
+                if(p.getCandiesToEvolve() != 0)
+				    candies2EvlvCol.add(i.getValue(), String.valueOf(p.getCandiesToEvolve()));
+                else
+                    candies2EvlvCol.add(i.getValue(), "-");
 				dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
 				pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
-				i.increment();
+                i.increment();
 			});
 		}
 		
-		public Pokemon getPokemonByIndex(int i) {
+		private Pokemon getPokemonByIndex(int i) {
 			try {
 				return pokeCol.get(pt.convertRowIndexToModel(i));
 			} catch (Exception e) {
@@ -374,8 +411,8 @@ public class PokemonTab extends JPanel {
 		@Override
 		public String getColumnName(int columnIndex) {
 			switch(columnIndex) {
-				case 0: return "Nickname";
-				case 1: return "Id";
+                case 0: return "Id";
+				case 1: return "Nickname";
 				case 2: return "Species";
 				case 3: return "IV %";
 				case 4: return "Atk";
@@ -408,8 +445,8 @@ public class PokemonTab extends JPanel {
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			switch(columnIndex) {
-				case 0: return nickCol.get(rowIndex);
-				case 1: return numIdCol.get(rowIndex);
+                case 0: return numIdCol.get(rowIndex);
+				case 1: return nickCol.get(rowIndex);
 				case 2: return speciesCol.get(rowIndex);
 				case 3: return ivCol.get(rowIndex);
 				case 4: return atkCol.get(rowIndex);
