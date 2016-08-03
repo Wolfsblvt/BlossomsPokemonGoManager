@@ -383,7 +383,7 @@ public class PokemonTab extends JPanel {
 				PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
 				PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
 				Double dps1 = Double.valueOf(pm1.getPower())/Double.valueOf(pm1.getTime())*1000;
-				Double dps2 = Double.valueOf(pm2.getPower())/Double.valueOf(pm2.getTime())*1000;				
+				Double dps2 = Double.valueOf(pm2.getPower())/Double.valueOf(pm2.getTime()+1000)*1000;				
 				move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1.doubleValue()) + "dps)");
 				move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " "))+ " (" + String.format("%.2f", dps2.doubleValue()) + "dps)");
 				hpCol.add(i.getValue(), p.getStamina());
