@@ -27,15 +27,15 @@ public class PokemonGoMainWindow extends JFrame {
 		console.clearAllLines();
 		System.out.println("Successfully logged in. Welcome, " + go.getPlayerProfile().getUsername() + ".");
 		System.out.println("Stats: Lvl " + go.getPlayerProfile().getStats().getLevel() + " " + StringUtils.capitalize(go.getPlayerProfile().getTeam().toString().toLowerCase().replaceAll("team_", "") + " player."));
-		System.out.println("Pokedex - Types Caught: " + go.getPlayerProfile().getStats().getUniquePokedexEntries() + ", Total Pokemon Caught: " + go.getPlayerProfile().getStats().getPokemonsCaptured() + ", Total Current Pokemon: " + go.getInventories().getPokebank().getPokemons().size());
+		System.out.println("Pokédex - Types Caught: " + go.getPlayerProfile().getStats().getUniquePokedexEntries() + ", Total Pokémon Caught: " + go.getPlayerProfile().getStats().getPokemonsCaptured() + ", Total Current Pokémon: " + go.getInventories().getPokebank().getPokemons().size());
 		setLayout(new BorderLayout());
-		setTitle("Blossom's Pokemon Go Manager");
+		setTitle("Blossom's Pokémon Go Manager");
 		setIconImage(Utilities.loadImage("PokeBall-icon.png"));
 		setBounds(0, 0, 600, 550);
 		Utilities.setLocationMidScreen(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(new MenuBar(go));
-		tab.add("Pokemon", new PokemonTab(go));
+		tab.add("Pokémon", new PokemonTab(go));
 		
 		add(tab, BorderLayout.CENTER);
 		

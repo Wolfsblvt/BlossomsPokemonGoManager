@@ -106,7 +106,7 @@ public class PokemonTab extends JPanel {
 					}
 				} catch (Exception e) {
 					err.increment();
-					System.out.println("Error transferring pokemon! " + e.getMessage());
+					System.out.println("Error transferring Pokémon! " + e.getMessage());
 				}
 			});
 			try {
@@ -115,7 +115,7 @@ public class PokemonTab extends JPanel {
 				e.printStackTrace();
 			}
 			SwingUtilities.invokeLater(this::refreshList);
-			JOptionPane.showMessageDialog(null, "Pokmon batch transfer complete!\nPokemon total: " + selection.size() + "\nSuccessful Transfers: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+			JOptionPane.showMessageDialog(null, "Pokémon batch transfer complete!\nPokémon total: " + selection.size() + "\nSuccessful Transfers: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
 		}
 	}
 	
@@ -147,7 +147,7 @@ public class PokemonTab extends JPanel {
 						}
 					} catch (Exception e) {
 						err.increment();
-						System.out.println("Error evolving pokemon! " + e.getMessage());
+						System.out.println("Error evolving Pokémon! " + e.getMessage());
 					}
 				});
 				try {
@@ -156,7 +156,7 @@ public class PokemonTab extends JPanel {
 					e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(this::refreshList);
-				JOptionPane.showMessageDialog(null, "Pokemon batch evolve complete!\nPokemon total: " + selection.size() + "\nSuccessful evolves: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+				JOptionPane.showMessageDialog(null, "Pokémon batch evolve complete!\nPokémon total: " + selection.size() + "\nSuccessful evolves: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
 			}
 		}
 	}
@@ -189,7 +189,7 @@ public class PokemonTab extends JPanel {
 						}
 					} catch (Exception e) {
 						err.increment();
-						System.out.println("Error powering up pokemon! " + e.getMessage());
+						System.out.println("Error powering up Pokémon! " + e.getMessage());
 					}
 				});
 				try {
@@ -198,7 +198,7 @@ public class PokemonTab extends JPanel {
 					e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(this::refreshList);
-				JOptionPane.showMessageDialog(null, "Pokemon batch powerup complete!\nPokemon total: " + selection.size() + "\nSuccessful powerups: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+				JOptionPane.showMessageDialog(null, "Pokémon batch powerup complete!\nPokémon total: " + selection.size() + "\nSuccessful powerups: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
 			}
 		}
 	}
@@ -220,7 +220,7 @@ public class PokemonTab extends JPanel {
 			innerPanel.add(new JLabel(str));
 		});
 		panel.add(scroll);
-		int response = JOptionPane.showConfirmDialog(null, panel, "Please confirm " + operation + " of " + pokes.size() + " pokemon", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int response = JOptionPane.showConfirmDialog(null, panel, "Please confirm " + operation + " of " + pokes.size() + " Pokémon", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 		return response == JOptionPane.OK_OPTION;
 	}
 	
