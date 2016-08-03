@@ -198,6 +198,7 @@ public class PokemonTab extends JPanel {
 	private boolean confirmOperation(String operation, ArrayList<Pokemon> pokes) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+		panel.setMaximumSize(panel.getSize());
 		
 		JPanel innerPanel = new JPanel();
 		innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
@@ -205,8 +206,10 @@ public class PokemonTab extends JPanel {
 		
 		JScrollPane scroll = new JScrollPane(innerPanel);
 		scroll.setAlignmentX(CENTER_ALIGNMENT);
-		scroll.setMaximumSize(new Dimension(150, 150));
-		
+		scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+
+		panel.setMaximumSize(panel.getSize());
+
 		pokes.forEach(p -> {
 			String str = StringUtils.capitalize(p.getPokemonId() + "") + " - CP: " + p.getCp() + ", IV: " + (Math.round(p.getIvRatio() * 10000)/100) + "%";
 			innerPanel.add(new JLabel(str));
