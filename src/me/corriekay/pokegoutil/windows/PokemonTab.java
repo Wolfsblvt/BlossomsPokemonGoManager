@@ -34,12 +34,17 @@ public class PokemonTab extends JPanel {
 		setLayout(new BorderLayout());
 		this.go = go;
 		JPanel topPanel = new JPanel(new GridBagLayout());
-		JButton transferSelected, evolveSelected, powerUpSelected;
+		JButton refreshPkmn, transferSelected, evolveSelected, powerUpSelected;
+		refreshPkmn = new JButton("Refresh Pokémon");
 		transferSelected = new JButton("Transfer Selected");
 		evolveSelected = new JButton("Evolve Selected");
 		powerUpSelected = new JButton("Power Up Selected");
 
 		GridBagConstraints gbc = new GridBagConstraints();
+		topPanel.add(refreshPkmn, gbc);
+		refreshPkmn.addActionListener(l-> new SwingWorker<Void, Void>(){
+			protected Void doInBackground() throws Exception { refreshPkmn(); return null; }
+		}.execute());
 		topPanel.add(transferSelected, gbc);
 		transferSelected.addActionListener(l-> new SwingWorker<Void, Void>(){
 			protected Void doInBackground() throws Exception { transferSelected(); return null; }
@@ -66,6 +71,16 @@ public class PokemonTab extends JPanel {
 		JScrollPane sp = new JScrollPane(pt);
 		sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(sp, BorderLayout.CENTER);
+	}
+	
+	private void refreshPkmn() {
+		try {
+			go.getInventories().updateInventories(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		SwingUtilities.invokeLater(this::refreshList);
+		System.out.println("Done refreshing Pokémon list");
 	}
 	
 	private void transferSelected() {
@@ -100,7 +115,7 @@ public class PokemonTab extends JPanel {
 				e.printStackTrace();
 			}
 			SwingUtilities.invokeLater(this::refreshList);
-			JOptionPane.showMessageDialog(null, "Pokemon batch transfer complete!\nPokemon total: " + selection.size() + "\nSuccessful Transfers: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+			JOptionPane.showMessageDialog(null, "Pokmon batch transfer complete!\nPokemon total: " + selection.size() + "\nSuccessful Transfers: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
 		}
 	}
 	
