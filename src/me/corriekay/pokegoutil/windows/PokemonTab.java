@@ -1,12 +1,26 @@
 package me.corriekay.pokegoutil.windows;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -21,7 +35,9 @@ import com.pokegoapi.api.pokemon.Pokemon;
 
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
-import me.corriekay.pokegoutil.utils.*;
+import me.corriekay.pokegoutil.utils.GhostText;
+import me.corriekay.pokegoutil.utils.JTableColumnPacker;
+import me.corriekay.pokegoutil.utils.LDocumentListener;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -230,16 +246,20 @@ public class PokemonTab extends JPanel {
 	private void refreshList() {
 		List<Pokemon> pokes = new ArrayList<>();
 		String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans").toLowerCase();
-		go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-			String searchme = poke.getPokemonId() + "" + poke.getPokemonFamily() + poke.getNickname() + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2() + poke.getPokeball();
-			searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
-			if(searchme.contains(search)) {
-				pokes.add(poke);
+		try {
+			go.getInventories().getPokebank().getPokemons().forEach(poke -> {
+				String searchme = poke.getPokemonId() + "" + poke.getPokemonFamily() + poke.getNickname() + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2() + poke.getPokeball();
+				searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
+				if(searchme.contains(search)) {
+					pokes.add(poke);
+				}
+			});
+			pt.constructNewTableModel(go, (search.equals("") || search.equals("searchpokemon...") ? go.getInventories().getPokebank().getPokemons() : pokes));
+			for(int i = 0; i < pt.getModel().getColumnCount(); i++) {
+				JTableColumnPacker.packColumn(pt, i, 4);
 			}
-		});
-		pt.constructNewTableModel(go, (search.equals("") || search.equals("searchpokemon...") ? go.getInventories().getPokebank().getPokemons() : pokes));
-		for(int i = 0; i < pt.getModel().getColumnCount(); i++) {
-			JTableColumnPacker.packColumn(pt, i, 4);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -324,7 +344,11 @@ public class PokemonTab extends JPanel {
 				move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")));
 				cpCol.add(i.getValue(), p.getCp());
 				hpCol.add(i.getValue(), p.getStamina());
-				candiesCol.add(i.getValue(), p.getCandy());
+				try {
+					candiesCol.add(i.getValue(), p.getCandy());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				candies2EvlvCol.add(i.getValue(), p.getCandiesToEvolve());
 				dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
 				pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));

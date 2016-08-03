@@ -9,6 +9,7 @@ import javax.swing.JTabbedPane;
 import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.player.PlayerProfile;
 
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
@@ -24,10 +25,13 @@ public class PokemonGoMainWindow extends JFrame {
 	
 	public PokemonGoMainWindow(PokemonGo pkmngo, Console console){
 		go = pkmngo;
+		PlayerProfile pp = go.getPlayerProfile();
 		console.clearAllLines();
-		System.out.println("Successfully logged in. Welcome, " + go.getPlayerProfile().getUsername() + ".");
-		System.out.println("Stats: Lvl " + go.getPlayerProfile().getStats().getLevel() + " " + StringUtils.capitalize(go.getPlayerProfile().getTeam().toString().toLowerCase().replaceAll("team_", "") + " player."));
-		System.out.println("Pokedex - Types Caught: " + go.getPlayerProfile().getStats().getUniquePokedexEntries() + ", Total Pokemon Caught: " + go.getPlayerProfile().getStats().getPokemonsCaptured() + ", Total Current Pokemon: " + go.getInventories().getPokebank().getPokemons().size());
+		try{
+			System.out.println("Successfully logged in. Welcome, " + pp.getPlayerData().getUsername() + ".");
+			System.out.println("Stats: Lvl " + pp.getStats().getLevel() + " " + StringUtils.capitalize(pp.getPlayerData().getTeam().toString().toLowerCase().replaceAll("team_", "") + " player."));
+			System.out.println("Pokedex - Types Caught: " + pp.getStats().getUniquePokedexEntries() + ", Total Pokemon Caught: " + pp.getStats().getPokemonsCaptured() + ", Total Current Pokemon: " + go.getInventories().getPokebank().getPokemons().size());
+		} catch (Exception e) {e.printStackTrace();}
 		setLayout(new BorderLayout());
 		setTitle("Blossom's Pokemon Go Manager");
 		setIconImage(Utilities.loadImage("PokeBall-icon.png"));
