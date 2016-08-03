@@ -49,7 +49,7 @@ public class BlossomsPoGoManager {
 		PokemonGo go = null;
 		while(!logged) {
 			//BEGIN LOGIN WINDOW
-			JSONObject config = BlossomsPoGoManager.config.getJSONObject("login");
+			JSONObject loginconf = BlossomsPoGoManager.config.getJSONObject("login");
 			go = null;
 			cp = null;
 			http = new OkHttpClient();
@@ -59,8 +59,8 @@ public class BlossomsPoGoManager {
 			UIManager.put("OptionPane.cancelButtonText", "Exit");
 			UIManager.put("OptionPane.okButtonText", "Ok");
 			
-			JTextField username = new JTextField(config.optString("PTCUsername", null));
-			JTextField password = new JPasswordField(config.optString("PTCPassword", null));
+			JTextField username = new JTextField(loginconf.optString("PTCUsername", null));
+			JTextField password = new JPasswordField(loginconf.optString("PTCPassword", null));
 	
 			JPanel panel1 = new JPanel(new BorderLayout());
 			panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
@@ -75,16 +75,16 @@ public class BlossomsPoGoManager {
 				System.exit(0);
 			} else if(response == JOptionPane.OK_OPTION) {
 				//Using PTC, remove Google infos
-				config.remove("GoogleAuthToken");
+				loginconf.remove("GoogleAuthToken");
 				try {
 					cp = new PtcCredentialProvider(http, username.getText(), password.getText());
-					config.put("PTCUsername", username.getText());
-					if(config.optBoolean("SaveAuth", false) || checkSaveAuth()) {
-						config.put("PTCPassword", password.getText());
-						config.put("SaveAuth", true);
+					loginconf.put("PTCUsername", username.getText());
+					if(loginconf.optBoolean("SaveAuth", false) || checkSaveAuth()) {
+						loginconf.put("PTCPassword", password.getText());
+						loginconf.put("SaveAuth", true);
 					} else {
-						config.remove("PTCPassword");
-						config.remove("SaveAuth");
+						loginconf.remove("PTCPassword");
+						loginconf.remove("SaveAuth");
 					}
 				} catch(Exception e){
 					alertFailedLogin();
@@ -92,9 +92,9 @@ public class BlossomsPoGoManager {
 				} 
 			} else if (response == JOptionPane.NO_OPTION) {
 				//Using Google, remove PTC infos
-				config.remove("PTCUsername");
-				config.remove("PTCPassword");
-				String authCode = config.optString("GoogleAuthToken", null);
+				loginconf.remove("PTCUsername");
+				loginconf.remove("PTCPassword");
+				String authCode = loginconf.optString("GoogleAuthToken", null);
 				boolean refresh = false;
 				if(authCode == null) {
 					//We need to get the auth code, as we do not have it yet.
@@ -122,12 +122,12 @@ public class BlossomsPoGoManager {
 					if(refresh) provider.refreshToken(authCode);
 					else provider.login(authCode); 
 					cp = provider;
-					if(config.optBoolean("SaveAuth", false) || checkSaveAuth()){
-						if(!refresh) config.put("GoogleAuthToken", provider.getRefreshToken());
-						config.put("SaveAuth", true);
+					if(loginconf.optBoolean("SaveAuth", false) || checkSaveAuth()){
+						if(!refresh) loginconf.put("GoogleAuthToken", provider.getRefreshToken());
+						loginconf.put("SaveAuth", true);
 					} else {
-						config.remove("GoogleAuthToken");
-						config.remove("SaveAuth");
+						loginconf.remove("GoogleAuthToken");
+						loginconf.remove("SaveAuth");
 					}
 				} catch (Exception e) {
 					alertFailedLogin();
@@ -144,6 +144,7 @@ public class BlossomsPoGoManager {
                 go = new PokemonGo(cp, http);
             else
                 throw new IllegalStateException();
+            BlossomsPoGoManager.config.put("login", loginconf);
             Utilities.saveFile(file, config.toString(4));
 			logged = true;
 		}
