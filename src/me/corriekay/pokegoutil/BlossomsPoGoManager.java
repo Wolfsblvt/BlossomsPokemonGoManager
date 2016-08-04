@@ -1,30 +1,27 @@
 package me.corriekay.pokegoutil;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.io.File;
+import java.net.URI;
+import java.nio.file.FileAlreadyExistsException;
+import java.util.*;
+
+import javax.swing.*;
+
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.auth.CredentialProvider;
-import com.pokegoapi.auth.GoogleUserCredentialProvider;
-import com.pokegoapi.auth.PtcCredentialProvider;
+import com.pokegoapi.auth.*;
 import com.pokegoapi.util.PokeNames;
 
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
-
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.io.File;
-import java.net.URI;
-import java.nio.file.FileAlreadyExistsException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Locale;
 
 public class BlossomsPoGoManager {
 	
@@ -33,6 +30,7 @@ public class BlossomsPoGoManager {
 	private static Console console;
 	private static boolean logged = false;
 	private static PokemonGoMainWindow mainWindow = null;
+	public static final String VERSION = "0.1.1-Beta";
 
 	public static void main(String[] args) throws Exception {
 		Utilities.setNativeLookAndFeel();
