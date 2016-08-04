@@ -146,16 +146,6 @@ public class PokemonTab extends JPanel {
 					err.increment();
 					System.out.println("Error transferring Pokémon! " + e.getMessage());
 				}
-
-                // TODO: Temp delay for transfer
-                try {
-                    Random rnd = new Random();
-                    Integer randomInt = rnd.nextInt(5000) + 3000;
-                    System.out.println("Waiting " + (randomInt/1000.0F) + " seconds.");
-                    TimeUnit.MILLISECONDS.sleep(randomInt);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             });
 			try {
 				go.getInventories().updateInventories(true);
