@@ -29,7 +29,7 @@ public class PokemonGoMainWindow extends JFrame {
 		console.clearAllLines();
 		System.out.println("Successfully logged in. Welcome, " + p.getUsername() + ".");
 		System.out.println("Stats: Lvl " + p.getStats().getLevel() + " " + StringUtils.capitalize(p.getTeam().toString().toLowerCase().replaceAll("team_", "") + " player."));
-		System.out.println("PokÈdex - Types Caught: " + p.getStats().getUniquePokedexEntries() + ", Total PokÈmon Caught: " + p.getStats().getPokemonsCaptured() + ", Total Current PokÈmon: " + go.getInventories().getPokebank().getPokemons().size());
+		System.out.println("Pok√©dex - Types Caught: " + p.getStats().getUniquePokedexEntries() + ", Total Pok√©mon Caught: " + p.getStats().getPokemonsCaptured() + ", Total Current Pok√©mon: " + go.getInventories().getPokebank().getPokemons().size());
 		setLayout(new BorderLayout());
 		refreshTitle();
 		setIconImage(Utilities.loadImage("PokeBall-icon.png"));
@@ -37,7 +37,7 @@ public class PokemonGoMainWindow extends JFrame {
 		Utilities.setLocationMidScreen(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(new MenuBar(go));
-		tab.add("PokÈmon", new PokemonTab(go));
+		tab.add("Pok√©mon", new PokemonTab(go));
 
 		add(tab, BorderLayout.CENTER);
 
@@ -51,9 +51,9 @@ public class PokemonGoMainWindow extends JFrame {
 	public void refreshTitle() {
 		try {
 			NumberFormat f = NumberFormat.getInstance();
-			setTitle(String.format("%s - Stardust: %s - Blossom's PokÈmon Go Manager", p.getUsername(), f.format(p.getCurrency(PlayerProfile.Currency.STARDUST))));
+			setTitle(String.format("%s - Stardust: %s - Blossom's Pok√©mon Go Manager", p.getUsername(), f.format(p.getCurrency(PlayerProfile.Currency.STARDUST))));
 		} catch (InvalidCurrencyException e) {
-			setTitle("Blossom's Pokemon Go Manager");
+			setTitle("Blossom's Pok√©mon Go Manager");
 		}
 	}
 
