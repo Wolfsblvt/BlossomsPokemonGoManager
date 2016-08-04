@@ -322,7 +322,6 @@ public class PokemonTab extends JPanel {
 			setAutoResizeMode(AUTO_RESIZE_OFF);
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
 		private void constructNewTableModel(PokemonGo go, List<Pokemon> pokes) {
 			PokemonTableModel ptm = new PokemonTableModel(pokes, this);
 			setModel(ptm);
@@ -331,16 +330,21 @@ public class PokemonTab extends JPanel {
             trs.setComparator(0, c);
             //trs.setComparator(3, c);
 			trs.setComparator(3, (d1, d2) -> (int)((double)d1 - (double)d2));
+			trs.setComparator(4, c);
+			trs.setComparator(5, c);
+			trs.setComparator(6, c);
+			trs.setComparator(7, c);
             trs.setComparator(12, c);
 			trs.setComparator(14, c);
             //TODO: needs to be fixed/debugged
-			trs.setComparator(16, (e1, e2) -> {
+			trs.setComparator(15, (e1, e2) -> {
 			    if(e1.equals("-"))
-			        e1 = 0;
+			        e1 = "0";
                 if(e2.equals("-"))
-                    e2 = 0;
-                return Math.round((int)e1 - (int)e2);
+                    e2 = "0";
+                return Math.round(Integer.getInteger((String) e1) - Integer.getInteger((String) e2));
 			});
+			trs.setComparator(16, c);
 			setRowSorter(trs);
 			trs.toggleSortOrder(sortColIndex);
 			List<SortKey> sortKeys = new ArrayList<>();
