@@ -5,18 +5,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.time.LocalDateTime;
-import java.util.Random;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.table.*;
 
-import POGOProtos.Enums.PokemonIdOuterClass;
+import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.text.WordUtils;
@@ -451,7 +450,30 @@ public class PokemonTab extends JPanel {
                 }
 
                 // Max CP calculation for highest evolution of current Pokemon
-                PokemonIdOuterClass.PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(p.getPokemonFamily());
+                PokemonFamilyId familyId = p.getPokemonFamily();
+                PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
+
+                // Eeveelutions exception handling
+                if (familyId.getNumber() == PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
+                    if (p.getPokemonId().getNumber() == PokemonId.EEVEE.getNumber()) {
+                        PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonId.VAPOREON);
+                        PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonId.FLAREON);
+                        PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonId.JOLTEON);
+                        if (vap != null && fla != null && jol != null) {
+                            Comparator<PokemonMeta> cMeta = (m1, m2) -> {
+                                int comb1 = PokemonCpUtils.getMaxCp(m1.getBaseAttack(), m1.getBaseDefense(), m1.getBaseStamina());
+                                int comb2 = PokemonCpUtils.getMaxCp(m2.getBaseAttack(), m2.getBaseDefense(), m2.getBaseStamina());
+                                return comb1 - comb2;
+                            };
+                            highestFamilyId = PokemonId.forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                        }
+                    } else {
+                        // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
+                        // We correct that here
+                        highestFamilyId = p.getPokemonId();
+                    }
+                }
+
                 PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
                 if (highestFamilyId == p.getPokemonId()) {
                     maxEvolvedCpCurrentCol.add(i.getValue(), maxCpCurrent);
