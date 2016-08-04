@@ -1,11 +1,12 @@
 package me.corriekay.pokegoutil.windows;
 
+import javax.swing.*;
+
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-import me.corriekay.pokegoutil.BlossomsPoGoManager;
 
-import javax.swing.*;
+import me.corriekay.pokegoutil.BlossomsPoGoManager;
 
 @SuppressWarnings("serial")
 public class MenuBar extends JMenuBar {
@@ -45,7 +46,7 @@ public class MenuBar extends JMenuBar {
 		help = new JMenu("Help");
 		
 		JMenuItem about = new JMenuItem("About");
-		about.addActionListener(l->JOptionPane.showMessageDialog(null, "Author: Corrie 'Blossom' Kay\n\nThis work is protected under the\nCreative Commons Attribution-\nNonCommercial-ShareAlike 4.0\nInternational license, which can\nbe found here:\nhttps://creativecommons.org/\nlicenses/by-nc-sa/4.0/\n\nThanks to Grover for providing\nsuch a great API.\n\nThanks for Draseart for\nthe icon art.", "About Blossom's Pokemon Go Manager", JOptionPane.PLAIN_MESSAGE));
+		about.addActionListener(l->JOptionPane.showMessageDialog(null, "Version: " + BlossomsPoGoManager.VERSION + "\n\nAuthor: Corrie 'Blossom' Kay\n\nThis work is protected under the\nCreative Commons Attribution-\nNonCommercial-ShareAlike 4.0\nInternational license, which can\nbe found here:\nhttps://creativecommons.org/\nlicenses/by-nc-sa/4.0/\n\nThanks to Grover for providing\nsuch a great API.\n\nThanks for Draseart for\nthe icon art.", "About Blossom's Pokémon Go Manager", JOptionPane.PLAIN_MESSAGE));
 		
 		help.add(about);
 		

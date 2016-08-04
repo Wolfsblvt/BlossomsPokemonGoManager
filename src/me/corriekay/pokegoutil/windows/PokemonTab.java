@@ -1,52 +1,29 @@
 package me.corriekay.pokegoutil.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.SortOrder;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.table.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.text.WordUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.api.pokemon.PokemonMoveMeta;
-import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
+import com.pokegoapi.api.pokemon.*;
 
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
-import me.corriekay.pokegoutil.utils.GhostText;
-import me.corriekay.pokegoutil.utils.JTableColumnPacker;
-import me.corriekay.pokegoutil.utils.LDocumentListener;
+import me.corriekay.pokegoutil.utils.*;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -90,22 +67,28 @@ public class PokemonTab extends JPanel {
 		topPanel.add(searchBar, gbc);
 		
 		// pokemon name language drop down
-		String[] locales = { "en", "de", "fr", "ru", "zh_CN", "zh_HK" };
+		String[] locales = { "en", "de", "fr", /*"ru", "zh_CN", "zh_HK"*/ };
 		JComboBox<String> pokelang = new JComboBox<String>(locales);
-		pokelang.setSelectedIndex(0);
+		String locale = BlossomsPoGoManager.getConfigItem("options.lang", "en");
+		pokelang.setSelectedItem(locale);
 		pokelang.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				@SuppressWarnings("unchecked")
-				JComboBox<String> pokelang = (JComboBox<String>)e.getSource();
-				String lang = (String)pokelang.getSelectedItem();
-				changeLanguage(lang);
+				new SwingWorker<Void, Void>() {
+					protected Void doInBackground() throws Exception {
+						@SuppressWarnings("unchecked")
+						JComboBox<String> pokelang = (JComboBox<String>)e.getSource();
+						String lang = (String)pokelang.getSelectedItem();
+						changeLanguage(lang);
+						return null;
+					}
+				}.execute();
 			}
 		});
 		topPanel.add(pokelang);
 		
 		LDocumentListener.addChangeListener(searchBar, e -> refreshList());
-		new GhostText(searchBar, "Search Pokemon...");
+		new GhostText(searchBar, "Search Pokémon...");
 		
 		add(topPanel, BorderLayout.NORTH);
 		JScrollPane sp = new JScrollPane(pt);
@@ -114,18 +97,7 @@ public class PokemonTab extends JPanel {
 	}
 	
 	private void changeLanguage(String langCode) {
-		JSONObject opts;
-		try {
-			opts = BlossomsPoGoManager.config.getJSONObject("options");
-			opts.put("lang", langCode);
-		}
-		catch (JSONException jsone) {
-			opts = new JSONObject();
-			opts.put("lang", langCode);
-			BlossomsPoGoManager.config.put("options", opts);
-		}
-		BlossomsPoGoManager.saveConfig();
-		
+		BlossomsPoGoManager.setConfigItem("options.lang", langCode);
 		refreshPkmn();
 	}
 	
@@ -148,7 +120,7 @@ public class PokemonTab extends JPanel {
 				System.out.println("Doing Operation " + total.getValue() + " of " + selection.size());
 				total.increment();
 				if (poke.isFavorite()){
-					System.out.println("Pokemon is favorite, not transferring.");
+					System.out.println("Pokémon is favorite, not transferring.");
 					err.increment();
 					return;
 				}
@@ -304,13 +276,13 @@ public class PokemonTab extends JPanel {
 		String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans").toLowerCase();
 		try {
 			go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-				String searchme = poke.getPokemonId() + "" + poke.getPokemonFamily() + poke.getNickname() + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2() + poke.getPokeball();
+				String searchme = BlossomsPoGoManager.getPokemonName(poke) + "" + poke.getPokemonFamily() + poke.getNickname() + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2() + poke.getPokeball();
 				searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
 				if(searchme.contains(search)) {
 					pokes.add(poke);
 				}
 			});
-			pt.constructNewTableModel(go, (search.equals("") || search.equals("searchpokemon...") ? go.getInventories().getPokebank().getPokemons() : pokes));
+			pt.constructNewTableModel(go, (search.equals("") || search.equals("searchpokémon...") ? go.getInventories().getPokebank().getPokemons() : pokes));
 			for(int i = 0; i < pt.getModel().getColumnCount(); i++) {
 				JTableColumnPacker.packColumn(pt, i, 4);
 			}
@@ -350,7 +322,6 @@ public class PokemonTab extends JPanel {
 			setAutoResizeMode(AUTO_RESIZE_OFF);
 		}
 
-		@SuppressWarnings({ "rawtypes", "unchecked" })
 		private void constructNewTableModel(PokemonGo go, List<Pokemon> pokes) {
 			PokemonTableModel ptm = new PokemonTableModel(pokes, this);
 			setModel(ptm);
@@ -359,16 +330,21 @@ public class PokemonTab extends JPanel {
             trs.setComparator(0, c);
             //trs.setComparator(3, c);
 			trs.setComparator(3, (d1, d2) -> (int)((double)d1 - (double)d2));
+			trs.setComparator(4, c);
+			trs.setComparator(5, c);
+			trs.setComparator(6, c);
+			trs.setComparator(7, c);
             trs.setComparator(12, c);
 			trs.setComparator(14, c);
             //TODO: needs to be fixed/debugged
-			trs.setComparator(16, (e1, e2) -> {
+			trs.setComparator(15, (e1, e2) -> {
 			    if(e1.equals("-"))
-			        e1 = 0;
+			        e1 = "0";
                 if(e2.equals("-"))
-                    e2 = 0;
-                return Math.round((int)e1 - (int)e2);
+                    e2 = "0";
+                return Math.round(Integer.getInteger((String) e1) - Integer.getInteger((String) e2));
 			});
+			trs.setComparator(16, c);
 			setRowSorter(trs);
 			trs.toggleSortOrder(sortColIndex);
 			List<SortKey> sortKeys = new ArrayList<>();
