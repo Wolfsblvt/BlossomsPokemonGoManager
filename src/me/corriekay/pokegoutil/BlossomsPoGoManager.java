@@ -44,7 +44,7 @@ public class BlossomsPoGoManager {
 				throw new FileAlreadyExistsException(file.getName());
 			}
 			config = new JSONObject("{\"login\":{},\"options\":{}}");
-			Utilities.saveFile(file, config.toString(4));
+			saveConfig();
 		} else {
 			config = new JSONObject(Utilities.readFile(file));
 		}
@@ -223,6 +223,7 @@ public class BlossomsPoGoManager {
 		mainWindow.start();
 	}
 
+	// TODO is actually a relog function
 	public static void logOff() throws Exception {
 		logged = false;
 		mainWindow.setVisible(false);
