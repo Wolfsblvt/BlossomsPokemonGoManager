@@ -92,7 +92,8 @@ public class PokemonTab extends JPanel {
 		// pokemon name language drop down
 		String[] locales = { "en", "de", "fr", "ru", "zh_CN", "zh_HK" };
 		JComboBox<String> pokelang = new JComboBox<String>(locales);
-		pokelang.setSelectedIndex(0);
+		String locale = BlossomsPoGoManager.getConfigItem("options.lang", "en");
+		pokelang.setSelectedItem(locale);
 		pokelang.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -114,18 +115,7 @@ public class PokemonTab extends JPanel {
 	}
 	
 	private void changeLanguage(String langCode) {
-		JSONObject opts;
-		try {
-			opts = BlossomsPoGoManager.config.getJSONObject("options");
-			opts.put("lang", langCode);
-		}
-		catch (JSONException jsone) {
-			opts = new JSONObject();
-			opts.put("lang", langCode);
-			BlossomsPoGoManager.config.put("options", opts);
-		}
-		BlossomsPoGoManager.saveConfig();
-		
+		BlossomsPoGoManager.setConfigItem("options.lang", langCode);
 		refreshPkmn();
 	}
 	

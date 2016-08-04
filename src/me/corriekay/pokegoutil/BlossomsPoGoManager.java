@@ -22,6 +22,8 @@ import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
 public class BlossomsPoGoManager {
@@ -54,20 +56,45 @@ public class BlossomsPoGoManager {
         Utilities.saveFile(file, config.toString(4));
 	}
 	
+    public static String getConfigItem(String path, String defaultValue) {
+        try {
+            ArrayList<String> parts = new ArrayList<String>(Arrays.asList(path.split("\\.")));
+            JSONObject current = config;
+            for (String item : parts.subList(0, parts.size()-1)) {
+                current = config.getJSONObject(item);
+            }
+
+            return current.getString(parts.get(parts.size()-1));
+        }
+        catch (JSONException jsone) {
+            System.err.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
+            return defaultValue;
+        }
+    }
+    
+    public static void setConfigItem(String path, String value) {
+        try {
+            ArrayList<String> parts = new ArrayList<String>(Arrays.asList(path.split("\\.")));
+            JSONObject current = config;
+            for (String item : parts.subList(0, parts.size()-1)) {
+                if (!current.has(item)) {
+                    JSONObject newObj = new JSONObject();
+                    current.put(item, newObj);
+                }
+                
+                current = current.getJSONObject(item);
+            }
+            
+            current.put(parts.get(parts.size()-1), value);
+            BlossomsPoGoManager.saveConfig();
+        }
+        catch (JSONException jsone) {
+            System.out.println("Could not save '" + value + "' to config (" + path + ")!");
+        }
+    }
+	
 	public static String getPokemonName(int id) {
-		JSONObject opts;
-		String lang;
-		try {
-			opts = config.getJSONObject("options");
-			lang = opts.getString("lang");
-		}
-		catch (JSONException jsone) {
-			opts = new JSONObject();
-			lang = "en";
-			opts.put("lang", lang);
-			config.put("options", opts);
-			saveConfig();
-		}
+		String lang = getConfigItem("options.lang", "en");
 		
 		Locale locale;
 		String[] langar = lang.split("_");
