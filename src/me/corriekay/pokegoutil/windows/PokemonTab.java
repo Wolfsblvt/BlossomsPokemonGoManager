@@ -1,52 +1,29 @@
 package me.corriekay.pokegoutil.windows;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
+import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.SortOrder;
-import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.table.*;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.text.WordUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.api.pokemon.PokemonMoveMeta;
-import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
+import com.pokegoapi.api.pokemon.*;
 
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
-import me.corriekay.pokegoutil.utils.GhostText;
-import me.corriekay.pokegoutil.utils.JTableColumnPacker;
-import me.corriekay.pokegoutil.utils.LDocumentListener;
+import me.corriekay.pokegoutil.utils.*;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -97,10 +74,15 @@ public class PokemonTab extends JPanel {
 		pokelang.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				@SuppressWarnings("unchecked")
-				JComboBox<String> pokelang = (JComboBox<String>)e.getSource();
-				String lang = (String)pokelang.getSelectedItem();
-				changeLanguage(lang);
+				new SwingWorker<Void, Void>() {
+					protected Void doInBackground() throws Exception {
+						@SuppressWarnings("unchecked")
+						JComboBox<String> pokelang = (JComboBox<String>)e.getSource();
+						String lang = (String)pokelang.getSelectedItem();
+						changeLanguage(lang);
+						return null;
+					}
+				}.execute();
 			}
 		});
 		topPanel.add(pokelang);
