@@ -1,3 +1,9 @@
+/*
+ * Most of the code in this file is taken from PokeGoAPI by Grover-c13
+ * Kudos for his work.
+ * https://github.com/Grover-c13/PokeGOAPI-Java/blob/master/src/main/java/com/pokegoapi/api/pokemon/PokemonCpUtils.java
+ */
+
 package me.corriekay.pokegoutil.utils;
 
 import java.util.HashMap;
