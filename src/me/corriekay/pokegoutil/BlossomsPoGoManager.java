@@ -33,6 +33,7 @@ public class BlossomsPoGoManager {
 	private static Console console;
 	private static boolean logged = false;
 	private static PokemonGoMainWindow mainWindow = null;
+	public static final String VERSION = "0.1.1-Beta";
 
 	public static void main(String[] args) throws Exception {
 		Utilities.setNativeLookAndFeel();
