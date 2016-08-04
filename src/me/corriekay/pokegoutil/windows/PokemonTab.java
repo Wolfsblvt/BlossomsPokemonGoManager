@@ -67,7 +67,7 @@ public class PokemonTab extends JPanel {
 		topPanel.add(searchBar, gbc);
 		
 		// pokemon name language drop down
-		String[] locales = { "en", "de", "fr", "ru", "zh_CN", "zh_HK" };
+		String[] locales = { "en", "de", "fr", /*"ru", "zh_CN", "zh_HK"*/ };
 		JComboBox<String> pokelang = new JComboBox<String>(locales);
 		String locale = BlossomsPoGoManager.getConfigItem("options.lang", "en");
 		pokelang.setSelectedItem(locale);
