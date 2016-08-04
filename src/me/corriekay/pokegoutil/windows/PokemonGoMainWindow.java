@@ -31,7 +31,7 @@ public class PokemonGoMainWindow extends JFrame {
 		setLayout(new BorderLayout());
 		setTitle("Blossom's Pokemon Go Manager");
 		setIconImage(Utilities.loadImage("PokeBall-icon.png"));
-		setBounds(0, 0, 600, 550);
+		setBounds(0, 0, 1000, 550);
 		Utilities.setLocationMidScreen(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(new MenuBar(go));
