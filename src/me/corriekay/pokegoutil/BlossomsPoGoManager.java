@@ -41,7 +41,7 @@ public class BlossomsPoGoManager {
 			if (!file.createNewFile()) {
 				throw new FileAlreadyExistsException(file.getName());
 			}
-			config = new JSONObject("{\"login\":{},\"options\":{}}");
+			config = new JSONObject("{\"login\":{},\"options\":{\"lang\":\"en\"}}");
 			Utilities.saveFile(file, config.toString(4));
 		} else {
 			config = new JSONObject(Utilities.readFile(file));
