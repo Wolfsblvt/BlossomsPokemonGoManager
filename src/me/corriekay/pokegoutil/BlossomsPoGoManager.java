@@ -1,46 +1,126 @@
 package me.corriekay.pokegoutil;
 
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.io.File;
-import java.net.URI;
-
-import javax.swing.*;
-
-import org.json.JSONObject;
-
 import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.auth.*;
+import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.auth.CredentialProvider;
+import com.pokegoapi.auth.GoogleUserCredentialProvider;
+import com.pokegoapi.auth.PtcCredentialProvider;
+import com.pokegoapi.util.PokeNames;
 
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.io.File;
+import java.net.URI;
+import java.nio.file.FileAlreadyExistsException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
+
 public class BlossomsPoGoManager {
 	
 	private static final File file = new File(System.getProperty("user.dir"), "config.json");
-	private static JSONObject config;
+	public static JSONObject config;
 	private static Console console;
-	
+	private static boolean logged = false;
+	private static PokemonGoMainWindow mainWindow = null;
+
 	public static void main(String[] args) throws Exception {
 		Utilities.setNativeLookAndFeel();
 		console = new Console("Console", 0, 0, true);
 		console.setVisible(false);
 		if(!file.exists()) {
-			file.createNewFile();
+
+			if (!file.createNewFile()) {
+				throw new FileAlreadyExistsException(file.getName());
+			}
 			config = new JSONObject("{\"login\":{},\"options\":{}}");
 			Utilities.saveFile(file, config.toString(4));
 		} else {
 			config = new JSONObject(Utilities.readFile(file));
 		}
 		
-		boolean logged = false;
+		logOn();
+	}
+	
+	public static void saveConfig() {
+        Utilities.saveFile(file, config.toString(4));
+	}
+	
+    public static String getConfigItem(String path, String defaultValue) {
+        try {
+            ArrayList<String> parts = new ArrayList<String>(Arrays.asList(path.split("\\.")));
+            JSONObject current = config;
+            for (String item : parts.subList(0, parts.size()-1)) {
+                current = config.getJSONObject(item);
+            }
+
+            return current.getString(parts.get(parts.size()-1));
+        }
+        catch (JSONException jsone) {
+            System.err.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
+            return defaultValue;
+        }
+    }
+    
+    public static void setConfigItem(String path, String value) {
+        try {
+            ArrayList<String> parts = new ArrayList<String>(Arrays.asList(path.split("\\.")));
+            JSONObject current = config;
+            for (String item : parts.subList(0, parts.size()-1)) {
+                if (!current.has(item)) {
+                    JSONObject newObj = new JSONObject();
+                    current.put(item, newObj);
+                }
+                
+                current = current.getJSONObject(item);
+            }
+            
+            current.put(parts.get(parts.size()-1), value);
+            BlossomsPoGoManager.saveConfig();
+        }
+        catch (JSONException jsone) {
+            System.out.println("Could not save '" + value + "' to config (" + path + ")!");
+        }
+    }
+	
+	public static String getPokemonName(int id) {
+		String lang = getConfigItem("options.lang", "en");
+		
+		Locale locale;
+		String[] langar = lang.split("_");
+		if (langar.length == 1) {
+			locale = new Locale(langar[0]);
+		}
+		else {
+		    locale = new Locale(langar[0], langar[1]);
+		}
+		
+		String name = PokeNames.getDisplayName(id, locale);
+		name = StringUtils.capitalize(name.toLowerCase());
+		return name;
+	}
+	
+	public static String getPokemonName(Pokemon poke) {
+		return getPokemonName(poke.getPokemonId().getNumber());
+	}
+
+	public static void logOn() throws Exception {
 		OkHttpClient http;
-		CredentialProvider cp = null;
+		CredentialProvider cp;
 		PokemonGo go = null;
 		while(!logged) {
 			//BEGIN LOGIN WINDOW
+			JSONObject loginconf = BlossomsPoGoManager.config.getJSONObject("login");
 			go = null;
 			cp = null;
 			http = new OkHttpClient();
@@ -50,8 +130,8 @@ public class BlossomsPoGoManager {
 			UIManager.put("OptionPane.cancelButtonText", "Exit");
 			UIManager.put("OptionPane.okButtonText", "Ok");
 			
-			JTextField username = new JTextField(config.optString("PTCUsername", null));
-			JTextField password = new JPasswordField(config.optString("PTCPassword", null));
+			JTextField username = new JTextField(loginconf.optString("PTCUsername", null));
+			JTextField password = new JPasswordField(loginconf.optString("PTCPassword", null));
 	
 			JPanel panel1 = new JPanel(new BorderLayout());
 			panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
@@ -66,15 +146,16 @@ public class BlossomsPoGoManager {
 				System.exit(0);
 			} else if(response == JOptionPane.OK_OPTION) {
 				//Using PTC, remove Google infos
-				config.remove("GoogleAuthToken");
+				loginconf.remove("GoogleAuthToken");
 				try {
-					PtcCredentialProvider provider = new PtcCredentialProvider(http, username.getText(), password.getText());
-					cp = provider;
-					config.put("PTCUsername", username.getText());
-					if(checkSaveAuth()) {
-						config.put("PTCPassword", password.getText());
+					cp = new PtcCredentialProvider(http, username.getText(), password.getText());
+					loginconf.put("PTCUsername", username.getText());
+					if(loginconf.optBoolean("SaveAuth", false) || checkSaveAuth()) {
+						loginconf.put("PTCPassword", password.getText());
+						loginconf.put("SaveAuth", true);
 					} else {
-						config.remove("PTCPassword");
+						loginconf.remove("PTCPassword");
+						loginconf.remove("SaveAuth");
 					}
 				} catch(Exception e){
 					alertFailedLogin();
@@ -82,9 +163,9 @@ public class BlossomsPoGoManager {
 				} 
 			} else if (response == JOptionPane.NO_OPTION) {
 				//Using Google, remove PTC infos
-				config.remove("PTCUsername");
-				config.remove("PTCPassword");
-				String authCode = config.optString("GoogleAuthToken", null);
+				loginconf.remove("PTCUsername");
+				loginconf.remove("PTCPassword");
+				String authCode = loginconf.optString("GoogleAuthToken", null);
 				boolean refresh = false;
 				if(authCode == null) {
 					//We need to get the auth code, as we do not have it yet.
@@ -105,7 +186,6 @@ public class BlossomsPoGoManager {
 					//The user should have the auth code now. Lets get it.
 					authCode = JOptionPane.showInputDialog(null, "Please provide the authentication code", "Google Auth", JOptionPane.PLAIN_MESSAGE);
 				} else {
-					JOptionPane.showMessageDialog(null, "Logging in using cached google auth token!", "Google Auth", JOptionPane.PLAIN_MESSAGE);
 					refresh = true;
 				}
 				try {
@@ -113,10 +193,12 @@ public class BlossomsPoGoManager {
 					if(refresh) provider.refreshToken(authCode);
 					else provider.login(authCode); 
 					cp = provider;
-					if(checkSaveAuth()){
-						if(!refresh) config.put("GoogleAuthToken", provider.getRefreshToken());
+					if(loginconf.optBoolean("SaveAuth", false) || checkSaveAuth()){
+						if(!refresh) loginconf.put("GoogleAuthToken", provider.getRefreshToken());
+						loginconf.put("SaveAuth", true);
 					} else {
-						config.remove("GoogleAuthToken");
+						loginconf.remove("GoogleAuthToken");
+						loginconf.remove("SaveAuth");
 					}
 				} catch (Exception e) {
 					alertFailedLogin();
@@ -129,11 +211,24 @@ public class BlossomsPoGoManager {
 			UIManager.put("OptionPane.okButtonText", "Ok");
 			UIManager.put("OptionPane.cancelButtonText", "Cancel");
 
-			go = new PokemonGo(cp, http);
-			Utilities.saveFile(file, config.toString(4));
+            if (cp != null)
+                go = new PokemonGo(cp, http);
+            else
+                throw new IllegalStateException();
+            BlossomsPoGoManager.config.put("login", loginconf);
+            saveConfig();
 			logged = true;
 		}
-		new PokemonGoMainWindow(go, console).start();
+		mainWindow = new PokemonGoMainWindow(go, console);
+		mainWindow.start();
+	}
+
+	public static void logOff() throws Exception {
+		logged = false;
+		mainWindow.setVisible(false);
+		mainWindow.dispose();
+		mainWindow = null;
+		logOn();
 	}
 	
 	private static void alertFailedLogin() {

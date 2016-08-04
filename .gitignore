@@ -49,4 +49,4 @@ Temporary Items
 .apdisk
 /target/
 *.log
-*.json
+config.json
