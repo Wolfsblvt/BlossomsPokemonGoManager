@@ -294,7 +294,7 @@ public class PokemonTab extends JPanel {
 		String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans").toLowerCase();
 		try {
 			go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-				String searchme = poke.getPokemonId() + "" + poke.getPokemonFamily() + poke.getNickname() + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2() + poke.getPokeball();
+				String searchme = BlossomsPoGoManager.getPokemonName(poke) + "" + poke.getPokemonFamily() + poke.getNickname() + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2() + poke.getPokeball();
 				searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
 				if(searchme.contains(search)) {
 					pokes.add(poke);
