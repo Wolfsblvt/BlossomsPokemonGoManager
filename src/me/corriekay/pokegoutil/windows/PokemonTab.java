@@ -88,7 +88,7 @@ public class PokemonTab extends JPanel {
 		topPanel.add(pokelang);
 		
 		LDocumentListener.addChangeListener(searchBar, e -> refreshList());
-		new GhostText(searchBar, "Search Pokemon...");
+		new GhostText(searchBar, "Search Pokémon...");
 		
 		add(topPanel, BorderLayout.NORTH);
 		JScrollPane sp = new JScrollPane(pt);
@@ -120,7 +120,7 @@ public class PokemonTab extends JPanel {
 				System.out.println("Doing Operation " + total.getValue() + " of " + selection.size());
 				total.increment();
 				if (poke.isFavorite()){
-					System.out.println("Pokemon is favorite, not transferring.");
+					System.out.println("Pokémon is favorite, not transferring.");
 					err.increment();
 					return;
 				}
