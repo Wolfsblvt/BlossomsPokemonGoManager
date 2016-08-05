@@ -415,9 +415,14 @@ public class PokemonTab extends JPanel {
 				type2Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
 
 				PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
-				PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
+				PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
 				Double dps1 = (double) pm1.getPower() / (double) pm1.getTime() *1000;
-				Double dps2 = (double) pm2.getPower() / (double) (pm2.getTime() + 1000) *1000;
+				Double dps2 = (double) pm2.getPower() / (double) (pm2.getTime() + 500) *1000;				
+				if(p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType()))
+					dps1 = dps1*1.25;
+				if(p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType()))
+					dps2 = dps2*1.25;
+				
 				move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1.doubleValue()) + "dps)");
 				move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " "))+ " (" + String.format("%.2f", dps2.doubleValue()) + "dps)");
 				hpCol.add(i.getValue(), p.getStamina());
