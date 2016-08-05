@@ -1,22 +1,38 @@
 package me.corriekay.pokegoutil.windows;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.table.*;
+import javax.swing.SortOrder;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
-import POGOProtos.Enums.PokemonIdOuterClass;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.text.WordUtils;
@@ -24,12 +40,20 @@ import org.apache.commons.lang3.text.WordUtils;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.*;
+import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import com.pokegoapi.api.pokemon.PokemonMoveMeta;
+import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 
+import POGOProtos.Enums.PokemonIdOuterClass;
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
-import me.corriekay.pokegoutil.utils.*;
+import me.corriekay.pokegoutil.utils.GhostText;
+import me.corriekay.pokegoutil.utils.JTableColumnPacker;
+import me.corriekay.pokegoutil.utils.LDocumentListener;
+import me.corriekay.pokegoutil.utils.PokemonCpUtils;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -164,7 +188,9 @@ public class PokemonTab extends JPanel {
 				e.printStackTrace();
 			}
 			SwingUtilities.invokeLater(this::refreshList);
-			JOptionPane.showMessageDialog(null, "Pokémon batch transfer complete!\nPokémon total: " + selection.size() + "\nSuccessful Transfers: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+			JOptionPane.showMessageDialog(null,
+					"Pokémon batch transfer complete!\nPokémon total: " + selection.size() + "\nSuccessful Transfers: "
+							+ success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
 		}
 	}
 
@@ -206,7 +232,9 @@ public class PokemonTab extends JPanel {
 					e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(this::refreshList);
-				JOptionPane.showMessageDialog(null, "Pokémon batch evolve complete!\nPokémon total: " + selection.size() + "\nSuccessful evolves: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+				JOptionPane.showMessageDialog(null,
+						"Pokémon batch evolve complete!\nPokémon total: " + selection.size() + "\nSuccessful evolves: "
+								+ success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
 			}
 		}
 	}
@@ -249,7 +277,10 @@ public class PokemonTab extends JPanel {
 					e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(this::refreshList);
-				JOptionPane.showMessageDialog(null, "Pokémon batch powerup complete!\nPokémon total: " + selection.size() + "\nSuccessful powerups: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+				JOptionPane.showMessageDialog(null,
+						"Pokémon batch powerup complete!\nPokémon total: " + selection.size()
+								+ "\nSuccessful powerups: " + success.getValue()
+								+ (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
 			}
 		}
 	}
@@ -271,7 +302,9 @@ public class PokemonTab extends JPanel {
 			innerPanel.add(new JLabel(str));
 		});
 		panel.add(scroll);
-		int response = JOptionPane.showConfirmDialog(null, panel, "Please confirm " + operation + " of " + pokes.size() + " Pokémon", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int response = JOptionPane.showConfirmDialog(null, panel,
+				"Please confirm " + operation + " of " + pokes.size() + " Pokémon", JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE);
 		return response == JOptionPane.OK_OPTION;
 	}
 
@@ -298,7 +331,8 @@ public class PokemonTab extends JPanel {
 					pokes.add(poke);
 				}
 			});
-			pt.constructNewTableModel(go, (search.equals("") || search.equals("searchpokémon...") ? go.getInventories().getPokebank().getPokemons() : pokes));
+			pt.constructNewTableModel(go, (search.equals("") || search.equals("searchpokémon...")
+					? go.getInventories().getPokebank().getPokemons() : pokes));
 			for(int i = 0; i < pt.getModel().getColumnCount(); i++) {
 				JTableColumnPacker.packColumn(pt, i, 4);
 			}
@@ -415,7 +449,8 @@ public class PokemonTab extends JPanel {
 				pokeCol.add(i.getValue(), p);
                 numIdCol.add(i.getValue(), p.getMeta().getNumber());
 				nickCol.add(i.getValue(), p.getNickname());
-				speciesCol.add(i.getValue(), BlossomsPoGoManager.getPokemonName(p).replaceAll("_male", "♂").replaceAll("_female", "♀"));
+				speciesCol.add(i.getValue(),
+						BlossomsPoGoManager.getPokemonName(p).replaceAll("_male", "♂").replaceAll("_female", "♀"));
                 levelCol.add(i.getValue(), (double)p.getLevel());
                 ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
                 cpCol.add(i.getValue(), p.getCp());
@@ -426,9 +461,16 @@ public class PokemonTab extends JPanel {
 				type2Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
 
 				PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
-				PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
-				Double dps1 = (double) pm1.getPower() / (double) pm1.getTime() *1000;
-				Double dps2 = (double) pm2.getPower() / (double) (pm2.getTime() + 1000) *1000;
+				PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
+				
+				Double dps1 = Double.valueOf(pm1.getPower())/Double.valueOf(pm1.getTime())*1000;
+				Double dps2 = Double.valueOf(pm2.getPower())/Double.valueOf(pm2.getTime()+500)*1000;
+				
+				if(p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType()))
+					dps1 = dps1*1.25;
+				if(p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType()))
+					dps2 = dps2*1.25;
+				
 				move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1.doubleValue()) + "dps)");
 				move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " "))+ " (" + String.format("%.2f", dps2.doubleValue()) + "dps)");
 				hpCol.add(i.getValue(), p.getStamina());
