@@ -20,6 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
@@ -106,7 +107,12 @@ public class BlossomsPoGoManager {
 		    locale = new Locale(langar[0], langar[1]);
 		}
 		
-		String name = PokeNames.getDisplayName(id, locale);
+		String name = null;
+		try {
+			name = new String(PokeNames.getDisplayName(id, locale).getBytes("ISO-8859-1"),"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		name = StringUtils.capitalize(name.toLowerCase());
 		return name;
 	}
