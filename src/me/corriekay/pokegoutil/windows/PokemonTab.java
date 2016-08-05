@@ -398,7 +398,7 @@ public class PokemonTab extends JPanel {
 				PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
 				
 				Double dps1 = Double.valueOf(pm1.getPower())/Double.valueOf(pm1.getTime())*1000;
-				Double dps2 = Double.valueOf(pm2.getPower())/Double.valueOf(pm2.getTime())*1000;
+				Double dps2 = Double.valueOf(pm2.getPower())/Double.valueOf(pm2.getTime()+500)*1000;
 				
 				if(p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType()))
 					dps1 = dps1*1.25;
