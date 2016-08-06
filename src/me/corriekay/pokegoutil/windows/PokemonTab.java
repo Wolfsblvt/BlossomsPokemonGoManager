@@ -34,6 +34,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -319,7 +320,7 @@ public class PokemonTab extends JPanel {
 	}
         
         private void selectLessThanIv() {        	
-        		if (!StringUtils.isNumeric(ivTransfer.getText())) {
+        		if (!NumberUtils.isNumber(ivTransfer.getText())) {
         			System.out.println("Please select a valid IV value (0-100)");
         			return;
         		}
