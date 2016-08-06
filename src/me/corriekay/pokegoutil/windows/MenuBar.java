@@ -61,8 +61,8 @@ public class MenuBar extends JMenuBar {
 		go.getInventories().updateInventories(true);
 		PlayerProfile pp = go.getPlayerProfile();
 		Object[] tstats = {
-				"Trainer Name: " + pp.getUsername(),
-				"Team: " + pp.getTeam().toString(),
+				"Trainer Name: " + pp.getPlayerData().getUsername(), 
+				"Team: " + pp.getPlayerData().getTeam().toString(),
 				"Level: " + pp.getStats().getLevel(),
 				"XP: " + pp.getStats().getExperience() + " (" + go.getPlayerProfile().getStats().getNextLevelXp() + " to next level)",
 				"Stardust: " + pp.getCurrency(Currency.STARDUST)
