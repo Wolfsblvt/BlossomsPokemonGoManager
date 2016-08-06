@@ -95,37 +95,37 @@ public class PokemonTab extends JPanel {
 		}.execute());
         
 		ivTransfer.addKeyListener(
-				new KeyListener() {	
-					@Override
-					public void keyPressed(KeyEvent e) {
-						if(e.getKeyCode() == KeyEvent.VK_ENTER){
-							new SwingWorker<Void, Void>() {
-								protected Void doInBackground() throws Exception { selectLessThanIv(); return null; }
-							}.execute();
-						}						
-					}
-
-					@Override
-					public void keyTyped(KeyEvent e) {
-						//nothing here						
-					}
-
-					@Override
-					public void keyReleased(KeyEvent e) {
-						//nothing here
-					}
+			new KeyListener() {	
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if(e.getKeyCode() == KeyEvent.VK_ENTER){
+						new SwingWorker<Void, Void>() {
+							protected Void doInBackground() throws Exception { selectLessThanIv(); return null; }
+						}.execute();
+					}						
 				}
+
+				@Override
+				public void keyTyped(KeyEvent e) {
+					//nothing here						
+				}
+
+				@Override
+				public void keyReleased(KeyEvent e) {
+					//nothing here
+				}
+			}
 		);
 		
-                topPanel.add(ivTransfer, gbc);
-		new GhostText(ivTransfer, "Pokemon IV");
-                
-                JButton transferIv = new JButton("Select Pokemon < IV");
-                transferIv.addActionListener(l -> new SwingWorker<Void, Void>() {
+        topPanel.add(ivTransfer, gbc);
+        
+		new GhostText(ivTransfer, "Pokemon IV");                
+        JButton transferIv = new JButton("Select Pokemon < IV");
+        transferIv.addActionListener(l -> new SwingWorker<Void, Void>() {
 			protected Void doInBackground() throws Exception { selectLessThanIv(); return null; }
-		}.execute());
-                
-                topPanel.add(transferIv, gbc);
+		}.execute());                
+        topPanel.add(transferIv, gbc);
+        
 		gbc.weightx = 1.0;
 		gbc.weighty = 1.0;
 		gbc.gridwidth = 3;
@@ -321,7 +321,8 @@ public class PokemonTab extends JPanel {
         			System.out.println("Please select a valid IV value (0-100)");
         			return;
         		}
-        		Double ivLessThan = Double.parseDouble(ivTransfer.getText());
+
+        		double ivLessThan = Double.parseDouble(ivTransfer.getText());
         		if (ivLessThan > 100 || ivLessThan < 0) {
         			System.out.println("Please select a valid IV value (0-100)");
         			return;
