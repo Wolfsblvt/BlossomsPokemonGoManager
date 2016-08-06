@@ -297,6 +297,19 @@ public class PokemonTab extends JPanel {
 		pokes.forEach(p -> {
 			String str = PokeHandler.getLocalPokeName(p) + " - CP: " + p.getCp() + ", IV: "
 					+ (Math.round(p.getIvRatio() * 10000) / 100) + "%";
+			switch (operation){
+				case "Evolve":
+					str += " Cost: " + p.getCandyCostsForPowerup();
+					str += p.getCandyCostsForPowerup()>1?" Candies":" Candy";
+					break;
+				case "PowerUp":
+					str += " Cost: " + p.getCandyCostsForPowerup();
+					str += p.getCandyCostsForPowerup()>1?" Candies":" Candy";					
+					str += " " + p.getStardustCostsForPowerup() + " Stardust";
+					break;
+				case "Transfer":
+					break;
+			}
 			innerPanel.add(new JLabel(str));
 		});
 		panel.add(scroll);
