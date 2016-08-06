@@ -15,6 +15,8 @@ import org.apache.commons.lang3.StringUtils;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.exceptions.InvalidCurrencyException;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.Console;
@@ -37,11 +39,17 @@ public class PokemonGoMainWindow extends JFrame {
 		p = go.getPlayerProfile();
 
 		console.clearAllLines();
-		System.out.println("Successfully logged in. Welcome, " + p.getUsername() + ".");
-		System.out.println("Stats: Lvl " + p.getStats().getLevel() + " " + StringUtils.capitalize(p.getTeam().toString().toLowerCase().replaceAll("team_", "") + " player."));
-		System.out.println("Pokédex - Types Caught: " + p.getStats().getUniquePokedexEntries()
-				+ ", Total Pokémon Caught: " + p.getStats().getPokemonsCaptured() + ", Total Current Pokémon: "
-				+ go.getInventories().getPokebank().getPokemons().size());
+		try {
+			System.out.println("Successfully logged in. Welcome, " + p.getPlayerData().getUsername() + ".");
+			System.out.println("Stats: Lvl " + p.getStats().getLevel() + " " + StringUtils.capitalize(
+					p.getPlayerData().getTeam().toString().toLowerCase().replaceAll("team_", "") + " player."));
+			System.out.println("Pokédex - Types Caught: " + p.getStats().getUniquePokedexEntries()
+					+ ", Total Pokémon Caught: " + p.getStats().getPokemonsCaptured() + ", Total Current Pokémon: "
+					+ go.getInventories().getPokebank().getPokemons().size());
+		} catch (RemoteServerException | LoginFailedException e) {
+			System.out.println("Unable to login!");
+			e.printStackTrace();
+		}
 		setLayout(new BorderLayout());
 		refreshTitle();
 		setIconImage(Utilities.loadImage("PokeBall-icon.png"));
@@ -63,9 +71,9 @@ public class PokemonGoMainWindow extends JFrame {
 				config.setInt("options.window.posy", w.getY());
 			}
 		});
-		Point p = Utilities.getLocationMidScreen(this);
-		int posx = config.getInt("options.window.posx", p.x);
-		int posy = config.getInt("options.window.posy", p.y);
+		Point pt = Utilities.getLocationMidScreen(this);
+		int posx = config.getInt("options.window.posx", pt.x);
+		int posy = config.getInt("options.window.posy", pt.y);
 		setLocation(posx, posy);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setJMenuBar(new MenuBar(go));
@@ -83,9 +91,9 @@ public class PokemonGoMainWindow extends JFrame {
 	public void refreshTitle() {
 		try {
 			NumberFormat f = NumberFormat.getInstance();
-			setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", p.getUsername(),
+			setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", p.getPlayerData().getUsername(),
 					f.format(p.getCurrency(PlayerProfile.Currency.STARDUST))));
-		} catch (InvalidCurrencyException e) {
+		} catch (InvalidCurrencyException | LoginFailedException | RemoteServerException e) {
 			setTitle("Blossom's Pokémon Go Manager");
 		}
 	}

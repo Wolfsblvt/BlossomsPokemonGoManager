@@ -54,7 +54,7 @@ public class PokeHandler {
 	 * it every time we process a pokemon. This should save resources.
 	 */
 	private static Pattern getRenamePattern() {
-		return Pattern.compile("(\\%([a-zA-Z])\\%)");
+		return Pattern.compile("(%([a-zA-Z]+)%)");
 	}
 
 	/***
@@ -76,9 +76,9 @@ public class PokeHandler {
 				// Get ReplacePattern Object and use its get method
 				// to get the replacement string.
 				// Replace in nickname.
-				ReplacePattern rep = ReplacePattern.valueOf(exprName);
+				ReplacePattern rep = ReplacePattern.valueOf(exprName.toUpperCase());
 				String repStr = rep.get(pokemon);
-				pokeNick.replace(fullExpr, repStr);
+				pokeNick = pokeNick.replace(fullExpr, repStr);
 			} catch (IllegalArgumentException iae) {
 				// Do nothing, nothing to replace
 			}
