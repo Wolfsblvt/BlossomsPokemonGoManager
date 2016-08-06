@@ -19,6 +19,11 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# IntelliJ files
+.idea/
+/out/
+PokeGoBot.iml
+
 # =========================
 # Operating System Files
 # =========================
