@@ -1,21 +1,38 @@
 package me.corriekay.pokegoutil.windows;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.util.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.table.*;
+import javax.swing.SortOrder;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
-import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.text.WordUtils;
@@ -23,12 +40,22 @@ import org.apache.commons.lang3.text.WordUtils;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.*;
+import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import com.pokegoapi.api.pokemon.PokemonMoveMeta;
+import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 
+import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
-import me.corriekay.pokegoutil.utils.*;
+import me.corriekay.pokegoutil.utils.GhostText;
+import me.corriekay.pokegoutil.utils.JTableColumnPacker;
+import me.corriekay.pokegoutil.utils.LDocumentListener;
+import me.corriekay.pokegoutil.utils.PokeHandler;
+import me.corriekay.pokegoutil.utils.PokemonCpUtils;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -144,11 +171,12 @@ public class PokemonTab extends JPanel {
 					go.getInventories().updateInventories(true);
 					if(result == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
 						int newCandies = poke.getCandy();
-						System.out.println("Transferring " + BlossomsPoGoManager.getPokemonName(poke) + ", Result: Success!");
+						System.out.println("Transferring " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
 						System.out.println("Stat changes: (Candies : " + newCandies + "[+" + (newCandies - candies) + "])");
 						success.increment();
 					} else {
-						System.out.println("Error transferring " + BlossomsPoGoManager.getPokemonName(poke) + ", result: " + result);
+						System.out.println(
+								"Error transferring " + PokeHandler.getLocalPokeName(poke) + ", result: " + result);
 						err.increment();
 					}
 				} catch (Exception e) {
@@ -162,7 +190,9 @@ public class PokemonTab extends JPanel {
 				e.printStackTrace();
 			}
 			SwingUtilities.invokeLater(this::refreshList);
-			JOptionPane.showMessageDialog(null, "Pokémon batch transfer complete!\nPokémon total: " + selection.size() + "\nSuccessful Transfers: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+			JOptionPane.showMessageDialog(null,
+					"Pokémon batch transfer complete!\nPokémon total: " + selection.size() + "\nSuccessful Transfers: "
+							+ success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
 		}
 	}
 
@@ -186,7 +216,8 @@ public class PokemonTab extends JPanel {
 							int newcandies = newpoke.getCandy();
 							int newcp = newpoke.getCp();
 							int newhp = newpoke.getStamina();
-							System.out.println("Evolving " + BlossomsPoGoManager.getPokemonName(poke) + ". Evolve result: Success!");
+							System.out.println(
+									"Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: Success!");
 							System.out.println("Stat changes: (Candies: " + newcandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newcp + "[+" + (newcp - cp) + "], HP: " + newhp + "[+" + (newhp - hp) +"])");
 							success.increment();
 						} else {
@@ -204,7 +235,9 @@ public class PokemonTab extends JPanel {
 					e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(this::refreshList);
-				JOptionPane.showMessageDialog(null, "Pokémon batch evolve complete!\nPokémon total: " + selection.size() + "\nSuccessful evolves: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+				JOptionPane.showMessageDialog(null,
+						"Pokémon batch evolve complete!\nPokémon total: " + selection.size() + "\nSuccessful evolves: "
+								+ success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
 			}
 		}
 	}
@@ -228,12 +261,14 @@ public class PokemonTab extends JPanel {
 							int newCandies = poke.getCandy();
 							int newCp = poke.getCp();
 							int newHp = poke.getMaxStamina();
-							System.out.println("Powering Up " + BlossomsPoGoManager.getPokemonName(poke) + ", Result: Success!");
+							System.out.println(
+									"Powering Up " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
 							System.out.println("Stat changes: (Candies : " + newCandies + "[-" + (newCandies - candies) + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]) Stardust used " + stardustUsed + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
 							success.increment();
 						} else {
 							err.increment();
-							System.out.println("Error powering up " + BlossomsPoGoManager.getPokemonName(poke) + ", result: " + result);
+							System.out.println(
+									"Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: " + result);
 						}
 					} catch (Exception e) {
 						err.increment();
@@ -247,7 +282,10 @@ public class PokemonTab extends JPanel {
 					e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(this::refreshList);
-				JOptionPane.showMessageDialog(null, "Pokémon batch powerup complete!\nPokémon total: " + selection.size() + "\nSuccessful powerups: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+				JOptionPane.showMessageDialog(null,
+						"Pokémon batch powerup complete!\nPokémon total: " + selection.size()
+								+ "\nSuccessful powerups: " + success.getValue()
+								+ (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
 			}
 		}
 	}
@@ -279,11 +317,14 @@ public class PokemonTab extends JPanel {
 		scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
 		pokes.forEach(p -> {
-			String str = BlossomsPoGoManager.getPokemonName(p) + " - CP: " + p.getCp() + ", IV: " + (Math.round(p.getIvRatio() * 10000)/100) + "%";
+			String str = PokeHandler.getLocalPokeName(p) + " - CP: " + p.getCp() + ", IV: "
+					+ (Math.round(p.getIvRatio() * 10000) / 100) + "%";
 			innerPanel.add(new JLabel(str));
 		});
 		panel.add(scroll);
-		int response = JOptionPane.showConfirmDialog(null, panel, "Please confirm " + operation + " of " + pokes.size() + " Pokémon", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+		int response = JOptionPane.showConfirmDialog(null, panel,
+				"Please confirm " + operation + " of " + pokes.size() + " Pokémon", JOptionPane.OK_CANCEL_OPTION,
+				JOptionPane.PLAIN_MESSAGE);
 		return response == JOptionPane.OK_OPTION;
 	}
 
@@ -304,13 +345,16 @@ public class PokemonTab extends JPanel {
 		String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans").toLowerCase();
 		try {
 			go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-				String searchme = BlossomsPoGoManager.getPokemonName(poke) + "" + poke.getPokemonFamily() + poke.getNickname() + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2() + poke.getPokeball();
+				String searchme = PokeHandler.getLocalPokeName(poke) + "" + poke.getPokemonFamily() + poke.getNickname()
+						+ poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2()
+						+ poke.getPokeball();
 				searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
 				if(searchme.contains(search)) {
 					pokes.add(poke);
 				}
 			});
-			pt.constructNewTableModel(go, (search.equals("") || search.equals("searchpokémon...") ? go.getInventories().getPokebank().getPokemons() : pokes));
+			pt.constructNewTableModel(go, (search.equals("") || search.equals("searchpokémon...")
+					? go.getInventories().getPokebank().getPokemons() : pokes));
 			for(int i = 0; i < pt.getModel().getColumnCount(); i++) {
 				JTableColumnPacker.packColumn(pt, i, 4);
 			}
@@ -427,7 +471,8 @@ public class PokemonTab extends JPanel {
 				pokeCol.add(i.getValue(), p);
                 numIdCol.add(i.getValue(), p.getMeta().getNumber());
 				nickCol.add(i.getValue(), p.getNickname());
-				speciesCol.add(i.getValue(), BlossomsPoGoManager.getPokemonName(p).replaceAll("_male", "♂").replaceAll("_female", "♀"));
+				speciesCol.add(i.getValue(),
+						PokeHandler.getLocalPokeName(p).replaceAll("_male", "♂").replaceAll("_female", "♀"));
                 levelCol.add(i.getValue(), (double)p.getLevel());
                 ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
                 cpCol.add(i.getValue(), p.getCp());
