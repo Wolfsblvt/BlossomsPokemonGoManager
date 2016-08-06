@@ -248,7 +248,7 @@ public class PokemonTab extends JPanel {
 							success.increment();
 						} else {
 							err.increment();
-							System.out.println("Error evolving " + StringUtils.capitalize(poke.evolve().toString().toLowerCase())+ ", result: " + er);
+							System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke)+ ", result: " + er.toString());
 						}
 					} catch (Exception e) {
 						err.increment();
@@ -296,7 +296,7 @@ public class PokemonTab extends JPanel {
 						} else {
 							err.increment();
 							System.out.println(
-									"Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: " + result);
+									"Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: " + result.toString());
 						}
 					} catch (Exception e) {
 						err.increment();
