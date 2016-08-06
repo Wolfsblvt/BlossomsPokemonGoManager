@@ -1,31 +1,34 @@
 package me.corriekay.pokegoutil;
 
+import java.awt.BorderLayout;
+import java.awt.Desktop;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.io.File;
+import java.net.URI;
+import java.nio.file.FileAlreadyExistsException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
-import com.pokegoapi.util.PokeNames;
 
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
-
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.nio.file.FileAlreadyExistsException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Locale;
 
 public class BlossomsPoGoManager {
 	
@@ -95,32 +98,6 @@ public class BlossomsPoGoManager {
         }
     }
 	
-	public static String getPokemonName(int id) {
-		String lang = getConfigItem("options.lang", "en");
-		
-		Locale locale;
-		String[] langar = lang.split("_");
-		if (langar.length == 1) {
-			locale = new Locale(langar[0]);
-		}
-		else {
-		    locale = new Locale(langar[0], langar[1]);
-		}
-		
-		String name = null;
-		try {
-			name = new String(PokeNames.getDisplayName(id, locale).getBytes("ISO-8859-1"),"UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		name = StringUtils.capitalize(name.toLowerCase());
-		return name;
-	}
-	
-	public static String getPokemonName(Pokemon poke) {
-		return getPokemonName(poke.getPokemonId().getNumber());
-	}
-
 	public static void logOn() throws Exception {
 		OkHttpClient http;
 		CredentialProvider cp;
