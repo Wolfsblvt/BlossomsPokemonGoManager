@@ -8,7 +8,6 @@ import java.time.ZoneId;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
@@ -217,10 +216,11 @@ public class PokemonTab extends JPanel {
 						go.getPlayerProfile().updateProfile();
 						if(result == UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result.SUCCESS) {
 							int newCandies = poke.getCandy();
+							int candiesToPowerUp = poke.getCandyCostsForPowerup();
 							int newCp = poke.getCp();
 							int newHp = poke.getMaxStamina();
 							System.out.println("Powering Up " + BlossomsPoGoManager.getPokemonName(poke) + ", Result: Success!");
-							System.out.println("Stat changes: (Candies : " + newCandies + "[-" + (newCandies - candies) + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]) Stardust used " + stardustUsed + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
+							System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToPowerUp + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]) Stardust used " + stardustUsed + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
 							success.increment();
 						} else {
 							err.increment();
