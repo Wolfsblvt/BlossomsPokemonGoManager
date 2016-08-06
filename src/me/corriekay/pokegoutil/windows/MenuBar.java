@@ -1,12 +1,11 @@
 package me.corriekay.pokegoutil.windows;
 
-import javax.swing.*;
-
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
+
+import javax.swing.*;
 
 @SuppressWarnings("serial")
 public class MenuBar extends JMenuBar {
@@ -30,7 +29,13 @@ public class MenuBar extends JMenuBar {
 		
 		
 		file.add(trainerStats);
-		
+
+		JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer after evolve");
+		tAfterE.setSelected(PokemonTab.tAfterE);
+		tAfterE.addItemListener(e -> PokemonTab.tAfterE = tAfterE.isSelected());
+
+		file.add(tAfterE);
+
 		JMenuItem logout = new JMenuItem("Logout");
 		logout.addActionListener(al->{
 			try {
@@ -38,14 +43,7 @@ public class MenuBar extends JMenuBar {
 			} catch(Exception e) {e.printStackTrace();}
 		});
 	
-	
 		file.add(logout);
-
-		JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer after evolve");
-		tAfterE.setSelected(PokemonTab.tAfterE);
-		tAfterE.addItemListener(e -> PokemonTab.tAfterE = tAfterE.isSelected());
-
-		file.add(tAfterE);
 		
 		add(file);
 		
