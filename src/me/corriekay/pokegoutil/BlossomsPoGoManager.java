@@ -1,5 +1,6 @@
 package me.corriekay.pokegoutil;
 
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.FileAlreadyExistsException;
@@ -17,6 +18,7 @@ import com.pokegoapi.util.PokeNames;
 import me.corriekay.pokegoutil.controllers.AccountController;
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
+
 
 public class BlossomsPoGoManager {
 	
@@ -83,7 +85,7 @@ public class BlossomsPoGoManager {
             System.out.println("Could not save '" + value + "' to config (" + path + ")!");
         }
     }
-	
+
 	public static String getPokemonName(int id) {
 		String lang = getConfigItem("options.lang", "en");
 		
