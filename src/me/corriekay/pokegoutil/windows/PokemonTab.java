@@ -149,10 +149,10 @@ public class PokemonTab extends JPanel {
 		if(confirmOperation("Transfer", selection)) {
 			MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
 			selection.forEach(poke -> {
-				System.out.println("Doing Operation " + total.getValue() + " of " + selection.size());
+				System.out.println("Doing Transfer " + total.getValue() + " of " + selection.size());
 				total.increment();
 				if (poke.isFavorite()){
-					System.out.println("Pokémon is favorite, not transferring.");
+					System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp() + "cp is favorite, not transferring.");
 					err.increment();
 					return;
 				}
@@ -193,7 +193,7 @@ public class PokemonTab extends JPanel {
 			if(confirmOperation("Evolve", selection)) {
 				MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
 				selection.forEach(poke -> {
-					System.out.println("Doing Operation " + total.getValue() + " of " + selection.size());
+					System.out.println("Doing Evolve " + total.getValue() + " of " + selection.size());
 					total.increment();
 					try {
 						int candies = poke.getCandy();
@@ -240,12 +240,13 @@ public class PokemonTab extends JPanel {
 				MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
 				selection.forEach(poke -> {
 					try {
-						System.out.println("Doing Operation " + total.getValue() + " of " + selection.size());
+						System.out.println("Doing Power Up " + total.getValue() + " of " + selection.size());
 						total.increment();
 						int candies = poke.getCandy();
 						int cp = poke.getCp();
 						int hp = poke.getMaxStamina();
 						int stardustUsed = poke.getStardustCostsForPowerup();
+						int candiesToPowerUp = poke.getCandyCostsForPowerup();
 						UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result result = poke.powerUp();
 						go.getPlayerProfile().updateProfile();
 						if(result == UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result.SUCCESS) {
@@ -254,7 +255,7 @@ public class PokemonTab extends JPanel {
 							int newHp = poke.getMaxStamina();
 							System.out.println(
 									"Powering Up " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
-							System.out.println("Stat changes: (Candies : " + newCandies + "[-" + (newCandies - candies) + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]) Stardust used " + stardustUsed + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
+							System.out.println("Stat changes: (Candies : " + newCandies + "[" + candies + "-" + candiesToPowerUp + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]) Stardust used " + stardustUsed + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
 							success.increment();
 						} else {
 							err.increment();
@@ -296,6 +297,19 @@ public class PokemonTab extends JPanel {
 		pokes.forEach(p -> {
 			String str = PokeHandler.getLocalPokeName(p) + " - CP: " + p.getCp() + ", IV: "
 					+ (Math.round(p.getIvRatio() * 10000) / 100) + "%";
+			switch (operation){
+				case "Evolve":
+					str += " Cost: " + p.getCandyCostsForPowerup();
+					str += p.getCandyCostsForPowerup()>1?" Candies":" Candy";
+					break;
+				case "PowerUp":
+					str += " Cost: " + p.getCandyCostsForPowerup();
+					str += p.getCandyCostsForPowerup()>1?" Candies":" Candy";					
+					str += " " + p.getStardustCostsForPowerup() + " Stardust";
+					break;
+				case "Transfer":
+					break;
+			}
 			innerPanel.add(new JLabel(str));
 		});
 		panel.add(scroll);
@@ -472,8 +486,14 @@ public class PokemonTab extends JPanel {
 				move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " "))+ " (" + String.format("%.2f", dps2.doubleValue()) + "dps)");
 				hpCol.add(i.getValue(), p.getStamina());
 
-                int trainerLevel = go.getPlayerProfile().getStats().getLevel();
-
+                int trainerLevel = 1;
+				try {
+					trainerLevel = go.getPlayerProfile().getStats().getLevel();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+                
                 // Max CP calculation for current Pokemon
                 PokemonMeta pokemonMeta = PokemonMetaRegistry.getMeta(p.getPokemonId());
                 int maxCpCurrent = 0, maxCp = 0;
