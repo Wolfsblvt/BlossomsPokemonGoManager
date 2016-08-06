@@ -454,7 +454,7 @@ public class PokemonTab extends JPanel {
 		private final ArrayList<String>  pokeballCol = new ArrayList<>();//21
         private final ArrayList<LocalDateTime> caughtCol = new ArrayList<>();//22
 
-
+        @Deprecated
 		private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
 			this.pt = pt;
 			MutableInt i = new MutableInt();
