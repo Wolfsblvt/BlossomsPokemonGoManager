@@ -10,10 +10,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -46,7 +46,8 @@ import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
 import com.pokegoapi.api.pokemon.PokemonMoveMeta;
 import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 
-import POGOProtos.Enums.PokemonIdOuterClass;
+import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
@@ -171,16 +172,6 @@ public class PokemonTab extends JPanel {
 					err.increment();
 					System.out.println("Error transferring Pokémon! " + e.getMessage());
 				}
-
-                // TODO: Temp delay for transfer
-                try {
-                    Random rnd = new Random();
-                    Integer randomInt = rnd.nextInt(5000) + 3000;
-                    System.out.println("Waiting " + (randomInt/1000.0F) + " seconds.");
-                    TimeUnit.MILLISECONDS.sleep(randomInt);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             });
 			try {
 				go.getInventories().updateInventories(true);
@@ -462,10 +453,8 @@ public class PokemonTab extends JPanel {
 
 				PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
 				PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
-				
-				Double dps1 = Double.valueOf(pm1.getPower())/Double.valueOf(pm1.getTime())*1000;
-				Double dps2 = Double.valueOf(pm2.getPower())/Double.valueOf(pm2.getTime()+500)*1000;
-				
+				Double dps1 = (double) pm1.getPower() / (double) pm1.getTime() *1000;
+				Double dps2 = (double) pm2.getPower() / (double) (pm2.getTime() + 500) *1000;				
 				if(p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType()))
 					dps1 = dps1*1.25;
 				if(p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType()))
@@ -493,7 +482,30 @@ public class PokemonTab extends JPanel {
                 }
 
                 // Max CP calculation for highest evolution of current Pokemon
-                PokemonIdOuterClass.PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(p.getPokemonFamily());
+                PokemonFamilyId familyId = p.getPokemonFamily();
+                PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
+
+                // Eeveelutions exception handling
+                if (familyId.getNumber() == PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
+                    if (p.getPokemonId().getNumber() == PokemonId.EEVEE.getNumber()) {
+                        PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonId.VAPOREON);
+                        PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonId.FLAREON);
+                        PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonId.JOLTEON);
+                        if (vap != null && fla != null && jol != null) {
+                            Comparator<PokemonMeta> cMeta = (m1, m2) -> {
+                                int comb1 = PokemonCpUtils.getMaxCp(m1.getBaseAttack(), m1.getBaseDefense(), m1.getBaseStamina());
+                                int comb2 = PokemonCpUtils.getMaxCp(m2.getBaseAttack(), m2.getBaseDefense(), m2.getBaseStamina());
+                                return comb1 - comb2;
+                            };
+                            highestFamilyId = PokemonId.forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                        }
+                    } else {
+                        // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
+                        // We correct that here
+                        highestFamilyId = p.getPokemonId();
+                    }
+                }
+
                 PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
                 if (highestFamilyId == p.getPokemonId()) {
                     maxEvolvedCpCurrentCol.add(i.getValue(), maxCpCurrent);
