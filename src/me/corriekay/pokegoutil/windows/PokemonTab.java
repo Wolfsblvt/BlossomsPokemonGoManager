@@ -296,7 +296,6 @@ public class PokemonTab extends JPanel {
                 int ivLessThan = Integer.parseInt(ivTransfer.getText());
                 for(int i = 0; i < pt.getRowCount(); i++){
                     double pIv = (double) pt.getValueAt(i, 3);
-                    System.out.println(pIv);
                     if(pIv < ivLessThan){
                         pt.getSelectionModel().addSelectionInterval(i, i);
                     }
