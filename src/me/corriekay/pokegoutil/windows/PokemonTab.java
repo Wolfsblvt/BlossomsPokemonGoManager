@@ -63,7 +63,7 @@ public class PokemonTab extends JPanel {
 	private final PokemonGo go;
 	private final PokemonTable pt = new PokemonTable();
 	private final JTextField searchBar = new JTextField("");
-
+        private final JTextField ivTransfer = new JTextField("", 20);
 	public PokemonTab(PokemonGo go) {
 		setLayout(new BorderLayout());
 		this.go = go;
@@ -91,7 +91,16 @@ public class PokemonTab extends JPanel {
 		powerUpSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
 			protected Void doInBackground() throws Exception { powerUpSelected(); return null; }
 		}.execute());
-
+                
+                topPanel.add(ivTransfer, gbc);
+		new GhostText(ivTransfer, "Pokemon IV");
+                
+                JButton transferIv = new JButton("Select Pokemon < IV");
+                transferIv.addActionListener(l -> new SwingWorker<Void, Void>() {
+			protected Void doInBackground() throws Exception { selectLessThanIv(); return null; }
+		}.execute());
+                
+                topPanel.add(transferIv, gbc);
 		gbc.weightx = 1.0;
 		gbc.weighty = 1.0;
 		gbc.gridwidth = 3;
@@ -281,7 +290,20 @@ public class PokemonTab extends JPanel {
 			}
 		}
 	}
-
+        
+        private void selectLessThanIv() {
+                pt.clearSelection();
+                System.out.println("Selecting Pokemon with IV less than: " + ivTransfer.getText());
+                int ivLessThan = Integer.parseInt(ivTransfer.getText());
+                for(int i = 0; i < pt.getRowCount(); i++){
+                    double pIv = (double) pt.getValueAt(i, 3);
+                    if(pIv < ivLessThan){
+                        pt.getSelectionModel().addSelectionInterval(i, i);
+                    }
+                }
+                
+        }
+        
 	private boolean confirmOperation(String operation, ArrayList<Pokemon> pokes) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
