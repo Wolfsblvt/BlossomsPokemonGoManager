@@ -136,6 +136,30 @@ public class PokeHandler {
 		return getLocalPokeName(pokemon.getPokemonId().getNumber());
 	}
 
+	/***
+	 * Returns the Name of the Pokémon <c>pokemon</c> in the current language,
+	 * formatted for display.
+	 * 
+	 * @param pokemon
+	 *            The Pokémon
+	 * @return The translated Pokémon name
+	 */
+	public static String getLocalPrettyPokeName(Pokemon pokemon) {
+		return getLocalPrettyPokeName(pokemon.getPokemonId().getNumber());
+	}
+
+	/***
+	 * Returns the Name of the Pokémon <c>pokemon</c> in the current language,
+	 * formatted for display.
+	 * 
+	 * @param pokemon
+	 *            The Pokémon
+	 * @return The translated Pokémon name
+	 */
+	public static String getLocalPrettyPokeName(int id) {
+		return getLocalPokeName(id).replaceAll("_male", "♂").replaceAll("_female", "♀");
+	}
+
 	// endregion
 
 	/***
