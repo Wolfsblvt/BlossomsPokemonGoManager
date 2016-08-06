@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.time.Instant;
@@ -65,8 +63,10 @@ public class PokemonTab extends JPanel {
 	private final PokemonGo go;
 	private final PokemonTable pt = new PokemonTable();
 	private final JTextField searchBar = new JTextField("");
-        private final JTextField ivTransfer = new JTextField("", 20);
-	public PokemonTab(PokemonGo go) {
+    private final JTextField ivTransfer = new JTextField("", 20);
+    static boolean tAfterE;
+
+    public PokemonTab(PokemonGo go) {
 		setLayout(new BorderLayout());
 		this.go = go;
 		JPanel topPanel = new JPanel(new GridBagLayout());
@@ -134,23 +134,18 @@ public class PokemonTab extends JPanel {
 
 		// pokemon name language drop down
 		String[] locales = { "en", "de", "fr", "ru", "zh_CN", "zh_HK" };
-		JComboBox<String> pokelang = new JComboBox<String>(locales);
+		JComboBox<String> pokelang = new JComboBox<>(locales);
 		String locale = BlossomsPoGoManager.getConfigItem("options.lang", "en");
 		pokelang.setSelectedItem(locale);
-		pokelang.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new SwingWorker<Void, Void>() {
-					protected Void doInBackground() throws Exception {
-						@SuppressWarnings("unchecked")
-						JComboBox<String> pokelang = (JComboBox<String>)e.getSource();
-						String lang = (String)pokelang.getSelectedItem();
-						changeLanguage(lang);
-						return null;
-					}
-				}.execute();
-			}
-		});
+		pokelang.addActionListener(e -> new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                @SuppressWarnings("unchecked")
+                JComboBox<String> pokelang1 = (JComboBox<String>)e.getSource();
+                String lang = (String) pokelang1.getSelectedItem();
+                changeLanguage(lang);
+                return null;
+            }
+        }.execute());
 		topPanel.add(pokelang);
 
 		LDocumentListener.addChangeListener(searchBar, e -> refreshList());
@@ -193,7 +188,7 @@ public class PokemonTab extends JPanel {
 				try {
 					int candies = poke.getCandy();
 					ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = poke.transferPokemon();
-					go.getInventories().updateInventories(true);
+
 					if(result == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
 						int newCandies = poke.getCandy();
 						System.out.println("Transferring " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
@@ -236,14 +231,20 @@ public class PokemonTab extends JPanel {
 						int hp = poke.getMaxStamina();
 						EvolutionResult er = poke.evolve();
 						if(er.isSuccessful()) {
-							go.getInventories().updateInventories(true);
-							Pokemon newpoke = er.getEvolvedPokemon();
-							int newcandies = newpoke.getCandy();
-							int newcp = newpoke.getCp();
-							int newhp = newpoke.getStamina();
+							Pokemon newPoke = er.getEvolvedPokemon();
+							int newCandies = newPoke.getCandy();
+							int newCp = newPoke.getCp();
+							int newHp = newPoke.getStamina();
 							System.out.println(
 									"Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: Success!");
-							System.out.println("Stat changes: (Candies: " + newcandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newcp + "[+" + (newcp - cp) + "], HP: " + newhp + "[+" + (newhp - hp) +"])");
+                            if(tAfterE) {
+                                ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke.transferPokemon();
+                                System.out.println("Transferring " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + ", Result: " + result);
+                                System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "]");
+                            } else {
+                                System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) +"])");
+                            }
+                            go.getInventories().updateInventories(true);
 							success.increment();
 						} else {
 							err.increment();
@@ -260,9 +261,10 @@ public class PokemonTab extends JPanel {
 					e.printStackTrace();
 				}
 				SwingUtilities.invokeLater(this::refreshList);
-				JOptionPane.showMessageDialog(null,
-						"Pokémon batch evolve complete!\nPokémon total: " + selection.size() + "\nSuccessful evolves: "
-								+ success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
+                if (tAfterE)
+                    JOptionPane.showMessageDialog(null, "Pokemon batch evolve complete!\nPokemon total: " + selection.size() + "\nSuccessful evolves/transfers: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
+                else
+                	JOptionPane.showMessageDialog(null, "Pokemon batch evolve complete!\nPokemon total: " + selection.size() + "\nSuccessful evolves: " +success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() :""));
 			}
 		}
 	}
@@ -348,6 +350,8 @@ public class PokemonTab extends JPanel {
 		JScrollPane scroll = new JScrollPane(innerPanel);
 		scroll.setAlignmentX(CENTER_ALIGNMENT);
 		scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
+
+		panel.setMaximumSize(panel.getSize());
 
 		pokes.forEach(p -> {
 			String str = PokeHandler.getLocalPokeName(p) + " - CP: " + p.getCp() + ", IV: "
@@ -537,15 +541,14 @@ public class PokemonTab extends JPanel {
 				if(p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType()))
 					dps2 = dps2*1.25;
 				
-				move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1.doubleValue()) + "dps)");
-				move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " "))+ " (" + String.format("%.2f", dps2.doubleValue()) + "dps)");
+				move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1) + "dps)");
+				move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " "))+ " (" + String.format("%.2f", dps2) + "dps)");
 				hpCol.add(i.getValue(), p.getStamina());
 
                 int trainerLevel = 1;
 				try {
 					trainerLevel = go.getPlayerProfile().getStats().getLevel();
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
                 
