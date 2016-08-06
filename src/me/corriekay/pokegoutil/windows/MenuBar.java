@@ -40,6 +40,12 @@ public class MenuBar extends JMenuBar {
 	
 	
 		file.add(logout);
+
+		JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer after evolve");
+		tAfterE.setSelected(PokemonTab.tAfterE);
+		tAfterE.addItemListener(e -> PokemonTab.tAfterE = tAfterE.isSelected());
+
+		file.add(tAfterE);
 		
 		add(file);
 		
