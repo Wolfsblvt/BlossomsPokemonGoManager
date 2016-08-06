@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
-import java.io.File;
 import java.net.URI;
 
 import javax.swing.JLabel;
@@ -14,17 +13,14 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
-import org.json.JSONObject;
-
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
 
-import me.corriekay.pokegoutil.BlossomsPoGoManager;
+import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.Console;
-import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
 
@@ -41,8 +37,7 @@ public final class AccountController {
 	private PokemonGoMainWindow mainWindow = null;
 	private PokemonGo go = null;
 
-	private File file;
-	private JSONObject config;
+	private static Config config = Config.getConfig();
 		
 	private AccountController(){
 		
@@ -52,12 +47,10 @@ public final class AccountController {
 		return S_INSTANCE;
 	}
 	
-	public static void initialize(File configfile, JSONObject config, Console console){
+	public static void initialize(Console console) {
 		if(sIsInit)
 			return;
 		
-		S_INSTANCE.file = configfile;
-		S_INSTANCE.config = config;
 		S_INSTANCE.console = console;
 		
 		sIsInit = true;
@@ -72,7 +65,6 @@ public final class AccountController {
 		PokemonGo go = null;
 		while(!S_INSTANCE.logged) {
 			//BEGIN LOGIN WINDOW
-			JSONObject loginconf = BlossomsPoGoManager.config.getJSONObject("login");
 			go = null;
 			cp = null;
 			http = new OkHttpClient();
@@ -82,8 +74,8 @@ public final class AccountController {
 			UIManager.put("OptionPane.cancelButtonText", "Exit");
 			UIManager.put("OptionPane.okButtonText", "Ok");
 			
-			JTextField username = new JTextField(loginconf.optString("PTCUsername", null));
-			JTextField password = new JPasswordField(loginconf.optString("PTCPassword", null));
+			JTextField username = new JTextField(config.getString("login.PTCUsername", null));
+			JTextField password = new JPasswordField(config.getString("login.PTCPassword", null));
 	
 			JPanel panel1 = new JPanel(new BorderLayout());
 			panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
@@ -98,16 +90,16 @@ public final class AccountController {
 				System.exit(0);
 			} else if(response == JOptionPane.OK_OPTION) {
 				//Using PTC, remove Google infos
-				loginconf.remove("GoogleAuthToken");
+				config.delete("login.GoogleAuthToken");
 				try {
 					cp = new PtcCredentialProvider(http, username.getText(), password.getText());
-					loginconf.put("PTCUsername", username.getText());
-					if(loginconf.optBoolean("SaveAuth", false) || checkSaveAuth()) {
-						loginconf.put("PTCPassword", password.getText());
-						loginconf.put("SaveAuth", true);
+					config.setString("login.PTCUsername", username.getText());
+					if (config.getBool("login.SaveAuth", false) || checkSaveAuth()) {
+						config.setString("login.PTCPassword", password.getText());
+						config.setBool("login.SaveAuth", true);
 					} else {
-						loginconf.remove("PTCPassword");
-						loginconf.remove("SaveAuth");
+						config.delete("login.PTCPassword");
+						config.delete("login.SaveAuth");
 					}
 				} catch(Exception e){
 					alertFailedLogin();
@@ -115,9 +107,9 @@ public final class AccountController {
 				} 
 			} else if (response == JOptionPane.NO_OPTION) {
 				//Using Google, remove PTC infos
-				loginconf.remove("PTCUsername");
-				loginconf.remove("PTCPassword");
-				String authCode = loginconf.optString("GoogleAuthToken", null);
+				config.delete("login.PTCUsername");
+				config.delete("login.PTCPassword");
+				String authCode = config.getString("login.GoogleAuthToken", null);
 				boolean refresh = false;
 				if(authCode == null) {
 					//We need to get the auth code, as we do not have it yet.
@@ -145,12 +137,13 @@ public final class AccountController {
 					if(refresh) provider.refreshToken(authCode);
 					else provider.login(authCode); 
 					cp = provider;
-					if(loginconf.optBoolean("SaveAuth", false) || checkSaveAuth()){
-						if(!refresh) loginconf.put("GoogleAuthToken", provider.getRefreshToken());
-						loginconf.put("SaveAuth", true);
+					if (config.getBool("login.SaveAuth", false) || checkSaveAuth()) {
+						if (!refresh)
+							config.setString("login.GoogleAuthToken", provider.getRefreshToken());
+						config.setBool("login.SaveAuth", true);
 					} else {
-						loginconf.remove("GoogleAuthToken");
-						loginconf.remove("SaveAuth");
+						config.delete("login.GoogleAuthToken");
+						config.delete("login.SaveAuth");
 					}
 				} catch (Exception e) {
 					alertFailedLogin();
@@ -167,8 +160,6 @@ public final class AccountController {
                 go = new PokemonGo(cp, http);
             else
                 throw new IllegalStateException();
-            BlossomsPoGoManager.config.put("login", loginconf);
-            saveConfig();
             S_INSTANCE.logged = true;
 		}
 		S_INSTANCE.go = go;
@@ -192,10 +183,6 @@ public final class AccountController {
 		UIManager.put("OptionPane.okButtonText", "Ok");
 		UIManager.put("OptionPane.cancelButtonText", "Cancel");
 		return JOptionPane.showConfirmDialog(null, "Do you wish to save the password/auth token?\nCaution: These are saved in plain-text.", "Save Authentication?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
-	}
-	
-	public static void saveConfig() {
-        Utilities.saveFile(S_INSTANCE.file, S_INSTANCE.config.toString(4));
 	}
 
 	// TODO is actually a relog function
