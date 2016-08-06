@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -91,16 +93,39 @@ public class PokemonTab extends JPanel {
 		powerUpSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
 			protected Void doInBackground() throws Exception { powerUpSelected(); return null; }
 		}.execute());
-                
-                topPanel.add(ivTransfer, gbc);
-		new GhostText(ivTransfer, "Pokemon IV");
-                
-                JButton transferIv = new JButton("Select Pokemon < IV");
-                transferIv.addActionListener(l -> new SwingWorker<Void, Void>() {
+        
+		ivTransfer.addKeyListener(
+			new KeyListener() {	
+				@Override
+				public void keyPressed(KeyEvent e) {
+					if(e.getKeyCode() == KeyEvent.VK_ENTER){
+						new SwingWorker<Void, Void>() {
+							protected Void doInBackground() throws Exception { selectLessThanIv(); return null; }
+						}.execute();
+					}						
+				}
+
+				@Override
+				public void keyTyped(KeyEvent e) {
+					//nothing here						
+				}
+
+				@Override
+				public void keyReleased(KeyEvent e) {
+					//nothing here
+				}
+			}
+		);
+		
+        topPanel.add(ivTransfer, gbc);
+        
+		new GhostText(ivTransfer, "Pokemon IV");                
+        JButton transferIv = new JButton("Select Pokemon < IV");
+        transferIv.addActionListener(l -> new SwingWorker<Void, Void>() {
 			protected Void doInBackground() throws Exception { selectLessThanIv(); return null; }
-		}.execute());
-                
-                topPanel.add(transferIv, gbc);
+		}.execute());                
+        topPanel.add(transferIv, gbc);
+        
 		gbc.weightx = 1.0;
 		gbc.weighty = 1.0;
 		gbc.gridwidth = 3;
@@ -108,7 +133,7 @@ public class PokemonTab extends JPanel {
 		topPanel.add(searchBar, gbc);
 
 		// pokemon name language drop down
-		String[] locales = { "en", "de", "fr", "ru", "ja", "zh_CN", "zh_HK" };
+		String[] locales = { "en", "de", "fr", "ru", "zh_CN", "zh_HK" };
 		JComboBox<String> pokelang = new JComboBox<String>(locales);
 		String locale = Config.getConfig().getString("options.lang", "en");
 		pokelang.setSelectedItem(locale);
@@ -223,7 +248,7 @@ public class PokemonTab extends JPanel {
 							success.increment();
 						} else {
 							err.increment();
-							System.out.println("Error evolving " + StringUtils.capitalize(poke.evolve().toString().toLowerCase())+ ", result: " + er);
+							System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke)+ ", result: " + er.toString());
 						}
 					} catch (Exception e) {
 						err.increment();
@@ -271,7 +296,7 @@ public class PokemonTab extends JPanel {
 						} else {
 							err.increment();
 							System.out.println(
-									"Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: " + result);
+									"Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: " + result.toString());
 						}
 					} catch (Exception e) {
 						err.increment();
@@ -293,17 +318,25 @@ public class PokemonTab extends JPanel {
 		}
 	}
         
-        private void selectLessThanIv() {
+        private void selectLessThanIv() {        	
+        		if (!StringUtils.isNumeric(ivTransfer.getText())) {
+        			System.out.println("Please select a valid IV value (0-100)");
+        			return;
+        		}
+
+        		double ivLessThan = Double.parseDouble(ivTransfer.getText());
+        		if (ivLessThan > 100 || ivLessThan < 0) {
+        			System.out.println("Please select a valid IV value (0-100)");
+        			return;
+        		}
                 pt.clearSelection();
                 System.out.println("Selecting Pokemon with IV less than: " + ivTransfer.getText());
-                int ivLessThan = Integer.parseInt(ivTransfer.getText());
                 for(int i = 0; i < pt.getRowCount(); i++){
                     double pIv = (double) pt.getValueAt(i, 3);
                     if(pIv < ivLessThan){
                         pt.getSelectionModel().addSelectionInterval(i, i);
                     }
-                }
-                
+                }                
         }
         
 	private boolean confirmOperation(String operation, ArrayList<Pokemon> pokes) {

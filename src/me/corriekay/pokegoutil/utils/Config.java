@@ -169,6 +169,11 @@ public class Config {
 		return new FindResult(current, parts.get(parts.size() - 1));
 	}
 
+	public void delete(String path) {
+		FindResult res = findNode(path, false);
+		res.node().remove(res.name());
+	}
+
 	public void saveConfig() {
 		Utilities.saveFile(file, json.toString(4));
 	}

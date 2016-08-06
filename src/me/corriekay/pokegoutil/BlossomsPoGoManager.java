@@ -1,175 +1,21 @@
 package me.corriekay.pokegoutil;
 
-import java.awt.BorderLayout;
-import java.awt.Desktop;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
-import java.net.URI;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
-
-import org.json.JSONObject;
-
-import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.auth.CredentialProvider;
-import com.pokegoapi.auth.GoogleUserCredentialProvider;
-import com.pokegoapi.auth.PtcCredentialProvider;
-
-import me.corriekay.pokegoutil.utils.Config;
+import me.corriekay.pokegoutil.controllers.AccountController;
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
-import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
-import okhttp3.OkHttpClient;
+
 
 public class BlossomsPoGoManager {
 	
 	private static Console console;
-	private static boolean logged = false;
-	private static PokemonGoMainWindow mainWindow = null;
 	public static final String VERSION = "0.1.1-Beta";
-
-	private static Config config;
 
 	public static void main(String[] args) throws Exception {
 		Utilities.setNativeLookAndFeel();
 		console = new Console("Console", 0, 0, true);
 		console.setVisible(false);
 		
-		config = Config.getConfig();
-		
-		logOn();
-	}
-	
-    public static void logOn() throws Exception {
-		OkHttpClient http;
-		CredentialProvider cp;
-		PokemonGo go = null;
-		while(!logged) {
-			// BEGIN LOGIN WINDOW
-			JSONObject loginconf = config.getJSONObject("login", "{}");
-			go = null;
-			cp = null;
-			http = new OkHttpClient();
-	
-			UIManager.put("OptionPane.noButtonText", "Use Google Auth");
-			UIManager.put("OptionPane.yesButtonText", "Use PTC Auth");
-			UIManager.put("OptionPane.cancelButtonText", "Exit");
-			UIManager.put("OptionPane.okButtonText", "Ok");
-			
-			JTextField username = new JTextField(loginconf.optString("PTCUsername", null));
-			JTextField password = new JPasswordField(loginconf.optString("PTCPassword", null));
-	
-			JPanel panel1 = new JPanel(new BorderLayout());
-			panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
-			panel1.add(username, BorderLayout.CENTER);
-			JPanel panel2 = new JPanel(new BorderLayout());
-			panel2.add(new JLabel("PTC Password: "), BorderLayout.LINE_START);
-			panel2.add(password, BorderLayout.CENTER);
-			Object[] panel = {panel1, panel2, };
-			
-			int response = JOptionPane.showConfirmDialog(null, panel, "Login", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if(response == JOptionPane.CANCEL_OPTION) {
-				System.exit(0);
-			} else if(response == JOptionPane.OK_OPTION) {
-				//Using PTC, remove Google infos
-				loginconf.remove("GoogleAuthToken");
-				try {
-					cp = new PtcCredentialProvider(http, username.getText(), password.getText());
-					loginconf.put("PTCUsername", username.getText());
-					if(loginconf.optBoolean("SaveAuth", false) || checkSaveAuth()) {
-						loginconf.put("PTCPassword", password.getText());
-						loginconf.put("SaveAuth", true);
-					} else {
-						loginconf.remove("PTCPassword");
-						loginconf.remove("SaveAuth");
-					}
-				} catch(Exception e){
-					alertFailedLogin();
-					continue;
-				} 
-			} else if (response == JOptionPane.NO_OPTION) {
-				//Using Google, remove PTC infos
-				loginconf.remove("PTCUsername");
-				loginconf.remove("PTCPassword");
-				String authCode = loginconf.optString("GoogleAuthToken", null);
-				boolean refresh = false;
-				if(authCode == null) {
-					//We need to get the auth code, as we do not have it yet.
-					UIManager.put("OptionPane.okButtonText", "Ok");
-					JOptionPane.showMessageDialog(null, "You will need to provide a google authentication key to log in. Press OK to continue.", "Google Auth", JOptionPane.PLAIN_MESSAGE);
-					//We're gonna try to load the page using the users browser 
-					if(Desktop.isDesktopSupported()) {
-						JOptionPane.showMessageDialog(null, "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue", "Google Auth", JOptionPane.PLAIN_MESSAGE);
-						Desktop.getDesktop().browse(new URI(GoogleUserCredentialProvider.LOGIN_URL));
-					} else {
-						UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
-						if(JOptionPane.showConfirmDialog(null, "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.", "Google Auth", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION){
-							StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
-							Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
-						}
-						UIManager.put("OptionPane.cancelButtonText", "Cancel");
-					}
-					//The user should have the auth code now. Lets get it.
-					authCode = JOptionPane.showInputDialog(null, "Please provide the authentication code", "Google Auth", JOptionPane.PLAIN_MESSAGE);
-				} else {
-					refresh = true;
-				}
-				try {
-					GoogleUserCredentialProvider provider = new GoogleUserCredentialProvider(http);
-					if(refresh) provider.refreshToken(authCode);
-					else provider.login(authCode); 
-					cp = provider;
-					if(loginconf.optBoolean("SaveAuth", false) || checkSaveAuth()){
-						if(!refresh) loginconf.put("GoogleAuthToken", provider.getRefreshToken());
-						loginconf.put("SaveAuth", true);
-					} else {
-						loginconf.remove("GoogleAuthToken");
-						loginconf.remove("SaveAuth");
-					}
-				} catch (Exception e) {
-					alertFailedLogin();
-					continue;
-				}
-				
-			}
-			UIManager.put("OptionPane.noButtonText", "No");
-			UIManager.put("OptionPane.yesButtonText", "Yes");
-			UIManager.put("OptionPane.okButtonText", "Ok");
-			UIManager.put("OptionPane.cancelButtonText", "Cancel");
-
-            if (cp != null)
-                go = new PokemonGo(cp, http);
-            else
-                throw new IllegalStateException();
-			config.setJSONObject("login", loginconf);
-			logged = true;
-		}
-		mainWindow = new PokemonGoMainWindow(go, console);
-		mainWindow.start();
-	}
-
-	// TODO is actually a relog function
-	public static void logOff() throws Exception {
-		logged = false;
-		mainWindow.setVisible(false);
-		mainWindow.dispose();
-		mainWindow = null;
-		logOn();
-	}
-	
-	private static void alertFailedLogin() {
-		JOptionPane.showMessageDialog(null, "Unfortunately, your login has failed. Press OK to try again.", "Login Failed", JOptionPane.PLAIN_MESSAGE);
-	}
-	private static boolean checkSaveAuth() {
-		UIManager.put("OptionPane.noButtonText", "No");
-		UIManager.put("OptionPane.yesButtonText", "Yes");
-		UIManager.put("OptionPane.okButtonText", "Ok");
-		UIManager.put("OptionPane.cancelButtonText", "Cancel");
-		return JOptionPane.showConfirmDialog(null, "Do you wish to save the password/auth token?\nCaution: These are saved in plain-text.", "Save Authentication?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+		AccountController.initialize(console);
+		AccountController.logOn();
 	}
 }
