@@ -6,6 +6,7 @@ import com.pokegoapi.api.player.PlayerProfile.Currency;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 
 import javax.swing.*;
+import me.corriekay.pokegoutil.controllers.AccountController;
 
 @SuppressWarnings("serial")
 public class MenuBar extends JMenuBar {
@@ -58,7 +59,7 @@ public class MenuBar extends JMenuBar {
 	}
 	
 	private void logout() throws Exception {
-		BlossomsPoGoManager.logOff();
+		AccountController.logOff();
 	}
 
 	private void displayTrainerStats() throws Exception {
