@@ -18,7 +18,6 @@ import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.util.PokeNames;
 
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
-import me.corriekay.pokegoutil.BlossomsPoGoManager;
 
 public class PokeHandler {
 	private ArrayList<Pokemon> mons;
@@ -105,7 +104,7 @@ public class PokeHandler {
 	 */
 	public static String getLocalPokeName(int id) {
 		// TODO: change call to getConfigItem to config class once implemented
-		String lang = BlossomsPoGoManager.getConfigItem("options.lang", "en");
+		String lang = Config.getConfig().getString("options.lang", "en");
 
 		Locale locale;
 		String[] langar = lang.split("_");

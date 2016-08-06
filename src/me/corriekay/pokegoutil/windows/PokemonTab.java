@@ -50,7 +50,7 @@ import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
-import me.corriekay.pokegoutil.BlossomsPoGoManager;
+import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.GhostText;
 import me.corriekay.pokegoutil.utils.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.LDocumentListener;
@@ -101,7 +101,7 @@ public class PokemonTab extends JPanel {
 		// pokemon name language drop down
 		String[] locales = { "en", "de", "fr", "ru", "zh_CN", "zh_HK" };
 		JComboBox<String> pokelang = new JComboBox<String>(locales);
-		String locale = BlossomsPoGoManager.getConfigItem("options.lang", "en");
+		String locale = Config.getConfig().getString("options.lang", "en");
 		pokelang.setSelectedItem(locale);
 		pokelang.addActionListener(new ActionListener() {
 			@Override
@@ -129,7 +129,7 @@ public class PokemonTab extends JPanel {
 	}
 
 	private void changeLanguage(String langCode) {
-		BlossomsPoGoManager.setConfigItem("options.lang", langCode);
+		Config.getConfig().setString("options.lang", langCode);
 		refreshPkmn();
 	}
 
