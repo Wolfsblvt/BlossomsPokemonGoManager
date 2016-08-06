@@ -1,9 +1,24 @@
 package me.corriekay.pokegoutil.utils;
 
-import java.awt.*;
-import java.io.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.DisplayMode;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Window;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -189,12 +204,24 @@ public abstract class Utilities {
 	}
 	
 	public static void setLocationMidScreen(Window frame, int screen) {
-		DisplayMode monitor = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screen].getDisplayMode();
-		frame.setLocation(monitor.getWidth() / 2 - (frame.getWidth() / 2), monitor.getHeight() / 2 - (frame.getHeight() / 2));
+		frame.setLocation(getLocationMidScreen(frame, screen));
 	}
-	
+
 	public static void setLocationMidScreen(Window frame) {
 		setLocationMidScreen(frame, 0);
+	}
+	
+	public static Point getLocationMidScreen(Window frame, int screen) {
+		DisplayMode monitor = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screen]
+				.getDisplayMode();
+		Point p = new Point(monitor.getWidth() / 2 - (frame.getWidth() / 2),
+				monitor.getHeight() / 2 - (frame.getHeight() / 2));
+
+		return p;
+	}
+
+	public static Point getLocationMidScreen(Window frame) {
+		return getLocationMidScreen(frame, 0);
 	}
 	
 	public static String getTimeStamp(String format) {
