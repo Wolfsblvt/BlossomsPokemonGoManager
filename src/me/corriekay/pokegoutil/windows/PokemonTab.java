@@ -246,6 +246,7 @@ public class PokemonTab extends JPanel {
 						int cp = poke.getCp();
 						int hp = poke.getMaxStamina();
 						int stardustUsed = poke.getStardustCostsForPowerup();
+						int candiesToPowerUp = poke.getCandyCostsForPowerup();
 						UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result result = poke.powerUp();
 						go.getPlayerProfile().updateProfile();
 						if(result == UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result.SUCCESS) {
@@ -254,7 +255,7 @@ public class PokemonTab extends JPanel {
 							int newHp = poke.getMaxStamina();
 							System.out.println(
 									"Powering Up " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
-							System.out.println("Stat changes: (Candies : " + newCandies + "[-" + (newCandies - candies) + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]) Stardust used " + stardustUsed + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
+							System.out.println("Stat changes: (Candies : " + newCandies + "[" + candies + "-" + candiesToPowerUp + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]) Stardust used " + stardustUsed + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
 							success.increment();
 						} else {
 							err.increment();
@@ -296,6 +297,19 @@ public class PokemonTab extends JPanel {
 		pokes.forEach(p -> {
 			String str = PokeHandler.getLocalPokeName(p) + " - CP: " + p.getCp() + ", IV: "
 					+ (Math.round(p.getIvRatio() * 10000) / 100) + "%";
+			switch (operation){
+				case "Evolve":
+					str += " Cost: " + p.getCandyCostsForPowerup();
+					str += p.getCandyCostsForPowerup()>1?" Candies":" Candy";
+					break;
+				case "PowerUp":
+					str += " Cost: " + p.getCandyCostsForPowerup();
+					str += p.getCandyCostsForPowerup()>1?" Candies":" Candy";					
+					str += " " + p.getStardustCostsForPowerup() + " Stardust";
+					break;
+				case "Transfer":
+					break;
+			}
 			innerPanel.add(new JLabel(str));
 		});
 		panel.add(scroll);
