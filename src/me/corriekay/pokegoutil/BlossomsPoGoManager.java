@@ -1,27 +1,31 @@
 package me.corriekay.pokegoutil;
 
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.io.File;
-import java.net.URI;
-import java.nio.file.FileAlreadyExistsException;
-import java.util.*;
-
-import javax.swing.*;
-
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.auth.*;
+import com.pokegoapi.auth.CredentialProvider;
+import com.pokegoapi.auth.GoogleUserCredentialProvider;
+import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.util.PokeNames;
 
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
+
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.nio.file.FileAlreadyExistsException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
 
 public class BlossomsPoGoManager {
 	
@@ -42,7 +46,7 @@ public class BlossomsPoGoManager {
 				throw new FileAlreadyExistsException(file.getName());
 			}
 			config = new JSONObject("{\"login\":{},\"options\":{\"lang\":\"en\"}}");
-			Utilities.saveFile(file, config.toString(4));
+			saveConfig();
 		} else {
 			config = new JSONObject(Utilities.readFile(file));
 		}
@@ -103,7 +107,12 @@ public class BlossomsPoGoManager {
 		    locale = new Locale(langar[0], langar[1]);
 		}
 		
-		String name = PokeNames.getDisplayName(id, locale);
+		String name = null;
+		try {
+			name = new String(PokeNames.getDisplayName(id, locale).getBytes("ISO-8859-1"),"UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		name = StringUtils.capitalize(name.toLowerCase());
 		return name;
 	}
@@ -221,6 +230,7 @@ public class BlossomsPoGoManager {
 		mainWindow.start();
 	}
 
+	// TODO is actually a relog function
 	public static void logOff() throws Exception {
 		logged = false;
 		mainWindow.setVisible(false);
