@@ -54,6 +54,7 @@ import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.utils.GhostText;
 import me.corriekay.pokegoutil.utils.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.LDocumentListener;
+import me.corriekay.pokegoutil.utils.PokeHandler;
 import me.corriekay.pokegoutil.utils.PokemonCpUtils;
 
 @SuppressWarnings("serial")
@@ -161,11 +162,12 @@ public class PokemonTab extends JPanel {
 					go.getInventories().updateInventories(true);
 					if(result == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
 						int newCandies = poke.getCandy();
-						System.out.println("Transferring " + BlossomsPoGoManager.getPokemonName(poke) + ", Result: Success!");
+						System.out.println("Transferring " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
 						System.out.println("Stat changes: (Candies : " + newCandies + "[+" + (newCandies - candies) + "])");
 						success.increment();
 					} else {
-						System.out.println("Error transferring " + BlossomsPoGoManager.getPokemonName(poke) + ", result: " + result);
+						System.out.println(
+								"Error transferring " + PokeHandler.getLocalPokeName(poke) + ", result: " + result);
 						err.increment();
 					}
 				} catch (Exception e) {
@@ -205,7 +207,8 @@ public class PokemonTab extends JPanel {
 							int newcandies = newpoke.getCandy();
 							int newcp = newpoke.getCp();
 							int newhp = newpoke.getStamina();
-							System.out.println("Evolving " + BlossomsPoGoManager.getPokemonName(poke) + ". Evolve result: Success!");
+							System.out.println(
+									"Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: Success!");
 							System.out.println("Stat changes: (Candies: " + newcandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newcp + "[+" + (newcp - cp) + "], HP: " + newhp + "[+" + (newhp - hp) +"])");
 							success.increment();
 						} else {
@@ -249,12 +252,14 @@ public class PokemonTab extends JPanel {
 							int newCandies = poke.getCandy();
 							int newCp = poke.getCp();
 							int newHp = poke.getMaxStamina();
-							System.out.println("Powering Up " + BlossomsPoGoManager.getPokemonName(poke) + ", Result: Success!");
+							System.out.println(
+									"Powering Up " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
 							System.out.println("Stat changes: (Candies : " + newCandies + "[-" + (newCandies - candies) + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]) Stardust used " + stardustUsed + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
 							success.increment();
 						} else {
 							err.increment();
-							System.out.println("Error powering up " + BlossomsPoGoManager.getPokemonName(poke) + ", result: " + result);
+							System.out.println(
+									"Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: " + result);
 						}
 					} catch (Exception e) {
 						err.increment();
@@ -289,7 +294,8 @@ public class PokemonTab extends JPanel {
 		scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
 		pokes.forEach(p -> {
-			String str = BlossomsPoGoManager.getPokemonName(p) + " - CP: " + p.getCp() + ", IV: " + (Math.round(p.getIvRatio() * 10000)/100) + "%";
+			String str = PokeHandler.getLocalPokeName(p) + " - CP: " + p.getCp() + ", IV: "
+					+ (Math.round(p.getIvRatio() * 10000) / 100) + "%";
 			innerPanel.add(new JLabel(str));
 		});
 		panel.add(scroll);
@@ -316,7 +322,9 @@ public class PokemonTab extends JPanel {
 		String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans").toLowerCase();
 		try {
 			go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-				String searchme = BlossomsPoGoManager.getPokemonName(poke) + "" + poke.getPokemonFamily() + poke.getNickname() + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2() + poke.getPokeball();
+				String searchme = PokeHandler.getLocalPokeName(poke) + "" + poke.getPokemonFamily() + poke.getNickname()
+						+ poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2()
+						+ poke.getPokeball();
 				searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
 				if(searchme.contains(search)) {
 					pokes.add(poke);
@@ -441,7 +449,7 @@ public class PokemonTab extends JPanel {
                 numIdCol.add(i.getValue(), p.getMeta().getNumber());
 				nickCol.add(i.getValue(), p.getNickname());
 				speciesCol.add(i.getValue(),
-						BlossomsPoGoManager.getPokemonName(p).replaceAll("_male", "♂").replaceAll("_female", "♀"));
+						PokeHandler.getLocalPokeName(p).replaceAll("_male", "♂").replaceAll("_female", "♀"));
                 levelCol.add(i.getValue(), (double)p.getLevel());
                 ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
                 cpCol.add(i.getValue(), p.getCp());
