@@ -41,12 +41,12 @@ public class ChooseGuiWindowController {
     void onNewGuiBtnClicked(ActionEvent event) throws IOException {
     	oldGuiBtn.getScene().getWindow().hide();
     	
-    	Parent root = (Parent) FXMLLoader.load(getClass().getClassLoader().getResource("me/corriekay/pokegoutil/GUI/view/MainWindow.fxml"));
+    	Parent root = (Parent) FXMLLoader.load(ChooseGuiWindowController.class.getClassLoader().getResource("res/layout/MainWindow.fxml"));
 		Scene scene = new Scene(root);
 		
 		Stage mainWindow = new Stage();
 		
-		mainWindow.getIcons().add(new Image("/res/PokeBall-icon.png"));
+		mainWindow.getIcons().add(new Image("/res/icon/PokeBall-icon.png"));
 		mainWindow.setTitle("Blossom's Pokémon Go Manager");
 		mainWindow.initStyle(StageStyle.UNIFIED);
 		

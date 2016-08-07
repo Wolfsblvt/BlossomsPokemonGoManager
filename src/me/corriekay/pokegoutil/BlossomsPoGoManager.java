@@ -21,9 +21,9 @@ public class BlossomsPoGoManager extends Application{
 	
 	@Override
 	public void start(Stage primaryStage) throws IOException {
-		Parent root = (Parent) FXMLLoader.load(getClass().getClassLoader().getResource("me/corriekay/pokegoutil/GUI/view/ChooseGUIWindow.fxml"));
+		Parent root = (Parent) FXMLLoader.load(getClass().getClassLoader().getResource("res/layout/ChooseGUIWindow.fxml"));
 		primaryStage.setScene(new Scene(root));
-		primaryStage.getIcons().add(new Image("/res/PokeBall-icon.png"));
+		primaryStage.getIcons().add(new Image("/res/icon/PokeBall-icon.png"));
 		primaryStage.setTitle("Choose a GUI");
 		primaryStage.initStyle(StageStyle.UTILITY);
 		primaryStage.show();
