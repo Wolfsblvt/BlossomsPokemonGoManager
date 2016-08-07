@@ -73,4 +73,4 @@ We use discord to organize our development and answer questions. We also post im
 - **A:** No. We'll include lucky egg support for evolving, but that's it. We are not just another botting tool. We want to keep the use of our tool as fair as possible and just make managing Pokémon easier.
 
 #### Q: Can you include feature XY?
-- **A:** Maybe yes! Submit an issue explaing your suggestion as detailed as possible. We will look over it and see if we will inclode it and when (:
+- **A:** Maybe yes! Submit an issue explaing your suggestion as detailed as possible. We will look over it and see if we will include it and when (:
