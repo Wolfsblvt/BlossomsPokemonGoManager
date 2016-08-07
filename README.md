@@ -38,7 +38,7 @@ To use it in an IDE, you have to import the project as a Maven project.
 ## Working on this project
 #### Developing
 We are open for any help on our tool.  
-If you are fond of programming, you can always take one of the open issues, post that you want to help and create an PR. For other features PRs are welcome too, but make sure the feature is really needed and/or not done in another way so that the work isn't wasted.
+If you are fond of programming, you can always take one of the open issues, post that you want to help and create a Pull Request. For other features PRs are welcome too, but make sure the feature is really needed and/or not done in another way so that the work isn't wasted.
 
 #### Submitting Issues
 That's the best way how you can help us.  
