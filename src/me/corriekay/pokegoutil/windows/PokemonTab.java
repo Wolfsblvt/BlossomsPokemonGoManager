@@ -407,7 +407,11 @@ public class PokemonTab extends JPanel {
         String message = "";
         switch (operation) {
             case "Rename":
-                message = "Rename Pokémon with Name and %columnname% patterns";
+                message = "You want to rename " + pokes.size() + " Pokémon.\n You can rename with normal text and patterns, or both combined. Patterns are going to be replaced with the Pokémon values.\nExisting patterns:\n";
+                for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
+                    message += "%" + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
+                }
+                message += "\n";
         }
 
         String input = JOptionPane.showInputDialog(panel, message, operation, JOptionPane.PLAIN_MESSAGE);

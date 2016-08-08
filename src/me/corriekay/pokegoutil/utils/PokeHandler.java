@@ -185,8 +185,6 @@ public class PokeHandler {
                 perPokeCallback.accept(result, p);
             }
             results.put(p, result);
-
-            // TODO: Add the configurable delay from
         });
 
         return results;
