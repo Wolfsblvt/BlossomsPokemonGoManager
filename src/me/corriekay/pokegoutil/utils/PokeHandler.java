@@ -10,6 +10,7 @@ import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.pokegoapi.api.pokemon.PokemonMeta;
 import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.api.pokemon.Pokemon;
@@ -223,10 +224,74 @@ public class PokeHandler {
                 return String.valueOf(p.getCp());
             }
         },
+        HP("Hit Points") {
+            @Override
+            public String get(Pokemon p) {
+                return String.valueOf(p.getStamina());
+            }
+        },
         IVRATING("IV Rating") {
             @Override
             public String get(Pokemon p) {
                 return String.valueOf(Math.round(p.getIvRatio() * 100 * 100) / 100.0);
+            }
+        },
+        LEVEL("Level") {
+            @Override
+            public String get(Pokemon p) {
+                return String.valueOf(p.getLevel());
+            }
+        },
+        IV("IV Values (all three)") {
+            @Override
+            public String get(Pokemon p) {
+                return p.getIndividualAttack() + "/" + p.getIndividualDefense() + "/" + p.getIndividualStamina();
+            }
+        },
+        IV_ATT("IV Attack") {
+            @Override
+            public String get(Pokemon p) {
+                return String.valueOf(p.getIndividualAttack());
+            }
+        },
+        IV_DEF("IV Defense") {
+            @Override
+            public String get(Pokemon p) {
+                return String.valueOf(p.getIndividualDefense());
+            }
+        },
+        IV_STAM("IV Stamina") {
+            @Override
+            public String get(Pokemon p) {
+                return String.valueOf(p.getIndividualStamina());
+            }
+        },
+        MAX_CP("Max CP (40)") {
+            @Override
+            public String get(Pokemon p) {
+                PokemonMeta meta = p.getMeta();
+                int attack = meta.getBaseAttack() + p.getIndividualAttack();
+                int defense = meta.getBaseDefense() + p.getIndividualDefense();
+                int stamina = meta.getBaseStamina() + p.getIndividualStamina();
+                return String.valueOf(PokemonCpUtils.getMaxCp(attack, defense, stamina));
+            }
+        },
+        TYPE1("Type 1") {
+            @Override
+            public String get(Pokemon p) {
+                return StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase());
+            }
+        },
+        TYPE2("Type 2") {
+            @Override
+            public String get(Pokemon p) {
+                return StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", ""));
+            }
+        },
+        ID("Pokedex Id") {
+            @Override
+            public String get(Pokemon p) {
+                return String.valueOf(p.getId());
             }
         };
 
