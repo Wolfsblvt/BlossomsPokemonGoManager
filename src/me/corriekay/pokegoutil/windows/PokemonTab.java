@@ -74,11 +74,11 @@ public class PokemonTab extends JPanel {
         this.go = go;
         JPanel topPanel = new JPanel(new GridBagLayout());
         JButton refreshPkmn, renameSelected, transferSelected, evolveSelected, powerUpSelected;
-        refreshPkmn = new JButton("Refresh Pokémon");
-        renameSelected = new JButton("Rename Selected");
-        transferSelected = new JButton("Transfer Selected");
-        evolveSelected = new JButton("Evolve Selected");
-        powerUpSelected = new JButton("Power Up Selected");
+        refreshPkmn = new JButton("Refresh List");
+        renameSelected = new JButton("Rename");
+        transferSelected = new JButton("Transfer");
+        evolveSelected = new JButton("Evolve");
+        powerUpSelected = new JButton("Power Up");
 
         GridBagConstraints gbc = new GridBagConstraints();
         topPanel.add(refreshPkmn, gbc);
