@@ -36,6 +36,9 @@ public class LoginController extends StackPane{
     private Button googleAuthBtn;
     
     @FXML
+    private CheckBox autoRelogChkbx;
+    
+    @FXML
     private void initialize(){
     	AccountController.initialize();
     }
