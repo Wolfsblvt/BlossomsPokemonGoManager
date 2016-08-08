@@ -64,7 +64,7 @@
             </HBox>
          </children>
       </VBox>
-      <StackPane>
+      <StackPane prefHeight="254.0" prefWidth="803.0">
          <children>
             <TabPane prefHeight="250.0" prefWidth="803.0" tabClosingPolicy="UNAVAILABLE">
               <tabs>
