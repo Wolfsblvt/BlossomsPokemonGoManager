@@ -14,14 +14,16 @@ import javafx.stage.StageStyle;
 public class BlossomsPoGoManager extends Application{
 	
 	public static final String VERSION = "0.1.1-Beta";
-
+	public static final FXMLLoader LOADER = new FXMLLoader();
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
 	
 	@Override
 	public void start(Stage primaryStage) throws IOException {
-		Parent root = (Parent) FXMLLoader.load(getClass().getClassLoader().getResource("res/layout/ChooseGUIWindow.fxml"));
+		@SuppressWarnings("static-access")
+		Parent root = (Parent) LOADER.load(getClass().getClassLoader().getResource("res/layout/ChooseGUIWindow.fxml"));
 		primaryStage.setScene(new Scene(root));
 		primaryStage.getIcons().add(new Image("/res/icon/PokeBall-icon.png"));
 		primaryStage.setTitle("Choose a GUI");

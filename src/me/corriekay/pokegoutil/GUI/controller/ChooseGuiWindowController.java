@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.controllers.AccountController;
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
@@ -41,7 +42,8 @@ public class ChooseGuiWindowController {
     void onNewGuiBtnClicked(ActionEvent event) throws IOException {
     	oldGuiBtn.getScene().getWindow().hide();
     	
-    	Parent root = (Parent) FXMLLoader.load(ChooseGuiWindowController.class.getClassLoader().getResource("res/layout/MainWindow.fxml"));
+    	@SuppressWarnings("static-access")
+		Parent root = (Parent) BlossomsPoGoManager.LOADER.load(ChooseGuiWindowController.class.getClassLoader().getResource("res/layout/MainWindow.fxml"));
 		Scene scene = new Scene(root);
 		
 		Stage mainWindow = new Stage();
