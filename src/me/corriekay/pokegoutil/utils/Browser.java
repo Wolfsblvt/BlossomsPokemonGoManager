@@ -8,6 +8,12 @@ import java.net.URISyntaxException;
 
 public class Browser {
 
+    /***
+     * Opens given URL in users default browser of his operating system.
+     * Should work for all operating systems, with fallback.
+     * @param url The URL to open in browser
+     * @return If opening was successful
+     */
     public static boolean openUrl(String url) {
         // We start to check if Desktop API is supported. In that case everything is easy.
         if (Desktop.isDesktopSupported()) {
