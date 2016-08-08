@@ -36,6 +36,31 @@ public class PokeHandler {
 
     // region Static helper methods to handle Pokémon
 
+    public static String generatePokemonNickname(String pattern, Pokemon pokemon) {
+        return generatePokemonNickname(pattern, pokemon, getRenamePattern());
+    }
+
+    private static String generatePokemonNickname(String pattern, Pokemon pokemon, Pattern regex) {
+        String pokeNick = pattern;
+        Matcher m = regex.matcher(pattern);
+        while (m.find()) {
+            String fullExpr = m.group(1);
+            String exprName = m.group(2);
+
+            try {
+                // Get ReplacePattern Object and use its get method
+                // to get the replacement string.
+                // Replace in nickname.
+                ReplacePattern rep = ReplacePattern.valueOf(exprName.toUpperCase());
+                String repStr = rep.get(pokemon);
+                pokeNick = pokeNick.replace(fullExpr, repStr);
+            } catch (IllegalArgumentException iae) {
+                // Do nothing, nothing to replace
+            }
+        }
+        return pokeNick;
+    }
+
     /***
      * Rename a single Pokemon based on a pattern
      *
@@ -64,31 +89,14 @@ public class PokeHandler {
      * @return The result of type <c>NicknamePokemonResponse.Result</c>
      */
     private static NicknamePokemonResponse.Result renWPattern(String pattern, Pokemon pokemon, Pattern regex) {
-        Pokemon p = pokemon;
-        String pokeNick = pattern;
-        Matcher m = regex.matcher(pattern);
-        while (m.find()) {
-            String fullExpr = m.group(1);
-            String exprName = m.group(2);
-
-            try {
-                // Get ReplacePattern Object and use its get method
-                // to get the replacement string.
-                // Replace in nickname.
-                ReplacePattern rep = ReplacePattern.valueOf(exprName.toUpperCase());
-                String repStr = rep.get(pokemon);
-                pokeNick = pokeNick.replace(fullExpr, repStr);
-            } catch (IllegalArgumentException iae) {
-                // Do nothing, nothing to replace
-            }
-        }
+        String pokeNick = generatePokemonNickname(pattern, pokemon, regex);
 
         // Actually renaming the Pokémon with the calculated nickname
         try {
-            NicknamePokemonResponse.Result result = p.renamePokemon(pokeNick);
+            NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick);
             return result;
         } catch (LoginFailedException | RemoteServerException e) {
-            System.out.println("API Error while renaming " + getLocalPokeName(p) + "(" + p.getNickname() + ")!");
+            System.out.println("API Error while renaming " + getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")!");
             System.err.println(e.getStackTrace());
             return NicknamePokemonResponse.Result.UNRECOGNIZED;
         }
@@ -177,6 +185,8 @@ public class PokeHandler {
                 perPokeCallback.accept(result, p);
             }
             results.put(p, result);
+
+            // TODO: Add the configurable delay from
         });
 
         return results;
@@ -218,7 +228,7 @@ public class PokeHandler {
         IVRATING("IV Rating") {
             @Override
             public String get(Pokemon p) {
-                return String.valueOf((int) p.getIvRatio() * 100);
+                return String.valueOf(Math.round(p.getIvRatio() * 100 * 100) / 100.0);
             }
         };
 

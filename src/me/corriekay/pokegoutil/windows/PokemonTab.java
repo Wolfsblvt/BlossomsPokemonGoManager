@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -33,6 +34,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
+import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -71,8 +73,9 @@ public class PokemonTab extends JPanel {
         setLayout(new BorderLayout());
         this.go = go;
         JPanel topPanel = new JPanel(new GridBagLayout());
-        JButton refreshPkmn, transferSelected, evolveSelected, powerUpSelected;
+        JButton refreshPkmn, renameSelected, transferSelected, evolveSelected, powerUpSelected;
         refreshPkmn = new JButton("Refresh Pokémon");
+        renameSelected = new JButton("Rename Selected");
         transferSelected = new JButton("Transfer Selected");
         evolveSelected = new JButton("Evolve Selected");
         powerUpSelected = new JButton("Power Up Selected");
@@ -82,6 +85,13 @@ public class PokemonTab extends JPanel {
         refreshPkmn.addActionListener(l -> new SwingWorker<Void, Void>() {
             protected Void doInBackground() throws Exception {
                 refreshPkmn();
+                return null;
+            }
+        }.execute());
+        topPanel.add(renameSelected, gbc);
+        renameSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                renameSelected();
                 return null;
             }
         }.execute());
@@ -189,6 +199,40 @@ public class PokemonTab extends JPanel {
         }
         SwingUtilities.invokeLater(this::refreshList);
         System.out.println("Done refreshing Pokémon list");
+    }
+
+    private void renameSelected() {
+        ArrayList<Pokemon> selection = getSelectedPokemon();
+        if (selection.size() == 0) return;
+        String renamePattern = inputOperation("Rename", selection);
+        if (!"".equals(renamePattern)) {
+            MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
+            PokeHandler handler = new PokeHandler(selection);
+
+            BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback = (result, pokemon) -> {
+                System.out.println("Doing Rename " + total.getValue() + " of " + selection.size());
+                total.increment();
+                if (result.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
+                    success.increment();
+                    System.out.println("Renaming " + PokeHandler.getLocalPrettyPokeName(pokemon) + " from \"" + pokemon.getNickname() + "\" to \"" + PokeHandler.generatePokemonNickname(renamePattern, pokemon) + "\", Result: Success!");
+                } else {
+                    err.increment();
+                    System.out.println("Renaming " + PokeHandler.getLocalPrettyPokeName(pokemon) + " failed! Code: " + result.toString() + "; Nick: " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
+                }
+            };
+
+            handler.bulkRenameWithPattern(renamePattern, perPokeCallback);
+
+            try {
+                go.getInventories().updateInventories(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            SwingUtilities.invokeLater(this::refreshList);
+            JOptionPane.showMessageDialog(null,
+                    "Pokémon batch rename complete!\nPokémon total: " + selection.size() + "\nSuccessful Renames: "
+                            + success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
+        }
     }
 
     private void transferSelected() {
@@ -358,7 +402,28 @@ public class PokemonTab extends JPanel {
         }
     }
 
+    private String inputOperation(String operation, ArrayList<Pokemon> pokes) {
+        JPanel panel = _buildPanelForOperation(operation, pokes);
+        String message = "";
+        switch (operation) {
+            case "Rename":
+                message = "Rename Pokémon with Name and %columnname% patterns";
+        }
+
+        String input = JOptionPane.showInputDialog(panel, message, operation, JOptionPane.PLAIN_MESSAGE);
+        return input;
+    }
+
     private boolean confirmOperation(String operation, ArrayList<Pokemon> pokes) {
+        JPanel panel = _buildPanelForOperation(operation, pokes);
+
+        int response = JOptionPane.showConfirmDialog(null, panel,
+                "Please confirm " + operation + " of " + pokes.size() + " Pokémon", JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE);
+        return response == JOptionPane.OK_OPTION;
+    }
+
+    private JPanel _buildPanelForOperation(String operation, ArrayList<Pokemon> pokes) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
@@ -385,16 +450,15 @@ public class PokemonTab extends JPanel {
                     str += p.getCandyCostsForPowerup() > 1 ? " Candies" : " Candy";
                     str += " " + p.getStardustCostsForPowerup() + " Stardust";
                     break;
+                case "Rename":
+                    break;
                 case "Transfer":
                     break;
             }
             innerPanel.add(new JLabel(str));
         });
         panel.add(scroll);
-        int response = JOptionPane.showConfirmDialog(null, panel,
-                "Please confirm " + operation + " of " + pokes.size() + " Pokémon", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.PLAIN_MESSAGE);
-        return response == JOptionPane.OK_OPTION;
+        return panel;
     }
 
     private ArrayList<Pokemon> getSelectedPokemon() {
