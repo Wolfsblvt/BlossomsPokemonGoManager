@@ -1,22 +1,16 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 
-public class MainWindowController extends VBox{
+public class MainWindowController extends Pane{
 
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
-
-    @FXML
+	@FXML
     private MenuItem settingsMenuItem;
 
     @FXML
@@ -24,6 +18,30 @@ public class MainWindowController extends VBox{
 
     @FXML
     private MenuItem quitMenuItem;
+
+    @FXML
+    private MenuItem aboutMenuItem;
+
+    @FXML
+    private HBox PlayerInfo;
+
+    @FXML
+    private ImageView teamIcon;
+
+    @FXML
+    private Label playerNameLabel;
+
+    @FXML
+    private Label playerLvl;
+
+    @FXML
+    private Label playerStardustLbl;
+
+    @FXML
+    private Label nbPkmInBagsLbl;
+
+    @FXML
+    private Label nbItemsBagsLbl;
     
     @FXML
     void onAboutClicked(ActionEvent event) {
