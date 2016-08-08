@@ -16,7 +16,7 @@ public class Browser {
                 // Okay, that was easy
                 desktop.browse(new URI(url));
                 return true;
-            } catch (IOException | URISyntaxException e) {
+            } catch (IOException | URISyntaxException | UnsupportedOperationException e) {
                 // Something went wrong with desktop, we try running the crossPlatformSolution
                 e.printStackTrace();
                 return tryCrossPlatformOpenUrl(url);
