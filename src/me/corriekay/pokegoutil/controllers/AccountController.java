@@ -5,6 +5,10 @@ import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -23,6 +27,7 @@ import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
+import sun.rmi.runtime.Log;
 
 /*this controller does the login/log off, and different account information (aka player data)
  * 
@@ -69,28 +74,48 @@ public final class AccountController {
             cp = null;
             http = new OkHttpClient();
 
-            UIManager.put("OptionPane.noButtonText", "Use Google Auth");
-            UIManager.put("OptionPane.yesButtonText", "Use PTC Auth");
-            UIManager.put("OptionPane.cancelButtonText", "Exit");
-            UIManager.put("OptionPane.okButtonText", "Ok");
-
             JTextField username = new JTextField(config.getString("login.PTCUsername", null));
             JTextField password = new JPasswordField(config.getString("login.PTCPassword", null));
 
-            JPanel panel1 = new JPanel(new BorderLayout());
-            panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
-            panel1.add(username, BorderLayout.CENTER);
-            JPanel panel2 = new JPanel(new BorderLayout());
-            panel2.add(new JLabel("PTC Password: "), BorderLayout.LINE_START);
-            panel2.add(password, BorderLayout.CENTER);
-            Object[] panel = {panel1, panel2,};
+            boolean directLoginWithSavedCredentials = checkForSavedCredentials();
 
-            int response = JOptionPane.showConfirmDialog(null, panel, "Login", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            int response;
+
+            if (directLoginWithSavedCredentials) {
+                if (getLoginData(LoginType.GOOGLE) != null) {
+                    response = JOptionPane.NO_OPTION; // This means Google. Trust me
+                } else if (getLoginData(LoginType.PTC) != null) {
+                    response = JOptionPane.YES_OPTION; // And this PTC. Yeah, really
+                } else {
+                    // Something is wrong here, we delete login and start anew
+                    deleteLoginData(LoginType.BOTH);
+                    return;
+                }
+            } else {
+                // We do not want to login directly, so go for the question box and delete that data before
+                deleteLoginData(LoginType.BOTH);
+
+                UIManager.put("OptionPane.noButtonText", "Use Google Auth");
+                UIManager.put("OptionPane.yesButtonText", "Use PTC Auth");
+                UIManager.put("OptionPane.cancelButtonText", "Exit");
+                UIManager.put("OptionPane.okButtonText", "Ok");
+
+                JPanel panel1 = new JPanel(new BorderLayout());
+                panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
+                panel1.add(username, BorderLayout.CENTER);
+                JPanel panel2 = new JPanel(new BorderLayout());
+                panel2.add(new JLabel("PTC Password: "), BorderLayout.LINE_START);
+                panel2.add(password, BorderLayout.CENTER);
+                Object[] panel = {panel1, panel2,};
+
+                response = JOptionPane.showConfirmDialog(null, panel, "Login", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            }
+
             if (response == JOptionPane.CANCEL_OPTION) {
                 System.exit(0);
             } else if (response == JOptionPane.OK_OPTION) {
                 //Using PTC, remove Google infos
-                config.delete("login.GoogleAuthToken");
+                deleteLoginData(LoginType.GOOGLE, true);
                 try {
                     cp = new PtcCredentialProvider(http, username.getText(), password.getText());
                     config.setString("login.PTCUsername", username.getText());
@@ -98,8 +123,7 @@ public final class AccountController {
                         config.setString("login.PTCPassword", password.getText());
                         config.setBool("login.SaveAuth", true);
                     } else {
-                        config.delete("login.PTCPassword");
-                        config.delete("login.SaveAuth");
+                        deleteLoginData(LoginType.PTC);
                     }
                 } catch (Exception e) {
                     alertFailedLogin();
@@ -107,8 +131,7 @@ public final class AccountController {
                 }
             } else if (response == JOptionPane.NO_OPTION) {
                 //Using Google, remove PTC infos
-                config.delete("login.PTCUsername");
-                config.delete("login.PTCPassword");
+                deleteLoginData(LoginType.PTC, true);
                 String authCode = config.getString("login.GoogleAuthToken", null);
                 boolean refresh = false;
                 if (authCode == null) {
@@ -142,8 +165,7 @@ public final class AccountController {
                             config.setString("login.GoogleAuthToken", provider.getRefreshToken());
                         config.setBool("login.SaveAuth", true);
                     } else {
-                        config.delete("login.GoogleAuthToken");
-                        config.delete("login.SaveAuth");
+                        deleteLoginData(LoginType.GOOGLE);
                     }
                 } catch (Exception e) {
                     alertFailedLogin();
@@ -185,7 +207,64 @@ public final class AccountController {
         return JOptionPane.showConfirmDialog(null, "Do you wish to save the password/auth token?\nCaution: These are saved in plain-text.", "Save Authentication?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
     }
 
-    // TODO is actually a relog function
+    private static LoginType checkSavedConfig() {
+        if (!config.getBool("login.SaveAuth", false)) {
+            return LoginType.NONE;
+        } else {
+            if (getLoginData(LoginType.GOOGLE) != null) return LoginType.GOOGLE;
+            if (getLoginData(LoginType.PTC) != null) return LoginType.PTC;
+            return LoginType.NONE;
+        }
+    }
+
+    private static List<String> getLoginData(LoginType type) {
+        switch (type) {
+            case GOOGLE:
+                String token = config.getString("login.GoogleAuthToken", null);
+                return (token != null) ? Collections.singletonList(token) : null;
+            case PTC:
+                String username = config.getString("login.PTCUsername", null);
+                String password = config.getString("login.PTCPassword", null);
+                return (username != null && password != null) ? Arrays.asList(username, password) : null;
+            default:
+                return null;
+        }
+    }
+
+
+    private static void deleteLoginData(LoginType type) {
+        deleteLoginData(type, false);
+    }
+
+    private static void deleteLoginData(LoginType type, boolean justCleanup) {
+        if (!justCleanup) config.delete("login.SaveAuth");
+        switch (type) {
+            case BOTH:
+                config.delete("login.GoogleAuthToken");
+                config.delete("login.PTCUsername");
+                config.delete("login.PTCPassword");
+            case GOOGLE:
+                config.delete("login.GoogleAuthToken");
+            case PTC:
+                config.delete("login.PTCUsername");
+                config.delete("login.PTCPassword");
+            default:
+        }
+    }
+
+    private static boolean checkForSavedCredentials() {
+        LoginType savedLogin = checkSavedConfig();
+        if (savedLogin == LoginType.NONE) {
+            return false;
+        } else {
+            UIManager.put("OptionPane.noButtonText", "No");
+            UIManager.put("OptionPane.yesButtonText", "Yes");
+            UIManager.put("OptionPane.okButtonText", "Ok");
+            UIManager.put("OptionPane.cancelButtonText", "Cancel");
+            return JOptionPane.showConfirmDialog(null, "You have saved login data for " + savedLogin.toString() + ". Want to login with that?", "Use Saved Login", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+        }
+    }
+
     public static void logOff() throws Exception {
         if (!sIsInit) {
             throw new ExceptionInInitializerError("AccountController needs to be initialized before logging on");
@@ -200,13 +279,14 @@ public final class AccountController {
         logOn();
     }
 
-    //TODO does nothing yet
-    public static void relogNewUser() {
-
-    }
-
     public static PlayerProfile getPlayerProfile() {
         return S_INSTANCE.go != null ? S_INSTANCE.go.getPlayerProfile() : null;
     }
 
+    public enum LoginType {
+        GOOGLE,
+        PTC,
+        BOTH,
+        NONE
+    }
 }
