@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<VBox prefHeight="311.0" prefWidth="539.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.corriekay.pokegoutil.GUI.controller.MainWindowController">
+  <children>
+    <MenuBar prefHeight="25.0" prefWidth="634.0" VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem fx:id="settingsMenuItem" mnemonicParsing="false" onAction="#onSettingsClicked" text="Settings..." />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem fx:id="logOffMenuItem" mnemonicParsing="false" onAction="#onLogOffClicked" text="LogOff" />
+                  <MenuItem fx:id="quitMenuItem" mnemonicParsing="false" onAction="#onQuitClicked" text="Quit" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#onAboutClicked" text="About" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+      <VBox prefHeight="0.0" prefWidth="803.0">
+         <children>
+            <HBox fx:id="PlayerInfo">
+               <children>
+                  <ImageView fx:id="teamIcon" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true" />
+                  <Label fx:id="playerNameLabel" prefHeight="17.0" prefWidth="70.0" text="PlayerName">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label text="   Lvl: " />
+                  <Label fx:id="playerLvl" prefHeight="17.0" prefWidth="32.0" text="PH_" />
+                  <Label fx:id="playerStardustLbl" prefHeight="17.0" prefWidth="99.0" text="   ###########">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label text="Stardust" />
+                  <Separator orientation="VERTICAL" prefHeight="17.0" prefWidth="18.0" />
+                  <Label fx:id="nbPkmInBagsLbl" text="###/### " />
+                  <Label text="Pokémon" />
+                  <Separator orientation="VERTICAL" prefHeight="17.0" prefWidth="18.0" />
+                  <Label fx:id="nbItemsBagsLbl" text="###/### " />
+                  <Label text="Items" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <StackPane prefHeight="254.0" prefWidth="803.0">
+         <children>
+            <TabPane prefHeight="250.0" prefWidth="803.0" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                <Tab text="Pokémon">
+                  <content>
+                        <Accordion prefHeight="223.0" prefWidth="803.0">
+                          <panes>
+                            <TitledPane animated="false" prefHeight="146.0" prefWidth="803.0" text="Choose Action">
+                              <content>
+                                <AnchorPane />
+                              </content>
+                            </TitledPane>
+                            <TitledPane animated="false" prefHeight="148.0" prefWidth="803.0" text="Select Pokémon">
+                                 <content>
+                                    <AnchorPane />
+                                 </content>
+                            </TitledPane>
+                            <TitledPane animated="false" text="Options">
+                              <content>
+                                <AnchorPane prefHeight="119.0" prefWidth="801.0" />
+                              </content>
+                            </TitledPane>
+                              <TitledPane animated="false" prefHeight="147.0" prefWidth="803.0" text="Result">
+                                <content>
+                                  <AnchorPane />
+                                </content>
+                              </TitledPane>
+                          </panes>
+                        </Accordion>
+                  </content>
+                </Tab>
+                <Tab text="Items">
+                  <content>
+                    <AnchorPane />
+                  </content>
+                </Tab>
+                  <Tab text="Console">
+                    <content>
+                      <AnchorPane />
+                    </content>
+                  </Tab>
+              </tabs>
+            </TabPane>
+         </children>
+      </StackPane>
+  </children>
+</VBox>
