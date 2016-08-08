@@ -77,7 +77,7 @@ public class LoginController extends StackPane{
 			mainWindow.setTitle("Blossom's Pokémon Go Manager");
 		}
 		
-		mainWindow.initStyle(StageStyle.UNIFIED);
+		mainWindow.initStyle(StageStyle.DECORATED);
 		
 		mainWindow.setScene(scene);    	  
 		mainWindow.show();
