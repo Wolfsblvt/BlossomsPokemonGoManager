@@ -1,21 +1,31 @@
 package me.corriekay.pokegoutil;
 
-import me.corriekay.pokegoutil.controllers.AccountController;
-import me.corriekay.pokegoutil.utils.Console;
-import me.corriekay.pokegoutil.utils.Utilities;
+import java.io.IOException;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 
-public class BlossomsPoGoManager {
+public class BlossomsPoGoManager extends Application{
 	
-	private static Console console;
 	public static final String VERSION = "0.1.1-Beta";
 
-	public static void main(String[] args) throws Exception {
-		Utilities.setNativeLookAndFeel();
-		console = new Console("Console", 0, 0, true);
-		console.setVisible(false);
-		
-		AccountController.initialize(console);
-		AccountController.logOn();
+	public static void main(String[] args) {
+		launch(args);
+	}
+	
+	@Override
+	public void start(Stage primaryStage) throws IOException {
+		Parent root = (Parent) FXMLLoader.load(getClass().getClassLoader().getResource("res/layout/ChooseGUIWindow.fxml"));
+		primaryStage.setScene(new Scene(root));
+		primaryStage.getIcons().add(new Image("/res/icon/PokeBall-icon.png"));
+		primaryStage.setTitle("Choose a GUI");
+		primaryStage.initStyle(StageStyle.UTILITY);
+		primaryStage.show();
 	}
 }
