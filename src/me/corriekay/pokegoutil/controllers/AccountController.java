@@ -19,6 +19,7 @@ import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
 
+import me.corriekay.pokegoutil.utils.Browser;
 import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
@@ -115,11 +116,12 @@ public final class AccountController {
 					//We need to get the auth code, as we do not have it yet.
 					UIManager.put("OptionPane.okButtonText", "Ok");
 					JOptionPane.showMessageDialog(null, "You will need to provide a google authentication key to log in. Press OK to continue.", "Google Auth", JOptionPane.PLAIN_MESSAGE);
-					//We're gonna try to load the page using the users browser 
-					if(Desktop.isDesktopSupported()) {
-						JOptionPane.showMessageDialog(null, "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue", "Google Auth", JOptionPane.PLAIN_MESSAGE);
-						Desktop.getDesktop().browse(new URI(GoogleUserCredentialProvider.LOGIN_URL));
-					} else {
+
+					//We're gonna try to load the page using the users browser
+					JOptionPane.showMessageDialog(null, "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue", "Google Auth", JOptionPane.PLAIN_MESSAGE);
+					boolean success = Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
+					if(!success) {
+						// Okay, couldn't open it. We use the manual copy window
 						UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
 						if(JOptionPane.showConfirmDialog(null, "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.", "Google Auth", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION){
 							StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
