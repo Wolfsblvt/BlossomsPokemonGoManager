@@ -523,7 +523,7 @@ public class PokemonTab extends JPanel {
                 numIdCol.add(i.getValue(), p.getMeta().getNumber());
 				nickCol.add(i.getValue(), p.getNickname());
 				speciesCol.add(i.getValue(),
-						PokeHandler.getLocalPokeName(p).replaceAll("_male", "♂").replaceAll("_female", "♀"));
+						PokeHandler.getLocalPokeName(p));
                 levelCol.add(i.getValue(), (double)p.getLevel());
                 ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
                 cpCol.add(i.getValue(), p.getCp());
