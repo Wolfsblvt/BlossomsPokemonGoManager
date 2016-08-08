@@ -12,14 +12,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.controllers.AccountController;
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
 
-public class ChooseGuiWindowController {
+public class ChooseGuiWindowController extends Pane{
 	
     @FXML
     private ResourceBundle resources;
@@ -35,22 +35,27 @@ public class ChooseGuiWindowController {
     
     @FXML
     void initialize() {
-    	
     }
 
     @FXML
-    void onNewGuiBtnClicked(ActionEvent event) throws IOException {
+    void onNewGuiBtnClicked(ActionEvent event){
     	oldGuiBtn.getScene().getWindow().hide();
     	
-    	@SuppressWarnings("static-access")
-		Parent root = (Parent) BlossomsPoGoManager.LOADER.load(ChooseGuiWindowController.class.getClassLoader().getResource("res/layout/MainWindow.fxml"));
+    	//@SuppressWarnings("static-access")
+		Parent root;
+		try {
+			root = (Parent) FXMLLoader.load(ChooseGuiWindowController.class.getClassLoader().getResource("resources/layout/Login.fxml"));
+		} catch (IOException e) {
+			System.err.println("Error loading resource: resources/layout/Login.fxml" );
+			return;
+		}
 		Scene scene = new Scene(root);
 		
 		Stage mainWindow = new Stage();
 		
-		mainWindow.getIcons().add(new Image("/res/icon/PokeBall-icon.png"));
-		mainWindow.setTitle("Blossom's Pokémon Go Manager");
-		mainWindow.initStyle(StageStyle.UNIFIED);
+		mainWindow.getIcons().add(new Image("/resources/icon/PokeBall-icon.png"));
+		mainWindow.setTitle("Login");
+		mainWindow.initStyle(StageStyle.UTILITY);
 		
 		mainWindow.setScene(scene);    	  
 		mainWindow.show();
@@ -65,17 +70,13 @@ public class ChooseGuiWindowController {
             private Console console;
 
 			@Override
-            public void run() {
-            	try {
-            		Utilities.setNativeLookAndFeel();
-            		console = new Console("Console", 0, 0, true);
-            		console.setVisible(false);
-            		AccountController.initialize(console);
-					AccountController.logOn();
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+            public void run() {            	
+        		Utilities.setNativeLookAndFeel();
+        		console = new Console("Console", 0, 0, true);
+        		console.setVisible(false);
+        		AccountController.initialize(console);
+				AccountController.logOn();
+				
             }
         });    	    	
     }

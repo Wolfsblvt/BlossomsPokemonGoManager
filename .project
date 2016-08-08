@@ -15,14 +15,7 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<resources>
-		  <resource>
-			<directory>src/res</directory>
-			<includes>
-			  <include>**/*.fxml</include>
-			</includes>
-		  </resource>
-		</resources>
+		
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>

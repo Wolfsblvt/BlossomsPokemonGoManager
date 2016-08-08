@@ -6,8 +6,9 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.VBox;
 
-public class MainWindowController {
+public class MainWindowController extends VBox{
 
     @FXML
     private ResourceBundle resources;
@@ -36,7 +37,8 @@ public class MainWindowController {
 
     @FXML
     void onQuitClicked(ActionEvent event) {
-
+    	//TODO Kill in a more humane way, maybe...
+    	System.exit(0);
     }
 
     @FXML
