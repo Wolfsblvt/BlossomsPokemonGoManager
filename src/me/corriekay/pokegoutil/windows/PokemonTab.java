@@ -214,10 +214,10 @@ public class PokemonTab extends JPanel {
                 total.increment();
                 if (result.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
                     success.increment();
-                    System.out.println("Renaming " + PokeHandler.getLocalPrettyPokeName(pokemon) + " from \"" + pokemon.getNickname() + "\" to \"" + PokeHandler.generatePokemonNickname(renamePattern, pokemon) + "\", Result: Success!");
+                    System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " from \"" + pokemon.getNickname() + "\" to \"" + PokeHandler.generatePokemonNickname(renamePattern, pokemon) + "\", Result: Success!");
                 } else {
                     err.increment();
-                    System.out.println("Renaming " + PokeHandler.getLocalPrettyPokeName(pokemon) + " failed! Code: " + result.toString() + "; Nick: " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
+                    System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " failed! Code: " + result.toString() + "; Nick: " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
                 }
             };
 
