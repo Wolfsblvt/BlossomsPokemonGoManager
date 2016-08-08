@@ -117,10 +117,11 @@ public class PokeHandler {
 		String name = null;
 		try {
 			name = new String(PokeNames.getDisplayName(id, locale).getBytes("ISO-8859-1"), "UTF-8");
+            name = StringUtils.capitalize(name.toLowerCase());
+            name = name.replaceAll("_male", "♂").replaceAll("_female", "♀");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		name = StringUtils.capitalize(name.toLowerCase());
 		return name;
 	}
 
@@ -129,34 +130,10 @@ public class PokeHandler {
 	 * 
 	 * @param pokemon
 	 *            The Pokémon
-	 * @return The translated Pokémon name
+     * @return The translated Pokémon name
 	 */
 	public static String getLocalPokeName(Pokemon pokemon) {
 		return getLocalPokeName(pokemon.getPokemonId().getNumber());
-	}
-
-	/***
-	 * Returns the Name of the Pokémon <c>pokemon</c> in the current language,
-	 * formatted for display.
-	 * 
-	 * @param pokemon
-	 *            The Pokémon
-	 * @return The translated Pokémon name
-	 */
-	public static String getLocalPrettyPokeName(Pokemon pokemon) {
-		return getLocalPrettyPokeName(pokemon.getPokemonId().getNumber());
-	}
-
-	/***
-	 * Returns the Name of the Pokémon <c>pokemon</c> in the current language,
-	 * formatted for display.
-	 * 
-	 * @param pokemon
-	 *            The Pokémon
-	 * @return The translated Pokémon name
-	 */
-	public static String getLocalPrettyPokeName(int id) {
-		return getLocalPokeName(id).replaceAll("_male", "♂").replaceAll("_female", "♀");
 	}
 
 	// endregion
