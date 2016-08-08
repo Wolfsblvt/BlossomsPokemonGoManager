@@ -190,7 +190,7 @@ public final class AccountController {
         if (!sIsInit) {
             throw new ExceptionInInitializerError("AccountController needs to be initialized before logging on");
         }
-        if (S_INSTANCE.logged = false)
+        if (!S_INSTANCE.logged)
             return;
 
         S_INSTANCE.logged = false;
