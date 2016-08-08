@@ -30,11 +30,13 @@ public class PokemonGoMainWindow extends JFrame {
 	public static PokemonGoMainWindow window = null;
 	private Config config = Config.getConfig();
 
-	public PokemonGo getPoGo() { return go; }
+	public PokemonGo getPoGo() {
+		return go;
+	}
 
 	private final JTabbedPane tab = new JTabbedPane();
 
-	public PokemonGoMainWindow(PokemonGo pkmngo, Console console){
+	public PokemonGoMainWindow(PokemonGo pkmngo, Console console) {
 		go = pkmngo;
 		p = go.getPlayerProfile();
 
@@ -52,7 +54,7 @@ public class PokemonGoMainWindow extends JFrame {
 		}
 		setLayout(new BorderLayout());
 		refreshTitle();
-		setIconImage(Utilities.loadImage("PokeBall-icon.png"));
+		setIconImage(Utilities.loadImage("resources/icon/PokeBall-icon.png"));
 		setBounds(0, 0, config.getInt("options.window.width", 800), config.getInt("options.window.height", 650));
 		// add EventHandler to save new window size and position to
 		// config for the app to remember over restarts
@@ -99,7 +101,7 @@ public class PokemonGoMainWindow extends JFrame {
 	}
 
 	public void start() {
-		//pack();
+		// pack();
 		setVisible(true);
 	}
 }

@@ -17,7 +17,7 @@
 		</buildCommand>
 		<resources>
 		  <resource>
-			<directory>src/res</directory>
+			<directory>src/resources</directory>
 			<includes>
 			  <include>**/*.fxml</include>
 			</includes>
