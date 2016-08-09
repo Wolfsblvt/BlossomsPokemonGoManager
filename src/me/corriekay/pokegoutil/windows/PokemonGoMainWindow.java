@@ -40,16 +40,16 @@ public class PokemonGoMainWindow extends JFrame {
 
 		console.clearAllLines();
 		try {
-			
+
 			System.out.println("Successfully logged in. Welcome, " + pp.getPlayerData().getUsername() + ".");
-			System.out.println("Stats: Lvl " + pp.getStats().getLevel() + " " 
-					+ Utilities.convertTeamColorToName(pp.getPlayerData().getTeamValue()) + " player.");			
+			System.out.println("Stats: Lvl " + pp.getStats().getLevel() + " "
+					+ Utilities.convertTeamColorToName(pp.getPlayerData().getTeamValue()) + " player.");
 			System.out.println("Pokédex - Types Caught: " + pp.getStats().getUniquePokedexEntries()
 					+ ", Total Pokémon Caught: " + pp.getStats().getPokemonsCaptured() + ", Total Current Pokémon: "
 					+ go.getInventories().getPokebank().getPokemons().size());
 		} catch (RemoteServerException | LoginFailedException e) {
-			System.out.println("Unable to login!");
-			e.printStackTrace();
+			// System.out.println("Unable to login!");
+			// e.printStackTrace();
 		}
 		setLayout(new BorderLayout());
 		refreshTitle();
