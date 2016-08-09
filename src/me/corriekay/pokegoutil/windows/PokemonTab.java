@@ -264,7 +264,7 @@ public class PokemonTab extends JPanel {
                     }
                 } catch (Exception e) {
                     err.increment();
-                    System.out.println("Error transferring Pokémon! " + e.getMessage());
+                    System.out.println("Error transferring " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
                 }
             });
             try {
@@ -315,7 +315,7 @@ public class PokemonTab extends JPanel {
                         }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error evolving Pokémon! " + e.getMessage());
+                        System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
                     }
                 });
                 try {
@@ -363,7 +363,7 @@ public class PokemonTab extends JPanel {
                         }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error powering up Pokémon! " + e.getMessage());
+                        System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
                     }
                 });
                 try {
