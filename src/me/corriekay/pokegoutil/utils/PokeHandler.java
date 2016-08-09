@@ -206,7 +206,7 @@ public class PokeHandler {
         HP("Hit Points") {
             @Override
             public String get(Pokemon p) {
-                return String.valueOf(p.getStamina());
+                return String.valueOf(p.getMaxStamina());
             }
         },
         IVRATING("IV Rating") {
