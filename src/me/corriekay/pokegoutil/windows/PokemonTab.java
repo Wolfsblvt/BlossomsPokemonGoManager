@@ -549,6 +549,7 @@ public class PokemonTab extends JPanel {
             trs.setComparator(6, c);
             trs.setComparator(7, c);
             trs.setComparator(12, c);
+            trs.setComparator(13, c);
             trs.setComparator(14, c);
             trs.setComparator(15, c);
             trs.setComparator(16, c);
