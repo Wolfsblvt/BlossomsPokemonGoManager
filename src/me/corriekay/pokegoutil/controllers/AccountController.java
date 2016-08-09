@@ -23,8 +23,6 @@ import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.utils.Browser;
 import me.corriekay.pokegoutil.utils.Config;
@@ -77,8 +75,8 @@ public final class AccountController {
 	}
 
     @Deprecated
-    public static void logOn() {
-        if (!sIsInit) {
+    public static void logOn() throws Exception{
+    	if (!sIsInit) {
             throw new ExceptionInInitializerError("AccountController needs to be initialized before logging on");
         }
         OkHttpClient http;
@@ -156,15 +154,11 @@ public final class AccountController {
                     JOptionPane.showMessageDialog(null, "You will need to provide a google authentication key to log in. Press OK to continue.", "Google Auth", JOptionPane.PLAIN_MESSAGE);
 
                     //We're gonna try to load the page using the users browser
-                    if (Desktop.isDesktopSupported()) {
-                        JOptionPane.showMessageDialog(null, "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue", "Google Auth", JOptionPane.PLAIN_MESSAGE);
-                        try {
-    						Desktop.getDesktop().browse(new URI(GoogleUserCredentialProvider.LOGIN_URL));
-    					} catch (IOException | URISyntaxException e) {
-    						System.err.println("Error Opening browser: " + e.toString());
-    						return;
-    }
-                    } else {
+                    JOptionPane.showMessageDialog(null, "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue", "Google Auth", JOptionPane.PLAIN_MESSAGE);
+                    boolean success = Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
+
+                    if (!success) {
+                        // Okay, couldn't open it. We use the manual copy window
                         UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
                         if (JOptionPane.showConfirmDialog(null, "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.", "Google Auth", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION) {
                             StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
@@ -199,20 +193,17 @@ public final class AccountController {
             UIManager.put("OptionPane.yesButtonText", "Yes");
             UIManager.put("OptionPane.okButtonText", "Ok");
             UIManager.put("OptionPane.cancelButtonText", "Cancel");
+
             if (cp != null)
-				try {
-					go = new PokemonGo(cp, http);
-				} catch (LoginFailedException | RemoteServerException e) {
-					System.err.println("Error login" + e.toString() );
-				}
-			else
+                go = new PokemonGo(cp, http);
+            else
                 throw new IllegalStateException();
             S_INSTANCE.logged = true;
-		}
-		S_INSTANCE.go = go;
-		initOtherControllers(go);
-		S_INSTANCE.mainWindow = new PokemonGoMainWindow(go, S_INSTANCE.console);
-		S_INSTANCE.mainWindow.start();
+        }
+        S_INSTANCE.go = go;
+        initOtherControllers(go);
+        S_INSTANCE.mainWindow = new PokemonGoMainWindow(go, S_INSTANCE.console);
+        S_INSTANCE.mainWindow.start();
 	}
 	
 	public static void logOnPTC(String username, String password) {
