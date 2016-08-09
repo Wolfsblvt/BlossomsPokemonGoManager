@@ -66,6 +66,7 @@ public class BlossomsPoGoManager extends Application{
 			primaryStage.getIcons().add(new Image(image.toExternalForm()));
 			primaryStage.setTitle("Choose a GUI");
 			primaryStage.initStyle(StageStyle.UTILITY);
+			primaryStage.setResizable(false);
 			primaryStage.show();
 		}
 	}

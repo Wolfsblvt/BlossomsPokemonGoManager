@@ -87,7 +87,7 @@ public class LoginController extends StackPane{
 		}
 		
 		mainWindow.initStyle(StageStyle.DECORATED);
-		
+		mainWindow.setResizable(false);
 		mainWindow.setScene(scene);    	  
 		mainWindow.show();
     }

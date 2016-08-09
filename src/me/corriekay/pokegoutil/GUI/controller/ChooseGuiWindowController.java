@@ -59,6 +59,7 @@ public class ChooseGuiWindowController extends Pane{
 		mainWindow.getIcons().add(new Image(image.toExternalForm()));
 		mainWindow.setTitle("Login");
 		mainWindow.initStyle(StageStyle.UTILITY);
+		mainWindow.setResizable(false);
 		
 		mainWindow.setScene(scene);    	  
 		mainWindow.show();
