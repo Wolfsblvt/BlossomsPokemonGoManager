@@ -10,8 +10,6 @@ import java.text.NumberFormat;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.exceptions.InvalidCurrencyException;
@@ -26,7 +24,7 @@ import me.corriekay.pokegoutil.utils.Utilities;
 public class PokemonGoMainWindow extends JFrame {
 
 	private final PokemonGo go;
-	private final PlayerProfile p;
+	private final PlayerProfile pp;
 	public static PokemonGoMainWindow window = null;
 	private Config config = Config.getConfig();
 
@@ -36,15 +34,16 @@ public class PokemonGoMainWindow extends JFrame {
 
 	public PokemonGoMainWindow(PokemonGo pkmngo, Console console){
 		go = pkmngo;
-		p = go.getPlayerProfile();
+		pp = go.getPlayerProfile();
 
 		console.clearAllLines();
 		try {
-			System.out.println("Successfully logged in. Welcome, " + p.getPlayerData().getUsername() + ".");
-			System.out.println("Stats: Lvl " + p.getStats().getLevel() + " " + StringUtils.capitalize(
-					p.getPlayerData().getTeam().toString().toLowerCase().replaceAll("team_", "") + " player."));
-			System.out.println("Pokédex - Types Caught: " + p.getStats().getUniquePokedexEntries()
-					+ ", Total Pokémon Caught: " + p.getStats().getPokemonsCaptured() + ", Total Current Pokémon: "
+			
+			System.out.println("Successfully logged in. Welcome, " + pp.getPlayerData().getUsername() + ".");
+			System.out.println("Stats: Lvl " + pp.getStats().getLevel() + " " 
+					+ Utilities.convertTeamColorToName(pp.getPlayerData().getTeamValue()) + " player.");			
+			System.out.println("Pokédex - Types Caught: " + pp.getStats().getUniquePokedexEntries()
+					+ ", Total Pokémon Caught: " + pp.getStats().getPokemonsCaptured() + ", Total Current Pokémon: "
 					+ go.getInventories().getPokebank().getPokemons().size());
 		} catch (RemoteServerException | LoginFailedException e) {
 			System.out.println("Unable to login!");
@@ -91,8 +90,8 @@ public class PokemonGoMainWindow extends JFrame {
 	public void refreshTitle() {
 		try {
 			NumberFormat f = NumberFormat.getInstance();
-			setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", p.getPlayerData().getUsername(),
-					f.format(p.getCurrency(PlayerProfile.Currency.STARDUST))));
+			setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
+					f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
 		} catch (InvalidCurrencyException | LoginFailedException | RemoteServerException e) {
 			setTitle("Blossom's Pokémon Go Manager");
 		}
