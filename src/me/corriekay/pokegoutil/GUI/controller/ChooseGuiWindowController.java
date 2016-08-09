@@ -21,6 +21,8 @@ import me.corriekay.pokegoutil.utils.Utilities;
 
 public class ChooseGuiWindowController extends Pane{
 	
+	private ClassLoader classLoader;
+	
     @FXML
     private ResourceBundle resources;
 
@@ -35,25 +37,26 @@ public class ChooseGuiWindowController extends Pane{
     
     @FXML
     void initialize() {
+    	classLoader = getClass().getClassLoader();
     }
 
     @FXML
     void onNewGuiBtnClicked(ActionEvent event){
     	oldGuiBtn.getScene().getWindow().hide();
     	
-    	//@SuppressWarnings("static-access")
 		Parent root;
 		try {
-			root = (Parent) FXMLLoader.load(ChooseGuiWindowController.class.getClassLoader().getResource("resources/layout/Login.fxml"));
+			root = (Parent) FXMLLoader.load(classLoader.getResource("layout/Login.fxml"));
 		} catch (IOException e) {
-			System.err.println("Error loading resource: resources/layout/Login.fxml" );
+			System.err.println("Error loading resource: layout/Login.fxml" );
 			return;
 		}
 		Scene scene = new Scene(root);
 		
 		Stage mainWindow = new Stage();
 		
-		mainWindow.getIcons().add(new Image("/resources/icon/PokeBall-icon.png"));
+		URL image = classLoader.getResource("icon/PokeBall-icon.png");
+		mainWindow.getIcons().add(new Image(image.toExternalForm()));
 		mainWindow.setTitle("Login");
 		mainWindow.initStyle(StageStyle.UTILITY);
 		
@@ -75,8 +78,7 @@ public class ChooseGuiWindowController extends Pane{
         		console = new Console("Console", 0, 0, true);
         		console.setVisible(false);
         		AccountController.initialize(console);
-				AccountController.logOn();
-				
+				AccountController.logOn();				
             }
         });    	    	
     }

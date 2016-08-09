@@ -1,6 +1,7 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.NumberFormat;
 
 import com.pokegoapi.api.player.PlayerProfile;
@@ -24,6 +25,8 @@ import me.corriekay.pokegoutil.controllers.AccountController;
 
 public class LoginController extends StackPane{
 
+	private ClassLoader classLoader;
+	
     @FXML
     private TextField user;
 
@@ -41,6 +44,7 @@ public class LoginController extends StackPane{
     
     @FXML
     private void initialize(){
+    	classLoader =  getClass().getClassLoader();
     	AccountController.initialize();
     }
     
@@ -62,16 +66,17 @@ public class LoginController extends StackPane{
     	ptcLoginBtn.getScene().getWindow().hide();    	
 		Parent root;
 		try {
-			root = (Parent) FXMLLoader.load(ChooseGuiWindowController.class.getClassLoader().getResource("resources/layout/MainWindow.fxml"));
+			root = (Parent) FXMLLoader.load(classLoader.getResource("layout/MainWindow.fxml"));
 		} catch (IOException e1) {
-			System.err.println("Error loading resource: resources/layout/MainWindow.fxml");
+			System.err.println("Error loading resource: layout/MainWindow.fxml");
 			return;
 		}
 		Scene scene = new Scene(root);
 		
 		Stage mainWindow = new Stage();
 		
-		mainWindow.getIcons().add(new Image("resources/icon/PokeBall-icon.png"));
+		URL image = classLoader.getResource("icon/PokeBall-icon.png");
+		mainWindow.getIcons().add(new Image(image.toExternalForm()));
 		try {
 			NumberFormat f = NumberFormat.getInstance();
 			PlayerProfile pp = AccountController.getPlayerProfile();

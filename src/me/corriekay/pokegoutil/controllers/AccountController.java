@@ -23,6 +23,8 @@ import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.utils.Browser;
 import me.corriekay.pokegoutil.utils.Config;
@@ -75,7 +77,7 @@ public final class AccountController {
 	}
 
     @Deprecated
-    public static void logOn() throws Exception{
+    public static void logOn() {
     	if (!sIsInit) {
             throw new ExceptionInInitializerError("AccountController needs to be initialized before logging on");
         }
@@ -195,8 +197,12 @@ public final class AccountController {
             UIManager.put("OptionPane.cancelButtonText", "Cancel");
 
             if (cp != null)
-                go = new PokemonGo(cp, http);
-            else
+				try {
+					go = new PokemonGo(cp, http);
+				} catch (LoginFailedException | RemoteServerException e) {	
+					e.printStackTrace();
+				}
+			else
                 throw new IllegalStateException();
             S_INSTANCE.logged = true;
         }
