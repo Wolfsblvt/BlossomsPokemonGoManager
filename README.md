@@ -66,6 +66,9 @@ We use discord to organize our development and answer questions. We also post im
 #### Q: After login no window shows up. No error is displayed
 - **A:** It's a small bug with the current config. Go to your folder where the `.jar` file is and delete the `config.json`.
 
+#### Q: Java 8 is not available for my linux system. What do I do?
+- **A:** Read up [Install Oracle Java 8 (JDK8 and JRE8) in Ubuntu or Linux Mint](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html) on how you exactly do it.
+
 #### Q: Is the IV calculated somehow? Is it the correct value or maybe wrong? My IV calculator says something different.
 - **A:** The IV isn't calculated, it is directly taken from the API response. It's the exact value like the game has it.
 
