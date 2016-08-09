@@ -42,7 +42,7 @@ If you are fond of programming, you can always take one of the open issues, post
 
 #### Submitting Issues
 That's the best way how you can help us.  
-If you found a bug, submit an issue. If you have a suggestion, submit an issue. Just make sure before that the issue wasn't already mentioned. Search on the issue tracker helps there.  
+If you found a bug, submit an issue. If you have a suggestion, submit an issue. **Just make sure before that the issue wasn't already mentioned. Search on the issue tracker helps there.**
 Just one thing: **Please try to not group too many bugs/suggestions in one issue** It's better to have ten more issues where it's clear what there is inside than to have one big blob. So don't hesitate to create more than one issue.
 
 If you have **Bugs**, please be as detailed as possible.  
