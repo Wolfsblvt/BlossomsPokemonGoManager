@@ -30,7 +30,9 @@ public class PokemonGoMainWindow extends JFrame {
 	public static PokemonGoMainWindow window = null;
 	private Config config = Config.getConfig();
 
-	public PokemonGo getPoGo() { return go; }
+	public PokemonGo getPoGo() {
+		return go;
+	}
 
 	private final JTabbedPane tab = new JTabbedPane();
 

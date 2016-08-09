@@ -264,7 +264,7 @@ public class PokemonTab extends JPanel {
                     }
                 } catch (Exception e) {
                     err.increment();
-                    System.out.println("Error transferring Pokémon! " + e.getMessage());
+                    System.out.println("Error transferring " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
                 }
             });
             try {
@@ -315,7 +315,7 @@ public class PokemonTab extends JPanel {
                         }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error evolving Pokémon! " + e.getMessage());
+                        System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
                     }
                 });
                 try {
@@ -363,7 +363,7 @@ public class PokemonTab extends JPanel {
                         }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error powering up Pokémon! " + e.getMessage());
+                        System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
                     }
                 });
                 try {
@@ -631,7 +631,7 @@ public class PokemonTab extends JPanel {
 
                 move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1) + "dps)");
                 move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " (" + String.format("%.2f", dps2) + "dps)");
-                hpCol.add(i.getValue(), p.getStamina());
+                hpCol.add(i.getValue(), p.getMaxStamina());
 
                 int trainerLevel = 1;
                 try {
