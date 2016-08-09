@@ -359,8 +359,8 @@ public class PokemonTab extends JPanel {
 					+ (Math.round(p.getIvRatio() * 10000) / 100) + "%";
 			switch (operation){
 				case "Evolve":
-					str += " Cost: " + p.getCandiesToEvolve();
-					str += p.getCandiesToEvolve()>1?" Candies":" Candy";
+					str += " Cost: " + p.getCandyCostsForPowerup();
+					str += p.getCandyCostsForPowerup()>1?" Candies":" Candy";
 					break;
 				case "PowerUp":
 					str += " Cost: " + p.getCandyCostsForPowerup();
