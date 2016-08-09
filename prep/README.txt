@@ -11,6 +11,7 @@ Usage
 First, extract the release ZIP file into a folder of its own somewhere on your computer.
 To run the Application, do one of the following:
    - On Windows, double-click the RunOnWindows.bat
+   - On Linux/Unix, double-click the RunOnLinux.sh
    - Double-click BlossomsPogoManager.jar
    - Run the file through the command prompt, with "java -jar path/to/BlossomsPogoManager.jar"
 
