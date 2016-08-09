@@ -7,6 +7,7 @@ import me.corriekay.pokegoutil.BlossomsPoGoManager;
 
 import javax.swing.*;
 import me.corriekay.pokegoutil.controllers.AccountController;
+import me.corriekay.pokegoutil.utils.Utilities;
 
 @SuppressWarnings("serial")
 public class MenuBar extends JMenuBar {
@@ -67,7 +68,7 @@ public class MenuBar extends JMenuBar {
 		PlayerProfile pp = go.getPlayerProfile();
 		Object[] tstats = {
 				"Trainer Name: " + pp.getPlayerData().getUsername(), 
-				"Team: " + pp.getPlayerData().getTeam().toString(),
+				"Team: " + Utilities.convertTeamColorToName(pp.getPlayerData().getTeamValue()),
 				"Level: " + pp.getStats().getLevel(),
 				"XP: " + pp.getStats().getExperience() + " (" + go.getPlayerProfile().getStats().getNextLevelXp() + " to next level)",
 				"Stardust: " + pp.getCurrency(Currency.STARDUST)

@@ -24,6 +24,10 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.pokegoapi.api.player.Team;
+
 public abstract class Utilities {
 	private static final Random random = new Random(System.currentTimeMillis());
 	
@@ -257,5 +261,16 @@ public abstract class Utilities {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static String convertTeamColorToName(int teamValue){
+		Team[] teams = Team.values();
+		
+		for(Team team : teams){
+			if(team.getValue() == teamValue){
+				return StringUtils.capitalize(team.toString().toLowerCase().replaceAll("team_", ""));
+			}
+		}
+		return "UNKNOWN_TEAM";
 	}
 }
