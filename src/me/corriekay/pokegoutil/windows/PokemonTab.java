@@ -659,7 +659,7 @@ public class PokemonTab extends JPanel {
         private final ArrayList<Integer> dustToLevelCol = new ArrayList<>();//20
         private final ArrayList<String> pokeballCol = new ArrayList<>();//21
         private final ArrayList<LocalDateTime> caughtCol = new ArrayList<>();//22
-        private final ArrayList<Boolean> favCol = new ArrayList<>();//23
+        private final ArrayList<String> favCol = new ArrayList<>();//23
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
@@ -766,7 +766,7 @@ public class PokemonTab extends JPanel {
                 dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
                 pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
                 caughtCol.add(i.getValue(), LocalDateTime.ofInstant(Instant.ofEpochMilli(p.getCreationTimeMs()), ZoneId.systemDefault()));
-                favCol.add(i.getValue(), p.isFavorite());
+                favCol.add(i.getValue(), (p.isFavorite()) ? "True" : "");
                 i.increment();
             });
         }
