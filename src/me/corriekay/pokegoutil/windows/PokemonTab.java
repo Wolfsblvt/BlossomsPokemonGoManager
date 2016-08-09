@@ -601,6 +601,7 @@ public class PokemonTab extends JPanel {
             TableRowSorter<TableModel> trs = new TableRowSorter<>(getModel());
             Comparator<Integer> c = (i1, i2) -> Math.round(i1 - i2);
             Comparator<Double> cDouble = (d1, d2) -> (int) (d1 - d2);
+            Comparator<LocalDateTime> cDate = (date1, date2) -> (date1.compareTo(date2));
             trs.setComparator(0, c);
             trs.setComparator(3, cDouble);
             trs.setComparator(4, cDouble);
@@ -608,6 +609,7 @@ public class PokemonTab extends JPanel {
             trs.setComparator(6, c);
             trs.setComparator(7, c);
             trs.setComparator(12, c);
+            trs.setComparator(13, c);
             trs.setComparator(14, c);
             trs.setComparator(15, c);
             trs.setComparator(16, c);
@@ -622,7 +624,7 @@ public class PokemonTab extends JPanel {
                 return Math.round(Integer.getInteger((String) e1) - Integer.getInteger((String) e2));
             });
             trs.setComparator(20, c);
-            trs.setComparator(22, (date1, date2) -> (((LocalDateTime) date1).compareTo((LocalDateTime) date2)));
+            trs.setComparator(22, cDate);
             setRowSorter(trs);
             trs.toggleSortOrder(sortColIndex);
             List<SortKey> sortKeys = new ArrayList<>();
