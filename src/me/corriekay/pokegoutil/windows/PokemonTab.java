@@ -631,7 +631,7 @@ public class PokemonTab extends JPanel {
 
                 move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1) + "dps)");
                 move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " (" + String.format("%.2f", dps2) + "dps)");
-                hpCol.add(i.getValue(), p.getStamina());
+                hpCol.add(i.getValue(), p.getMaxStamina());
 
                 int trainerLevel = 1;
                 try {
