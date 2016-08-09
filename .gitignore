@@ -52,6 +52,8 @@ PokeGoBot.iml
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Project specific files
 /target/
 *.log
 config.json
