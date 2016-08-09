@@ -419,7 +419,7 @@ public class PokemonTab extends JPanel {
                         // it was likely successful
                         // https://github.com/Grover-c13/PokeGOAPI-Java/issues?utf8=%E2%9C%93&q=Contents%20of%20buffer%20are%20null%20
                         err.increment();
-                        System.out.println("Error toggling Pokémon(s) favorite! " + e.getMessage());
+                        System.out.println("Error toggling Pokémon " + PokeHandler.getLocalPokeName(poke) + " favorite! " + e.getMessage());
                     }
                 });
                 try {
