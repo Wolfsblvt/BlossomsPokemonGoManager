@@ -74,13 +74,13 @@ public class PokemonTab extends JPanel {
         setLayout(new BorderLayout());
         this.go = go;
         JPanel topPanel = new JPanel(new GridBagLayout());
-        JButton refreshPkmn, renameSelected, transferSelected, evolveSelected, powerUpSelected, toggleFavoriteSelected;
+        JButton refreshPkmn, renameSelected, transferSelected, evolveSelected, powerUpSelected, toggleFavorite;
         refreshPkmn = new JButton("Refresh List");
         renameSelected = new JButton("Rename");
         transferSelected = new JButton("Transfer");
         evolveSelected = new JButton("Evolve");
         powerUpSelected = new JButton("Power Up");
-        toggleFavoriteSelected = new JButton("Toggle Favorite Selected");
+        toggleFavorite = new JButton("Toggle Favorite");
 
         GridBagConstraints gbc = new GridBagConstraints();
         topPanel.add(refreshPkmn, gbc);
@@ -118,9 +118,9 @@ public class PokemonTab extends JPanel {
                 return null;
             }
         }.execute());
-        topPanel.add(toggleFavoriteSelected, gbc);
-        toggleFavoriteSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception { toggleFavoriteSelected(); return null; }
+        topPanel.add(toggleFavorite, gbc);
+        toggleFavorite.addActionListener(l -> new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception { toggleFavorite(); return null; }
         }.execute());
 
         ivTransfer.addKeyListener(
@@ -389,7 +389,7 @@ public class PokemonTab extends JPanel {
 
 
     //feature added by Ben Kauffman
-    private void toggleFavoriteSelected() {
+    private void toggleFavorite() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
         if(selection.size() > 0) {
             if(confirmOperation("Toggle Favorite", selection)) {
@@ -783,31 +783,56 @@ public class PokemonTab extends JPanel {
         @Override
         public String getColumnName(int columnIndex) {
             switch (columnIndex) {
-                case 0: return "Id";
-                case 1: return "Nickname";
-                case 2: return "Species";
-                case 3: return "IV %";
-                case 4: return "Lvl";
-                case 5: return "Atk";
-                case 6: return "Def";
-                case 7: return "Stam";
-                case 8: return "Type 1";
-                case 9: return "Type 2";
-                case 10: return "Move 1";
-                case 11: return "Move 2";
-                case 12: return "CP";
-                case 13: return "HP";
-                case 14: return "Max CP (Cur)";
-                case 15: return "Max CP (40)";
-                case 16: return "Max Evolved CP (Cur)";
-                case 17: return "Max Evolved CP (40)";
-                case 18: return "Candies";
-                case 19: return "To Evolve";
-                case 20: return "Stardust";
-                case 21: return "Caught With";
-                case 22: return "Time Caught";
-                case 23: return "Favorite";
-                default: return "UNKNOWN?";
+                case 0:
+                    return "Id";
+                case 1:
+                    return "Nickname";
+                case 2:
+                    return "Species";
+                case 3:
+                    return "IV %";
+                case 4:
+                    return "Lvl";
+                case 5:
+                    return "Atk";
+                case 6:
+                    return "Def";
+                case 7:
+                    return "Stam";
+                case 8:
+                    return "Type 1";
+                case 9:
+                    return "Type 2";
+                case 10:
+                    return "Move 1";
+                case 11:
+                    return "Move 2";
+                case 12:
+                    return "CP";
+                case 13:
+                    return "HP";
+                case 14:
+                    return "Max CP (Cur)";
+                case 15:
+                    return "Max CP (40)";
+                case 16:
+                    return "Max Evolved CP (Cur)";
+                case 17:
+                    return "Max Evolved CP (40)";
+                case 18:
+                    return "Candies";
+                case 19:
+                    return "To Evolve";
+                case 20:
+                    return "Stardust";
+                case 21:
+                    return "Caught With";
+                case 22:
+                    return "Time Caught";
+                case 23:
+                    return "Favorite";
+                default:
+                    return "UNKNOWN?";
             }
         }
 
@@ -824,31 +849,56 @@ public class PokemonTab extends JPanel {
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             switch (columnIndex) {
-                case 0: return numIdCol.get(rowIndex);
-                case 1: return nickCol.get(rowIndex);
-                case 2: return speciesCol.get(rowIndex);
-                case 3: return ivCol.get(rowIndex);
-                case 4: return levelCol.get(rowIndex);
-                case 5: return atkCol.get(rowIndex);
-                case 6: return defCol.get(rowIndex);
-                case 7: return stamCol.get(rowIndex);
-                case 8: return type1Col.get(rowIndex);
-                case 9: return type2Col.get(rowIndex);
-                case 10: return move1Col.get(rowIndex);
-                case 11: return move2Col.get(rowIndex);
-                case 12: return cpCol.get(rowIndex);
-                case 13: return hpCol.get(rowIndex);
-                case 14: return maxCpCurrentCol.get(rowIndex);
-                case 15: return maxCpCol.get(rowIndex);
-                case 16: return maxEvolvedCpCurrentCol.get(rowIndex);
-                case 17: return maxEvolvedCpCol.get(rowIndex);
-                case 18: return candiesCol.get(rowIndex);
-                case 19: return candies2EvlvCol.get(rowIndex);
-                case 20: return dustToLevelCol.get(rowIndex);
-                case 21: return pokeballCol.get(rowIndex);
-                case 22: return caughtCol.get(rowIndex);
-                case 23: return favCol.get(rowIndex);
-                default: return null;
+                case 0:
+                    return numIdCol.get(rowIndex);
+                case 1:
+                    return nickCol.get(rowIndex);
+                case 2:
+                    return speciesCol.get(rowIndex);
+                case 3:
+                    return ivCol.get(rowIndex);
+                case 4:
+                    return levelCol.get(rowIndex);
+                case 5:
+                    return atkCol.get(rowIndex);
+                case 6:
+                    return defCol.get(rowIndex);
+                case 7:
+                    return stamCol.get(rowIndex);
+                case 8:
+                    return type1Col.get(rowIndex);
+                case 9:
+                    return type2Col.get(rowIndex);
+                case 10:
+                    return move1Col.get(rowIndex);
+                case 11:
+                    return move2Col.get(rowIndex);
+                case 12:
+                    return cpCol.get(rowIndex);
+                case 13:
+                    return hpCol.get(rowIndex);
+                case 14:
+                    return maxCpCurrentCol.get(rowIndex);
+                case 15:
+                    return maxCpCol.get(rowIndex);
+                case 16:
+                    return maxEvolvedCpCurrentCol.get(rowIndex);
+                case 17:
+                    return maxEvolvedCpCol.get(rowIndex);
+                case 18:
+                    return candiesCol.get(rowIndex);
+                case 19:
+                    return candies2EvlvCol.get(rowIndex);
+                case 20:
+                    return dustToLevelCol.get(rowIndex);
+                case 21:
+                    return pokeballCol.get(rowIndex);
+                case 22:
+                    return caughtCol.get(rowIndex);
+                case 23:
+                    return favCol.get(rowIndex);
+                default:
+                    return null;
             }
         }
     }
