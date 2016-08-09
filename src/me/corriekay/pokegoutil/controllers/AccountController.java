@@ -128,6 +128,7 @@ public final class AccountController {
                     }
                 } catch (Exception e) {
                     alertFailedLogin();
+                    deleteLoginData(LoginType.PTC);
                     continue;
                 }
             } else if (response == JOptionPane.NO_OPTION) {
@@ -172,6 +173,7 @@ public final class AccountController {
                     }
                 } catch (Exception e) {
                     alertFailedLogin();
+                    deleteLoginData(LoginType.GOOGLE);
                     continue;
                 }
 
