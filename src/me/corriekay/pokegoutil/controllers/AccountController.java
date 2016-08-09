@@ -26,13 +26,14 @@ import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
+import me.corriekay.pokegoutil.utils.Browser;
 import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
 
 /*this controller does the login/log off, and different account information (aka player data)
- * 
+ *
  */
 public final class AccountController {
 	
@@ -153,6 +154,7 @@ public final class AccountController {
                     //We need to get the auth code, as we do not have it yet.
                     UIManager.put("OptionPane.okButtonText", "Ok");
                     JOptionPane.showMessageDialog(null, "You will need to provide a google authentication key to log in. Press OK to continue.", "Google Auth", JOptionPane.PLAIN_MESSAGE);
+
                     //We're gonna try to load the page using the users browser
                     if (Desktop.isDesktopSupported()) {
                         JOptionPane.showMessageDialog(null, "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue", "Google Auth", JOptionPane.PLAIN_MESSAGE);
