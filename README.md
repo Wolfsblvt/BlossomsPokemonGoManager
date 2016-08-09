@@ -40,6 +40,10 @@ To use it in an IDE, you have to import the project as a Maven project.
 We are open for any help on our tool.  
 If you are fond of programming, you can always take one of the open issues, post that you want to help and create a Pull Request. For other features PRs are welcome too, but make sure the feature is really needed and/or not done in another way so that the work isn't wasted.
 
+**IMPORTANT! Please submit Pull Requests only against `develop`! PRs against master will be rejected.**
+
+Thanks for your help.
+
 #### Submitting Issues
 That's the best way how you can help us.  
 If you found a bug, submit an issue. If you have a suggestion, submit an issue. Just make sure before that the issue wasn't already mentioned. Search on the issue tracker helps there.  
