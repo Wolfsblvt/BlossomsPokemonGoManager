@@ -21,10 +21,10 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import me.corriekay.pokegoutil.controllers.AccountController;
+import me.corriekay.pokegoutil.controllers.AccountControllerNew;
 
 public class LoginController extends StackPane {
-	
+
     @FXML
     private TextField user;
 
@@ -36,57 +36,57 @@ public class LoginController extends StackPane {
 
     @FXML
     private Button googleAuthBtn;
-    
+
     @FXML
     private CheckBox autoRelogChkbx;
-    
-    public LoginController(){
+
+    public LoginController() {
     }
-    
+
     @FXML
-    private void initialize(){
-    	AccountController.initialize();    	
+    private void initialize() {
+        AccountControllerNew.initialize();
     }
-    
+
     @FXML
     void onGoogleAuthBtnClicked(ActionEvent event) {
-    	//TODO actually do the login
-    	//AccountController.logOnGoogleAuth();
-    	openMainWindow();
+        //TODO actually do the login
+        //AccountControllerNew.logOnGoogleAuth();
+        openMainWindow();
     }
-    
+
     @FXML
     void onPTCLoginBtnClicked(ActionEvent event) {
-    	//TODO actually do the login
-    	//AccountController.logOnPTC(user.getText(), password.getText());
-    	openMainWindow();
+        //TODO actually do the login
+        //AccountControllerNew.logOnPTC(user.getText(), password.getText());
+        openMainWindow();
     }
-    
+
     void openMainWindow() {
-    	googleAuthBtn.getScene().getWindow().hide();
-    	ClassLoader classLoader = getClass().getClassLoader();    	
-    	Parent mainLayout;		
-		try {
-			mainLayout = (Parent) FXMLLoader.load(classLoader.getResource("layout/MainWindow.fxml"));
-		} catch (IOException e) {
-			System.err.println("Problem loading .fxml file: " + e.toString());
-			return;
-		}
-    	Stage mainWindow = new Stage();
-    	URL icon = classLoader.getResource("icon/PokeBall-icon.png");
-		mainWindow.getIcons().add(new Image(icon.toExternalForm()));
-		try {
-			NumberFormat f = NumberFormat.getInstance();
-			PlayerProfile pp = AccountController.getPlayerProfile();
-			mainWindow.setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
-					f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
-		} catch (InvalidCurrencyException | LoginFailedException | RemoteServerException | NullPointerException e) {
-			mainWindow.setTitle("Blossom's Pokémon Go Manager");
-		}
-		
-		mainWindow.initStyle(StageStyle.DECORATED);
-		mainWindow.setResizable(false);
-		mainWindow.setScene(new Scene(mainLayout));    	  
-		mainWindow.show();
+        googleAuthBtn.getScene().getWindow().hide();
+        ClassLoader classLoader = getClass().getClassLoader();
+        Parent mainLayout;
+        try {
+            mainLayout = (Parent) FXMLLoader.load(classLoader.getResource("layout/MainWindow.fxml"));
+        } catch (IOException e) {
+            System.err.println("Problem loading .fxml file: " + e.toString());
+            return;
+        }
+        Stage mainWindow = new Stage();
+        URL icon = classLoader.getResource("icon/PokeBall-icon.png");
+        mainWindow.getIcons().add(new Image(icon.toExternalForm()));
+        try {
+            NumberFormat f = NumberFormat.getInstance();
+            PlayerProfile pp = AccountControllerNew.getPlayerProfile();
+            mainWindow.setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
+                    f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
+        } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException | NullPointerException e) {
+            mainWindow.setTitle("Blossom's Pokémon Go Manager");
+        }
+
+        mainWindow.initStyle(StageStyle.DECORATED);
+        mainWindow.setResizable(false);
+        mainWindow.setScene(new Scene(mainLayout));
+        mainWindow.show();
     }
 }
