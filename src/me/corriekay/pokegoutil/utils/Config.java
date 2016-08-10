@@ -6,6 +6,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -88,11 +89,12 @@ public class Config {
 	public String getString(String path, String defaultValue) {
 		try {
 			FindResult res = findNode(path, false);
-	
-			return res.node().getString(res.name());
+
+			String value = res.node().getString(res.name());
+			return StringEscapeUtils.unescapeJson(value);
 		} catch (JSONException jsone) {
 			System.err.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
-			setString(path, defaultValue);
+			setString(path, StringEscapeUtils.escapeJson(defaultValue));
 			return defaultValue;
 		}
 	}
@@ -101,7 +103,7 @@ public class Config {
 		try {
 			FindResult res = findNode(path, true);
 
-			res.node().put(res.name(), value);
+			res.node().put(res.name(), StringEscapeUtils.escapeJson(value));
 			saveConfig();
 		} catch (JSONException jsone) {
 			System.out.println("Could not save '" + value + "' to config (" + path + ")!");
