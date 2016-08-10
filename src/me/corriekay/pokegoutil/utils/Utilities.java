@@ -25,6 +25,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.api.player.Team;
@@ -78,7 +79,6 @@ public abstract class Utilities {
     }
 
     public static Image loadImage(String filename) {
-
         try {
             return ImageIO.read(Utilities.class.getClassLoader().getResourceAsStream(filename));
         } catch (Exception e) {
@@ -287,5 +287,13 @@ public abstract class Utilities {
             }
         }
         return "UNKNOWN_TEAM";
+    }
+
+    public static String getRealExceptionMessage(Exception e) {
+        String message = e.getMessage();
+        if (e instanceof InvalidProtocolBufferException || "Contents of buffer are null".equals(message)) {
+            message = "Server hasn't responded in time. Seems to be busy. The action may have been successful though. (" + message + ")";
+        }
+        return message;
     }
 }

@@ -6,14 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 import javax.swing.BoxLayout;
@@ -282,7 +275,7 @@ public class PokemonTab extends JPanel {
                     }
                 } catch (Exception e) {
                     err.increment();
-                    System.out.println("Error transferring " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
+                    System.out.println("Error transferring " + PokeHandler.getLocalPokeName(poke) + "! " + Utilities.getRealExceptionMessage(e));
                 }
             });
             try {
@@ -340,7 +333,7 @@ public class PokemonTab extends JPanel {
                         }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
+                        System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + "! " + Utilities.getRealExceptionMessage(e));
                     }
                 });
                 try {
@@ -395,7 +388,7 @@ public class PokemonTab extends JPanel {
                         }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
+                        System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + "! " + Utilities.getRealExceptionMessage(e));
                     }
                 });
                 try {
@@ -446,7 +439,7 @@ public class PokemonTab extends JPanel {
                         }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error toggling favorite for " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
+                        System.out.println("Error toggling favorite for " + PokeHandler.getLocalPokeName(poke) + "! " + Utilities.getRealExceptionMessage(e));
                     }
                 });
                 try {
@@ -608,10 +601,10 @@ public class PokemonTab extends JPanel {
          * 16 Integer - Max Evolved CP (Current)
          * 17 Integer - Max Evolved CP
          * 18 Integer - Candies of type
-         * 19 Integer - Candies to Evolve
+         * 19 String - Candies to Evolve
          * 20 Integer - Star Dust to level
          * 21 String - Pokeball Type
-         * 22 LocalDateTime - Caught at
+         * 22 String(Date) - Caught at
          * 23 Boolean - Favorite
          */
         int sortColIndex = 0;
@@ -628,7 +621,14 @@ public class PokemonTab extends JPanel {
             TableRowSorter<TableModel> trs = new TableRowSorter<>(getModel());
             Comparator<Integer> c = (i1, i2) -> Math.round(i1 - i2);
             Comparator<Double> cDouble = (d1, d2) -> (int) (d1 - d2);
-            Comparator<LocalDateTime> cDate = (date1, date2) -> (date1.compareTo(date2));
+            Comparator<String> cDate = (date1, date2) -> DateHelper.fromString(date1).compareTo(DateHelper.fromString(date2));
+            Comparator<String> cNullableInt = (s1, s2) -> {
+                if ("-".equals(s1))
+                    s1 = "0";
+                if ("-".equals(s2))
+                    s2 = "0";
+                return Integer.parseInt(s1) - Integer.parseInt(s2);
+            };
             trs.setComparator(0, c);
             trs.setComparator(3, cDouble);
             trs.setComparator(4, cDouble);
@@ -642,14 +642,7 @@ public class PokemonTab extends JPanel {
             trs.setComparator(16, c);
             trs.setComparator(17, c);
             trs.setComparator(18, c);
-            //TODO: needs to be fixed/debugged
-            trs.setComparator(19, (e1, e2) -> {
-                if (e1.equals("-"))
-                    e1 = "0";
-                if (e2.equals("-"))
-                    e2 = "0";
-                return Math.round(Integer.getInteger((String) e1) - Integer.getInteger((String) e2));
-            });
+            trs.setComparator(19, cNullableInt);
             trs.setComparator(20, c);
             trs.setComparator(22, cDate);
             setRowSorter(trs);
@@ -686,9 +679,9 @@ public class PokemonTab extends JPanel {
                 candiesCol = new ArrayList<>();//18
         private final ArrayList<String> candies2EvlvCol = new ArrayList<>();//19
         private final ArrayList<Integer> dustToLevelCol = new ArrayList<>();//20
-        private final ArrayList<String> pokeballCol = new ArrayList<>();//21
-        private final ArrayList<LocalDateTime> caughtCol = new ArrayList<>();//22
-        private final ArrayList<String> favCol = new ArrayList<>();//23
+        private final ArrayList<String> pokeballCol = new ArrayList<>(),//21
+                caughtCol = new ArrayList<>(),//22
+                favCol = new ArrayList<>();//23
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
@@ -794,7 +787,7 @@ public class PokemonTab extends JPanel {
                     candies2EvlvCol.add(i.getValue(), "-");
                 dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
                 pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
-                caughtCol.add(i.getValue(), LocalDateTime.ofInstant(Instant.ofEpochMilli(p.getCreationTimeMs()), ZoneId.systemDefault()));
+                caughtCol.add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
                 favCol.add(i.getValue(), (p.isFavorite()) ? "True" : "");
                 i.increment();
             });

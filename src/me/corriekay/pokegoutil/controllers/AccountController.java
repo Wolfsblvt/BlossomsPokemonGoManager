@@ -127,7 +127,7 @@ public final class AccountController {
                         deleteLoginData(LoginType.PTC);
                     }
                 } catch (Exception e) {
-                    alertFailedLogin();
+                    alertFailedLogin(e.getMessage());
                     deleteLoginData(LoginType.PTC);
                     continue;
                 }
@@ -172,7 +172,9 @@ public final class AccountController {
                         deleteLoginData(LoginType.GOOGLE);
                     }
                 } catch (Exception e) {
-                    alertFailedLogin();
+                    System.out.println("Exception at Google Auth Stuff");
+                    e.printStackTrace();
+                    alertFailedLogin(e.getMessage());
                     deleteLoginData(LoginType.GOOGLE);
                     continue;
                 }
@@ -200,8 +202,8 @@ public final class AccountController {
         PokemonBagController.initialize(go);
     }
 
-    private static void alertFailedLogin() {
-        JOptionPane.showMessageDialog(null, "Unfortunately, your login has failed. Press OK to try again.", "Login Failed", JOptionPane.PLAIN_MESSAGE);
+    private static void alertFailedLogin(String message) {
+        JOptionPane.showMessageDialog(null, "Unfortunately, your login has failed. Reason: " + message + "\nPress OK to try again.", "Login Failed", JOptionPane.PLAIN_MESSAGE);
     }
 
     private static boolean checkSaveAuth() {
