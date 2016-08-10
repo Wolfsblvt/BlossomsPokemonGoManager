@@ -36,6 +36,8 @@ import javax.swing.table.TableRowSorter;
 
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
+import com.google.protobuf.InvalidProtocolBufferException;
+import me.corriekay.pokegoutil.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -54,12 +56,6 @@ import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
-import me.corriekay.pokegoutil.utils.Config;
-import me.corriekay.pokegoutil.utils.GhostText;
-import me.corriekay.pokegoutil.utils.JTableColumnPacker;
-import me.corriekay.pokegoutil.utils.LDocumentListener;
-import me.corriekay.pokegoutil.utils.PokeHandler;
-import me.corriekay.pokegoutil.utils.PokemonCpUtils;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -270,7 +266,7 @@ public class PokemonTab extends JPanel {
                     }
                 } catch (Exception e) {
                     err.increment();
-                    System.out.println("Error transferring " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
+                    System.out.println("Error transferring " + PokeHandler.getLocalPokeName(poke) + "! " + Utilities.getRealExceptionMessage(e));
                 }
             });
             try {
@@ -321,7 +317,7 @@ public class PokemonTab extends JPanel {
                         }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
+                        System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + "! " + Utilities.getRealExceptionMessage(e));
                     }
                 });
                 try {
@@ -369,7 +365,7 @@ public class PokemonTab extends JPanel {
                         }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + "! " + e.getMessage());
+                        System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + "! " + Utilities.getRealExceptionMessage(e));
                     }
                 });
                 try {
@@ -414,12 +410,8 @@ public class PokemonTab extends JPanel {
                         }
 
                     } catch (Exception e) {
-
-                        // if the error was "Contents of buffer are null"
-                        // it was likely successful
-                        // https://github.com/Grover-c13/PokeGOAPI-Java/issues?utf8=%E2%9C%93&q=Contents%20of%20buffer%20are%20null%20
                         err.increment();
-                        System.out.println("Error toggling Pokémon " + PokeHandler.getLocalPokeName(poke) + " favorite! " + e.getMessage());
+                        System.out.println("Error toggling Pokémon " + PokeHandler.getLocalPokeName(poke) + " favorite! " + Utilities.getRealExceptionMessage(e));
                     }
                 });
                 try {
