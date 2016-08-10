@@ -267,8 +267,8 @@ public abstract class Utilities {
     }
 
     public static void sleepRandom(int minMilliseconds, int maxMilliseconds) {
-        int from = Math.min(minMilliseconds, maxMilliseconds);
-        int to = Math.max(minMilliseconds, maxMilliseconds);
+        int from = Math.max(minMilliseconds, maxMilliseconds);
+        int to = Math.min(minMilliseconds, maxMilliseconds);
         try {
             int randomInt = random.nextInt((from - to) + 1) + to;
             System.out.println("Waiting " + (randomInt / 1000.0F) + " seconds.");
