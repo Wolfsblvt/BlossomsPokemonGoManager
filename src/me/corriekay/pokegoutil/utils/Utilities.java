@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
@@ -257,10 +258,22 @@ public abstract class Utilities {
         return c;
     }
 
-    public static void sleep(int sleep) {
+    public static void sleep(long milliseconds) {
         try {
-            Thread.sleep(sleep);
-        } catch (Exception e) {
+            TimeUnit.MILLISECONDS.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sleepRandom(int minMilliseconds, int maxMilliseconds) {
+        int from = Math.min(minMilliseconds, maxMilliseconds);
+        int to = Math.max(minMilliseconds, maxMilliseconds);
+        try {
+            int randomInt = random.nextInt((from - to) + 1) + to;
+            System.out.println("Waiting " + (randomInt / 1000.0F) + " seconds.");
+            TimeUnit.MILLISECONDS.sleep(randomInt);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
