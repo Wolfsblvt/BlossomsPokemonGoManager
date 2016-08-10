@@ -97,8 +97,7 @@ public class PokeHandler {
             NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick);
             return result;
         } catch (LoginFailedException | RemoteServerException e) {
-            System.out.println("API Error while renaming " + getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")!");
-            System.err.println(e.getStackTrace());
+            System.out.println("Error while renaming " + getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! " + e.getMessage());
             return NicknamePokemonResponse.Result.UNRECOGNIZED;
         }
     }
