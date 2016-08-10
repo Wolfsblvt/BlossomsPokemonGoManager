@@ -142,7 +142,7 @@ public final class AccountController {
                         deleteLoginData(LoginType.PTC);
                     }
                 } catch (Exception e) {
-                    alertFailedLogin();
+                    alertFailedLogin(e.getMessage());
                     deleteLoginData(LoginType.PTC);
                     continue;
                 }
@@ -187,7 +187,9 @@ public final class AccountController {
                         deleteLoginData(LoginType.GOOGLE);
                     }
                 } catch (Exception e) {
-                    alertFailedLogin();
+                    System.out.println("Exception at Google Auth Stuff");
+                    e.printStackTrace();
+                    alertFailedLogin(e.getMessage());
                     deleteLoginData(LoginType.GOOGLE);
                     continue;
                 }
@@ -202,7 +204,10 @@ public final class AccountController {
 				try {
 					go = new PokemonGo(cp, http);
 				} catch (LoginFailedException | RemoteServerException e) {	
-					e.printStackTrace();
+					//e.printStackTrace();
+					alertFailedLogin(e.getMessage());
+                    deleteLoginData(LoginType.BOTH);
+                    continue;
 				}
 			else
                 throw new IllegalStateException();
@@ -212,6 +217,7 @@ public final class AccountController {
         initOtherControllers(go);
         S_INSTANCE.mainWindow = new PokemonGoMainWindow(go, S_INSTANCE.console);
         S_INSTANCE.mainWindow.start();
+
 	}
 	
 	public static void logOnPTC(String username, String password) {
@@ -330,6 +336,11 @@ public final class AccountController {
 	public static void relogNewUser(){
 		
 	}
+
+    private static void alertFailedLogin(String message) {
+        JOptionPane.showMessageDialog(null, "Unfortunately, your login has failed. Reason: " + message + "\nPress OK to try again.", "Login Failed", JOptionPane.PLAIN_MESSAGE);
+    }
+
 
     private static LoginType checkSavedConfig() {
         if (!config.getBool("login.SaveAuth", false)) {
