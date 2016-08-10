@@ -4,8 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -22,48 +23,62 @@ import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.utils.Browser;
 import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
-import sun.rmi.runtime.Log;
 
 /*this controller does the login/log off, and different account information (aka player data)
  *
  */
 public final class AccountController {
+	
+	private static final AccountController S_INSTANCE = new AccountController();
+	private static boolean sIsInit = false;
+	
+	@Deprecated
+	private Console console;
+	private boolean logged = false;
+	
+	@Deprecated
+	protected PokemonGoMainWindow mainWindow = null;
+	protected PokemonGo go = null;
+	protected OkHttpClient http;
+	protected CredentialProvider cp;
 
-    private static final AccountController S_INSTANCE = new AccountController();
-    private static boolean sIsInit = false;
+	private static Config config = Config.getConfig();
+		
+	private AccountController(){
+		
+	}
+	
+	public static AccountController getInstance(){
+		return S_INSTANCE;
+	}
+	
+	@Deprecated
+	public static void initialize(Console console) {
+		if(sIsInit)
+			return;
+		
+		S_INSTANCE.console = console;
+		
+		sIsInit = true;
+	}
+	
+	public static void initialize() {
+		if(sIsInit)
+			return;		
+		sIsInit = true;
+	}
 
-    private Console console;
-    private boolean logged = false;
-    private PokemonGoMainWindow mainWindow = null;
-    private PokemonGo go = null;
-
-    private static Config config = Config.getConfig();
-
-    private AccountController() {
-
-    }
-
-    public static AccountController getInstance() {
-        return S_INSTANCE;
-    }
-
-    public static void initialize(Console console) {
-        if (sIsInit)
-            return;
-
-        S_INSTANCE.console = console;
-
-        sIsInit = true;
-    }
-
-    public static void logOn() throws Exception {
-        if (!sIsInit) {
+    @Deprecated
+    public static void logOn() {
+    	if (!sIsInit) {
             throw new ExceptionInInitializerError("AccountController needs to be initialized before logging on");
         }
         OkHttpClient http;
@@ -186,8 +201,15 @@ public final class AccountController {
             UIManager.put("OptionPane.cancelButtonText", "Cancel");
 
             if (cp != null)
-                go = new PokemonGo(cp, http);
-            else
+				try {
+					go = new PokemonGo(cp, http);
+				} catch (LoginFailedException | RemoteServerException e) {	
+					//e.printStackTrace();
+					alertFailedLogin(e.getMessage());
+                    deleteLoginData(LoginType.BOTH);
+                    continue;
+				}
+			else
                 throw new IllegalStateException();
             S_INSTANCE.logged = true;
         }
@@ -195,24 +217,130 @@ public final class AccountController {
         initOtherControllers(go);
         S_INSTANCE.mainWindow = new PokemonGoMainWindow(go, S_INSTANCE.console);
         S_INSTANCE.mainWindow.start();
-    }
 
-    private static void initOtherControllers(PokemonGo go) {
-        InventoryController.initialize(go);
-        PokemonBagController.initialize(go);
-    }
+	}
+	
+	public static void logOnPTC(String username, String password) {
+		S_INSTANCE.http = new OkHttpClient();
+		while(!S_INSTANCE.logged) {		
+			//Using PTC, remove Google infos
+			config.delete("login.GoogleAuthToken");
+			try {
+				S_INSTANCE.cp = new PtcCredentialProvider(S_INSTANCE.http, username, password);
+				config.setString("login.PTCUsername", username);
+				if (config.getBool("login.SaveAuth", false) || checkSaveAuth()) {
+					config.setString("login.PTCPassword", password);
+					config.setBool("login.SaveAuth", true);
+				} else {
+					config.delete("login.PTCPassword");
+					config.delete("login.SaveAuth");
+				}
+			} catch(Exception e){
+				alertFailedLogin2();
+				continue;
+			}
+		}
+		
+	}
+	
+	public static void logOnGoogleAuth() {
+		S_INSTANCE.go = null;
+		S_INSTANCE.cp = null;
+		S_INSTANCE.http = new OkHttpClient();
+		while(!S_INSTANCE.logged) {
+			//Using Google, remove PTC infos
+			config.delete("login.PTCUsername");
+			config.delete("login.PTCPassword");
+			String authCode = config.getString("login.GoogleAuthToken", null);
+			boolean refresh = false;
+			if(authCode == null) {
+				//We need to get the auth code, as we do not have it yet.
+				UIManager.put("OptionPane.okButtonText", "Ok");
+				JOptionPane.showMessageDialog(null, "You will need to provide a google authentication key to log in. Press OK to continue.", "Google Auth", JOptionPane.PLAIN_MESSAGE);
+				//We're gonna try to load the page using the users browser 
+				if(Desktop.isDesktopSupported()) {
+					JOptionPane.showMessageDialog(null, "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue", "Google Auth", JOptionPane.PLAIN_MESSAGE);
+					try {
+						Desktop.getDesktop().browse(new URI(GoogleUserCredentialProvider.LOGIN_URL));
+					} catch (IOException | URISyntaxException e) {
+						System.err.println("Error Opening browser: " + e.toString());
+						return;
+					}
+				} else {
+					UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
+					if(JOptionPane.showConfirmDialog(null, "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.", "Google Auth", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION){
+						StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
+						Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+					}
+					UIManager.put("OptionPane.cancelButtonText", "Cancel");
+				}
+				//The user should have the auth code now. Lets get it.
+				authCode = JOptionPane.showInputDialog(null, "Please provide the authentication code", "Google Auth", JOptionPane.PLAIN_MESSAGE);
+			} else {
+				refresh = true;
+			}
+			try {
+				GoogleUserCredentialProvider provider = new GoogleUserCredentialProvider(S_INSTANCE.http);
+				if(refresh) provider.refreshToken(authCode);
+				else provider.login(authCode); 
+				S_INSTANCE.cp = provider;
+				if (config.getBool("login.SaveAuth", false) || checkSaveAuth2()) {
+					if (!refresh)
+						config.setString("login.GoogleAuthToken", provider.getRefreshToken());
+					config.setBool("login.SaveAuth", true);
+				} else {
+					config.delete("login.GoogleAuthToken");
+					config.delete("login.SaveAuth");
+				}
+			} catch (Exception e) {
+				alertFailedLogin2();
+				continue;
+			}
+		}
+		
+	}
+	
+	private static void initOtherControllers(PokemonGo go) {
+		InventoryController.initialize(go);
+		PokemonBagController.initialize(go);
+	}
+	
+	@Deprecated
+	private static void alertFailedLogin() {
+		JOptionPane.showMessageDialog(null, "Unfortunately, your login has failed. Press OK to try again.", "Login Failed", JOptionPane.PLAIN_MESSAGE);
+	}
+	
+	private static void alertFailedLogin2() {
+		//TODO alertFailedLogin
+		return;
+	}
+	
+	@Deprecated
+	private static boolean checkSaveAuth() {
+		UIManager.put("OptionPane.noButtonText", "No");
+		UIManager.put("OptionPane.yesButtonText", "Yes");
+		UIManager.put("OptionPane.okButtonText", "Ok");
+		UIManager.put("OptionPane.cancelButtonText", "Cancel");
+		return JOptionPane.showConfirmDialog(null, "Do you wish to save the password/auth token?\nCaution: These are saved in plain-text.", "Save Authentication?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+	}
+	
+	private static boolean checkSaveAuth2() {
+		return true;
+	}
+	
+	public static void logOff2() {
+		
+	}
+	
+	//TODO does nothing yet
+	public static void relogNewUser(){
+		
+	}
 
     private static void alertFailedLogin(String message) {
         JOptionPane.showMessageDialog(null, "Unfortunately, your login has failed. Reason: " + message + "\nPress OK to try again.", "Login Failed", JOptionPane.PLAIN_MESSAGE);
     }
 
-    private static boolean checkSaveAuth() {
-        UIManager.put("OptionPane.noButtonText", "No");
-        UIManager.put("OptionPane.yesButtonText", "Yes");
-        UIManager.put("OptionPane.okButtonText", "Ok");
-        UIManager.put("OptionPane.cancelButtonText", "Cancel");
-        return JOptionPane.showConfirmDialog(null, "Do you wish to save the password/auth token?\nCaution: These are saved in plain-text.", "Save Authentication?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
-    }
 
     private static LoginType checkSavedConfig() {
         if (!config.getBool("login.SaveAuth", false)) {
@@ -272,6 +400,7 @@ public final class AccountController {
         }
     }
 
+    @Deprecated
     public static void logOff() throws Exception {
         if (!sIsInit) {
             throw new ExceptionInInitializerError("AccountController needs to be initialized before logging on");
