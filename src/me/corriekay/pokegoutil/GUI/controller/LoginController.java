@@ -21,7 +21,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import me.corriekay.pokegoutil.controllers.AccountController;
+import me.corriekay.pokegoutil.controllers.AccountControllerNew;
 
 public class LoginController extends StackPane {
 
@@ -45,20 +45,20 @@ public class LoginController extends StackPane {
 
     @FXML
     private void initialize() {
-        AccountController.initialize();
+        AccountControllerNew.initialize();
     }
 
     @FXML
     void onGoogleAuthBtnClicked(ActionEvent event) {
         //TODO actually do the login
-        //AccountController.logOnGoogleAuth();
+        //AccountControllerNew.logOnGoogleAuth();
         openMainWindow();
     }
 
     @FXML
     void onPTCLoginBtnClicked(ActionEvent event) {
         //TODO actually do the login
-        //AccountController.logOnPTC(user.getText(), password.getText());
+        //AccountControllerNew.logOnPTC(user.getText(), password.getText());
         openMainWindow();
     }
 
@@ -77,7 +77,7 @@ public class LoginController extends StackPane {
         mainWindow.getIcons().add(new Image(icon.toExternalForm()));
         try {
             NumberFormat f = NumberFormat.getInstance();
-            PlayerProfile pp = AccountController.getPlayerProfile();
+            PlayerProfile pp = AccountControllerNew.getPlayerProfile();
             mainWindow.setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
                     f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
         } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException | NullPointerException e) {
