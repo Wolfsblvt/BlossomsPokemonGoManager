@@ -9,11 +9,7 @@ import java.awt.event.KeyListener;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 import javax.swing.BoxLayout;
@@ -36,6 +32,7 @@ import javax.swing.table.TableRowSorter;
 
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
+import me.corriekay.pokegoutil.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -54,12 +51,6 @@ import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
-import me.corriekay.pokegoutil.utils.Config;
-import me.corriekay.pokegoutil.utils.GhostText;
-import me.corriekay.pokegoutil.utils.JTableColumnPacker;
-import me.corriekay.pokegoutil.utils.LDocumentListener;
-import me.corriekay.pokegoutil.utils.PokeHandler;
-import me.corriekay.pokegoutil.utils.PokemonCpUtils;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -120,7 +111,10 @@ public class PokemonTab extends JPanel {
         }.execute());
         topPanel.add(toggleFavorite, gbc);
         toggleFavorite.addActionListener(l -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception { toggleFavorite(); return null; }
+            protected Void doInBackground() throws Exception {
+                toggleFavorite();
+                return null;
+            }
         }.execute());
 
         ivTransfer.addKeyListener(
@@ -391,8 +385,8 @@ public class PokemonTab extends JPanel {
     //feature added by Ben Kauffman
     private void toggleFavorite() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
-        if(selection.size() > 0) {
-            if(confirmOperation("Toggle Favorite", selection)) {
+        if (selection.size() > 0) {
+            if (confirmOperation("Toggle Favorite", selection)) {
                 MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
                 selection.forEach(poke -> {
                     try {
@@ -402,7 +396,7 @@ public class PokemonTab extends JPanel {
                         System.out.println("Attempting to set favorite for " + PokeHandler.getLocalPokeName(poke) + " to " + !poke.isFavorite() + "...");
                         go.getPlayerProfile().updateProfile();
 
-                        if(result == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
+                        if (result == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
                             System.out.println(
                                     "Favorite for " + PokeHandler.getLocalPokeName(poke) + " set to " + !poke.isFavorite() + ", Result: Success!");
                             success.increment();
@@ -584,7 +578,7 @@ public class PokemonTab extends JPanel {
          * 19 String - Candies to Evolve
          * 20 Integer - Star Dust to level
          * 21 String - Pokeball Type
-         * 22 LocalDateTime - Caught at
+         * 22 String(Date) - Caught at
          * 23 Boolean - Favorite
          */
         int sortColIndex = 0;
@@ -601,7 +595,7 @@ public class PokemonTab extends JPanel {
             TableRowSorter<TableModel> trs = new TableRowSorter<>(getModel());
             Comparator<Integer> c = (i1, i2) -> Math.round(i1 - i2);
             Comparator<Double> cDouble = (d1, d2) -> (int) (d1 - d2);
-            Comparator<LocalDateTime> cDate = (date1, date2) -> (date1.compareTo(date2));
+            Comparator<String> cDate = (date1, date2) -> DateHelper.fromString(date1).compareTo(DateHelper.fromString(date2));
             Comparator<String> cNullableInt = (s1, s2) -> {
                 if ("-".equals(s1))
                     s1 = "0";
@@ -659,9 +653,9 @@ public class PokemonTab extends JPanel {
                 candiesCol = new ArrayList<>();//18
         private final ArrayList<String> candies2EvlvCol = new ArrayList<>();//19
         private final ArrayList<Integer> dustToLevelCol = new ArrayList<>();//20
-        private final ArrayList<String> pokeballCol = new ArrayList<>();//21
-        private final ArrayList<LocalDateTime> caughtCol = new ArrayList<>();//22
-        private final ArrayList<String> favCol = new ArrayList<>();//23
+        private final ArrayList<String> pokeballCol = new ArrayList<>(),//21
+                caughtCol = new ArrayList<>(),//22
+                favCol = new ArrayList<>();//23
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
@@ -767,7 +761,7 @@ public class PokemonTab extends JPanel {
                     candies2EvlvCol.add(i.getValue(), "-");
                 dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
                 pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
-                caughtCol.add(i.getValue(), LocalDateTime.ofInstant(Instant.ofEpochMilli(p.getCreationTimeMs()), ZoneId.systemDefault()));
+                caughtCol.add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
                 favCol.add(i.getValue(), (p.isFavorite()) ? "True" : "");
                 i.increment();
             });
