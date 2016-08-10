@@ -120,7 +120,10 @@ public class PokemonTab extends JPanel {
         }.execute());
         topPanel.add(toggleFavorite, gbc);
         toggleFavorite.addActionListener(l -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception { toggleFavorite(); return null; }
+            protected Void doInBackground() throws Exception {
+                toggleFavorite();
+                return null;
+            }
         }.execute());
 
         ivTransfer.addKeyListener(
@@ -391,8 +394,8 @@ public class PokemonTab extends JPanel {
     //feature added by Ben Kauffman
     private void toggleFavorite() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
-        if(selection.size() > 0) {
-            if(confirmOperation("Toggle Favorite", selection)) {
+        if (selection.size() > 0) {
+            if (confirmOperation("Toggle Favorite", selection)) {
                 MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
                 selection.forEach(poke -> {
                     try {
@@ -402,7 +405,7 @@ public class PokemonTab extends JPanel {
                         System.out.println("Attempting to set favorite for " + PokeHandler.getLocalPokeName(poke) + " to " + !poke.isFavorite() + "...");
                         go.getPlayerProfile().updateProfile();
 
-                        if(result == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
+                        if (result == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
                             System.out.println(
                                     "Favorite for " + PokeHandler.getLocalPokeName(poke) + " set to " + !poke.isFavorite() + ", Result: Success!");
                             success.increment();
