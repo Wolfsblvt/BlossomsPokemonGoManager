@@ -19,7 +19,7 @@ import me.corriekay.pokegoutil.utils.Utilities;
 
 public class BlossomsPoGoManager extends Application {
 
-    public static final String VERSION = "0.2.0-Alpha";
+    public static final String VERSION = "v0.1.2-alpha.2";
 
     private ClassLoader classLoader = getClass().getClassLoader();
 
@@ -53,7 +53,7 @@ public class BlossomsPoGoManager extends Application {
     public void openGUIChooser(Stage primaryStage) {
         Parent root;
         try {
-            root = (Parent) FXMLLoader.load(classLoader.getResource("layout/ChooseGUIWindow.fxml"));
+            root = FXMLLoader.load(classLoader.getResource("layout/ChooseGUIWindow.fxml"));
         } catch (IOException e) {
             System.err.println("Problem loading .fxml file: " + e.toString());
             return;
