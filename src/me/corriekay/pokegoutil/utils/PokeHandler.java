@@ -78,7 +78,7 @@ public class PokeHandler {
      * it every time we process a pokemon. This should save resources.
      */
     private static Pattern getRenamePattern() {
-        return Pattern.compile("(%([a-zA-Z]+)%)");
+        return Pattern.compile("(%([a-zA-Z_]+)%)");
     }
 
     /***
