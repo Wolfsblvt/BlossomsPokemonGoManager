@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.corriekay.pokegoutil.GUI.controller.LuckyEggGrinderController">
+   <children>
+      <ProgressBar id="progressBar" fx:id="GrinderProgressBar" disable="true" layoutX="14.0" layoutY="368.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="24.0" prefWidth="568.0" progress="0.74" />
+      <Button id="grindBtn" fx:id="GrindBtn" disable="true" layoutX="14.0" layoutY="330.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="128.0" text="GRIND">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Label id="headerLabel" fx:id="headerLabel" layoutX="14.0" layoutY="14.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Select which pokémon to evolve and transfer :" />
+      <RadioButton id="caterpieRadioBtn" fx:id="caterpieRadioBtn" layoutX="12.0" layoutY="36.0" mnemonicParsing="false" selected="true" text="Caterpie : ### owned, ##### cand(y-ies), you can Evolve ### Caterpie(s)" />
+      <RadioButton id="weedleRadioBtn" fx:id="weedleRadioBtn" layoutX="12.0" layoutY="58.0" mnemonicParsing="false" selected="true" text="Weedle : ### owned, ##### cand(y-ies), you can Evolve ### Weedle(s)" />
+      <RadioButton id="pidgeyRadioBtn" fx:id="pidgeyRadioBtn" layoutX="12.0" layoutY="79.0" mnemonicParsing="false" selected="true" text="Pidgey : ### owned, ##### cand(y-ies), you can Evolve ### Pidgey(s)" />
+      <Label id="progressLabel" fx:id="progressLabel" layoutX="284.0" layoutY="372.0" text="###%" />
+      <Button id="transferBtn" fx:id="transferBtn" disable="true" layoutX="454.0" layoutY="330.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="32.0" prefWidth="128.0" text="TRANSFER">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Button>
+      <Pane id="selectPkPane" fx:id="selectPkPane" layoutX="14.0" layoutY="161.0" prefHeight="128.0" prefWidth="568.0">
+         <children>
+            <Label layoutX="14.0" layoutY="14.0" text="TODO LIST HERE" />
+         </children>
+      </Pane>
+      <ComboBox id="optionComboBox" fx:id="optionComboBox" layoutX="12.0" layoutY="123.0" prefHeight="25.0" prefWidth="191.0" promptText="add/remove to the grinder" />
+      <Label layoutX="12.0" layoutY="106.0" text="Options :" />
+      <Label id="requestLabel" fx:id="requestLabel" layoutX="215.0" layoutY="127.0" text="You will earn ######## XP evolving ### pokémon." />
+      <Button id="eggActivateBtn" fx:id="eggActivateBtn" disable="true" layoutX="500.0" layoutY="41.0" mnemonicParsing="false" text="Activate Egg" />
+      <Label id="eggNbLbl" fx:id="eggNbLbl" layoutX="493.0" layoutY="12.0" prefHeight="22.0" prefWidth="95.0" text="###  Lucky Egg(s)" textAlignment="CENTER" wrapText="true" />
+      <Label id="timeLeftOnEggLabel" layoutX="235.0" layoutY="345.0" text="Time left on Egg : ##:##" />
+      <Label id="operationLbl" fx:id="operationLbl" layoutX="12.0" layoutY="299.0" text="Operation in progress : operation_description" />
+   </children>
+</AnchorPane>
