@@ -78,7 +78,7 @@ public class PokeHandler {
      * it every time we process a pokemon. This should save resources.
      */
     private static Pattern getRenamePattern() {
-        return Pattern.compile("(%([a-zA-Z]+)%)");
+        return Pattern.compile("(%([a-zA-Z_]+)%)");
     }
 
     /***
@@ -190,7 +190,7 @@ public class PokeHandler {
                 return p.getNickname();
             }
         },
-        NAME("Pokemon Name") {
+        NAME("Pokémon Name") {
             @Override
             public String get(Pokemon p) {
                 return getLocalPokeName(p);
@@ -208,19 +208,19 @@ public class PokeHandler {
                 return String.valueOf(p.getMaxStamina());
             }
         },
-        IVRATING("IV Rating") {
-            @Override
-            public String get(Pokemon p) {
-                return String.valueOf(Math.round(p.getIvRatio() * 100 * 100) / 100.0);
-            }
-        },
-        LEVEL("Level") {
+        LEVEL("Pokémon Level") {
             @Override
             public String get(Pokemon p) {
                 return String.valueOf(p.getLevel());
             }
         },
-        IV("IV Values (all three)") {
+        IV_RATING("IV Rating") {
+            @Override
+            public String get(Pokemon p) {
+                return String.valueOf(Math.round(p.getIvRatio() * 100 * 100) / 100.0);
+            }
+        },
+        IV("IV Values (All three, like \"15/15/15\")") {
             @Override
             public String get(Pokemon p) {
                 return p.getIndividualAttack() + "/" + p.getIndividualDefense() + "/" + p.getIndividualStamina();
@@ -244,7 +244,7 @@ public class PokeHandler {
                 return String.valueOf(p.getIndividualStamina());
             }
         },
-        MAX_CP("Max CP (40)") {
+        MAX_CP("Maximum possible CP (with Trainer Level 40)") {
             @Override
             public String get(Pokemon p) {
                 PokemonMeta meta = p.getMeta();
@@ -254,19 +254,19 @@ public class PokeHandler {
                 return String.valueOf(PokemonCpUtils.getMaxCp(attack, defense, stamina));
             }
         },
-        TYPE1("Type 1") {
+        TYPE1("Pokémon Type 1") {
             @Override
             public String get(Pokemon p) {
                 return StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase());
             }
         },
-        TYPE2("Type 2") {
+        TYPE2("Pokémon Type 2") {
             @Override
             public String get(Pokemon p) {
                 return StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", ""));
             }
         },
-        ID("Pokedex Id") {
+        ID("Pokédex Id") {
             @Override
             public String get(Pokemon p) {
                 return String.valueOf(p.getId());
