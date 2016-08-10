@@ -560,7 +560,7 @@ public class PokemonTab extends JPanel {
                     e1 = "0";
                 if (e2.equals("-"))
                     e2 = "0";
-                return Math.round(Integer.getInteger((String) e1) - Integer.getInteger((String) e2));
+                return Math.round(Integer.parseInt((String)e1) - Integer.parseInt((String)e2));
             });
             trs.setComparator(20, c);
             trs.setComparator(22, (date1, date2) -> (((LocalDateTime) date1).compareTo((LocalDateTime) date2)));
