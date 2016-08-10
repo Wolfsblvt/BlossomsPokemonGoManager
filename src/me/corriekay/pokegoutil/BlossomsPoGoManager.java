@@ -1,7 +1,6 @@
 package me.corriekay.pokegoutil;
 
 import java.io.IOException;
-import java.net.URL;
 
 import javax.swing.SwingUtilities;
 
@@ -20,8 +19,9 @@ import me.corriekay.pokegoutil.utils.Utilities;
 
 public class BlossomsPoGoManager extends Application{
 	
-	public static final String VERSION = "0.1.1-Beta";
-	//public static final FXMLLoader LOADER = new FXMLLoader();
+	public static final String VERSION = "0.2.0-Alpha";
+	
+	private ClassLoader classLoader = getClass().getClassLoader();
 	
 	public static void main(String[] args) {
 		launch(args);
@@ -29,7 +29,6 @@ public class BlossomsPoGoManager extends Application{
 	
 	@Override
 	public void start(Stage primaryStage){
-		//@SuppressWarnings("static-access")
 		if (Config.getConfig().getBool("develop", false))
 			openGUIChooser(primaryStage);
 		else
@@ -52,22 +51,18 @@ public class BlossomsPoGoManager extends Application{
 	}
 
 	public void openGUIChooser(Stage primaryStage) {
-		if (primaryStage!=null) {
-			Parent root;
-			ClassLoader classLoader = getClass().getClassLoader();
-			try {
-				root = (Parent) FXMLLoader.load(classLoader.getResource("layout/ChooseGUIWindow.fxml"));
-			} catch (IOException e) {
-				System.err.println("Problem loading .fxml file: " + e.toString());
-				return;
-			}
-			primaryStage.setScene(new Scene(root));
-			URL image = classLoader.getResource("icon/PokeBall-icon.png");
-			primaryStage.getIcons().add(new Image(image.toExternalForm()));
-			primaryStage.setTitle("Choose a GUI");
-			primaryStage.initStyle(StageStyle.UTILITY);
-			primaryStage.setResizable(false);
-			primaryStage.show();
+		Parent root;		
+		try {
+			root = (Parent) FXMLLoader.load(classLoader.getResource("layout/ChooseGUIWindow.fxml"));
+		} catch (IOException e) {
+			System.err.println("Problem loading .fxml file: " + e.toString());
+			return;
 		}
+		primaryStage.setScene(new Scene(root));
+		primaryStage.getIcons().add(new Image(classLoader.getResource("icon/PokeBall-icon.png").toExternalForm()));
+		primaryStage.setTitle("Choose a GUI");
+		primaryStage.initStyle(StageStyle.UTILITY);
+		primaryStage.setResizable(false);
+		primaryStage.show();
 	}
 }

@@ -23,9 +23,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.controllers.AccountController;
 
-public class LoginController extends StackPane{
-
-	private ClassLoader classLoader;
+public class LoginController extends StackPane {
 	
     @FXML
     private TextField user;
@@ -42,10 +40,12 @@ public class LoginController extends StackPane{
     @FXML
     private CheckBox autoRelogChkbx;
     
+    public LoginController(){
+    }
+    
     @FXML
     private void initialize(){
-    	classLoader =  getClass().getClassLoader();
-    	AccountController.initialize();
+    	AccountController.initialize();    	
     }
     
     @FXML
@@ -63,20 +63,18 @@ public class LoginController extends StackPane{
     }
     
     void openMainWindow() {
-    	ptcLoginBtn.getScene().getWindow().hide();    	
-		Parent root;
+    	googleAuthBtn.getScene().getWindow().hide();
+    	ClassLoader classLoader = getClass().getClassLoader();    	
+    	Parent mainLayout;		
 		try {
-			root = (Parent) FXMLLoader.load(classLoader.getResource("layout/MainWindow.fxml"));
-		} catch (IOException e1) {
-			System.err.println("Error loading resource: layout/MainWindow.fxml");
+			mainLayout = (Parent) FXMLLoader.load(classLoader.getResource("layout/MainWindow.fxml"));
+		} catch (IOException e) {
+			System.err.println("Problem loading .fxml file: " + e.toString());
 			return;
 		}
-		Scene scene = new Scene(root);
-		
-		Stage mainWindow = new Stage();
-		
-		URL image = classLoader.getResource("icon/PokeBall-icon.png");
-		mainWindow.getIcons().add(new Image(image.toExternalForm()));
+    	Stage mainWindow = new Stage();
+    	URL icon = classLoader.getResource("icon/PokeBall-icon.png");
+		mainWindow.getIcons().add(new Image(icon.toExternalForm()));
 		try {
 			NumberFormat f = NumberFormat.getInstance();
 			PlayerProfile pp = AccountController.getPlayerProfile();
@@ -88,7 +86,7 @@ public class LoginController extends StackPane{
 		
 		mainWindow.initStyle(StageStyle.DECORATED);
 		mainWindow.setResizable(false);
-		mainWindow.setScene(scene);    	  
+		mainWindow.setScene(new Scene(mainLayout));    	  
 		mainWindow.show();
     }
 }

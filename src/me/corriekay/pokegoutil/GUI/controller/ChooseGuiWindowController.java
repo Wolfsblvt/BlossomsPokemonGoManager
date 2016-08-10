@@ -21,54 +21,61 @@ import me.corriekay.pokegoutil.utils.Utilities;
 
 public class ChooseGuiWindowController extends Pane{
 	
-	private ClassLoader classLoader;
-	
     @FXML
     private ResourceBundle resources;
-
+    
     @FXML
     private URL location;
-
+    
     @FXML
+    private URL icon;
+
+	@FXML
     private Button oldGuiBtn;
 
     @FXML
     private Button newGuiBtn;
+	
+	public URL getIcon(){
+		return icon;
+	}
+	
+	public URL getLocation(){
+		return location;
+	}
+    
+    public ChooseGuiWindowController(){
+    }
     
     @FXML
     void initialize() {
-    	classLoader = getClass().getClassLoader();
     }
 
     @FXML
     void onNewGuiBtnClicked(ActionEvent event){
-    	oldGuiBtn.getScene().getWindow().hide();
-    	
-		Parent root;
+    	newGuiBtn.getScene().getWindow().hide();	
+    	ClassLoader classLoader = getClass().getClassLoader();
+    	Parent login = new LoginController();		
 		try {
-			root = (Parent) FXMLLoader.load(classLoader.getResource("layout/Login.fxml"));
+			login = (Parent) FXMLLoader.load(classLoader.getResource("layout/Login.fxml"));
 		} catch (IOException e) {
-			System.err.println("Error loading resource: layout/Login.fxml" );
+			System.err.println("Problem loading .fxml file: " + e.toString());
 			return;
 		}
-		Scene scene = new Scene(root);
-		
-		Stage mainWindow = new Stage();
-		
-		URL image = classLoader.getResource("icon/PokeBall-icon.png");
-		mainWindow.getIcons().add(new Image(image.toExternalForm()));
-		mainWindow.setTitle("Login");
-		mainWindow.initStyle(StageStyle.UTILITY);
-		mainWindow.setResizable(false);
-		
-		mainWindow.setScene(scene);    	  
-		mainWindow.show();
+    	
+		Stage loginWindow = new Stage();		
+		URL icon = classLoader.getResource("icon/PokeBall-icon.png");
+		loginWindow.getIcons().add(new Image(icon.toExternalForm()));
+		loginWindow.setTitle("Login");
+		loginWindow.initStyle(StageStyle.UTILITY);
+		loginWindow.setResizable(false);		
+		loginWindow.setScene(new Scene(login));    	  
+		loginWindow.show();
     }
 
     @FXML
     void onOldGuiBtnClicked(ActionEvent event) {
-    	Stage chooseGuiWindow = (Stage) oldGuiBtn.getScene().getWindow();
-    	chooseGuiWindow.close();
+    	oldGuiBtn.getScene().getWindow().hide();
     	SwingUtilities.invokeLater(new Runnable() {
 
             private Console console;
