@@ -581,7 +581,7 @@ public class PokemonTab extends JPanel {
          * 16 Integer - Max Evolved CP (Current)
          * 17 Integer - Max Evolved CP
          * 18 Integer - Candies of type
-         * 19 Integer - Candies to Evolve
+         * 19 String - Candies to Evolve
          * 20 Integer - Star Dust to level
          * 21 String - Pokeball Type
          * 22 LocalDateTime - Caught at
@@ -602,6 +602,13 @@ public class PokemonTab extends JPanel {
             Comparator<Integer> c = (i1, i2) -> Math.round(i1 - i2);
             Comparator<Double> cDouble = (d1, d2) -> (int) (d1 - d2);
             Comparator<LocalDateTime> cDate = (date1, date2) -> (date1.compareTo(date2));
+            Comparator<String> cNullableInt = (s1, s2) -> {
+                if ("-".equals(s1))
+                    s1 = "0";
+                if ("-".equals(s2))
+                    s2 = "0";
+                return Integer.parseInt(s1) - Integer.parseInt(s2);
+            };
             trs.setComparator(0, c);
             trs.setComparator(3, cDouble);
             trs.setComparator(4, cDouble);
@@ -615,14 +622,7 @@ public class PokemonTab extends JPanel {
             trs.setComparator(16, c);
             trs.setComparator(17, c);
             trs.setComparator(18, c);
-            //TODO: needs to be fixed/debugged
-            trs.setComparator(19, (e1, e2) -> {
-                if (e1.equals("-"))
-                    e1 = "0";
-                if (e2.equals("-"))
-                    e2 = "0";
-                return Math.round(Integer.parseInt((String)e1) - Integer.parseInt((String)e2));
-            });
+            trs.setComparator(19, cNullableInt);
             trs.setComparator(20, c);
             trs.setComparator(22, cDate);
             setRowSorter(trs);
