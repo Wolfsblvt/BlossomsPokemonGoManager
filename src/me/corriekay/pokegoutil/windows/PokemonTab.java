@@ -216,6 +216,13 @@ public class PokemonTab extends JPanel {
                     err.increment();
                     System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " failed! Code: " + result.toString() + "; Nick: " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
                 }
+
+                // If not last element, sleep until the next one
+                if (!selection.get(selection.size() - 1).equals(pokemon)) {
+                    int sleepMin = Config.getConfig().getInt("delay.rename.min", 1000);
+                    int sleepMax = Config.getConfig().getInt("delay.rename.max", 5000);
+                    Utilities.sleepRandom(sleepMin, sleepMax);
+                }
             };
 
             handler.bulkRenameWithPattern(renamePattern, perPokeCallback);
@@ -258,6 +265,13 @@ public class PokemonTab extends JPanel {
                         System.out.println(
                                 "Error transferring " + PokeHandler.getLocalPokeName(poke) + ", result: " + result);
                         err.increment();
+                    }
+
+                    // If not last element, sleep until the next one
+                    if (!selection.get(selection.size() - 1).equals(poke)) {
+                        int sleepMin = Config.getConfig().getInt("delay.transfer.min", 1000);
+                        int sleepMax = Config.getConfig().getInt("delay.transfer.max", 5000);
+                        Utilities.sleepRandom(sleepMin, sleepMax);
                     }
                 } catch (Exception e) {
                     err.increment();
@@ -310,6 +324,13 @@ public class PokemonTab extends JPanel {
                             err.increment();
                             System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + ", result: " + er.toString());
                         }
+
+                        // If not last element, sleep until the next one
+                        if (!selection.get(selection.size() - 1).equals(poke)) {
+                            int sleepMin = Config.getConfig().getInt("delay.evolve.min", 3000);
+                            int sleepMax = Config.getConfig().getInt("delay.evolve.max", 12000);
+                            Utilities.sleepRandom(sleepMin, sleepMax);
+                        }
                     } catch (Exception e) {
                         err.increment();
                         System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + "! " + Utilities.getRealExceptionMessage(e));
@@ -358,6 +379,13 @@ public class PokemonTab extends JPanel {
                             System.out.println(
                                     "Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: " + result.toString());
                         }
+
+                        // If not last element, sleep until the next one
+                        if (!selection.get(selection.size() - 1).equals(poke)) {
+                            int sleepMin = Config.getConfig().getInt("delay.powerUp.min", 1000);
+                            int sleepMax = Config.getConfig().getInt("delay.powerUp.max", 5000);
+                            Utilities.sleepRandom(sleepMin, sleepMax);
+                        }
                     } catch (Exception e) {
                         err.increment();
                         System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + "! " + Utilities.getRealExceptionMessage(e));
@@ -397,16 +425,21 @@ public class PokemonTab extends JPanel {
                             System.out.println(
                                     "Favorite for " + PokeHandler.getLocalPokeName(poke) + " set to " + !poke.isFavorite() + ", Result: Success!");
                             success.increment();
-
                         } else {
                             err.increment();
                             System.out.println(
-                                    "Error toggling favorite for " + PokeHandler.getLocalPokeName(poke) + " , result: " + result.toString());
+                                    "Error toggling favorite for " + PokeHandler.getLocalPokeName(poke) + ", result: " + result.toString());
                         }
 
+                        // If not last element, sleep until the next one
+                        if (!selection.get(selection.size() - 1).equals(poke)) {
+                            int sleepMin = Config.getConfig().getInt("delay.favorite.min", 1000);
+                            int sleepMax = Config.getConfig().getInt("delay.favorite.max", 3000);
+                            Utilities.sleepRandom(sleepMin, sleepMax);
+                        }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error toggling Pokémon " + PokeHandler.getLocalPokeName(poke) + " favorite! " + Utilities.getRealExceptionMessage(e));
+                        System.out.println("Error toggling favorite for " + PokeHandler.getLocalPokeName(poke) + "! " + Utilities.getRealExceptionMessage(e));
                     }
                 });
                 try {
