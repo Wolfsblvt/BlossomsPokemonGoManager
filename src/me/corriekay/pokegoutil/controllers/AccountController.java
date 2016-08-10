@@ -187,8 +187,6 @@ public final class AccountController {
                         deleteLoginData(LoginType.GOOGLE);
                     }
                 } catch (Exception e) {
-                    System.out.println("Exception at Google Auth Stuff");
-                    e.printStackTrace();
                     alertFailedLogin(e.getMessage());
                     deleteLoginData(LoginType.GOOGLE);
                     continue;
@@ -204,7 +202,6 @@ public final class AccountController {
                 try {
                     go = new PokemonGo(cp, http);
                 } catch (LoginFailedException | RemoteServerException e) {
-                    //e.printStackTrace();
                     alertFailedLogin(e.getMessage());
                     deleteLoginData(LoginType.BOTH);
                     continue;
@@ -236,8 +233,7 @@ public final class AccountController {
                     config.delete("login.SaveAuth");
                 }
             } catch (Exception e) {
-                alertFailedLogin2();
-                continue;
+                alertFailedLogin2(e.getMessage());
             }
         }
 
@@ -257,16 +253,13 @@ public final class AccountController {
                 //We need to get the auth code, as we do not have it yet.
                 UIManager.put("OptionPane.okButtonText", "Ok");
                 JOptionPane.showMessageDialog(null, "You will need to provide a google authentication key to log in. Press OK to continue.", "Google Auth", JOptionPane.PLAIN_MESSAGE);
+
                 //We're gonna try to load the page using the users browser
-                if (Desktop.isDesktopSupported()) {
-                    JOptionPane.showMessageDialog(null, "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue", "Google Auth", JOptionPane.PLAIN_MESSAGE);
-                    try {
-                        Desktop.getDesktop().browse(new URI(GoogleUserCredentialProvider.LOGIN_URL));
-                    } catch (IOException | URISyntaxException e) {
-                        System.err.println("Error Opening browser: " + e.toString());
-                        return;
-                    }
-                } else {
+                JOptionPane.showMessageDialog(null, "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue", "Google Auth", JOptionPane.PLAIN_MESSAGE);
+                boolean success = Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
+
+                if (!success) {
+                    // Okay, couldn't open it. We use the manual copy window
                     UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
                     if (JOptionPane.showConfirmDialog(null, "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.", "Google Auth", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION) {
                         StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
@@ -274,6 +267,7 @@ public final class AccountController {
                     }
                     UIManager.put("OptionPane.cancelButtonText", "Cancel");
                 }
+
                 //The user should have the auth code now. Lets get it.
                 authCode = JOptionPane.showInputDialog(null, "Please provide the authentication code", "Google Auth", JOptionPane.PLAIN_MESSAGE);
             } else {
@@ -293,8 +287,7 @@ public final class AccountController {
                     config.delete("login.SaveAuth");
                 }
             } catch (Exception e) {
-                alertFailedLogin2();
-                continue;
+                alertFailedLogin2(e.getMessage());
             }
         }
 
@@ -306,11 +299,11 @@ public final class AccountController {
     }
 
     @Deprecated
-    private static void alertFailedLogin() {
-        JOptionPane.showMessageDialog(null, "Unfortunately, your login has failed. Press OK to try again.", "Login Failed", JOptionPane.PLAIN_MESSAGE);
+    private static void alertFailedLogin(String message) {
+        JOptionPane.showMessageDialog(null, "Unfortunately, your login has failed. Reason: " + message + "\nPress OK to try again.", "Login Failed", JOptionPane.PLAIN_MESSAGE);
     }
 
-    private static void alertFailedLogin2() {
+    private static void alertFailedLogin2(String message) {
         //TODO alertFailedLogin
         return;
     }
@@ -327,20 +320,6 @@ public final class AccountController {
     private static boolean checkSaveAuth2() {
         return true;
     }
-
-    public static void logOff2() {
-
-    }
-
-    //TODO does nothing yet
-    public static void relogNewUser() {
-
-    }
-
-    private static void alertFailedLogin(String message) {
-        JOptionPane.showMessageDialog(null, "Unfortunately, your login has failed. Reason: " + message + "\nPress OK to try again.", "Login Failed", JOptionPane.PLAIN_MESSAGE);
-    }
-
 
     private static LoginType checkSavedConfig() {
         if (!config.getBool("login.SaveAuth", false)) {
@@ -414,6 +393,10 @@ public final class AccountController {
         S_INSTANCE.mainWindow = null;
         deleteLoginData(LoginType.BOTH);
         logOn();
+    }
+
+    public static void logOff2() {
+
     }
 
     public static PlayerProfile getPlayerProfile() {
