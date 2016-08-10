@@ -75,7 +75,6 @@ public abstract class Utilities {
 	
 	public static Image loadImage(String filename) {
 		
-		filename = "res/" + filename;
 		try {
 			return ImageIO.read(Utilities.class.getClassLoader().getResourceAsStream(filename));
 		} catch (Exception e) {

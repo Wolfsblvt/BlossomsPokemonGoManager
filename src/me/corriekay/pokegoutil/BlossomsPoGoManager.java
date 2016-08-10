@@ -8,7 +8,7 @@ import me.corriekay.pokegoutil.utils.Utilities;
 public class BlossomsPoGoManager {
 	
 	private static Console console;
-	public static final String VERSION = "0.1.1-Beta";
+	public static final String VERSION = "v0.1.2-alpha.1";
 
 	public static void main(String[] args) throws Exception {
 		Utilities.setNativeLookAndFeel();
