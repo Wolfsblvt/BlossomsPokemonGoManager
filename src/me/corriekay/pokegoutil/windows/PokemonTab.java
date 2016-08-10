@@ -35,6 +35,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
+import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -73,12 +74,13 @@ public class PokemonTab extends JPanel {
         setLayout(new BorderLayout());
         this.go = go;
         JPanel topPanel = new JPanel(new GridBagLayout());
-        JButton refreshPkmn, renameSelected, transferSelected, evolveSelected, powerUpSelected;
+        JButton refreshPkmn, renameSelected, transferSelected, evolveSelected, powerUpSelected, toggleFavorite;
         refreshPkmn = new JButton("Refresh List");
         renameSelected = new JButton("Rename");
         transferSelected = new JButton("Transfer");
         evolveSelected = new JButton("Evolve");
         powerUpSelected = new JButton("Power Up");
+        toggleFavorite = new JButton("Toggle Favorite");
 
         GridBagConstraints gbc = new GridBagConstraints();
         topPanel.add(refreshPkmn, gbc);
@@ -115,6 +117,10 @@ public class PokemonTab extends JPanel {
                 powerUpSelected();
                 return null;
             }
+        }.execute());
+        topPanel.add(toggleFavorite, gbc);
+        toggleFavorite.addActionListener(l -> new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception { toggleFavorite(); return null; }
         }.execute());
 
         ivTransfer.addKeyListener(
@@ -381,6 +387,58 @@ public class PokemonTab extends JPanel {
         }
     }
 
+
+    //feature added by Ben Kauffman
+    private void toggleFavorite() {
+        ArrayList<Pokemon> selection = getSelectedPokemon();
+        if(selection.size() > 0) {
+            if(confirmOperation("Toggle Favorite", selection)) {
+                MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
+                selection.forEach(poke -> {
+                    try {
+                        System.out.println("Toggling favorite " + total.getValue() + " of " + selection.size());
+                        total.increment();
+                        SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result result = poke.setFavoritePokemon(!poke.isFavorite());
+                        System.out.println("Attempting to set favorite for " + PokeHandler.getLocalPokeName(poke) + " to " + !poke.isFavorite() + "...");
+                        go.getPlayerProfile().updateProfile();
+
+                        if(result == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
+                            System.out.println(
+                                    "Favorite for " + PokeHandler.getLocalPokeName(poke) + " set to " + !poke.isFavorite() + ", Result: Success!");
+                            success.increment();
+
+                        } else {
+                            err.increment();
+                            System.out.println(
+                                    "Error toggling favorite for " + PokeHandler.getLocalPokeName(poke) + " , result: " + result.toString());
+                        }
+
+                    } catch (Exception e) {
+
+                        // if the error was "Contents of buffer are null"
+                        // it was likely successful
+                        // https://github.com/Grover-c13/PokeGOAPI-Java/issues?utf8=%E2%9C%93&q=Contents%20of%20buffer%20are%20null%20
+                        err.increment();
+                        System.out.println("Error toggling Pokémon " + PokeHandler.getLocalPokeName(poke) + " favorite! " + e.getMessage());
+                    }
+                });
+                try {
+                    PokemonGoMainWindow.window.refreshTitle();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                SwingUtilities.invokeLater(this::refreshPkmn);
+
+                JOptionPane.showMessageDialog(null,
+                        "Pokémon batch \"toggle favorite\" complete!\nPokémon total: " + selection.size()
+                                + "\nSuccessful toggles: " + success.getValue()
+                                + (err.getValue() > 0 ? "\nErrors (need validation): " + err.getValue() : "")
+                );
+
+            }
+        }
+    }
+
     private void selectLessThanIv() {
         if (!NumberUtils.isNumber(ivTransfer.getText())) {
             System.out.println("Please select a valid IV value (0-100)");
@@ -446,8 +504,8 @@ public class PokemonTab extends JPanel {
                     + (Math.round(p.getIvRatio() * 10000) / 100) + "%";
             switch (operation) {
                 case "Evolve":
-                    str += " Cost: " + p.getCandyCostsForPowerup();
-                    str += p.getCandyCostsForPowerup() > 1 ? " Candies" : " Candy";
+                    str += " Cost: " + p.getCandiesToEvolve();
+                    str += p.getCandiesToEvolve() > 1 ? " Candies" : " Candy";
                     break;
                 case "PowerUp":
                     str += " Cost: " + p.getCandyCostsForPowerup();
@@ -527,6 +585,7 @@ public class PokemonTab extends JPanel {
          * 20 Integer - Star Dust to level
          * 21 String - Pokeball Type
          * 22 LocalDateTime - Caught at
+         * 23 Boolean - Favorite
          */
         int sortColIndex = 0;
         SortOrder so = SortOrder.ASCENDING;
@@ -542,6 +601,7 @@ public class PokemonTab extends JPanel {
             TableRowSorter<TableModel> trs = new TableRowSorter<>(getModel());
             Comparator<Integer> c = (i1, i2) -> Math.round(i1 - i2);
             Comparator<Double> cDouble = (d1, d2) -> (int) (d1 - d2);
+            Comparator<LocalDateTime> cDate = (date1, date2) -> (date1.compareTo(date2));
             trs.setComparator(0, c);
             trs.setComparator(3, cDouble);
             trs.setComparator(4, cDouble);
@@ -549,6 +609,7 @@ public class PokemonTab extends JPanel {
             trs.setComparator(6, c);
             trs.setComparator(7, c);
             trs.setComparator(12, c);
+            trs.setComparator(13, c);
             trs.setComparator(14, c);
             trs.setComparator(15, c);
             trs.setComparator(16, c);
@@ -563,7 +624,7 @@ public class PokemonTab extends JPanel {
                 return Math.round(Integer.parseInt((String)e1) - Integer.parseInt((String)e2));
             });
             trs.setComparator(20, c);
-            trs.setComparator(22, (date1, date2) -> (((LocalDateTime) date1).compareTo((LocalDateTime) date2)));
+            trs.setComparator(22, cDate);
             setRowSorter(trs);
             trs.toggleSortOrder(sortColIndex);
             List<SortKey> sortKeys = new ArrayList<>();
@@ -600,6 +661,7 @@ public class PokemonTab extends JPanel {
         private final ArrayList<Integer> dustToLevelCol = new ArrayList<>();//20
         private final ArrayList<String> pokeballCol = new ArrayList<>();//21
         private final ArrayList<LocalDateTime> caughtCol = new ArrayList<>();//22
+        private final ArrayList<String> favCol = new ArrayList<>();//23
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
@@ -706,6 +768,7 @@ public class PokemonTab extends JPanel {
                 dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
                 pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
                 caughtCol.add(i.getValue(), LocalDateTime.ofInstant(Instant.ofEpochMilli(p.getCreationTimeMs()), ZoneId.systemDefault()));
+                favCol.add(i.getValue(), (p.isFavorite()) ? "True" : "");
                 i.increment();
             });
         }
@@ -768,6 +831,8 @@ public class PokemonTab extends JPanel {
                     return "Caught With";
                 case 22:
                     return "Time Caught";
+                case 23:
+                    return "Favorite";
                 default:
                     return "UNKNOWN?";
             }
@@ -775,7 +840,7 @@ public class PokemonTab extends JPanel {
 
         @Override
         public int getColumnCount() {
-            return 23;
+            return 24;
         }
 
         @Override
@@ -832,6 +897,8 @@ public class PokemonTab extends JPanel {
                     return pokeballCol.get(rowIndex);
                 case 22:
                     return caughtCol.get(rowIndex);
+                case 23:
+                    return favCol.get(rowIndex);
                 default:
                     return null;
             }

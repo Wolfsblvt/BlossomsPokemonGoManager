@@ -46,7 +46,7 @@ public class PokemonGoMainWindow extends JFrame {
 					+ Utilities.convertTeamColorToName(pp.getPlayerData().getTeamValue()) + " player.");
 			System.out.println("Pokédex - Types Caught: " + pp.getStats().getUniquePokedexEntries()
 					+ ", Total Pokémon Caught: " + pp.getStats().getPokemonsCaptured() + ", Total Current Pokémon: "
-					+ go.getInventories().getPokebank().getPokemons().size());
+					+ go.getInventories().getPokebank().getPokemons().size() + " (+" + go.getInventories().getHatchery().getEggs().size() + " Eggs)");
 		} catch (RemoteServerException | LoginFailedException e) {
 			// System.out.println("Unable to login!");
 			// e.printStackTrace();
