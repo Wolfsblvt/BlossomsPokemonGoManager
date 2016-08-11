@@ -4,7 +4,7 @@
  * https://github.com/Grover-c13/PokeGOAPI-Java/blob/master/src/main/java/com/pokegoapi/api/pokemon/PokemonCpUtils.java
  */
 
-package me.corriekay.pokegoutil.utils;
+package me.corriekay.pokegoutil.utils.pokemon;
 
 import java.util.HashMap;
 import java.util.Map;

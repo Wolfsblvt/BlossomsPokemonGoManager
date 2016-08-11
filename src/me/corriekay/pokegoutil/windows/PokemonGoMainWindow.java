@@ -6,8 +6,10 @@ import com.pokegoapi.exceptions.InvalidCurrencyException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import me.corriekay.pokegoutil.utils.Config;
-import me.corriekay.pokegoutil.utils.Console;
-import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.ui.Console;
+import me.corriekay.pokegoutil.utils.helpers.FileHelper;
+import me.corriekay.pokegoutil.utils.helpers.UIHelper;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +40,7 @@ public class PokemonGoMainWindow extends JFrame {
 
             System.out.println("Successfully logged in. Welcome, " + pp.getPlayerData().getUsername() + ".");
             System.out.println("Stats: Lvl " + pp.getStats().getLevel() + " "
-                    + Utilities.convertTeamColorToName(pp.getPlayerData().getTeamValue()) + " player.");
+                    + PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue()) + " player.");
             System.out.println("Pokédex - Types Caught: " + pp.getStats().getUniquePokedexEntries()
                     + ", Total Pokémon Caught: " + pp.getStats().getPokemonsCaptured() + ", Total Current Pokémon: "
                     + go.getInventories().getPokebank().getPokemons().size() + " (+" + go.getInventories().getHatchery().getEggs().size() + " Eggs)");
@@ -48,7 +50,7 @@ public class PokemonGoMainWindow extends JFrame {
         }
         setLayout(new BorderLayout());
         refreshTitle();
-        setIconImage(Utilities.loadImage("icon/PokeBall-icon.png"));
+        setIconImage(FileHelper.loadImage("icon/PokeBall-icon.png"));
         setBounds(0, 0, config.getInt("options.window.width", 800), config.getInt("options.window.height", 650));
         // add EventHandler to save new window size and position to
         // config for the app to remember over restarts
@@ -67,7 +69,7 @@ public class PokemonGoMainWindow extends JFrame {
                 config.setInt("options.window.posy", w.getY());
             }
         });
-        Point pt = Utilities.getLocationMidScreen(this);
+        Point pt = UIHelper.getLocationMidScreen(this);
         int posx = config.getInt("options.window.posx", pt.x);
         int posy = config.getInt("options.window.posy", pt.y);
         setLocation(posx, posy);

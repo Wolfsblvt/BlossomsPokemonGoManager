@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.utils;
+package me.corriekay.pokegoutil.utils.helpers;
 
 
 import java.awt.*;
@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class Browser {
+public final class Browser {
+    private Browser() { /* Prevent initializing this class */ }
 
     /***
      * Opens given URL in users default browser of his operating system.

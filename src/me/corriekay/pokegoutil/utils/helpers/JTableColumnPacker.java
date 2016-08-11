@@ -1,11 +1,13 @@
-package me.corriekay.pokegoutil.utils;
+package me.corriekay.pokegoutil.utils.helpers;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
-public class JTableColumnPacker {
+public final class JTableColumnPacker {
+    private JTableColumnPacker() { /* Prevent initializing this class */ }
+
     public static void packColumn(JTable table, int vColIndex, int margin) {
         DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
         TableColumn col = colModel.getColumn(vColIndex);

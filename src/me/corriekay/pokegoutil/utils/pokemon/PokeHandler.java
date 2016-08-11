@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.utils;
+package me.corriekay.pokegoutil.utils.pokemon;
 
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import com.pokegoapi.api.pokemon.Pokemon;
@@ -6,6 +6,8 @@ import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.util.PokeNames;
+import me.corriekay.pokegoutil.utils.Config;
+import me.corriekay.pokegoutil.utils.Utilities;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;

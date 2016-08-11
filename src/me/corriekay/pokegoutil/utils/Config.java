@@ -1,5 +1,6 @@
 package me.corriekay.pokegoutil.utils;
 
+import me.corriekay.pokegoutil.utils.helpers.FileHelper;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +30,7 @@ public class Config {
             json = new JSONObject();
             saveConfig();
         } else {
-            json = new JSONObject(Utilities.readFile(file));
+            json = new JSONObject(FileHelper.readFile(file));
         }
     }
 
@@ -178,7 +179,7 @@ public class Config {
     }
 
     public void saveConfig() {
-        Utilities.saveFile(file, json.toString(4));
+        FileHelper.saveFile(file, json.toString(4));
     }
 
     private class FindResult {

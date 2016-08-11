@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.utils;
+package me.corriekay.pokegoutil.utils.ui;
 
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
