@@ -90,7 +90,7 @@ public class PokemonGoMainWindow extends JFrame {
 	public void refreshTitle() {
 		try {
 			NumberFormat f = NumberFormat.getInstance();
-			setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
+			setTitle(String.format("%s - Level: " + pp.getStats().getLevel() + " -  Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
 					f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
 		} catch (InvalidCurrencyException | LoginFailedException | RemoteServerException e) {
 			setTitle("Blossom's Pokémon Go Manager");
