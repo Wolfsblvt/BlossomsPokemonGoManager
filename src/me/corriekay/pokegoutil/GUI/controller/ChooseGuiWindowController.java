@@ -11,8 +11,8 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.controllers.AccountController;
-import me.corriekay.pokegoutil.utils.Console;
-import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.ui.Console;
+import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -82,7 +82,7 @@ public class ChooseGuiWindowController extends Pane {
 
             @Override
             public void run() {
-                Utilities.setNativeLookAndFeel();
+                UIHelper.setNativeLookAndFeel();
                 console = new Console("Console", 0, 0, true);
                 console.setVisible(false);
                 AccountController.initialize(console);

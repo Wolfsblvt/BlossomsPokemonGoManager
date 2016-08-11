@@ -1,4 +1,6 @@
-package me.corriekay.pokegoutil.utils;
+package me.corriekay.pokegoutil.utils.ui;
+
+import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,11 +17,6 @@ public class Console extends JFrame {
     public JScrollPane jsp;
     ArrayDeque<String> lines = new ArrayDeque<>();
     public ConsoleOut out = new ConsoleOut();
-    private String dateFormat = "MM/dd HH:mm:ss";
-
-    public void setDateFormat(String s) {
-        dateFormat = s;
-    }
 
     private String logname = "console.log";
 
@@ -116,7 +113,7 @@ public class Console extends JFrame {
         }
 
         private String timestamp() {
-            return Utilities.getTimeStamp(dateFormat);
+            return DateHelper.currentTime();
         }
 
         private String formatString(String s) {

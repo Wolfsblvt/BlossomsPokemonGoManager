@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.utils;
+package me.corriekay.pokegoutil.utils.ui;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
