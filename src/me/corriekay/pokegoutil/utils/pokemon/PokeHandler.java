@@ -199,13 +199,22 @@ public class PokeHandler {
         NAME_4("Pokémon Name (First four letters)") {
             @Override
             public String get(Pokemon p) {
-                return StringUtils.substring(getLocalPokeName(p), 0, 4);
+                String name = getLocalPokeName(p);
+                return (name.length() <= 4) ? name : name.substring(0, 3)+".";
             }
         },
         NAME_6("Pokémon Name (First six letters)") {
             @Override
             public String get(Pokemon p) {
-                return StringUtils.substring(getLocalPokeName(p), 0, 6);
+                String name = getLocalPokeName(p);
+                return (name.length() <= 4) ? name : name.substring(0, 5)+".";
+            }
+        },
+        NAME_8("Pokémon Name (First eight letters)") {
+            @Override
+            public String get(Pokemon p) {
+                String name = getLocalPokeName(p);
+                return (name.length() <= 8) ? name : name.substring(0, 7)+".";
             }
         },
         CP("Combat Points") {
