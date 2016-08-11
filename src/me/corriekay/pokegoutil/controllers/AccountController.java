@@ -281,7 +281,6 @@ public final class AccountController {
         S_INSTANCE.mainWindow.setVisible(false);
         S_INSTANCE.mainWindow.dispose();
         S_INSTANCE.mainWindow = null;
-        deleteLoginData(LoginType.BOTH);
         logOn();
     }
 
