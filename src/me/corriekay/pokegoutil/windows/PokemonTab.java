@@ -198,13 +198,17 @@ public class PokemonTab extends JPanel {
             if (result.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
                 success.increment();
                 System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " from \"" + pokemon.getNickname() + "\" to \"" + PokeHandler.generatePokemonNickname(renamePattern, pokemon) + "\", Result: Success!");
+            } else if (result.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE) { // FIXME: See PokeHandler.java@97
+                success.increment();
+                System.out.println("Not renaming " + PokeHandler.getLocalPokeName(pokemon) + ", already named " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
             } else {
                 err.increment();
                 System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " failed! Code: " + result.toString() + "; Nick: " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
             }
 
-            // If not last element, sleep until the next one
-            if (!selection.get(selection.size() - 1).equals(pokemon)) {
+            // If not last element, sleep until the next one and the rename was successful
+            if (!selection.get(selection.size() - 1).equals(pokemon)
+                    && result.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
                 int sleepMin = Config.getConfig().getInt("delay.rename.min", 1000);
                 int sleepMax = Config.getConfig().getInt("delay.rename.max", 5000);
                 Utilities.sleepRandom(sleepMin, sleepMax);

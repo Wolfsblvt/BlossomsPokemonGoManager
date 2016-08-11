@@ -92,6 +92,11 @@ public class PokeHandler {
     private static NicknamePokemonResponse.Result renWPattern(String pattern, Pokemon pokemon, Pattern regex) {
         String pokeNick = generatePokemonNickname(pattern, pokemon, regex);
 
+        if(pokeNick.equals(pokemon.getNickname())) {
+            // Why renaming to the same nickname?
+            return NicknamePokemonResponse.Result.UNSET; // FIXME: Enhance the response?
+        }
+
         // Actually renaming the Pokémon with the calculated nickname
         try {
             NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick);
