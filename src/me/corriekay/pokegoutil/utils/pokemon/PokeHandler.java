@@ -62,7 +62,7 @@ public class PokeHandler {
         return StringUtils.substring(pokeNick, 0, MAX_NICKNAME_LENGTH);
     }
 
-    /***
+    /**
      * Rename a single Pokemon based on a pattern
      *
      * @param pattern The pattern to use for renaming
@@ -73,7 +73,7 @@ public class PokeHandler {
         return renWPattern(pattern, pokemon, getRenamePattern());
     }
 
-    /***
+    /**
      * Helper method to get the rename Regex-Pattern so we don't have to rebuild
      * it every time we process a pokemon. This should save resources.
      */
@@ -81,7 +81,7 @@ public class PokeHandler {
         return Pattern.compile("(%([a-zA-Z0-9_]+)%)");
     }
 
-    /***
+    /**
      * Renames a pokemon according to a regex pattern.
      *
      * @param pattern The pattern to use for renaming
@@ -102,7 +102,7 @@ public class PokeHandler {
         }
     }
 
-    /***
+    /**
      * Returns the Name for the Pokémon with <c>id</c> in the current language.
      *
      * @param id The Pokémon ID
@@ -131,7 +131,7 @@ public class PokeHandler {
         return name;
     }
 
-    /***
+    /**
      * Returns the Name of the Pokémon <c>pokemon</c> in the current language.
      *
      * @param pokemon The Pokémon
@@ -143,7 +143,7 @@ public class PokeHandler {
 
     // endregion
 
-    /***
+    /**
      * Rename a bunch of Pokemon based on a pattern
      *
      * @param pattern         The pattern to use for renaming
@@ -317,7 +317,7 @@ public class PokeHandler {
             this.friendlyName = friendlyName;
         }
 
-        /***
+        /**
          * Returns the friendly name for the replacement pattern. Can be used to
          * generate explanations for possible placeholders automatically.
          */
@@ -325,7 +325,7 @@ public class PokeHandler {
             return friendlyName;
         }
 
-        /***
+        /**
          * This method must be overwritten and should return what should be the
          * replacement.
          *
