@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PokemonCpUtils {
-    private static final Map<Float,Float> LEVEL_CPMULTIPLIER = new HashMap<>();
+    private static final Map<Float, Float> LEVEL_CPMULTIPLIER = new HashMap<>();
 
     static {
         LEVEL_CPMULTIPLIER.put(1f, 0.094f);
@@ -110,6 +110,7 @@ public class PokemonCpUtils {
 
     /**
      * Get the level from the cp multiplier
+     *
      * @param cpMultiplier All CP multiplier values combined
      * @return Level
      */
@@ -119,7 +120,8 @@ public class PokemonCpUtils {
 
     /**
      * Get the maximum CP from the values
-     * @param attack All attack values combined
+     *
+     * @param attack  All attack values combined
      * @param defense All defense values combined
      * @param stamina All stamina values combined
      * @return Maximum CP for these levels
@@ -130,21 +132,23 @@ public class PokemonCpUtils {
 
     /**
      * Get the maximum CP from the values
-     * @param attack All attack values combined
-     * @param defense All defense values combined
-     * @param stamina All stamina values combined
+     *
+     * @param attack       All attack values combined
+     * @param defense      All defense values combined
+     * @param stamina      All stamina values combined
      * @param trainerLevel the trainer level for which the CP should be calculated
      * @return Maximum CP for these levels
      */
     public static int getMaxCpForTrainerLevel(int attack, int defense, int stamina, int trainerLevel) {
-        float maxPokemonLevel = Math.min(40.5f, trainerLevel+1.5F);
+        float maxPokemonLevel = Math.min(40.5f, trainerLevel + 1.5F);
         float maxCpMultplier = LEVEL_CPMULTIPLIER.get(maxPokemonLevel);
-        return (int)((double)attack * Math.pow((double)defense, 0.5D) * Math.pow((double)stamina, 0.5D) * Math.pow((double)maxCpMultplier, 2.0D) / 10.0D);
+        return (int) ((double) attack * Math.pow((double) defense, 0.5D) * Math.pow((double) stamina, 0.5D) * Math.pow((double) maxCpMultplier, 2.0D) / 10.0D);
     }
 
     /**
      * Get the CP after powerup
-     * @param cp Current CP level
+     *
+     * @param cp           Current CP level
      * @param cpMultiplier All CP multiplier values combined
      * @return New CP level
      */
@@ -152,21 +156,22 @@ public class PokemonCpUtils {
         // Based on http://pokemongo.gamepress.gg/power-up-costs
         float level = getLevelFromCpMultiplier(cpMultiplier);
         if (level <= 10) {
-            return (int)((cp * 0.009426125469) / Math.pow(cpMultiplier, 2));
+            return (int) ((cp * 0.009426125469) / Math.pow(cpMultiplier, 2));
         }
         if (level <= 20) {
-            return (int)((cp * 0.008919025675) / Math.pow(cpMultiplier, 2));
+            return (int) ((cp * 0.008919025675) / Math.pow(cpMultiplier, 2));
         }
         if (level <= 30) {
-            return (int)((cp * 0.008924905903) / Math.pow(cpMultiplier, 2));
+            return (int) ((cp * 0.008924905903) / Math.pow(cpMultiplier, 2));
         }
-        return (int)((cp * 0.00445946079) / Math.pow(cpMultiplier, 2));
+        return (int) ((cp * 0.00445946079) / Math.pow(cpMultiplier, 2));
     }
 
     /**
      * Get the amount of stardust required to do a powerup
+     *
      * @param cpMultiplier All CP multiplier values combined
-     * @param powerups Number of previous powerups
+     * @param powerups     Number of previous powerups
      * @return Amount of stardust
      */
     public static int getStartdustCostsForPowerup(float cpMultiplier, int powerups) {
@@ -234,20 +239,21 @@ public class PokemonCpUtils {
 
     /**
      * Get the amount of candy required to do a powerup
+     *
      * @param cpMultiplier All CP multiplier values combined
-     * @param powerups Number of previous powerups
+     * @param powerups     Number of previous powerups
      * @return Amount of candy
      */
     public static int getCandyCostsForPowerup(float cpMultiplier, int powerups) {
         // Based on http://pokemongo.gamepress.gg/power-up-costs
         float level = getLevelFromCpMultiplier(cpMultiplier);
-        if (level <= 13 && powerups <= 20 ) {
+        if (level <= 13 && powerups <= 20) {
             return 1;
         }
-        if (level <= 21 && powerups <= 36 ) {
+        if (level <= 21 && powerups <= 36) {
             return 2;
         }
-        if (level <= 31 && powerups <= 60 ) {
+        if (level <= 31 && powerups <= 60) {
             return 3;
         }
         return 4;

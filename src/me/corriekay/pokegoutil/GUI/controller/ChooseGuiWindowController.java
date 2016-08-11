@@ -1,11 +1,5 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import javax.swing.SwingUtilities;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +13,11 @@ import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.controllers.AccountController;
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
+
+import javax.swing.*;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class ChooseGuiWindowController extends Pane {
 

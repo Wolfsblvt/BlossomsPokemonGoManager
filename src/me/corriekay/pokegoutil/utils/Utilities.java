@@ -1,34 +1,18 @@
 package me.corriekay.pokegoutil.utils;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.DisplayMode;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Window;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.pokegoapi.api.player.Team;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-
-import com.google.protobuf.InvalidProtocolBufferException;
-import org.apache.commons.lang3.StringUtils;
-
-import com.pokegoapi.api.player.Team;
 
 public abstract class Utilities {
     private static final Random random = new Random(System.currentTimeMillis());

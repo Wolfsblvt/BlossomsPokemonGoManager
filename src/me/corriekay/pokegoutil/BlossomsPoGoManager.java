@@ -1,9 +1,5 @@
 package me.corriekay.pokegoutil;
 
-import java.io.IOException;
-
-import javax.swing.SwingUtilities;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,6 +11,9 @@ import me.corriekay.pokegoutil.controllers.AccountController;
 import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.Console;
 import me.corriekay.pokegoutil.utils.Utilities;
+
+import javax.swing.*;
+import java.io.IOException;
 
 
 public class BlossomsPoGoManager extends Application {

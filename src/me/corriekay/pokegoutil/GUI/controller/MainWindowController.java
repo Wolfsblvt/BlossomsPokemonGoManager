@@ -1,8 +1,5 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
-import java.io.IOException;
-import java.net.URL;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,7 +15,10 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-public class MainWindowController extends VBox{
+import java.io.IOException;
+import java.net.URL;
+
+public class MainWindowController extends VBox {
 
     @FXML
     private MenuItem settingsMenuItem;
@@ -68,30 +68,30 @@ public class MainWindowController extends VBox{
 
     @FXML
     void onOpenGrinderClicked(ActionEvent event) {
-    	//openGrinderBtn.getScene().getWindow().hide();	
-    	ClassLoader classLoader = getClass().getClassLoader();
-    	Parent grinder = new LuckyEggGrinderController();		
-		try {
-			grinder = (Parent) FXMLLoader.load(classLoader.getResource("layout/LuckyEggGrinder.fxml"));
-		} catch (IOException e) {
-			System.err.println("Problem loading .fxml file: " + e.toString());
-			return;
-		}
-    	
-		Stage grinderWindow = new Stage();		
-		URL icon = classLoader.getResource("icon/PokeBall-icon.png");
-		grinderWindow.getIcons().add(new Image(icon.toExternalForm()));
-		grinderWindow.setTitle("LuckyEggGrinder");
-		grinderWindow.initStyle(StageStyle.UTILITY);
-		grinderWindow.setResizable(false);		
-		grinderWindow.setScene(new Scene(grinder));    	  
-		grinderWindow.show();
+        //openGrinderBtn.getScene().getWindow().hide();
+        ClassLoader classLoader = getClass().getClassLoader();
+        Parent grinder = new LuckyEggGrinderController();
+        try {
+            grinder = (Parent) FXMLLoader.load(classLoader.getResource("layout/LuckyEggGrinder.fxml"));
+        } catch (IOException e) {
+            System.err.println("Problem loading .fxml file: " + e.toString());
+            return;
+        }
+
+        Stage grinderWindow = new Stage();
+        URL icon = classLoader.getResource("icon/PokeBall-icon.png");
+        grinderWindow.getIcons().add(new Image(icon.toExternalForm()));
+        grinderWindow.setTitle("LuckyEggGrinder");
+        grinderWindow.initStyle(StageStyle.UTILITY);
+        grinderWindow.setResizable(false);
+        grinderWindow.setScene(new Scene(grinder));
+        grinderWindow.show();
     }
 
     @FXML
     void onQuitClicked(ActionEvent event) {
-    	//TODO Kill in a more humane way, maybe...
-    	System.exit(0);
+        //TODO Kill in a more humane way, maybe...
+        System.exit(0);
     }
 
     @FXML
