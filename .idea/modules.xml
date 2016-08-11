@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PokeGoBot.iml" filepath="$PROJECT_DIR$/PokeGoBot.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BlossomsPokemonGoManager.iml" filepath="$PROJECT_DIR$/BlossomsPokemonGoManager.iml" />
     </modules>
   </component>
 </project>
