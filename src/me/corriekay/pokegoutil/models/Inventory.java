@@ -1,5 +1,5 @@
 package me.corriekay.pokegoutil.models;
 
 public class Inventory {
-	// list of items and such
+    // list of items and such
 }

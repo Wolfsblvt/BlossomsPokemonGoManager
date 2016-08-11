@@ -4,18 +4,17 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-
 <Pane prefHeight="65.0" prefWidth="304.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.corriekay.pokegoutil.GUI.controller.ChooseGuiWindowController">
-   <children>
-  <HBox alignment="CENTER" prefHeight="51.0" prefWidth="295.0">
     <children>
-      <Button fx:id="oldGuiBtn" mnemonicParsing="false" onAction="#onOldGuiBtnClicked" prefHeight="25.0" prefWidth="79.0" text="Current GUI" HBox.hgrow="NEVER">
-        <HBox.margin>
-          <Insets right="14.0" />
-        </HBox.margin>
-      </Button>
-        <Button fx:id="newGuiBtn" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#onNewGuiBtnClicked" prefHeight="25.0" prefWidth="171.0" text="WARNING MAY EXPLODE" />
+        <HBox alignment="CENTER" prefHeight="51.0" prefWidth="295.0">
+            <children>
+                <Button fx:id="oldGuiBtn" mnemonicParsing="false" onAction="#onOldGuiBtnClicked" prefHeight="25.0" prefWidth="79.0" text="Current GUI" HBox.hgrow="NEVER">
+                    <HBox.margin>
+                        <Insets right="14.0"/>
+                    </HBox.margin>
+                </Button>
+                <Button fx:id="newGuiBtn" cancelButton="true" minWidth="80.0" mnemonicParsing="false" onAction="#onNewGuiBtnClicked" prefHeight="25.0" prefWidth="171.0" text="WARNING MAY EXPLODE"/>
+            </children>
+        </HBox>
     </children>
-  </HBox>
-   </children>
 </Pane>

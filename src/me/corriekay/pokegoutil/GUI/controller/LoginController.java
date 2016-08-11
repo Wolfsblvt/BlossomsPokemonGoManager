@@ -1,14 +1,9 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
-import java.io.IOException;
-import java.net.URL;
-import java.text.NumberFormat;
-
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.exceptions.InvalidCurrencyException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +17,10 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.controllers.AccountControllerNew;
+
+import java.io.IOException;
+import java.net.URL;
+import java.text.NumberFormat;
 
 public class LoginController extends StackPane {
 

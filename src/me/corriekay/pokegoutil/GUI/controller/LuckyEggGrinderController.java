@@ -2,21 +2,13 @@ package me.corriekay.pokegoutil.GUI.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 
-public class LuckyEggGrinderController extends AnchorPane{
+public class LuckyEggGrinderController extends AnchorPane {
 
-	@FXML
+    @FXML
     private BorderPane luckyEggGrinderPane;
 
     @FXML
@@ -124,9 +116,9 @@ public class LuckyEggGrinderController extends AnchorPane{
 
     }
 
-    
+
     @FXML
     void initialize() {
-    	
+
     }
 }
