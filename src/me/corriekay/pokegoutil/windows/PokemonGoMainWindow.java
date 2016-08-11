@@ -28,30 +28,32 @@ public class PokemonGoMainWindow extends JFrame {
 	public static PokemonGoMainWindow window = null;
 	private Config config = Config.getConfig();
 
-	public PokemonGo getPoGo() { return go; }
+	public PokemonGo getPoGo() {
+		return go;
+	}
 
 	private final JTabbedPane tab = new JTabbedPane();
 
-	public PokemonGoMainWindow(PokemonGo pkmngo, Console console){
+	public PokemonGoMainWindow(PokemonGo pkmngo, Console console) {
 		go = pkmngo;
 		pp = go.getPlayerProfile();
 
 		console.clearAllLines();
 		try {
-			
+
 			System.out.println("Successfully logged in. Welcome, " + pp.getPlayerData().getUsername() + ".");
-			System.out.println("Stats: Lvl " + pp.getStats().getLevel() + " " 
-					+ Utilities.convertTeamColorToName(pp.getPlayerData().getTeamValue()) + " player.");			
+			System.out.println("Stats: Lvl " + pp.getStats().getLevel() + " "
+					+ Utilities.convertTeamColorToName(pp.getPlayerData().getTeamValue()) + " player.");
 			System.out.println("Pokédex - Types Caught: " + pp.getStats().getUniquePokedexEntries()
 					+ ", Total Pokémon Caught: " + pp.getStats().getPokemonsCaptured() + ", Total Current Pokémon: "
 					+ go.getInventories().getPokebank().getPokemons().size() + " (+" + go.getInventories().getHatchery().getEggs().size() + " Eggs)");
 		} catch (RemoteServerException | LoginFailedException e) {
-			System.out.println("Unable to login!");
-			e.printStackTrace();
+			// System.out.println("Unable to login!");
+			// e.printStackTrace();
 		}
 		setLayout(new BorderLayout());
 		refreshTitle();
-		setIconImage(Utilities.loadImage("PokeBall-icon.png"));
+		setIconImage(Utilities.loadImage("icon/PokeBall-icon.png"));
 		setBounds(0, 0, config.getInt("options.window.width", 800), config.getInt("options.window.height", 650));
 		// add EventHandler to save new window size and position to
 		// config for the app to remember over restarts
@@ -98,7 +100,7 @@ public class PokemonGoMainWindow extends JFrame {
 	}
 
 	public void start() {
-		//pack();
+		// pack();
 		setVisible(true);
 	}
 }

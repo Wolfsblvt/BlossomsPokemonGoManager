@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+
+<BorderPane fx:id="luckyEggGrinderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.corriekay.pokegoutil.GUI.controller.LuckyEggGrinderController">
+   <center>
+      <AnchorPane fx:id="optionsPane" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
+         <children>
+            <ComboBox id="optionComboBox" fx:id="optionsComboBox" layoutX="369.0" layoutY="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="189.0" promptText="add/remove to the grinder" />
+            <RadioButton id="caterpieRadioBtn" fx:id="noTransferLowerThanRadioBtn" layoutY="6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onNoTransferThanIV" text="Don't transfer low CP if IV is higher than : " />
+            <Spinner fx:id="noTransferLowerThanSpinner" disable="true" layoutX="242.0" layoutY="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="75.0" />
+            <RadioButton id="caterpieRadioBtn" fx:id="transferFavRadioBtn" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onTransferFav" text="Transfer favorites." />
+         </children>
+      </AnchorPane>
+   </center>
+   <bottom>
+      <AnchorPane fx:id="commandFooterPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
+         <children>
+            <ProgressBar id="progressBar" fx:id="GrinderProgressBar" disable="true" layoutY="204.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="24.0" prefWidth="573.0" progress="0.74" />
+            <Button id="grindBtn" fx:id="GrindBtn" disable="true" layoutX="1.0" layoutY="177.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="24.0" prefWidth="90.0" text="GRIND">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+            <Label id="progressLabel" fx:id="progressLabel" layoutX="266.0" layoutY="207.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="###/###" />
+            <Button id="transferBtn" fx:id="transferBtn" disable="true" layoutX="493.0" layoutY="176.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="TRANSFER">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Button>
+            <Label id="operationLbl" fx:id="operationLbl" layoutX="165.0" layoutY="176.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Operation in progress : operation_description" />
+            <TableView fx:id="listToTransferTableView" fixedCellSize="0.0" layoutX="4.0" layoutY="6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="154.0" prefWidth="566.0">
+              <columns>
+                <TableColumn fx:id="nick_tabCol" prefWidth="107.79998779296875" text="Nickname" />
+                <TableColumn fx:id="name_tabCol" prefWidth="86.5999755859375" text="Pokémon" />
+                  <TableColumn fx:id="iv_tabCol" prefWidth="52.4000244140625" text="IV" />
+                  <TableColumn fx:id="CP_tabCol" prefWidth="56.20001220703125" text="CP" />
+                  <TableColumn fx:id="ads_tabCol" prefWidth="88.0" text="A/D/S" />
+                  <TableColumn fx:id="fav_tabCol" prefWidth="82.0" text="Favorite" />
+              </columns>
+            </TableView>
+         </children>
+      </AnchorPane>
+   </bottom>
+   <top>
+      <AnchorPane fx:id="commandRequestPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
+         <children>
+            <Label id="headerLabel" fx:id="headerLabel" layoutY="3.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Select which Pokémon to evolve and transfer :" underline="true" />
+            <RadioButton id="caterpieRadioBtn" fx:id="caterpieRadioBtn1" layoutY="22.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="Caterpie : ### owned, ##### cand(y-ies), you can Evolve ### Caterpie(s)" />
+            <RadioButton id="weedleRadioBtn" fx:id="weedleRadioBtn1" layoutX="2.0" layoutY="70.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="Weedle : ### owned, ##### cand(y-ies), you can Evolve ### Weedle(s)" />
+            <RadioButton id="pidgeyRadioBtn" fx:id="pidgeyRadioBtn1" layoutY="125.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" selected="true" text="Pidgey : ### owned, ##### cand(y-ies), you can Evolve ### Pidgey(s)" />
+            <Label id="requestLabel" fx:id="requestLbl" layoutX="274.0" layoutY="185.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="You will earn ######## XP evolving ### Pokémon.">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Button id="eggActivateBtn" fx:id="eggActivateBtn" disable="true" layoutX="481.0" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Activate Egg" />
+            <Label id="eggNbLbl" fx:id="eggNbLbl" layoutX="475.0" layoutY="5.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="###  Lucky Egg(s)" textAlignment="CENTER" wrapText="true" />
+            <Label id="timeLeftOnEggLabel" fx:id="timeLeftOnEggLbl" layoutX="442.0" layoutY="61.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" text="Time left on Egg : ##:##" />
+            <RadioButton id="caterpieRadioBtn" fx:id="caterpieRadioBtn2" layoutX="19.0" layoutY="46.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="### Extra Caterpie(s), transfer those from lowest CP to highest" />
+            <RadioButton id="caterpieRadioBtn" fx:id="weedleRadioBtn2" layoutX="19.0" layoutY="97.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="### Extra Weedle(s), transfer those from lowest CP to highest" />
+            <RadioButton id="caterpieRadioBtn" fx:id="pidgeyRadioBtn1" layoutX="21.0" layoutY="154.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="### Extra Pidgey(s), transfer those from lowest CP to highest" />
+            <CheckBox fx:id="enableOptionsChkBox" layoutX="2.0" layoutY="185.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onEnableOptions" text="Enable Options" underline="true" />
+         </children>
+      </AnchorPane>
+   </top>
+</BorderPane>
