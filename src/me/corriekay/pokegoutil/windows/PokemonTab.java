@@ -16,6 +16,7 @@ import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -687,14 +688,8 @@ public class PokemonTab extends JPanel {
                 type1Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()));
                 type2Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
 
-                PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
-                PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
-                Double dps1 = (double) pm1.getPower() / (double) pm1.getTime() * 1000;
-                Double dps2 = (double) pm2.getPower() / (double) (pm2.getTime() + 500) * 1000;
-                if (p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType()))
-                    dps1 = dps1 * 1.25;
-                if (p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType()))
-                    dps2 = dps2 * 1.25;
+                Double dps1 = PokemonUtils.dpsForMove1(p);
+                Double dps2 = PokemonUtils.dpsForMove2(p);
 
                 move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1) + "dps)");
                 move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " (" + String.format("%.2f", dps2) + "dps)");
