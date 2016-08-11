@@ -70,7 +70,7 @@ public class MenuBar extends JMenuBar {
 				"Trainer Name: " + pp.getPlayerData().getUsername(), 
 				"Team: " + Utilities.convertTeamColorToName(pp.getPlayerData().getTeamValue()),
 				"Level: " + pp.getStats().getLevel(),
-				"XP: " + pp.getStats().getExperience() + " (" + go.getPlayerProfile().getStats().getNextLevelXp() + " to next level)",
+				"XP: " + pp.getStats().getExperience() + ", " + go.getPlayerProfile().getStats().getNextLevelXp() + " to next level (" + ( go.getPlayerProfile().getStats().getNextLevelXp() - pp.getStats().getExperience() ) + " remaining)",
 				"Stardust: " + pp.getCurrency(Currency.STARDUST)
 		};
 		JOptionPane.showMessageDialog(null, tstats, "Trainer Stats", JOptionPane.PLAIN_MESSAGE);
