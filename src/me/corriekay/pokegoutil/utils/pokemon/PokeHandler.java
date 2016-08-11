@@ -3,6 +3,8 @@ package me.corriekay.pokegoutil.utils.pokemon;
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMoveMeta;
+import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.util.PokeNames;
@@ -17,6 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PokeHandler {
+    public static final int MAX_NICKNAME_LENGTH = 12;
+
     private ArrayList<Pokemon> mons;
 
     public PokeHandler(Pokemon pokemon) {
@@ -55,7 +59,7 @@ public class PokeHandler {
                 // Do nothing, nothing to replace
             }
         }
-        return pokeNick;
+        return StringUtils.substring(pokeNick, 0, MAX_NICKNAME_LENGTH);
     }
 
     /***
@@ -74,7 +78,7 @@ public class PokeHandler {
      * it every time we process a pokemon. This should save resources.
      */
     private static Pattern getRenamePattern() {
-        return Pattern.compile("(%([a-zA-Z_]+)%)");
+        return Pattern.compile("(%([a-zA-Z0-9_]+)%)");
     }
 
     /***
@@ -192,6 +196,18 @@ public class PokeHandler {
                 return getLocalPokeName(p);
             }
         },
+        NAME_4("Pokémon Name (First four letters)") {
+            @Override
+            public String get(Pokemon p) {
+                return StringUtils.substring(getLocalPokeName(p), 0, 4);
+            }
+        },
+        NAME_6("Pokémon Name (First six letters)") {
+            @Override
+            public String get(Pokemon p) {
+                return StringUtils.substring(getLocalPokeName(p), 0, 6);
+            }
+        },
         CP("Combat Points") {
             @Override
             public String get(Pokemon p) {
@@ -216,10 +232,16 @@ public class PokeHandler {
                 return String.valueOf(Math.round(p.getIvRatio() * 100 * 100) / 100.0);
             }
         },
-        IV("IV Values (All three, like \"15/15/15\")") {
+        IV_RATING_INT("IV Rating (Rounded to integer)") {
             @Override
             public String get(Pokemon p) {
-                return p.getIndividualAttack() + "/" + p.getIndividualDefense() + "/" + p.getIndividualStamina();
+                return String.valueOf(Math.round(p.getIvRatio() * 100));
+            }
+        },
+        IV_HEX("IV Values in hexadecimal, like \"9FA\" (F = 15)") {
+            @Override
+            public String get(Pokemon p) {
+                return (Integer.toHexString(p.getIndividualAttack()) + Integer.toHexString(p.getIndividualDefense()) + Integer.toHexString(p.getIndividualStamina())).toUpperCase();
             }
         },
         IV_ATT("IV Attack") {
@@ -250,22 +272,42 @@ public class PokeHandler {
                 return String.valueOf(PokemonCpUtils.getMaxCp(attack, defense, stamina));
             }
         },
-        TYPE1("Pokémon Type 1") {
+        MOVE_TYPES("Types of both moves, displayed with first letter. (Fire, Normal = FN)") {
             @Override
             public String get(Pokemon p) {
-                return StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase());
+                PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
+                PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
+                return pm1.toString().toUpperCase().charAt(0) + "" + pm2.toString().toUpperCase().charAt(0);
             }
         },
-        TYPE2("Pokémon Type 2") {
+        DPS_1("Damage per second for Move 1") {
             @Override
             public String get(Pokemon p) {
-                return StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", ""));
+                return String.valueOf(Math.round(PokemonUtils.dpsForMove1(p)));
+            }
+        },
+        DPS_2("Damage per second for Move 2") {
+            @Override
+            public String get(Pokemon p) {
+                return String.valueOf(Math.round(PokemonUtils.dpsForMove2(p)));
+            }
+        },
+        TYPE_1("Pokémon Type 1 (First two letters)") {
+            @Override
+            public String get(Pokemon p) {
+                return StringUtils.substring(StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()), 0, 2);
+            }
+        },
+        TYPE_2("Pokémon Type 2 (First two letters)") {
+            @Override
+            public String get(Pokemon p) {
+                return StringUtils.substring(StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")), 0, 2);
             }
         },
         ID("Pokédex Id") {
             @Override
             public String get(Pokemon p) {
-                return String.valueOf(p.getId());
+                return String.valueOf(p.getPokemonId().getNumber());
             }
         };
 
