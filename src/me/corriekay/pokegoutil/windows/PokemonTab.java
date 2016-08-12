@@ -147,7 +147,7 @@ public class PokemonTab extends JPanel {
 
         // pokemon name language drop down
         String[] locales = {"en", "de", "fr", "ru", "zh_CN", "zh_HK"};
-        JComboBox<String> pokelang = new JComboBox<String>(locales);
+        JComboBox<String> pokelang = new JComboBox<>(locales);
         String locale = Config.getConfig().getString("options.lang", "en");
         pokelang.setSelectedItem(locale);
         pokelang.addActionListener(e -> new SwingWorker<Void, Void>() {
@@ -688,7 +688,7 @@ public class PokemonTab extends JPanel {
             trs.setComparator(20, c);
             trs.setComparator(22, cDate);
             trs.setComparator(24, cLong);
-            trs.setComparator(25, c);
+            trs.setComparator(25, cLong);
             trs.setComparator(26, cLong);
             trs.setComparator(27, cDouble);
             trs.setComparator(28, cDouble);
@@ -730,7 +730,7 @@ public class PokemonTab extends JPanel {
                 caughtCol = new ArrayList<>(),//22
                 favCol = new ArrayList<>();//23
         private final ArrayList<Long> duelAbilityCol = new ArrayList<>();//24
-        private final ArrayList<Integer> gymOffenseCol = new ArrayList<>();//25
+        private final ArrayList<Long> gymOffenseCol = new ArrayList<>();//25
         private final ArrayList<Long> gymDefenseCol = new ArrayList<>();//26
         private final ArrayList<Double> move1RatingCol = new ArrayList<>(),//27
                 move2RatingCol = new ArrayList<>();//28
