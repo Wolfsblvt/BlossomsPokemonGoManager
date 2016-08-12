@@ -160,6 +160,29 @@ public class PokemonTab extends JPanel {
         }.execute());
         topPanel.add(pokelang);
 
+        // Set font size if specified in config
+        Font font = pt.getFont();
+        int size = Config.getConfig().getInt("options.fontsize", font.getSize());
+        if (size != font.getSize()) {
+            pt.setFont(font.deriveFont((float) size));
+        }
+
+        // Font size dropdown
+        String[] sizes = {"11", "12", "13", "14", "15", "16", "17", "18"};
+        JComboBox<String> fontSize = new JComboBox<>(sizes);
+        fontSize.setSelectedItem(String.valueOf(size));
+        fontSize.addActionListener(e -> new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                @SuppressWarnings("unchecked")
+                JComboBox<String> source = (JComboBox<String>) e.getSource();
+                String size = source.getSelectedItem().toString();
+                pt.setFont(pt.getFont().deriveFont(Float.parseFloat(size)));
+                Config.getConfig().setInt("options.fontsize", Integer.parseInt(size));
+                return null;
+            }
+        }.execute());
+        topPanel.add(fontSize);
+
         LDocumentListener.addChangeListener(searchBar, e -> refreshList());
         new GhostText(searchBar, "Search Pokémon...");
 
@@ -602,8 +625,11 @@ public class PokemonTab extends JPanel {
          * 21 String - Pokeball Type
          * 22 String(Date) - Caught at
          * 23 Boolean - Favorite
-         * 24 Double - Move 1 Rating
-         * 25 Double - Move 2 Rating
+         * 24 Long - duelAbility
+         * 25 Integer - gymOffense
+         * 26 Integer - gymDefense
+         * 27 Double - Move 1 Rating
+         * 28 Double - Move 2 Rating
          */
         int sortColIndex = 0;
         SortOrder so = SortOrder.ASCENDING;
@@ -627,6 +653,7 @@ public class PokemonTab extends JPanel {
                     s2 = "0";
                 return Integer.parseInt(s1) - Integer.parseInt(s2);
             };
+            Comparator<Long> cLong = (l1, l2) -> l2.compareTo(l1);
             trs.setComparator(0, c);
             trs.setComparator(3, cDouble);
             trs.setComparator(4, cDouble);
@@ -643,8 +670,11 @@ public class PokemonTab extends JPanel {
             trs.setComparator(19, cNullableInt);
             trs.setComparator(20, c);
             trs.setComparator(22, cDate);
-            trs.setComparator(24, cDouble);
-            trs.setComparator(25, cDouble);
+            trs.setComparator(24, cLong);
+            trs.setComparator(25, c);
+            trs.setComparator(26, cLong);
+            trs.setComparator(27, cDouble);
+            trs.setComparator(28, cDouble);
             setRowSorter(trs);
             trs.toggleSortOrder(sortColIndex);
             List<SortKey> sortKeys = new ArrayList<>();
@@ -682,8 +712,11 @@ public class PokemonTab extends JPanel {
         private final ArrayList<String> pokeballCol = new ArrayList<>(),//21
                 caughtCol = new ArrayList<>(),//22
                 favCol = new ArrayList<>();//23
-        private final ArrayList<Double> move1RatingCol = new ArrayList<>(),//24
-                move2RatingCol = new ArrayList<>();//25
+        private final ArrayList<Long> duelAbilityCol = new ArrayList<>();//24
+        private final ArrayList<Integer> gymOffenseCol = new ArrayList<>();//25
+        private final ArrayList<Long> gymDefenseCol = new ArrayList<>();//26
+        private final ArrayList<Double> move1RatingCol = new ArrayList<>(),//27
+                move2RatingCol = new ArrayList<>();//28
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
@@ -784,7 +817,10 @@ public class PokemonTab extends JPanel {
                 dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
                 pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
                 caughtCol.add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
-                favCol.add(i.getValue(), (p.isFavorite()) ? "Yes" : "");
+                favCol.add(i.getValue(), (p.isFavorite()) ? "True" : "");
+                duelAbilityCol.add(i.getValue(), PokemonUtils.duelAbility(p));
+                gymOffenseCol.add(i.getValue(), PokemonUtils.gymOffense(p));
+                gymDefenseCol.add(i.getValue(), PokemonUtils.gymDefense(p));
                 move1RatingCol.add(i.getValue(), PokemonUtils.moveRating(p, true));
                 move2RatingCol.add(i.getValue(), PokemonUtils.moveRating(p, false));
                 i.increment();
@@ -852,8 +888,14 @@ public class PokemonTab extends JPanel {
                 case 23:
                     return "Favorite";
                 case 24:
-                    return "Move 1 Rating";
+                    return "Duel Ability";
                 case 25:
+                    return "Gym Offense";
+                case 26:
+                    return "Gym Defense";
+                case 27:
+                    return "Move 1 Rating";
+                case 28:
                     return "Move 2 Rating";
                 default:
                     return "UNKNOWN?";
@@ -862,7 +904,7 @@ public class PokemonTab extends JPanel {
 
         @Override
         public int getColumnCount() {
-            return 26;
+            return 29;
         }
 
         @Override
@@ -922,8 +964,14 @@ public class PokemonTab extends JPanel {
                 case 23:
                     return favCol.get(rowIndex);
                 case 24:
-                    return move1RatingCol.get(rowIndex);
+                    return duelAbilityCol.get(rowIndex);
                 case 25:
+                    return gymOffenseCol.get(rowIndex);
+                case 26:
+                    return gymDefenseCol.get(rowIndex);
+                case 27:
+                    return move1RatingCol.get(rowIndex);
+                case 28:
                     return move2RatingCol.get(rowIndex);
                 default:
                     return null;
