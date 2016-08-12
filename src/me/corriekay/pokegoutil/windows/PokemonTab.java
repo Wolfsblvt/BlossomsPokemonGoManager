@@ -32,9 +32,12 @@ import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -445,7 +448,6 @@ public class PokemonTab extends JPanel {
         }
     }
 
-
     //feature added by Ben Kauffman
     private void toggleFavorite() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
@@ -609,8 +611,39 @@ public class PokemonTab extends JPanel {
             for (int i = 0; i < pt.getModel().getColumnCount(); i++) {
                 JTableColumnPacker.packColumn(pt, i, 4);
             }
+
+            //Custom cell renderers
+            //@todo magic numbers pulled from max values of their respective columns in the moveset rankings spreadsheet calculations
+            //@see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+            TableColumn duelAbilityCol = this.pt.getColumnModel().getColumn(24);
+            duelAbilityCol.setCellRenderer(new moveSetRankingRenderer(21_858_183_256L));
+            TableColumn gymAttackCol = this.pt.getColumnModel().getColumn(25);
+            gymAttackCol.setCellRenderer(new moveSetRankingRenderer(510_419L));
+            TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
+            gymDefenseCol.setCellRenderer(new moveSetRankingRenderer(9_530_079_725L));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Provide custom formatting for the moveset ranking columns while allowing sorting on original values
+     */
+    private static class moveSetRankingRenderer extends JLabel implements TableCellRenderer {
+
+        private final long scale;
+
+        public moveSetRankingRenderer(long scale) {
+            this.scale = scale;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int rowIndex, int vColIndex) {
+            setText( NumberFormat.getPercentInstance().format(Double.parseDouble(value.toString()) / this.scale) );
+            setToolTipText(NumberFormat.getInstance().format(value));
+
+            return this;
         }
     }
 
@@ -835,9 +868,9 @@ public class PokemonTab extends JPanel {
                 pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
                 caughtCol.add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
                 favCol.add(i.getValue(), (p.isFavorite()) ? "True" : "");
-                duelAbilityCol.add(i.getValue(), PokemonUtils.duelAbility(p)/100000000);
-                gymOffenseCol.add(i.getValue(), PokemonUtils.gymOffense(p)/10000);
-                gymDefenseCol.add(i.getValue(), PokemonUtils.gymDefense(p)/100000000);
+                duelAbilityCol.add(i.getValue(), PokemonUtils.duelAbility(p));
+                gymOffenseCol.add(i.getValue(), PokemonUtils.gymOffense(p));
+                gymDefenseCol.add(i.getValue(), PokemonUtils.gymDefense(p));
                 move1RatingCol.add(i.getValue(), PokemonUtils.moveRating(p, true));
                 move2RatingCol.add(i.getValue(), PokemonUtils.moveRating(p, false));
                 i.increment();
