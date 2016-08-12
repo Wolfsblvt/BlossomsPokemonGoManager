@@ -602,6 +602,9 @@ public class PokemonTab extends JPanel {
          * 21 String - Pokeball Type
          * 22 String(Date) - Caught at
          * 23 Boolean - Favorite
+         * 24 Long - duelAbility
+         * 25 Integer - gymOffense
+         * 26 Integer - gymDefense
          */
         int sortColIndex = 0;
         SortOrder so = SortOrder.ASCENDING;
@@ -641,6 +644,9 @@ public class PokemonTab extends JPanel {
             trs.setComparator(19, cNullableInt);
             trs.setComparator(20, c);
             trs.setComparator(22, cDate);
+            trs.setComparator(24, c);
+            trs.setComparator(25, c);
+            trs.setComparator(26, c);
             setRowSorter(trs);
             trs.toggleSortOrder(sortColIndex);
             List<SortKey> sortKeys = new ArrayList<>();
@@ -678,6 +684,9 @@ public class PokemonTab extends JPanel {
         private final ArrayList<String> pokeballCol = new ArrayList<>(),//21
                 caughtCol = new ArrayList<>(),//22
                 favCol = new ArrayList<>();//23
+        private final ArrayList<Long> duelAbilityCol = new ArrayList<>();//24
+        private final ArrayList<Integer> gymOffenseCol = new ArrayList<>(),//25
+                gymDefenseCol = new ArrayList<>();//26
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
@@ -779,6 +788,10 @@ public class PokemonTab extends JPanel {
                 pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
                 caughtCol.add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
                 favCol.add(i.getValue(), (p.isFavorite()) ? "True" : "");
+                duelAbilityCol.add(i.getValue(), PokemonUtils.duelAbility(p));
+                gymOffenseCol.add(i.getValue(), PokemonUtils.gymOffense(p));
+                gymDefenseCol.add(i.getValue(), PokemonUtils.gymDefense(p));
+
                 i.increment();
             });
         }
@@ -843,6 +856,12 @@ public class PokemonTab extends JPanel {
                     return "Time Caught";
                 case 23:
                     return "Favorite";
+                case 24:
+                    return "Duel Ability";
+                case 25:
+                    return "Gym Offense";
+                case 26:
+                    return "Gym Defense";
                 default:
                     return "UNKNOWN?";
             }
@@ -850,7 +869,7 @@ public class PokemonTab extends JPanel {
 
         @Override
         public int getColumnCount() {
-            return 24;
+            return 27;
         }
 
         @Override
@@ -909,6 +928,12 @@ public class PokemonTab extends JPanel {
                     return caughtCol.get(rowIndex);
                 case 23:
                     return favCol.get(rowIndex);
+                case 24:
+                    return duelAbilityCol.get(rowIndex);
+                case 25:
+                    return gymOffenseCol.get(rowIndex);
+                case 26:
+                    return gymDefenseCol.get(rowIndex);
                 default:
                     return null;
             }
