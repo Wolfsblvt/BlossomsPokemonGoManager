@@ -281,12 +281,32 @@ public class PokeHandler {
                 return String.valueOf(PokemonCpUtils.getMaxCp(attack, defense, stamina));
             }
         },
-        MOVE_TYPES("Types of both moves, displayed with first letter. (Fire, Normal = FN)") {
+        MOVE_TYPE1("Move 1 type (Fire)") {
             @Override
             public String get(Pokemon p) {
-                PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
-                PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
-                return pm1.toString().toUpperCase().charAt(0) + "" + pm2.toString().toUpperCase().charAt(0);
+                String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
+                return StringUtils.capitalize(type.toLowerCase());
+            }
+        },
+        MOVE_TYPE2("Move 2 type (Fire)") {
+            @Override
+            public String get(Pokemon p) {
+                String type = PokemonMoveMetaRegistry.getMeta(p.getMove2()).getType().toString();
+                return StringUtils.capitalize(type.toLowerCase());
+            }
+        },
+        MOVE_TYPE1_SHORT("Move 1 abbreviated (Ghost = Gh)") {
+            @Override
+            public String get(Pokemon p) {
+                String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
+                return abbreviateType(type);
+            }
+        },
+        MOVE_TYPE2_SHORT("Move 2 abbreviated (Ghost = Gh)") {
+            @Override
+            public String get(Pokemon p) {
+                String type = PokemonMoveMetaRegistry.getMeta(p.getMove2()).getType().toString();
+                return abbreviateType(type);
             }
         },
         DPS_1("Damage per second for Move 1") {
@@ -319,6 +339,14 @@ public class PokeHandler {
                 return String.valueOf(p.getPokemonId().getNumber());
             }
         };
+
+        private static String abbreviateType(String type){
+            if(type.equalsIgnoreCase("fire")||type.equalsIgnoreCase("ground")){
+                return type.substring(0,1).toUpperCase() + type.substring(type.length()-1).toLowerCase();
+            }else{
+                return StringUtils.capitalize(type.substring(0,2).toLowerCase());
+            }
+        }
 
         private final String friendlyName;
 
