@@ -7,6 +7,7 @@ import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.gym.Gym;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.*;
@@ -184,6 +185,14 @@ public class PokemonTab extends JPanel {
         System.out.println("Done refreshing Pokémon list");
     }
 
+    private String generateFinishedText(String message, int size, MutableInt success, MutableInt skipped, MutableInt err) {
+        return message +
+                "\nPokémon total: " + size +
+                "\nSuccessful: " + success.getValue() +
+                (skipped.getValue() > 0 ? "\nSkipped: " + skipped.getValue() : "") +
+                (err.getValue() > 0 ? "\nErrors: " + err.getValue() : "");
+    }
+
     private void renameSelected() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.size() == 0) return;
@@ -199,20 +208,22 @@ public class PokemonTab extends JPanel {
             // We check if the Pokemon was skipped
             boolean isSkipped = (pokemon.getNickname().equals(PokeHandler.generatePokemonNickname(renamePattern, pokemon))
                     && result.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE);
+            if (isSkipped) {
+                System.out.println("Skipped renaming " + PokeHandler.getLocalPokeName(pokemon) + ", already named " + pokemon.getNickname());
+                skipped.increment();
+                return;
+            }
 
             if (result.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
                 success.increment();
                 System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " from \"" + pokemon.getNickname() + "\" to \"" + PokeHandler.generatePokemonNickname(renamePattern, pokemon) + "\", Result: Success!");
-            } else if (isSkipped) {
-                skipped.increment();
-                System.out.println("Skipped renaming " + PokeHandler.getLocalPokeName(pokemon) + ", already named " + pokemon.getNickname());
             } else {
                 err.increment();
                 System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " failed! Code: " + result.toString() + "; Nick: " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
             }
 
             // If not last element and API was queried, sleep until the next one
-            if (!selection.get(selection.size() - 1).equals(pokemon) && !isSkipped) {
+            if (!selection.get(selection.size() - 1).equals(pokemon)) {
                 int sleepMin = Config.getConfig().getInt("delay.rename.min", 1000);
                 int sleepMax = Config.getConfig().getInt("delay.rename.max", 5000);
                 Utilities.sleepRandom(sleepMin, sleepMax);
@@ -227,27 +238,29 @@ public class PokemonTab extends JPanel {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);
-        JOptionPane.showMessageDialog(null,
-                "Pokémon batch rename complete!" +
-                        "\nPokémon total: " + selection.size() +
-                        "\nSuccessful Renames: " + success.getValue() +
-                        (skipped.getValue() > 0 ? "\nSkipped: " + skipped.getValue() : "") +
-                        (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
+        JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch rename complete!",
+                selection.size(), success, skipped, err));
     }
 
     private void transferSelected() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.size() == 0) return;
         if (confirmOperation("Transfer", selection)) {
-            MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
+            MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
             selection.forEach(poke -> {
                 System.out.println("Doing Transfer " + total.getValue() + " of " + selection.size());
                 total.increment();
                 if (poke.isFavorite()) {
-                    System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp() + "cp is favorite, not transferring.");
-                    err.increment();
+                    System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp() + " CP is favorite, skipping.");
+                    skipped.increment();
                     return;
                 }
+                if (poke.getFromFort()) {
+                    System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp() + " CP is in gym, skipping.");
+                    skipped.increment();
+                    return;
+                }
+
                 try {
                     int candies = poke.getCandy();
                     ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = poke.transferPokemon();
@@ -280,9 +293,8 @@ public class PokemonTab extends JPanel {
                 e.printStackTrace();
             }
             SwingUtilities.invokeLater(this::refreshList);
-            JOptionPane.showMessageDialog(null,
-                    "Pokémon batch transfer complete!\nPokémon total: " + selection.size() + "\nSuccessful Transfers: "
-                            + success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
+            JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch transfer complete!",
+                    selection.size(), success, skipped, err));
         }
     }
 
@@ -290,10 +302,16 @@ public class PokemonTab extends JPanel {
         ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.size() > 0) {
             if (confirmOperation("Evolve", selection)) {
-                MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
+                MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
                 selection.forEach(poke -> {
                     System.out.println("Doing Evolve " + total.getValue() + " of " + selection.size());
                     total.increment();
+                    if (poke.getFromFort()) {
+                        System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp() + " CP is in gym, skipping.");
+                        skipped.increment();
+                        return;
+                    }
+
                     try {
                         int candies = poke.getCandy();
                         int candiesToEvolve = poke.getCandiesToEvolve();
@@ -338,10 +356,8 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshList);
-                if (tAfterE)
-                    JOptionPane.showMessageDialog(null, "Pokemon batch evolve complete!\nPokemon total: " + selection.size() + "\nSuccessful evolves/transfers: " + success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
-                else
-                    JOptionPane.showMessageDialog(null, "Pokemon batch evolve complete!\nPokemon total: " + selection.size() + "\nSuccessful evolves: " + success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
+                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch evolve" + ((tAfterE) ? "/transfer" : "") + " complete!",
+                        selection.size(), success, skipped, err));
             }
         }
     }
@@ -350,11 +366,17 @@ public class PokemonTab extends JPanel {
         ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.size() > 0) {
             if (confirmOperation("PowerUp", selection)) {
-                MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
+                MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
                 selection.forEach(poke -> {
                     try {
                         System.out.println("Doing Power Up " + total.getValue() + " of " + selection.size());
                         total.increment();
+                        if (poke.getFromFort()) {
+                            System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp() + " CP is in gym, skipping.");
+                            skipped.increment();
+                            return;
+                        }
+
                         int candies = poke.getCandy();
                         int cp = poke.getCp();
                         int hp = poke.getMaxStamina();
@@ -394,10 +416,8 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshList);
-                JOptionPane.showMessageDialog(null,
-                        "Pokémon batch powerup complete!\nPokémon total: " + selection.size()
-                                + "\nSuccessful powerups: " + success.getValue()
-                                + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
+                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch powerup complete!",
+                        selection.size(), success, skipped, err));
             }
         }
     }
@@ -408,7 +428,7 @@ public class PokemonTab extends JPanel {
         ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.size() > 0) {
             if (confirmOperation("Toggle Favorite", selection)) {
-                MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
+                MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
                 selection.forEach(poke -> {
                     try {
                         System.out.println("Toggling favorite " + total.getValue() + " of " + selection.size());
@@ -445,11 +465,8 @@ public class PokemonTab extends JPanel {
                 }
                 SwingUtilities.invokeLater(this::refreshPkmn);
 
-                JOptionPane.showMessageDialog(null,
-                        "Pokémon batch \"toggle favorite\" complete!\nPokémon total: " + selection.size()
-                                + "\nSuccessful toggles: " + success.getValue()
-                                + (err.getValue() > 0 ? "\nErrors (need validation): " + err.getValue() : "")
-                );
+                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch \"toggle favorite\" complete!",
+                        selection.size(), success, skipped, err));
 
             }
         }
