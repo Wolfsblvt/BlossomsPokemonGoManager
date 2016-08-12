@@ -15,6 +15,15 @@ public final class Utilities {
         return i % 2 == 0;
     }
 
+    /**
+     * Rounds given decimal number (like 0.75345) to a percentage with two decimals (75.35)
+     * @param decimalNumber The decimal number
+     * @return The percentage value
+     */
+    public static double percentage(double decimalNumber) {
+        return Math.round(decimalNumber * 100 * 100) / 100.0;
+    }
+
     public static Color randomColor() {
         Color c = new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255), 255);
         return c;
