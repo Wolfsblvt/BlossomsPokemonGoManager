@@ -177,7 +177,6 @@ public class PokemonTab extends JPanel {
                 JComboBox<String> source = (JComboBox<String>) e.getSource();
                 String size = source.getSelectedItem().toString();
                 pt.setFont(pt.getFont().deriveFont(Float.parseFloat(size)));
-                pt.repaint();
                 Config.getConfig().setInt("options.fontsize", Integer.parseInt(size));
                 return null;
             }
