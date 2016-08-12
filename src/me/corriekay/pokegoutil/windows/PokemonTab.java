@@ -29,6 +29,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.*;
@@ -159,6 +161,30 @@ public class PokemonTab extends JPanel {
             }
         }.execute());
         topPanel.add(pokelang);
+
+        // Set font size if specified in config
+        Font font = pt.getFont();
+        int size = Config.getConfig().getInt("options.fontsize", font.getSize());
+        if (size != font.getSize()) {
+            pt.setFont(font.deriveFont((float) size));
+        }
+
+        // Font size dropdown
+        String[] sizes = {"11", "12", "13", "14", "15", "16", "17", "18"};
+        JComboBox<String> fontSize = new JComboBox<>(sizes);
+        fontSize.setSelectedItem(String.valueOf(size));
+        fontSize.addActionListener(e -> new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                @SuppressWarnings("unchecked")
+                JComboBox<String> source = (JComboBox<String>) e.getSource();
+                String size = source.getSelectedItem().toString();
+                pt.setFont(pt.getFont().deriveFont(Float.parseFloat(size)));
+                pt.repaint();
+                Config.getConfig().setInt("options.fontsize", Integer.parseInt(size));
+                return null;
+            }
+        }.execute());
+        topPanel.add(fontSize);
 
         LDocumentListener.addChangeListener(searchBar, e -> refreshList());
         new GhostText(searchBar, "Search Pokémon...");
