@@ -106,13 +106,13 @@ public final class PokemonUtils {
         * @see i607ch00
         */
     public static Double weaveDPS(Pokemon p, Integer additionalDelay) {
-        Double critDamageBonus = 0.5;
-        Integer chargeDelayMS = 500;
+        double critDamageBonus = 0.5;
+        int chargeDelayMS = 500;
 
         PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
         PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
-        Double moveOneStab = (p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType())) ? 1.25 : 1;
-        Double moveTwoStab = (p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType())) ? 1.25 : 1;
+        double moveOneStab = (p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType())) ? 1.25 : 1;
+        double moveTwoStab = (p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType())) ? 1.25 : 1;
 
         //=CEILING(AB621/U621)
         //   *(R621*(1+S621*0.25))
@@ -125,7 +125,7 @@ public final class PokemonUtils {
         //Y = Move 2 Stab
         //AJ = Crit Damage Bonus
         //Z = Move 2 Crit Chance
-        Double weaveCycleDmg = Math.ceil(Math.abs(pm2.getEnergy()) / pm1.getEnergy())
+        double weaveCycleDmg = Math.ceil(Math.abs(pm2.getEnergy()) / pm1.getEnergy())
                 * (pm1.getPower() * moveOneStab)
                 + pm2.getPower() * moveTwoStab * (1 + (critDamageBonus * pm2.getCritChance()));
 
@@ -138,11 +138,13 @@ public final class PokemonUtils {
         //T = Move 1 Speed
         //AA = Move 2 Speed
         //AL1 = Charge Delay
-        Double weaveCycleLength = Math.ceil(Math.abs(pm2.getEnergy()) / pm1.getEnergy())
+        double weaveCycleLength = Math.ceil(Math.abs(pm2.getEnergy()) / pm1.getEnergy())
                 * (pm1.getTime() + additionalDelay)
                 + (pm2.getTime() + chargeDelayMS);
 
-        //=AC621*FLOOR(100000/AD621)+(R621*(1+(S621*0.25)))*FLOOR(MOD(100000,AD621)/T621)
+        //=AC621*FLOOR(100000/AD621)
+        // + (R621*(1+(S621*0.25)))
+        // * FLOOR(MOD(100000,AD621)/T621)
         //=AC621*FLOOR(100000/AF621)+(R621*(1+(S621*0.25)))*FLOOR(MOD(100000,AF621)/(2000+T621))
         //AC = Weave Cycle Damage
         //AD = Weave Cycle Length (ms)
@@ -150,9 +152,9 @@ public final class PokemonUtils {
         //S = Move 1  Stab
         //AD = Weave Cycle Length (ms)
         //T = Move 1  Speed
-        Double weaveDPS = weaveCycleDmg * Math.floor(100000 / weaveCycleLength)
+        double weaveDPS = weaveCycleDmg * Math.floor(100000 / weaveCycleLength)
                 + (pm1.getPower() * moveOneStab)
-                * Math.floor((100000 % weaveCycleLength) / (additionalDelay + pm1.getTime()));
+                * Math.floor((100000 % weaveCycleLength) / (pm1.getTime() + additionalDelay));
 
         return weaveDPS;
     }
