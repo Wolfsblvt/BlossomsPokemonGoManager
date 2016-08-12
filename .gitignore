@@ -19,10 +19,33 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# IntelliJ files
-.idea/
+
+# =========================
+# IntelliJ Files
+# =========================
+
+# User-specific stuff:
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
+
+# Sensitive or high-churn files:
+.idea/dataSources.ids
+.idea/dataSources.xml
+.idea/dataSources.local.xml
+.idea/sqlDataSources.xml
+.idea/dynamic.xml
+.idea/uiDesigner.xml
+
+# Gradle / Maven:
+.idea/gradle.xml
+.idea/libraries
+
+# IntelliJ
 /out/
-PokeGoBot.iml
+.idea_modules/
 
 # =========================
 # Operating System Files
@@ -52,6 +75,8 @@ PokeGoBot.iml
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Project specific files
 /target/
 *.log
 config.json

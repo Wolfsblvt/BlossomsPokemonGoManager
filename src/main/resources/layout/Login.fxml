@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<StackPane prefHeight="148.0" prefWidth="286.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.corriekay.pokegoutil.GUI.controller.LoginController">
+    <children>
+        <StackPane prefHeight="0.0" prefWidth="0.0">
+            <children>
+                <VBox prefHeight="0.0" prefWidth="0.0" spacing="10.0">
+                    <children>
+                        <TextField fx:id="user" prefHeight="25.0" prefWidth="330.0" promptText="PTC Username:"/>
+                        <TextField fx:id="password" promptText="PTC Password:"/>
+                        <Pane prefHeight="29.0" prefWidth="0.0">
+                            <children>
+                                <Button fx:id="googleAuthBtn" alignment="CENTER" contentDisplay="CENTER" layoutX="144.0" layoutY="2.0" mnemonicParsing="false" onAction="#onGoogleAuthBtnClicked" prefHeight="25.0" prefWidth="111.0" text="Use Google Auth"/>
+                                <Button fx:id="ptcLoginBtn" alignment="CENTER" contentDisplay="CENTER" layoutY="2.0" mnemonicParsing="false" onAction="#onPTCLoginBtnClicked" prefHeight="25.0" prefWidth="111.0" text="Use PTC Auth"/>
+                            </children>
+                        </Pane>
+                        <CheckBox fx:id="autoRelogChkbx" mnemonicParsing="false" prefHeight="17.0" prefWidth="147.0" text="Remember Credencials"/>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+</StackPane>
