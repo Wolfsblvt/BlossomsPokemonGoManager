@@ -189,26 +189,30 @@ public class PokemonTab extends JPanel {
         if (selection.size() == 0) return;
         String renamePattern = inputOperation("Rename", selection);
 
-        MutableInt err = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
+        MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
         PokeHandler handler = new PokeHandler(selection);
 
         BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback = (result, pokemon) -> {
             System.out.println("Doing Rename " + total.getValue() + " of " + selection.size());
             total.increment();
+
+            // We check if the Pokemon was skipped
+            boolean isSkipped = (pokemon.getNickname().equals(PokeHandler.generatePokemonNickname(renamePattern, pokemon))
+                    && result.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE);
+
             if (result.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
                 success.increment();
                 System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " from \"" + pokemon.getNickname() + "\" to \"" + PokeHandler.generatePokemonNickname(renamePattern, pokemon) + "\", Result: Success!");
-            } else if (result.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE) { // FIXME: See PokeHandler.java@97
-                success.increment();
-                System.out.println("Not renaming " + PokeHandler.getLocalPokeName(pokemon) + ", already named " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
+            } else if (isSkipped) {
+                skipped.increment();
+                System.out.println("Skipped renaming " + PokeHandler.getLocalPokeName(pokemon) + ", already named " + pokemon.getNickname());
             } else {
                 err.increment();
                 System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " failed! Code: " + result.toString() + "; Nick: " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
             }
 
-            // If not last element, sleep until the next one and the rename was successful
-            if (!selection.get(selection.size() - 1).equals(pokemon)
-                    && result.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
+            // If not last element and API was queried, sleep until the next one
+            if (!selection.get(selection.size() - 1).equals(pokemon) && !isSkipped) {
                 int sleepMin = Config.getConfig().getInt("delay.rename.min", 1000);
                 int sleepMax = Config.getConfig().getInt("delay.rename.max", 5000);
                 Utilities.sleepRandom(sleepMin, sleepMax);
@@ -224,8 +228,11 @@ public class PokemonTab extends JPanel {
         }
         SwingUtilities.invokeLater(this::refreshList);
         JOptionPane.showMessageDialog(null,
-                "Pokémon batch rename complete!\nPokémon total: " + selection.size() + "\nSuccessful Renames: "
-                        + success.getValue() + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
+                "Pokémon batch rename complete!" +
+                        "\nPokémon total: " + selection.size() +
+                        "\nSuccessful Renames: " + success.getValue() +
+                        (skipped.getValue() > 0 ? "\nSkipped: " + skipped.getValue() : "") +
+                        (err.getValue() > 0 ? "\nErrors: " + err.getValue() : ""));
     }
 
     private void transferSelected() {

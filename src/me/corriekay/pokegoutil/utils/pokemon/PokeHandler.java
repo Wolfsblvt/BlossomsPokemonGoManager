@@ -94,7 +94,7 @@ public class PokeHandler {
 
         if(pokeNick.equals(pokemon.getNickname())) {
             // Why renaming to the same nickname?
-            return NicknamePokemonResponse.Result.UNSET; // FIXME: Enhance the response?
+            return NicknamePokemonResponse.Result.UNSET; // We need to use UNSET here. No chance to extend the enum
         }
 
         // Actually renaming the Pokémon with the calculated nickname
