@@ -73,9 +73,9 @@ public final class PokemonUtils {
         * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
         * @see i607ch00
         */
-    public static Integer gymDefense(Pokemon p) {
+    public static Long gymDefense(Pokemon p) {
         Double gymDefense = PokemonUtils.weaveDPS(p, 2000) * p.getMeta().getBaseAttack() * PokemonUtils.tankiness(p);
-        return gymDefense.intValue();
+        return gymDefense.longValue();
     }
 
     /**

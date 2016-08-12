@@ -628,6 +628,7 @@ public class PokemonTab extends JPanel {
                     s2 = "0";
                 return Integer.parseInt(s1) - Integer.parseInt(s2);
             };
+            Comparator<Long> cLong = (l1, l2) -> l2.compareTo(l1);
             trs.setComparator(0, c);
             trs.setComparator(3, cDouble);
             trs.setComparator(4, cDouble);
@@ -644,9 +645,9 @@ public class PokemonTab extends JPanel {
             trs.setComparator(19, cNullableInt);
             trs.setComparator(20, c);
             trs.setComparator(22, cDate);
-            trs.setComparator(24, c);
+            trs.setComparator(24, cLong);
             trs.setComparator(25, c);
-            trs.setComparator(26, c);
+            trs.setComparator(26, cLong);
             setRowSorter(trs);
             trs.toggleSortOrder(sortColIndex);
             List<SortKey> sortKeys = new ArrayList<>();
@@ -685,8 +686,8 @@ public class PokemonTab extends JPanel {
                 caughtCol = new ArrayList<>(),//22
                 favCol = new ArrayList<>();//23
         private final ArrayList<Long> duelAbilityCol = new ArrayList<>();//24
-        private final ArrayList<Integer> gymOffenseCol = new ArrayList<>(),//25
-                gymDefenseCol = new ArrayList<>();//26
+        private final ArrayList<Integer> gymOffenseCol = new ArrayList<>();//25
+        private final ArrayList<Long> gymDefenseCol = new ArrayList<>();//26
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
