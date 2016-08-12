@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.controllers;
+package me.corriekay.pokegoutil.DATA.controllers;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
