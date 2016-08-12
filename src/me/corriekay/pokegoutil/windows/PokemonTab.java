@@ -517,7 +517,7 @@ public class PokemonTab extends JPanel {
 
         pokes.forEach(p -> {
             String str = PokeHandler.getLocalPokeName(p) + " - CP: " + p.getCp() + ", IV: "
-                    + (Math.round(p.getIvRatio() * 10000) / 100) + "%";
+                    + Utilities.percentage(p.getIvRatio()) + "%";
             switch (operation) {
                 case "Evolve":
                     str += " Cost: " + p.getCandiesToEvolve();
@@ -602,6 +602,8 @@ public class PokemonTab extends JPanel {
          * 21 String - Pokeball Type
          * 22 String(Date) - Caught at
          * 23 Boolean - Favorite
+         * 24 Double - Move 1 Rating
+         * 25 Double - Move 2 Rating
          */
         int sortColIndex = 0;
         SortOrder so = SortOrder.ASCENDING;
@@ -641,6 +643,8 @@ public class PokemonTab extends JPanel {
             trs.setComparator(19, cNullableInt);
             trs.setComparator(20, c);
             trs.setComparator(22, cDate);
+            trs.setComparator(24, cDouble);
+            trs.setComparator(25, cDouble);
             setRowSorter(trs);
             trs.toggleSortOrder(sortColIndex);
             List<SortKey> sortKeys = new ArrayList<>();
@@ -678,6 +682,8 @@ public class PokemonTab extends JPanel {
         private final ArrayList<String> pokeballCol = new ArrayList<>(),//21
                 caughtCol = new ArrayList<>(),//22
                 favCol = new ArrayList<>();//23
+        private final ArrayList<Double> move1RatingCol = new ArrayList<>(),//24
+                move2RatingCol = new ArrayList<>();//25
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
@@ -690,7 +696,7 @@ public class PokemonTab extends JPanel {
                 speciesCol.add(i.getValue(),
                         PokeHandler.getLocalPokeName(p));
                 levelCol.add(i.getValue(), (double) p.getLevel());
-                ivCol.add(i.getValue(), Math.round(p.getIvRatio() * 10000) / 100.00);
+                ivCol.add(i.getValue(), Utilities.percentage(p.getIvRatio()));
                 cpCol.add(i.getValue(), p.getCp());
                 atkCol.add(i.getValue(), p.getIndividualAttack());
                 defCol.add(i.getValue(), p.getIndividualDefense());
@@ -698,8 +704,8 @@ public class PokemonTab extends JPanel {
                 type1Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()));
                 type2Col.add(i.getValue(), StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
 
-                Double dps1 = PokemonUtils.dpsForMove1(p);
-                Double dps2 = PokemonUtils.dpsForMove2(p);
+                Double dps1 = PokemonUtils.dpsForMove(p, true);
+                Double dps2 = PokemonUtils.dpsForMove(p, false);
 
                 move1Col.add(i.getValue(), WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1) + "dps)");
                 move2Col.add(i.getValue(), WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " (" + String.format("%.2f", dps2) + "dps)");
@@ -778,7 +784,9 @@ public class PokemonTab extends JPanel {
                 dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
                 pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
                 caughtCol.add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
-                favCol.add(i.getValue(), (p.isFavorite()) ? "True" : "");
+                favCol.add(i.getValue(), (p.isFavorite()) ? "Yes" : "");
+                move1RatingCol.add(i.getValue(), PokemonUtils.moveRating(p, true));
+                move2RatingCol.add(i.getValue(), PokemonUtils.moveRating(p, false));
                 i.increment();
             });
         }
@@ -843,6 +851,10 @@ public class PokemonTab extends JPanel {
                     return "Time Caught";
                 case 23:
                     return "Favorite";
+                case 24:
+                    return "Move 1 Rating";
+                case 25:
+                    return "Move 2 Rating";
                 default:
                     return "UNKNOWN?";
             }
@@ -850,7 +862,7 @@ public class PokemonTab extends JPanel {
 
         @Override
         public int getColumnCount() {
-            return 24;
+            return 26;
         }
 
         @Override
@@ -909,6 +921,10 @@ public class PokemonTab extends JPanel {
                     return caughtCol.get(rowIndex);
                 case 23:
                     return favCol.get(rowIndex);
+                case 24:
+                    return move1RatingCol.get(rowIndex);
+                case 25:
+                    return move2RatingCol.get(rowIndex);
                 default:
                     return null;
             }
