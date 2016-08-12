@@ -835,9 +835,9 @@ public class PokemonTab extends JPanel {
                 pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
                 caughtCol.add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
                 favCol.add(i.getValue(), (p.isFavorite()) ? "True" : "");
-                duelAbilityCol.add(i.getValue(), PokemonUtils.duelAbility(p));
-                gymOffenseCol.add(i.getValue(), PokemonUtils.gymOffense(p));
-                gymDefenseCol.add(i.getValue(), PokemonUtils.gymDefense(p));
+                duelAbilityCol.add(i.getValue(), PokemonUtils.duelAbility(p)/100000000);
+                gymOffenseCol.add(i.getValue(), PokemonUtils.gymOffense(p)/10000);
+                gymDefenseCol.add(i.getValue(), PokemonUtils.gymDefense(p)/100000000);
                 move1RatingCol.add(i.getValue(), PokemonUtils.moveRating(p, true));
                 move2RatingCol.add(i.getValue(), PokemonUtils.moveRating(p, false));
                 i.increment();
