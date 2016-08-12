@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import me.corriekay.pokegoutil.controllers.AccountController;
+import me.corriekay.pokegoutil.DATA.controllers.AccountController;
 import me.corriekay.pokegoutil.utils.ui.Console;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 

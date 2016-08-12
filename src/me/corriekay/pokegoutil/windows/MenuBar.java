@@ -5,7 +5,7 @@ import com.pokegoapi.api.inventory.Stats;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
-import me.corriekay.pokegoutil.controllers.AccountController;
+import me.corriekay.pokegoutil.DATA.controllers.AccountController;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 import javax.swing.*;

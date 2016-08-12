@@ -16,7 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import me.corriekay.pokegoutil.controllers.AccountControllerNew;
+import me.corriekay.pokegoutil.DATA.controllers.AccountControllerNew;
 
 import java.io.IOException;
 import java.net.URL;
