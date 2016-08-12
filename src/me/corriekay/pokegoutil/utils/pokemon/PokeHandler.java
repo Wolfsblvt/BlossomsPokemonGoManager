@@ -3,7 +3,6 @@ package me.corriekay.pokegoutil.utils.pokemon;
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
-import com.pokegoapi.api.pokemon.PokemonMoveMeta;
 import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
@@ -243,13 +242,13 @@ public class PokeHandler {
         IV_RATING("IV Rating") {
             @Override
             public String get(Pokemon p) {
-                return String.valueOf(Math.round(p.getIvRatio() * 100 * 100) / 100.0);
+                return String.valueOf(Utilities.percentage(p.getIvRatio()));
             }
         },
-        IV_RATING_INT("IV Rating (Rounded to integer)") {
+        IV_RATING_SHORT("IV Rating in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                return String.valueOf(Math.round(p.getIvRatio() * 100));
+                return ratingWithTwoLetters(p.getIvRatio());
             }
         },
         IV_HEX("IV Values in hexadecimal, like \"9FA\" (F = 15)") {
@@ -286,28 +285,28 @@ public class PokeHandler {
                 return String.valueOf(PokemonCpUtils.getMaxCp(attack, defense, stamina));
             }
         },
-        MOVE_TYPE1("Move 1 type (Fire)") {
+        MOVE_TYPE_1("Move 1 type (Fire)") {
             @Override
             public String get(Pokemon p) {
                 String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
                 return StringUtils.capitalize(type.toLowerCase());
             }
         },
-        MOVE_TYPE2("Move 2 type (Fire)") {
+        MOVE_TYPE_2("Move 2 type (Fire)") {
             @Override
             public String get(Pokemon p) {
                 String type = PokemonMoveMetaRegistry.getMeta(p.getMove2()).getType().toString();
                 return StringUtils.capitalize(type.toLowerCase());
             }
         },
-        MOVE_TYPE1_SHORT("Move 1 abbreviated (Ghost = Gh)") {
+        MOVE_TYPE_1_SHORT("Move 1 abbreviated (Ghost = Gh)") {
             @Override
             public String get(Pokemon p) {
                 String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
                 return abbreviateType(type);
             }
         },
-        MOVE_TYPE2_SHORT("Move 2 abbreviated (Ghost = Gh)") {
+        MOVE_TYPE_2_SHORT("Move 2 abbreviated (Ghost = Gh)") {
             @Override
             public String get(Pokemon p) {
                 String type = PokemonMoveMetaRegistry.getMeta(p.getMove2()).getType().toString();
@@ -317,25 +316,39 @@ public class PokeHandler {
         DPS_1("Damage per second for Move 1") {
             @Override
             public String get(Pokemon p) {
-                return String.valueOf(Math.round(PokemonUtils.dpsForMove1(p)));
+                return String.valueOf(Math.round(PokemonUtils.dpsForMove(p, true)));
             }
         },
         DPS_2("Damage per second for Move 2") {
             @Override
             public String get(Pokemon p) {
-                return String.valueOf(Math.round(PokemonUtils.dpsForMove2(p)));
+                return String.valueOf(Math.round(PokemonUtils.dpsForMove(p, false)));
             }
         },
-        TYPE_1("Pokémon Type 1 (First two letters)") {
+        DPS_1_RATING("Rating for Move 1 (Percentage of max possible)") {
             @Override
             public String get(Pokemon p) {
-                return StringUtils.substring(StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()), 0, 2);
+                return ratingWithTwoLetters(PokemonUtils.moveRating(p, true));
             }
         },
-        TYPE_2("Pokémon Type 2 (First two letters)") {
+        DPS_2_RATING("Rating for Move 2 (Percentage of max possible)") {
             @Override
             public String get(Pokemon p) {
-                return StringUtils.substring(StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")), 0, 2);
+                return ratingWithTwoLetters(PokemonUtils.moveRating(p, false));
+            }
+        },
+        TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh)") {
+            @Override
+            public String get(Pokemon p) {
+                String type = p.getMeta().getType1().toString();
+                return abbreviateType(type);
+            }
+        },
+        TYPE_2("Pokémon Type 2 abbreviated (Ghost = Gh)") {
+            @Override
+            public String get(Pokemon p) {
+                String type = p.getMeta().getType2().toString();
+                return abbreviateType(type);
             }
         },
         ID("Pokédex Id") {
@@ -344,6 +357,11 @@ public class PokeHandler {
                 return String.valueOf(p.getPokemonId().getNumber());
             }
         };
+
+        private static String ratingWithTwoLetters(double rating) {
+            long rounded = Math.round(rating * 100);
+            return (rounded < 100) ? String.valueOf(rounded) : "XX";
+        }
 
         private static String abbreviateType(String type){
             if(type.equalsIgnoreCase("fire")||type.equalsIgnoreCase("ground")){
