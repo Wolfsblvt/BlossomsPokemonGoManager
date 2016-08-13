@@ -42,7 +42,6 @@ public class PokemonTab extends JPanel {
     private final PokemonTable pt = new PokemonTable();
     private final JTextField searchBar = new JTextField("");
     private final JTextField ivTransfer = new JTextField("", 20);
-    static boolean tAfterE;
 
     public PokemonTab(PokemonGo go) {
         setLayout(new BorderLayout());
@@ -347,7 +346,7 @@ public class PokemonTab extends JPanel {
                             int newHp = newPoke.getStamina();
                             System.out.println(
                                     "Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: Success!");
-                            if (tAfterE) {
+                            if (Config.getConfig().getBool("transfer.afterEvolve", false)) {
                                 ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke.transferPokemon();
                                 System.out.println("Transferring " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + ", Result: " + result);
                                 System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "]");
@@ -378,7 +377,7 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshList);
-                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch evolve" + ((tAfterE) ? "/transfer" : "") + " complete!",
+                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch evolve" + ((Config.getConfig().getBool("transfer.afterEvolve", false)) ? "/transfer" : "") + " complete!",
                         selection.size(), success, skipped, err));
             }
         }
