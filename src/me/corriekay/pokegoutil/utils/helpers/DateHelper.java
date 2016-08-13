@@ -1,6 +1,5 @@
 package me.corriekay.pokegoutil.utils.helpers;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
