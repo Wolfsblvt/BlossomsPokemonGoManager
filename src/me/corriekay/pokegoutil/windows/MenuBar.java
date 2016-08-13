@@ -21,7 +21,7 @@ public class MenuBar extends JMenuBar {
 
 		JMenu file, settings, help;
 
-		// File tab
+		// File menu
 		file = new JMenu("File");
 
 		JMenuItem trainerStats = new JMenuItem("View Trainer Stats");
@@ -46,7 +46,7 @@ public class MenuBar extends JMenuBar {
 
 		add(file);
 
-		// Settings tab
+		// Settings menu
 		settings = new JMenu("Settings");
 
 		JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer After Evolve");
@@ -62,16 +62,21 @@ public class MenuBar extends JMenuBar {
 
 		add(settings);
 
-		// Help tab
+		// Help menu
 		help = new JMenu("Help");
 
 		JMenuItem about = new JMenuItem("About");
 		about.addActionListener(l -> JOptionPane.showMessageDialog(null,
 				"Version: " + BlossomsPoGoManager.VERSION + "\n\nAuthor: Corrie 'Blossom' Kay"
-						+ "\n\nThis work is protected under the" + "\nCreative Commons Attribution-"
-						+ "\nNonCommercial-ShareAlike 4.0" + "\nInternational license, which can" + "\nbe found here:"
-						+ "\nhttps://creativecommons.org/" + "\nlicenses/by-nc-sa/4.0/"
-						+ "\n\nThanks to Grover for providing" + "\nsuch a great API." + "\n\nThanks for Draseart for"
+						+ "\n\nThis work is protected under the"
+						+ "\nCreative Commons Attribution-"
+						+ "\nNonCommercial-ShareAlike 4.0"
+						+ "\nInternational license, which can"
+						+ "\nbe found here:"
+						+ "\nhttps://creativecommons.org/"
+						+ "\nlicenses/by-nc-sa/4.0/"
+						+ "\n\nThanks to Grover for providing"
+						+ "\nsuch a great API." + "\n\nThanks for Draseart for"
 						+ "\nthe icon art.",
 				"About Blossom's Pokémon Go Manager", JOptionPane.PLAIN_MESSAGE));
 		help.add(about);
