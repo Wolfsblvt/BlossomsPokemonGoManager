@@ -64,7 +64,7 @@ public class PokemonTab extends JPanel {
         		if (event.getValueIsAdjusting() == true) {
         			int selectedRows = pt.getSelectedRowCount();
         			if (selectedRows > 1) {
-        				PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon");
+        				PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
         			} else {
         				PokemonGoMainWindow.window.refreshTitle();
         			}
