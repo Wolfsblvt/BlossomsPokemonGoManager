@@ -50,7 +50,7 @@ public class PokemonGoMainWindow extends JFrame {
         }
         setLayout(new BorderLayout());
         refreshTitle();
-        setIconImage(FileHelper.loadImage("icon/PokeBall-icon.png"));
+        setIconImage(FileHelper.loadImage("main/resources/icon/PokeBall-icon.png"));
         setBounds(0, 0, config.getInt("options.window.width", 800), config.getInt("options.window.height", 650));
         // add EventHandler to save new window size and position to
         // config for the app to remember over restarts
