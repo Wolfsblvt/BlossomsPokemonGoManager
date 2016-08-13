@@ -26,6 +26,8 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -56,6 +58,19 @@ public class PokemonTab extends JPanel {
         evolveSelected = new JButton("Evolve");
         powerUpSelected = new JButton("Power Up");
         toggleFavorite = new JButton("Toggle Favorite");
+        
+        pt.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+        	public void valueChanged(ListSelectionEvent event) {
+        		if (event.getValueIsAdjusting() == true) {
+        			int selectedRows = pt.getSelectedRowCount();
+        			if (selectedRows > 1) {
+        				PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
+        			} else {
+        				PokemonGoMainWindow.window.refreshTitle();
+        			}
+        		}
+            }
+        });
 
         GridBagConstraints gbc = new GridBagConstraints();
         topPanel.add(refreshPkmn, gbc);
