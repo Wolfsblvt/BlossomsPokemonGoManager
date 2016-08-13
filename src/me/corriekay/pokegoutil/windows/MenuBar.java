@@ -35,11 +35,18 @@ public class MenuBar extends JMenuBar {
 
 		file.add(trainerStats);
 
-		JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer after evolve");
+		JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer After Evolve");
 		tAfterE.setSelected(Config.getConfig().getBool("transfer.afterEvolve", false));
 		tAfterE.addItemListener(e -> Config.getConfig().setBool("transfer.afterEvolve", tAfterE.isSelected()));
 
 		file.add(tAfterE);
+
+		JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion");
+		doNotShowBulkPopup.setSelected(Config.getConfig().getBool("popup.afterBulk", true));
+		doNotShowBulkPopup
+				.addItemListener(e -> Config.getConfig().setBool("popup.afterBulk", doNotShowBulkPopup.isSelected()));
+
+		file.add(doNotShowBulkPopup);
 
 		JMenuItem logout = new JMenuItem("Logout");
 		logout.addActionListener(al -> {
@@ -58,18 +65,11 @@ public class MenuBar extends JMenuBar {
 
 		JMenuItem about = new JMenuItem("About");
 		about.addActionListener(l -> JOptionPane.showMessageDialog(null,
-				"Version: " + BlossomsPoGoManager.VERSION
-						+ "\n\nAuthor: Corrie 'Blossom' Kay"
-						+ "\n\nThis work is protected under the"
-						+ "\nCreative Commons Attribution-"
-						+ "\nNonCommercial-ShareAlike 4.0"
-						+ "\nInternational license, which can"
-						+ "\nbe found here:"
-						+ "\nhttps://creativecommons.org/"
-						+ "\nlicenses/by-nc-sa/4.0/"
-						+ "\n\nThanks to Grover for providing"
-						+ "\nsuch a great API."
-						+ "\n\nThanks for Draseart for"
+				"Version: " + BlossomsPoGoManager.VERSION + "\n\nAuthor: Corrie 'Blossom' Kay"
+						+ "\n\nThis work is protected under the" + "\nCreative Commons Attribution-"
+						+ "\nNonCommercial-ShareAlike 4.0" + "\nInternational license, which can" + "\nbe found here:"
+						+ "\nhttps://creativecommons.org/" + "\nlicenses/by-nc-sa/4.0/"
+						+ "\n\nThanks to Grover for providing" + "\nsuch a great API." + "\n\nThanks for Draseart for"
 						+ "\nthe icon art.",
 				"About Blossom's Pokémon Go Manager", JOptionPane.PLAIN_MESSAGE));
 

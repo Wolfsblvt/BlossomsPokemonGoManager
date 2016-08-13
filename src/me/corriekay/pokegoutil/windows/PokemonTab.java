@@ -259,8 +259,10 @@ public class PokemonTab extends JPanel {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);
-        JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch rename complete!",
-                selection.size(), success, skipped, err));
+		if (Config.getConfig().getBool("popup.afterBulk", true)) {
+			JOptionPane.showMessageDialog(null,
+					generateFinishedText("Pokémon batch rename complete!", selection.size(), success, skipped, err));
+		}
     }
 
     private void transferSelected() {
@@ -314,8 +316,10 @@ public class PokemonTab extends JPanel {
                 e.printStackTrace();
             }
             SwingUtilities.invokeLater(this::refreshList);
-            JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch transfer complete!",
-                    selection.size(), success, skipped, err));
+			if (Config.getConfig().getBool("popup.afterBulk", true)) {
+				JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch transfer complete!",
+						selection.size(), success, skipped, err));
+			}
         }
     }
 
@@ -377,8 +381,12 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshList);
-                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch evolve" + ((Config.getConfig().getBool("transfer.afterEvolve", false)) ? "/transfer" : "") + " complete!",
-                        selection.size(), success, skipped, err));
+				if (Config.getConfig().getBool("popup.afterBulk", true)) {
+					JOptionPane.showMessageDialog(null,
+							generateFinishedText("Pokémon batch evolve"
+									+ ((Config.getConfig().getBool("transfer.afterEvolve", false)) ? "/transfer" : "")
+									+ " complete!", selection.size(), success, skipped, err));
+				}
             }
         }
     }
@@ -437,8 +445,10 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshList);
-                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch powerup complete!",
-                        selection.size(), success, skipped, err));
+				if (Config.getConfig().getBool("popup.afterBulk", true)) {
+					JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch powerup complete!",
+							selection.size(), success, skipped, err));
+				}
             }
         }
     }
@@ -485,9 +495,10 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshPkmn);
-
-                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch \"toggle favorite\" complete!",
-                        selection.size(), success, skipped, err));
+				if (Config.getConfig().getBool("popup.afterBulk", true)) {
+					JOptionPane.showMessageDialog(null, generateFinishedText(
+							"Pokémon batch \"toggle favorite\" complete!", selection.size(), success, skipped, err));
+				}
 
             }
         }
