@@ -19,9 +19,9 @@ public class MenuBar extends JMenuBar {
 	public MenuBar(PokemonGo go) {
 		this.go = go;
 
-		JMenu file, help;
+		JMenu file, settings, help;
 
-		// File
+		// File tab
 		file = new JMenu("File");
 
 		JMenuItem trainerStats = new JMenuItem("View Trainer Stats");
@@ -32,21 +32,7 @@ public class MenuBar extends JMenuBar {
 				e.printStackTrace();
 			}
 		});
-
 		file.add(trainerStats);
-
-		JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer After Evolve");
-		tAfterE.setSelected(Config.getConfig().getBool("transfer.afterEvolve", false));
-		tAfterE.addItemListener(e -> Config.getConfig().setBool("transfer.afterEvolve", tAfterE.isSelected()));
-
-		file.add(tAfterE);
-
-		JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion");
-		doNotShowBulkPopup.setSelected(Config.getConfig().getBool("popup.afterBulk", true));
-		doNotShowBulkPopup
-				.addItemListener(e -> Config.getConfig().setBool("popup.afterBulk", doNotShowBulkPopup.isSelected()));
-
-		file.add(doNotShowBulkPopup);
 
 		JMenuItem logout = new JMenuItem("Logout");
 		logout.addActionListener(al -> {
@@ -56,11 +42,27 @@ public class MenuBar extends JMenuBar {
 				e.printStackTrace();
 			}
 		});
-
 		file.add(logout);
 
 		add(file);
 
+		// Settings tab
+		settings = new JMenu("Settings");
+
+		JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer After Evolve");
+		tAfterE.setSelected(Config.getConfig().getBool("transfer.afterEvolve", false));
+		tAfterE.addItemListener(e -> Config.getConfig().setBool("transfer.afterEvolve", tAfterE.isSelected()));
+		settings.add(tAfterE);
+
+		JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion");
+		doNotShowBulkPopup.setSelected(Config.getConfig().getBool("popup.afterBulk", true));
+		doNotShowBulkPopup
+				.addItemListener(e -> Config.getConfig().setBool("popup.afterBulk", doNotShowBulkPopup.isSelected()));
+		settings.add(doNotShowBulkPopup);
+
+		add(settings);
+
+		// Help tab
 		help = new JMenu("Help");
 
 		JMenuItem about = new JMenuItem("About");
@@ -72,7 +74,6 @@ public class MenuBar extends JMenuBar {
 						+ "\n\nThanks to Grover for providing" + "\nsuch a great API." + "\n\nThanks for Draseart for"
 						+ "\nthe icon art.",
 				"About Blossom's Pokémon Go Manager", JOptionPane.PLAIN_MESSAGE));
-
 		help.add(about);
 
 		add(help);
