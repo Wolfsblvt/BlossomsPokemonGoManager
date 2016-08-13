@@ -640,7 +640,7 @@ public class PokemonTab extends JPanel {
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                 boolean hasFocus, int rowIndex, int vColIndex) {
-            setText( NumberFormat.getPercentInstance().format(Double.parseDouble(value.toString()) / this.scale) );
+            setText( NumberFormat.getInstance().format(Math.ceil(Double.parseDouble(value.toString()) / this.scale * 100) - 1 ));
             setToolTipText(NumberFormat.getInstance().format(value));
 
             return this;
