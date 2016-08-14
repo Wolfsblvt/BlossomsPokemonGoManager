@@ -6,6 +6,9 @@ public enum ConfigKey {
 	WINDOW_POS_X("options.window.posx", 0, Integer.class),
 	WINDOW_POS_Y("options.window.posy", 0, Integer.class),
 	
+	TRANSFER_AFTER_EVOLVE("transfer.afterEvolve", false, Boolean.class),
+	SHOW_BULK_POPUP("popup.afterBulk", true, Boolean.class),
+	
 	;
 	
 	public final String keyName;
