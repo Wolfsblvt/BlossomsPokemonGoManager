@@ -47,7 +47,7 @@ public class PokemonTab extends JPanel {
     private final PokemonTable pt = new PokemonTable();
     private final JTextField searchBar = new JTextField("");
     private final JTextField ivTransfer = new JTextField("", 20);
-    
+
     private ConfigNew config = ConfigNew.getConfig();
 
     public PokemonTab(PokemonGo go) {
@@ -61,17 +61,17 @@ public class PokemonTab extends JPanel {
         evolveSelected = new JButton("Evolve");
         powerUpSelected = new JButton("Power Up");
         toggleFavorite = new JButton("Toggle Favorite");
-        
-        pt.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-        	public void valueChanged(ListSelectionEvent event) {
-        		if (event.getValueIsAdjusting() == true) {
-        			int selectedRows = pt.getSelectedRowCount();
-        			if (selectedRows > 1) {
-        				PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
-        			} else {
-        				PokemonGoMainWindow.window.refreshTitle();
-        			}
-        		}
+
+        pt.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (event.getValueIsAdjusting() == true) {
+                    int selectedRows = pt.getSelectedRowCount();
+                    if (selectedRows > 1) {
+                        PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
+                    } else {
+                        PokemonGoMainWindow.window.refreshTitle();
+                    }
+                }
             }
         });
 
@@ -212,7 +212,7 @@ public class PokemonTab extends JPanel {
     }
 
     private void changeLanguage(String langCode) {
-    	config.setString(ConfigKey.LANGUAGE, langCode);
+        config.setString(ConfigKey.LANGUAGE, langCode);
         refreshPkmn();
     }
 
@@ -619,9 +619,10 @@ public class PokemonTab extends JPanel {
                         + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2()
                         + poke.getPokeball();
                 searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
-                for(String s:terms) {
+                for (String s : terms) {
                     if (searchme.contains(s)) {
                         pokes.add(poke);
+                        // Break, so that a Pokémon isn't added twice even if it matches more than one criteria
                         break;
                     }
                 }
@@ -659,8 +660,8 @@ public class PokemonTab extends JPanel {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int rowIndex, int vColIndex) {
-            setText( NumberFormat.getInstance().format(Math.ceil(Double.parseDouble(value.toString()) / this.scale * 100) - 1 ));
+                                                       boolean hasFocus, int rowIndex, int vColIndex) {
+            setText(NumberFormat.getInstance().format(Math.ceil(Double.parseDouble(value.toString()) / this.scale * 100) - 1));
             setToolTipText(NumberFormat.getInstance().format(value));
 
             return this;

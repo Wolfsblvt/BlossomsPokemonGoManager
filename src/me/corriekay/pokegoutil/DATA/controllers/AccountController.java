@@ -246,18 +246,18 @@ public final class AccountController {
     private static void deleteLoginData(LoginType type, boolean justCleanup) {
         if (!justCleanup) config.delete(ConfigKey.LOGIN_SAVE_AUTH);
         switch (type) {
-        case BOTH:
-            config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
-            config.delete(ConfigKey.LOGIN_PTC_USERNAME);
-            config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
-        case GOOGLE:
-        	config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
-        case PTC:
-        	config.delete(ConfigKey.LOGIN_PTC_USERNAME);
-            config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
-        default:
-            	
-            	
+            case BOTH:
+                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
+                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+            case GOOGLE:
+                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+            case PTC:
+                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
+                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+            default:
+
+
         }
     }
 

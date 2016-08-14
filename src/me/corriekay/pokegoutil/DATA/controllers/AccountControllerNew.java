@@ -175,9 +175,9 @@ public final class AccountControllerNew {
                 config.delete(ConfigKey.LOGIN_PTC_USERNAME);
                 config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
             case GOOGLE:
-            	config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
             case PTC:
-            	config.delete(ConfigKey.LOGIN_PTC_USERNAME);
+                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
                 config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
             default:
         }
