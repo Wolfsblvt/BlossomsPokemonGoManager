@@ -40,9 +40,13 @@ To use it in an IDE, you have to import the project as a Maven project.
 We are open for any help on our tool.  
 If you are fond of programming, you can always take one of the open issues, post that you want to help and create a Pull Request. For other features PRs are welcome too, but make sure the feature is really needed and/or not done in another way so that the work isn't wasted.
 
+**IMPORTANT! Please submit Pull Requests only against `develop`! PRs against master will be rejected.**
+
+Thanks for your help.
+
 #### Submitting Issues
 That's the best way how you can help us.  
-If you found a bug, submit an issue. If you have a suggestion, submit an issue. Just make sure before that the issue wasn't already mentioned. Search on the issue tracker helps there.  
+If you found a bug, submit an issue. If you have a suggestion, submit an issue. **Just make sure, BEFORE SUBMITTING, that the issue wasn't already mentioned. Search on the issue tracker helps there.**
 Just one thing: **Please try to not group too many bugs/suggestions in one issue** It's better to have ten more issues where it's clear what there is inside than to have one big blob. So don't hesitate to create more than one issue.
 
 If you have **Bugs**, please be as detailed as possible.  
@@ -65,6 +69,9 @@ We use discord to organize our development and answer questions. We also post im
 
 #### Q: After login no window shows up. No error is displayed
 - **A:** It's a small bug with the current config. Go to your folder where the `.jar` file is and delete the `config.json`.
+
+#### Q: Java 8 is not available for my linux system. What do I do?
+- **A:** Read up [Install Oracle Java 8 (JDK8 and JRE8) in Ubuntu or Linux Mint](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html) on how you exactly do it.
 
 #### Q: Is the IV calculated somehow? Is it the correct value or maybe wrong? My IV calculator says something different.
 - **A:** The IV isn't calculated, it is directly taken from the API response. It's the exact value like the game has it.
