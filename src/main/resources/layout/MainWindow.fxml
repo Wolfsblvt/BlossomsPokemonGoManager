@@ -4,21 +4,21 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox prefHeight="487.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.corriekay.pokegoutil.GUI.controller.MainWindowController">
+<VBox prefHeight="487.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" >
     <children>
         <MenuBar prefHeight="25.0" prefWidth="634.0" VBox.vgrow="NEVER">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem fx:id="settingsMenuItem" mnemonicParsing="false" onAction="#onSettingsClicked" text="Settings..."/>
+                        <MenuItem fx:id="settingsMenuItem" mnemonicParsing="false" text="Settings..."/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem fx:id="logOffMenuItem" mnemonicParsing="false" onAction="#onLogOffClicked" text="LogOff"/>
-                        <MenuItem fx:id="quitMenuItem" mnemonicParsing="false" onAction="#onQuitClicked" text="Quit"/>
+                        <MenuItem fx:id="logOffMenuItem" mnemonicParsing="false" text="LogOff"/>
+                        <MenuItem fx:id="quitMenuItem" mnemonicParsing="false" text="Quit"/>
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#onAboutClicked" text="About"/>
+                        <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="About"/>
                     </items>
                 </Menu>
             </menus>
@@ -57,7 +57,7 @@
                     <tabs>
                         <Tab text="LuckyEggGrinder">
                             <content>
-                                <Button fx:id="openGrinderBtn" onAction="#onOpenGrinderClicked" prefHeight="25.0" prefWidth="105.0" text="Open"/>
+                                <Button fx:id="openGrinderBtn"  prefHeight="25.0" prefWidth="105.0" text="Open"/>
                                 <!-- problem with the embeding atm -->
                                 <!--fx:include fx:id="grinderPane" source="LuckyEggGrinder.fxml" />-->
                             </content>

@@ -3,79 +3,73 @@ package me.corriekay.pokegoutil.GUI.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
+import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.DATA.controllers.AccountController;
-import me.corriekay.pokegoutil.utils.ui.Console;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
+import me.corriekay.pokegoutil.utils.ui.Console;
 
 import javax.swing.*;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ResourceBundle;
 
 public class ChooseGuiWindowController extends Pane {
 
-    @FXML
-    private ResourceBundle resources;
-
-    @FXML
-    private URL location;
-
-    @FXML
-    private URL icon;
-
+    private final String fxmlLayout = "layout/ChooseGUIWindow.fxml";
+    private final URL icon;
+    private ClassLoader classLoader = getClass().getClassLoader();
+    private Scene rootScene;
     @FXML
     private Button oldGuiBtn;
 
     @FXML
     private Button newGuiBtn;
 
-    public URL getIcon() {
-        return icon;
-    }
-
-    public URL getLocation() {
-        return location;
-    }
-
     public ChooseGuiWindowController() {
+        FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
+        fxmlLoader.setController(this);
+        try {
+            fxmlLoader.load();
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+        rootScene = new Scene(fxmlLoader.getRoot());
+        Stage stage = new Stage();
+        stage.setScene(rootScene);
+        icon = classLoader.getResource("icon/PokeBall-icon.png");
+        stage.getIcons().add(new Image(icon.toExternalForm()));
+        stage.setTitle("Choose a GUI");
+        stage.initStyle(StageStyle.UTILITY);
+        stage.setResizable(false);
+
+        BlossomsPoGoManager.setNewPrimaryStage(stage);
     }
 
     @FXML
     void initialize() {
+        oldGuiBtn.setOnAction(this::onOldGuiBtnClicked);
+        newGuiBtn.setOnAction(this::onNewGuiBtnClicked);
+    }
+
+    private void onClose(WindowEvent windowEvent) {
+        System.exit(0);
     }
 
     @FXML
     void onNewGuiBtnClicked(ActionEvent event) {
-        newGuiBtn.getScene().getWindow().hide();
-        ClassLoader classLoader = getClass().getClassLoader();
-        Parent login = new LoginController();
-        try {
-            login = (Parent) FXMLLoader.load(classLoader.getResource("layout/Login.fxml"));
-        } catch (IOException e) {
-            System.err.println("Problem loading .fxml file: " + e.toString());
-            return;
-        }
-
-        Stage loginWindow = new Stage();
-        URL icon = classLoader.getResource("icon/PokeBall-icon.png");
-        loginWindow.getIcons().add(new Image(icon.toExternalForm()));
-        loginWindow.setTitle("Login");
-        loginWindow.initStyle(StageStyle.UTILITY);
-        loginWindow.setResizable(false);
-        loginWindow.setScene(new Scene(login));
-        loginWindow.show();
+        new LoginController();
+        BlossomsPoGoManager.getPrimaryStage().show();
     }
 
     @FXML
     void onOldGuiBtnClicked(ActionEvent event) {
-        oldGuiBtn.getScene().getWindow().hide();
+        rootScene.getWindow().hide();
         SwingUtilities.invokeLater(new Runnable() {
 
             private Console console;
