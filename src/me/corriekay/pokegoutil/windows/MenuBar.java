@@ -69,16 +69,26 @@ public class MenuBar extends JMenuBar {
 
         JMenuItem about = new JMenuItem("About");
         about.addActionListener(l -> JOptionPane.showMessageDialog(null,
-                "Version: " + BlossomsPoGoManager.VERSION + "\n\nAuthor: Corrie 'Blossom' Kay"
-                        + "\n\nThis work is protected under the"
+                "Version: " + BlossomsPoGoManager.VERSION
+                        + "\n"
+                        + "\nAuthor: Corrie 'Blossom' Kay"
+                        + "\nCollaborators: Wolfsblvt, Ljay,"
+                        + "\nnaderki, wullxz, Cryptically, "
+                        + "\neralpsahin, weblue, edysantosa,"
+                        + "\ndylanpdx, michael-smith-versacom"
+                        + "\n"
+                        + "\nThis work is protected under the"
                         + "\nCreative Commons Attribution-"
                         + "\nNonCommercial-ShareAlike 4.0"
                         + "\nInternational license, which can"
                         + "\nbe found here:"
                         + "\nhttps://creativecommons.org/"
                         + "\nlicenses/by-nc-sa/4.0/"
-                        + "\n\nThanks to Grover for providing"
-                        + "\nsuch a great API." + "\n\nThanks for Draseart for"
+                        + "\n"
+                        + "\nThanks to Grover for providing"
+                        + "\nsuch a great API."
+                        + "\n"
+                        + "\nThanks for Draseart for"
                         + "\nthe icon art.",
                 "About Blossom's Pokémon Go Manager", JOptionPane.PLAIN_MESSAGE));
         help.add(about);
@@ -101,5 +111,4 @@ public class MenuBar extends JMenuBar {
                 "Stardust: " + pp.getCurrency(Currency.STARDUST)};
         JOptionPane.showMessageDialog(null, tstats, "Trainer Stats", JOptionPane.PLAIN_MESSAGE);
     }
-
 }
