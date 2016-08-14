@@ -77,6 +77,19 @@ public class ConfigNew {
             return defaultValue;
         }
     }
+    
+    public boolean getBool(ConfigKey configKey, boolean defaultValue) {
+        try {
+            FindResult res = findNode(configKey.keyName, false);
+
+            return res.node().getBoolean(res.name());
+        } catch (JSONException jsone) {
+            System.err.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
+            setBool(configKey, defaultValue);
+            return defaultValue;
+        }
+    }
+
 
     public void setBool(ConfigKey configKey, boolean value) {
         try {
@@ -97,6 +110,19 @@ public class ConfigNew {
             return StringEscapeUtils.unescapeJson(value);
         } catch (JSONException jsone) {
         	String defaultValue = configKey.getDefaultValue();
+            System.err.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
+            setString(configKey, StringEscapeUtils.escapeJson(defaultValue));
+            return defaultValue;
+        }
+    }
+    
+    public String getString(ConfigKey configKey, String defaultValue) {
+        try {
+            FindResult res = findNode(configKey.keyName, false);
+
+            String value = res.node().getString(res.name());
+            return StringEscapeUtils.unescapeJson(value);
+        } catch (JSONException jsone) {
             System.err.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
             setString(configKey, StringEscapeUtils.escapeJson(defaultValue));
             return defaultValue;
@@ -126,6 +152,18 @@ public class ConfigNew {
             return defaultValue;
         }
     }
+    
+    public int getInt(ConfigKey configKey, int defaultValue) {
+        try {
+            FindResult res = findNode(configKey.keyName, false);
+
+            return res.node().getInt(res.name());
+        } catch (JSONException jsone) {
+            System.err.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
+            setInt(configKey, defaultValue);
+            return defaultValue;
+        }
+    }
 
     public void setInt(ConfigKey configKey, int value) {
         try {
@@ -145,6 +183,18 @@ public class ConfigNew {
             return res.node().getInt(res.name());
         } catch (JSONException jsone) {
         	double defaultValue = configKey.getDefaultValue();
+            System.err.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
+            setDouble(configKey, defaultValue);
+            return defaultValue;
+        }
+    }
+    
+    public double getDouble(ConfigKey configKey, double defaultValue) {
+        try {
+            FindResult res = findNode(configKey.keyName, false);
+
+            return res.node().getInt(res.name());
+        } catch (JSONException jsone) {
             System.err.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
             setDouble(configKey, defaultValue);
             return defaultValue;
