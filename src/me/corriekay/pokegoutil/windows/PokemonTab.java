@@ -7,7 +7,6 @@ import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.api.gym.Gym;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.*;
@@ -26,15 +25,20 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -43,7 +47,6 @@ public class PokemonTab extends JPanel {
     private final PokemonTable pt = new PokemonTable();
     private final JTextField searchBar = new JTextField("");
     private final JTextField ivTransfer = new JTextField("", 20);
-    static boolean tAfterE;
 
     public PokemonTab(PokemonGo go) {
         setLayout(new BorderLayout());
@@ -56,6 +59,19 @@ public class PokemonTab extends JPanel {
         evolveSelected = new JButton("Evolve");
         powerUpSelected = new JButton("Power Up");
         toggleFavorite = new JButton("Toggle Favorite");
+        
+        pt.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+        	public void valueChanged(ListSelectionEvent event) {
+        		if (event.getValueIsAdjusting() == true) {
+        			int selectedRows = pt.getSelectedRowCount();
+        			if (selectedRows > 1) {
+        				PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
+        			} else {
+        				PokemonGoMainWindow.window.refreshTitle();
+        			}
+        		}
+            }
+        });
 
         GridBagConstraints gbc = new GridBagConstraints();
         topPanel.add(refreshPkmn, gbc);
@@ -208,12 +224,18 @@ public class PokemonTab extends JPanel {
         System.out.println("Done refreshing Pokémon list");
     }
 
-    private String generateFinishedText(String message, int size, MutableInt success, MutableInt skipped, MutableInt err) {
-        return message +
+    private void showFinishedText(String message, int size, MutableInt success, MutableInt skipped, MutableInt err) {
+        String finishText = message +
                 "\nPokémon total: " + size +
                 "\nSuccessful: " + success.getValue() +
                 (skipped.getValue() > 0 ? "\nSkipped: " + skipped.getValue() : "") +
                 (err.getValue() > 0 ? "\nErrors: " + err.getValue() : "");
+
+        if (Config.getConfig().getBool("popup.afterBulk", true)) {
+            JOptionPane.showMessageDialog(null, finishText);
+        } else {
+            System.out.println(finishText);
+        }
     }
 
     private void renameSelected() {
@@ -261,8 +283,7 @@ public class PokemonTab extends JPanel {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);
-        JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch rename complete!",
-                selection.size(), success, skipped, err));
+        showFinishedText("Pokémon batch rename complete!", selection.size(), success, skipped, err);
     }
 
     private void transferSelected() {
@@ -316,8 +337,7 @@ public class PokemonTab extends JPanel {
                 e.printStackTrace();
             }
             SwingUtilities.invokeLater(this::refreshList);
-            JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch transfer complete!",
-                    selection.size(), success, skipped, err));
+            showFinishedText("Pokémon batch transfer complete!", selection.size(), success, skipped, err);
         }
     }
 
@@ -348,7 +368,7 @@ public class PokemonTab extends JPanel {
                             int newHp = newPoke.getStamina();
                             System.out.println(
                                     "Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: Success!");
-                            if (tAfterE) {
+                            if (Config.getConfig().getBool("transfer.afterEvolve", false)) {
                                 ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke.transferPokemon();
                                 System.out.println("Transferring " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + ", Result: " + result);
                                 System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "]");
@@ -379,8 +399,9 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshList);
-                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch evolve" + ((tAfterE) ? "/transfer" : "") + " complete!",
-                        selection.size(), success, skipped, err));
+                showFinishedText("Pokémon batch evolve"
+                        + ((Config.getConfig().getBool("transfer.afterEvolve", false)) ? "/transfer" : "")
+                        + " complete!", selection.size(), success, skipped, err);
             }
         }
     }
@@ -439,12 +460,10 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshList);
-                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch powerup complete!",
-                        selection.size(), success, skipped, err));
+                showFinishedText("Pokémon batch powerup complete!", selection.size(), success, skipped, err);
             }
         }
     }
-
 
     //feature added by Ben Kauffman
     private void toggleFavorite() {
@@ -487,10 +506,7 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshPkmn);
-
-                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch \"toggle favorite\" complete!",
-                        selection.size(), success, skipped, err));
-
+                showFinishedText("Pokémon batch \"toggle favorite\" complete!", selection.size(), success, skipped, err);
             }
         }
     }
@@ -609,8 +625,39 @@ public class PokemonTab extends JPanel {
             for (int i = 0; i < pt.getModel().getColumnCount(); i++) {
                 JTableColumnPacker.packColumn(pt, i, 4);
             }
+
+            //Custom cell renderers
+            //@todo magic numbers pulled from max values of their respective columns in the moveset rankings spreadsheet calculations
+            //@see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+            TableColumn duelAbilityCol = this.pt.getColumnModel().getColumn(24);
+            duelAbilityCol.setCellRenderer(new moveSetRankingRenderer(21_858_183_256L));
+            TableColumn gymAttackCol = this.pt.getColumnModel().getColumn(25);
+            gymAttackCol.setCellRenderer(new moveSetRankingRenderer(510_419L));
+            TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
+            gymDefenseCol.setCellRenderer(new moveSetRankingRenderer(9_530_079_725L));
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Provide custom formatting for the moveset ranking columns while allowing sorting on original values
+     */
+    private static class moveSetRankingRenderer extends JLabel implements TableCellRenderer {
+
+        private final long scale;
+
+        public moveSetRankingRenderer(long scale) {
+            this.scale = scale;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                boolean hasFocus, int rowIndex, int vColIndex) {
+            setText( NumberFormat.getInstance().format(Math.ceil(Double.parseDouble(value.toString()) / this.scale * 100) - 1 ));
+            setToolTipText(NumberFormat.getInstance().format(value));
+
+            return this;
         }
     }
 
