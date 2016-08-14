@@ -6,6 +6,7 @@ import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.DATA.controllers.AccountController;
+import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 import javax.swing.*;
@@ -18,9 +19,9 @@ public class MenuBar extends JMenuBar {
     public MenuBar(PokemonGo go) {
         this.go = go;
 
-        JMenu file, help;
+        JMenu file, settings, help;
 
-        //File
+        // File menu
         file = new JMenu("File");
 
         JMenuItem trainerStats = new JMenuItem("View Trainer Stats");
@@ -31,15 +32,7 @@ public class MenuBar extends JMenuBar {
                 e.printStackTrace();
             }
         });
-
-
         file.add(trainerStats);
-
-        JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer after evolve");
-        tAfterE.setSelected(PokemonTab.tAfterE);
-        tAfterE.addItemListener(e -> PokemonTab.tAfterE = tAfterE.isSelected());
-
-        file.add(tAfterE);
 
         JMenuItem logout = new JMenuItem("Logout");
         logout.addActionListener(al -> {
@@ -49,16 +42,43 @@ public class MenuBar extends JMenuBar {
                 e.printStackTrace();
             }
         });
-
         file.add(logout);
 
         add(file);
 
+        // Settings menu
+        settings = new JMenu("Settings");
+
+        JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer After Evolve");
+        tAfterE.setSelected(Config.getConfig().getBool("transfer.afterEvolve", false));
+        tAfterE.addItemListener(e -> Config.getConfig().setBool("transfer.afterEvolve", tAfterE.isSelected()));
+        settings.add(tAfterE);
+
+        JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion");
+        doNotShowBulkPopup.setSelected(Config.getConfig().getBool("popup.afterBulk", true));
+        doNotShowBulkPopup
+                .addItemListener(e -> Config.getConfig().setBool("popup.afterBulk", doNotShowBulkPopup.isSelected()));
+        settings.add(doNotShowBulkPopup);
+
+        add(settings);
+
+        // Help menu
         help = new JMenu("Help");
 
         JMenuItem about = new JMenuItem("About");
-        about.addActionListener(l -> JOptionPane.showMessageDialog(null, "Version: " + BlossomsPoGoManager.VERSION + "\n\nAuthor: Corrie 'Blossom' Kay\n\nThis work is protected under the\nCreative Commons Attribution-\nNonCommercial-ShareAlike 4.0\nInternational license, which can\nbe found here:\nhttps://creativecommons.org/\nlicenses/by-nc-sa/4.0/\n\nThanks to Grover for providing\nsuch a great API.\n\nThanks for Draseart for\nthe icon art.", "About Blossom's Pokémon Go Manager", JOptionPane.PLAIN_MESSAGE));
-
+        about.addActionListener(l -> JOptionPane.showMessageDialog(null,
+                "Version: " + BlossomsPoGoManager.VERSION + "\n\nAuthor: Corrie 'Blossom' Kay"
+                        + "\n\nThis work is protected under the"
+                        + "\nCreative Commons Attribution-"
+                        + "\nNonCommercial-ShareAlike 4.0"
+                        + "\nInternational license, which can"
+                        + "\nbe found here:"
+                        + "\nhttps://creativecommons.org/"
+                        + "\nlicenses/by-nc-sa/4.0/"
+                        + "\n\nThanks to Grover for providing"
+                        + "\nsuch a great API." + "\n\nThanks for Draseart for"
+                        + "\nthe icon art.",
+                "About Blossom's Pokémon Go Manager", JOptionPane.PLAIN_MESSAGE));
         help.add(about);
 
         add(help);
@@ -72,13 +92,11 @@ public class MenuBar extends JMenuBar {
         go.getInventories().updateInventories(true);
         PlayerProfile pp = go.getPlayerProfile();
         Stats stats = pp.getStats();
-        Object[] tstats = {
-                "Trainer Name: " + pp.getPlayerData().getUsername(),
+        Object[] tstats = {"Trainer Name: " + pp.getPlayerData().getUsername(),
                 "Team: " + PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue()),
-                "Level: " + stats.getLevel(),
-                "XP: " + stats.getExperience() + " (" + (stats.getNextLevelXp() - stats.getExperience()) + " to next level)",
-                "Stardust: " + pp.getCurrency(Currency.STARDUST)
-        };
+                "Level: " + stats.getLevel(), "XP: " + stats.getExperience() + " ("
+                + (stats.getNextLevelXp() - stats.getExperience()) + " to next level)",
+                "Stardust: " + pp.getCurrency(Currency.STARDUST)};
         JOptionPane.showMessageDialog(null, tstats, "Trainer Stats", JOptionPane.PLAIN_MESSAGE);
     }
 

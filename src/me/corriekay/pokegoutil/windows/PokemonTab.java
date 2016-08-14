@@ -7,7 +7,6 @@ import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.api.gym.Gym;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.*;
@@ -48,7 +47,6 @@ public class PokemonTab extends JPanel {
     private final PokemonTable pt = new PokemonTable();
     private final JTextField searchBar = new JTextField("");
     private final JTextField ivTransfer = new JTextField("", 20);
-    static boolean tAfterE;
 
     public PokemonTab(PokemonGo go) {
         setLayout(new BorderLayout());
@@ -226,12 +224,18 @@ public class PokemonTab extends JPanel {
         System.out.println("Done refreshing Pokémon list");
     }
 
-    private String generateFinishedText(String message, int size, MutableInt success, MutableInt skipped, MutableInt err) {
-        return message +
+    private void showFinishedText(String message, int size, MutableInt success, MutableInt skipped, MutableInt err) {
+        String finishText = message +
                 "\nPokémon total: " + size +
                 "\nSuccessful: " + success.getValue() +
                 (skipped.getValue() > 0 ? "\nSkipped: " + skipped.getValue() : "") +
                 (err.getValue() > 0 ? "\nErrors: " + err.getValue() : "");
+
+        if (Config.getConfig().getBool("popup.afterBulk", true)) {
+            JOptionPane.showMessageDialog(null, finishText);
+        } else {
+            System.out.println(finishText);
+        }
     }
 
     private void renameSelected() {
@@ -279,8 +283,7 @@ public class PokemonTab extends JPanel {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);
-        JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch rename complete!",
-                selection.size(), success, skipped, err));
+        showFinishedText("Pokémon batch rename complete!", selection.size(), success, skipped, err);
     }
 
     private void transferSelected() {
@@ -334,8 +337,7 @@ public class PokemonTab extends JPanel {
                 e.printStackTrace();
             }
             SwingUtilities.invokeLater(this::refreshList);
-            JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch transfer complete!",
-                    selection.size(), success, skipped, err));
+            showFinishedText("Pokémon batch transfer complete!", selection.size(), success, skipped, err);
         }
     }
 
@@ -366,7 +368,7 @@ public class PokemonTab extends JPanel {
                             int newHp = newPoke.getStamina();
                             System.out.println(
                                     "Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: Success!");
-                            if (tAfterE) {
+                            if (Config.getConfig().getBool("transfer.afterEvolve", false)) {
                                 ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke.transferPokemon();
                                 System.out.println("Transferring " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + ", Result: " + result);
                                 System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "]");
@@ -397,8 +399,9 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshList);
-                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch evolve" + ((tAfterE) ? "/transfer" : "") + " complete!",
-                        selection.size(), success, skipped, err));
+                showFinishedText("Pokémon batch evolve"
+                        + ((Config.getConfig().getBool("transfer.afterEvolve", false)) ? "/transfer" : "")
+                        + " complete!", selection.size(), success, skipped, err);
             }
         }
     }
@@ -457,8 +460,7 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshList);
-                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch powerup complete!",
-                        selection.size(), success, skipped, err));
+                showFinishedText("Pokémon batch powerup complete!", selection.size(), success, skipped, err);
             }
         }
     }
@@ -504,10 +506,7 @@ public class PokemonTab extends JPanel {
                     e.printStackTrace();
                 }
                 SwingUtilities.invokeLater(this::refreshPkmn);
-
-                JOptionPane.showMessageDialog(null, generateFinishedText("Pokémon batch \"toggle favorite\" complete!",
-                        selection.size(), success, skipped, err));
-
+                showFinishedText("Pokémon batch \"toggle favorite\" complete!", selection.size(), success, skipped, err);
             }
         }
     }
