@@ -1,6 +1,7 @@
 package me.corriekay.pokegoutil.utils;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 import java.util.Random;
@@ -17,11 +18,21 @@ public final class Utilities {
 
     /**
      * Rounds given decimal number (like 0.75345) to a percentage with two decimals (75.35)
+     *
      * @param decimalNumber The decimal number
      * @return The percentage value
      */
     public static double percentage(double decimalNumber) {
         return Math.round(decimalNumber * 100 * 100) / 100.0;
+    }
+
+    public static String percentageWithTwoCharacters(double number, double maximum) {
+        return percentageWithTwoCharacters(Math.min(number / maximum, maximum));
+    }
+    public static String percentageWithTwoCharacters(double decimalNumber) {
+        long rounded = Math.round(percentage(decimalNumber));
+        return (rounded < 100) ? StringUtils.leftPad(String.valueOf(rounded), 2, '0') : "XX";
+
     }
 
     public static Color randomColor() {

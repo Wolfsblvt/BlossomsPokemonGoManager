@@ -8,11 +8,10 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.DATA.controllers.AccountController;
-import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
-import me.corriekay.pokegoutil.utils.ui.Console;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
+import me.corriekay.pokegoutil.utils.ui.Console;
 
 import javax.swing.*;
 import java.io.IOException;

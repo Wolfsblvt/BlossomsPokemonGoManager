@@ -11,6 +11,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@Deprecated
 public class Config {
     private static final File file = new File(System.getProperty("user.dir"), "config.json");
     private static JSONObject json;
