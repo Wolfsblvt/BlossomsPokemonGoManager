@@ -9,6 +9,8 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 import me.corriekay.pokegoutil.utils.Config;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.ui.Console;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
@@ -37,7 +39,7 @@ public final class AccountController {
     protected OkHttpClient http;
     protected CredentialProvider cp;
 
-    private static Config config = Config.getConfig();
+    private static ConfigNew config = ConfigNew.getConfig();
 
     private AccountController() {
 
@@ -69,8 +71,8 @@ public final class AccountController {
             cp = null;
             http = new OkHttpClient();
 
-            JTextField username = new JTextField(config.getString("login.PTCUsername", null));
-            JTextField password = new JPasswordField(config.getString("login.PTCPassword", null));
+            JTextField username = new JTextField(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
+            JTextField password = new JPasswordField(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
 
             boolean directLoginWithSavedCredentials = checkForSavedCredentials();
 
@@ -113,10 +115,10 @@ public final class AccountController {
                 deleteLoginData(LoginType.GOOGLE, true);
                 try {
                     cp = new PtcCredentialProvider(http, username.getText(), password.getText());
-                    config.setString("login.PTCUsername", username.getText());
-                    if (config.getBool("login.SaveAuth", false) || checkSaveAuth()) {
-                        config.setString("login.PTCPassword", password.getText());
-                        config.setBool("login.SaveAuth", true);
+                    config.setString(ConfigKey.LOGIN_PTC_USERNAME, username.getText());
+                    if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
+                        config.setString(ConfigKey.LOGIN_PTC_PASSWORD, password.getText());
+                        config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
                     } else {
                         deleteLoginData(LoginType.PTC);
                     }
@@ -128,7 +130,7 @@ public final class AccountController {
             } else if (response == JOptionPane.NO_OPTION) {
                 //Using Google, remove PTC infos
                 deleteLoginData(LoginType.PTC, true);
-                String authCode = config.getString("login.GoogleAuthToken", null);
+                String authCode = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, null);
                 boolean refresh = false;
                 if (authCode == null) {
                     //We need to get the auth code, as we do not have it yet.
@@ -158,10 +160,10 @@ public final class AccountController {
                     if (refresh) provider.refreshToken(authCode);
                     else provider.login(authCode);
                     cp = provider;
-                    if (config.getBool("login.SaveAuth", false) || checkSaveAuth()) {
+                    if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH, false) || checkSaveAuth()) {
                         if (!refresh)
-                            config.setString("login.GoogleAuthToken", provider.getRefreshToken());
-                        config.setBool("login.SaveAuth", true);
+                            config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
+                        config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
                     } else {
                         deleteLoginData(LoginType.GOOGLE);
                     }
@@ -213,7 +215,7 @@ public final class AccountController {
     }
 
     private static LoginType checkSavedConfig() {
-        if (!config.getBool("login.SaveAuth", false)) {
+        if (!config.getBool(ConfigKey.LOGIN_SAVE_AUTH, false)) {
             return LoginType.NONE;
         } else {
             if (getLoginData(LoginType.GOOGLE) != null) return LoginType.GOOGLE;
@@ -225,11 +227,11 @@ public final class AccountController {
     private static List<String> getLoginData(LoginType type) {
         switch (type) {
             case GOOGLE:
-                String token = config.getString("login.GoogleAuthToken", null);
+                String token = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
                 return (token != null) ? Collections.singletonList(token) : null;
             case PTC:
-                String username = config.getString("login.PTCUsername", null);
-                String password = config.getString("login.PTCPassword", null);
+                String username = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
+                String password = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
                 return (username != null && password != null) ? Arrays.asList(username, password) : null;
             default:
                 return null;
@@ -242,18 +244,20 @@ public final class AccountController {
     }
 
     private static void deleteLoginData(LoginType type, boolean justCleanup) {
-        if (!justCleanup) config.delete("login.SaveAuth");
+        if (!justCleanup) config.delete(ConfigKey.LOGIN_SAVE_AUTH);
         switch (type) {
-            case BOTH:
-                config.delete("login.GoogleAuthToken");
-                config.delete("login.PTCUsername");
-                config.delete("login.PTCPassword");
-            case GOOGLE:
-                config.delete("login.GoogleAuthToken");
-            case PTC:
-                config.delete("login.PTCUsername");
-                config.delete("login.PTCPassword");
-            default:
+        case BOTH:
+            config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+            config.delete(ConfigKey.LOGIN_PTC_USERNAME);
+            config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+        case GOOGLE:
+        	config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+        case PTC:
+        	config.delete(ConfigKey.LOGIN_PTC_USERNAME);
+            config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+        default:
+            	
+            	
         }
     }
 
