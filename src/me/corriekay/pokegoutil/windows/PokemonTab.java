@@ -633,15 +633,15 @@ public class PokemonTab extends JPanel {
                 JTableColumnPacker.packColumn(pt, i, 4);
             }
 
-            //Custom cell renderers
-            //@todo magic numbers pulled from max values of their respective columns in the moveset rankings spreadsheet calculations
-            //@see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+            // Custom cell renderers
+            // Magic numbers pulled from max values of their respective columns in the moveset rankings spreadsheet calculations
+            // @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
             TableColumn duelAbilityCol = this.pt.getColumnModel().getColumn(24);
-            duelAbilityCol.setCellRenderer(new moveSetRankingRenderer(21_858_183_256L));
+            duelAbilityCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUAL_ABILITY_MAX));
             TableColumn gymAttackCol = this.pt.getColumnModel().getColumn(25);
-            gymAttackCol.setCellRenderer(new moveSetRankingRenderer(510_419L));
+            gymAttackCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
             TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
-            gymDefenseCol.setCellRenderer(new moveSetRankingRenderer(9_530_079_725L));
+            gymDefenseCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -650,21 +650,32 @@ public class PokemonTab extends JPanel {
     /**
      * Provide custom formatting for the moveset ranking columns while allowing sorting on original values
      */
-    private static class moveSetRankingRenderer extends JLabel implements TableCellRenderer {
+    private static class MoveSetRankingRenderer extends JLabel implements TableCellRenderer {
 
         private final long scale;
 
-        public moveSetRankingRenderer(long scale) {
+        public MoveSetRankingRenderer(long scale) {
             this.scale = scale;
         }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                        boolean hasFocus, int rowIndex, int vColIndex) {
-            setText(NumberFormat.getInstance().format(Math.ceil(Double.parseDouble(value.toString()) / this.scale * 100) - 1));
+            setText(Utilities.percentageWithTwoCharacters(Double.parseDouble(value.toString()), this.scale));
             setToolTipText(NumberFormat.getInstance().format(value));
-
+            setOpaque(true);
+            setDefaultSelectionColors(table, isSelected, this);
             return this;
+        }
+    }
+
+    private static void setDefaultSelectionColors(JTable table, boolean isSelected, JLabel tcr) {
+        if (isSelected) {
+            tcr.setBackground(table.getSelectionBackground());
+            tcr.setForeground(table.getSelectionForeground());
+        } else {
+            tcr.setBackground(table.getBackground());
+            tcr.setForeground(table.getForeground());
         }
     }
 

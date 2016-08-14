@@ -5,10 +5,9 @@ import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
-import me.corriekay.pokegoutil.utils.helpers.Browser;
-import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.helpers.Browser;
 import okhttp3.OkHttpClient;
 
 import javax.swing.*;
