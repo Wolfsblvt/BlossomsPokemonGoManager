@@ -1,5 +1,7 @@
 package me.corriekay.pokegoutil.utils;
 
+import javax.swing.*;
+
 public enum ConfigKey {
 
     DEVELOPFLAG("develop", false, Boolean.class),
@@ -13,6 +15,11 @@ public enum ConfigKey {
     WINDOW_HEIGHT("options.window.height", 650, Integer.class),
     WINDOW_POS_X("options.window.posx", 0, Integer.class),
     WINDOW_POS_Y("options.window.posy", 0, Integer.class),
+
+    SORT_COLINDEX_1("options.sort.1.colIndex", 0, Integer.class),
+    SORT_ORDER_1("options.sort.1.order", SortOrder.ASCENDING.toString(), String.class),
+    SORT_COLINDEX_2("options.sort.2.colIndex", 12, Integer.class),
+    SORT_ORDER_2("options.sort.2.order", SortOrder.DESCENDING.toString(), String.class),
 
     TRANSFER_AFTER_EVOLVE("transfer.afterEvolve", false, Boolean.class),
     SHOW_BULK_POPUP("popup.afterBulk", true, Boolean.class),

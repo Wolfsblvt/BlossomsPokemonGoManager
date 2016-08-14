@@ -9,13 +9,17 @@ import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.*;
-import me.corriekay.pokegoutil.utils.*;
+import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
-import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import org.apache.commons.lang3.StringUtils;
@@ -27,9 +31,7 @@ import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -37,8 +39,6 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -713,12 +713,26 @@ public class PokemonTab extends JPanel {
          * 27 Double - Move 1 Rating
          * 28 Double - Move 2 Rating
          */
-        int sortColIndex = 0;
-        SortOrder so = SortOrder.ASCENDING;
+        ConfigNew config = ConfigNew.getConfig();
+
+        int sortColIndex1, sortColIndex2;
+        SortOrder sortOrder1, sortOrder2;
 
         private PokemonTable() {
             setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
             setAutoResizeMode(AUTO_RESIZE_OFF);
+
+            // Load sort configs
+            sortColIndex1 = config.getInt(ConfigKey.SORT_COLINDEX_1);
+            sortColIndex2 = config.getInt(ConfigKey.SORT_COLINDEX_2);
+            try {
+                sortOrder1 = SortOrder.valueOf(config.getString(ConfigKey.SORT_ORDER_1));
+                sortOrder2 = SortOrder.valueOf(config.getString(ConfigKey.SORT_ORDER_2));
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                sortOrder1 = SortOrder.ASCENDING;
+                sortOrder2 = SortOrder.ASCENDING;
+            }
         }
 
         private void constructNewTableModel(PokemonGo go, List<Pokemon> pokes) {
@@ -758,10 +772,37 @@ public class PokemonTab extends JPanel {
             trs.setComparator(27, cDouble);
             trs.setComparator(28, cDouble);
             setRowSorter(trs);
-            trs.toggleSortOrder(sortColIndex);
             List<SortKey> sortKeys = new ArrayList<>();
-            sortKeys.add(new SortKey(sortColIndex, so));
+            sortKeys.add(new SortKey(sortColIndex1, sortOrder1));
+            sortKeys.add(new SortKey(sortColIndex2, sortOrder2));
             trs.setSortKeys(sortKeys);
+
+            // Add listener to save those sorting values
+            trs.addRowSorterListener(
+                    e -> {
+                        RowSorter sorter = e.getSource();
+                        if (sorter != null) {
+                            List<SortKey> keys = sorter.getSortKeys();
+                            if (keys.size() > 0) {
+                                System.out.println("DEBUG-> Size: " + keys.size());
+                                for (SortKey key : keys) {
+                                    System.out.println("SortKey: { column: " + key.getColumn() + ", order: " + key.getSortOrder().toString() + "}");
+                                }
+                                SortKey prim = keys.get(0);
+                                sortOrder1 = prim.getSortOrder();
+                                config.setString(ConfigKey.SORT_ORDER_1, sortOrder1.toString());
+                                sortColIndex1 = prim.getColumn();
+                                config.setInt(ConfigKey.SORT_COLINDEX_1, sortColIndex1);
+                            }
+                            if (keys.size() > 1) {
+                                SortKey sec = keys.get(1);
+                                sortOrder2 = sec.getSortOrder();
+                                config.setString(ConfigKey.SORT_ORDER_2, sortOrder2.toString());
+                                sortColIndex2 = sec.getColumn();
+                                config.setInt(ConfigKey.SORT_COLINDEX_2, sortColIndex2);
+                            }
+                        }
+                    });
         }
     }
 
