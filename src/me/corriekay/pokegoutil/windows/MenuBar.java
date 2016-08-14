@@ -15,6 +15,7 @@ import javax.swing.*;
 public class MenuBar extends JMenuBar {
 
     private final PokemonGo go;
+    private Config config = Config.getConfig();
 
     public MenuBar(PokemonGo go) {
         this.go = go;
@@ -50,14 +51,14 @@ public class MenuBar extends JMenuBar {
         settings = new JMenu("Settings");
 
         JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer After Evolve");
-        tAfterE.setSelected(Config.getConfig().getBool("transfer.afterEvolve", false));
-        tAfterE.addItemListener(e -> Config.getConfig().setBool("transfer.afterEvolve", tAfterE.isSelected()));
+        tAfterE.setSelected(config.getBool("transfer.afterEvolve", false));
+        tAfterE.addItemListener(e -> config.setBool("transfer.afterEvolve", tAfterE.isSelected()));
         settings.add(tAfterE);
 
         JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion");
-        doNotShowBulkPopup.setSelected(Config.getConfig().getBool("popup.afterBulk", true));
+        doNotShowBulkPopup.setSelected(config.getBool("popup.afterBulk", true));
         doNotShowBulkPopup
-                .addItemListener(e -> Config.getConfig().setBool("popup.afterBulk", doNotShowBulkPopup.isSelected()));
+                .addItemListener(e -> config.setBool("popup.afterBulk", doNotShowBulkPopup.isSelected()));
         settings.add(doNotShowBulkPopup);
 
         add(settings);
