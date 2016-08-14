@@ -34,8 +34,6 @@ public final class AccountController {
 
     protected PokemonGoMainWindow mainWindow = null;
     protected PokemonGo go = null;
-    protected OkHttpClient http;
-    protected CredentialProvider cp;
 
     private static Config config = Config.getConfig();
 

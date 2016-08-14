@@ -4,14 +4,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<BorderPane fx:id="luckyEggGrinderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.corriekay.pokegoutil.GUI.controller.LuckyEggGrinderController">
+<BorderPane fx:id="luckyEggGrinderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" >
     <center>
         <AnchorPane fx:id="optionsPane" disable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" BorderPane.alignment="CENTER">
             <children>
                 <ComboBox id="optionComboBox" fx:id="optionsComboBox" layoutX="369.0" layoutY="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="189.0" promptText="add/remove to the grinder"/>
-                <RadioButton id="caterpieRadioBtn" fx:id="noTransferLowerThanRadioBtn" layoutY="6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onNoTransferThanIV" text="Don't transfer low CP if IV is higher than : "/>
+                <RadioButton id="caterpieRadioBtn" fx:id="noTransferLowerThanRadioBtn" layoutY="6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Don't transfer low CP if IV is higher than : "/>
                 <Spinner fx:id="noTransferLowerThanSpinner" disable="true" layoutX="242.0" layoutY="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="75.0"/>
-                <RadioButton id="caterpieRadioBtn" fx:id="transferFavRadioBtn" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onTransferFav" text="Transfer favorites."/>
+                <RadioButton id="caterpieRadioBtn" fx:id="transferFavRadioBtn" layoutY="27.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Transfer favorites."/>
             </children>
         </AnchorPane>
     </center>
@@ -62,7 +62,7 @@
                 <RadioButton id="caterpieRadioBtn" fx:id="caterpieRadioBtn2" layoutX="19.0" layoutY="46.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="### Extra Caterpie(s), transfer those from lowest CP to highest"/>
                 <RadioButton id="caterpieRadioBtn" fx:id="weedleRadioBtn2" layoutX="19.0" layoutY="97.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="### Extra Weedle(s), transfer those from lowest CP to highest"/>
                 <RadioButton id="caterpieRadioBtn" fx:id="pidgeyRadioBtn1" layoutX="21.0" layoutY="154.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="### Extra Pidgey(s), transfer those from lowest CP to highest"/>
-                <CheckBox fx:id="enableOptionsChkBox" layoutX="2.0" layoutY="185.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onEnableOptions" text="Enable Options" underline="true"/>
+                <CheckBox fx:id="enableOptionsChkBox" layoutX="2.0" layoutY="185.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Enable Options" underline="true"/>
             </children>
         </AnchorPane>
     </top>
