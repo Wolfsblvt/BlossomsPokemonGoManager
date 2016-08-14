@@ -9,16 +9,13 @@ import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.api.pokemon.PokemonMeta;
-import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
-import me.corriekay.pokegoutil.utils.Config;
-import me.corriekay.pokegoutil.utils.Utilities;
-import me.corriekay.pokegoutil.utils.helpers.DateHelper;
+import com.pokegoapi.api.pokemon.*;
+import me.corriekay.pokegoutil.utils.*;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
+import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +27,9 @@ import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -38,6 +37,8 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -46,6 +47,8 @@ public class PokemonTab extends JPanel {
     private final PokemonTable pt = new PokemonTable();
     private final JTextField searchBar = new JTextField("");
     private final JTextField ivTransfer = new JTextField("", 20);
+
+    private ConfigNew config = ConfigNew.getConfig();
 
     public PokemonTab(PokemonGo go) {
         setLayout(new BorderLayout());
@@ -59,16 +62,16 @@ public class PokemonTab extends JPanel {
         powerUpSelected = new JButton("Power Up");
         toggleFavorite = new JButton("Toggle Favorite");
 
-        pt.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-        	public void valueChanged(ListSelectionEvent event) {
-        		if (event.getValueIsAdjusting() == true) {
-        			int selectedRows = pt.getSelectedRowCount();
-        			if (selectedRows > 1) {
-        				PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
-        			} else {
-        				PokemonGoMainWindow.window.refreshTitle();
-        			}
-        		}
+        pt.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (event.getValueIsAdjusting() == true) {
+                    int selectedRows = pt.getSelectedRowCount();
+                    if (selectedRows > 1) {
+                        PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
+                    } else {
+                        PokemonGoMainWindow.window.refreshTitle();
+                    }
+                }
             }
         });
 
@@ -163,7 +166,7 @@ public class PokemonTab extends JPanel {
         // pokemon name language drop down
         String[] locales = {"en", "de", "fr", "ru", "zh_CN", "zh_HK"};
         JComboBox<String> pokelang = new JComboBox<>(locales);
-        String locale = Config.getConfig().getString("options.lang", "en");
+        String locale = config.getString(ConfigKey.LANGUAGE);
         pokelang.setSelectedItem(locale);
         pokelang.addActionListener(e -> new SwingWorker<Void, Void>() {
             protected Void doInBackground() throws Exception {
@@ -178,7 +181,7 @@ public class PokemonTab extends JPanel {
 
         // Set font size if specified in config
         Font font = pt.getFont();
-        int size = Config.getConfig().getInt("options.fontsize", font.getSize());
+        int size = config.getInt(ConfigKey.FONT_SIZE, font.getSize());
         if (size != font.getSize()) {
             pt.setFont(font.deriveFont((float) size));
         }
@@ -193,7 +196,7 @@ public class PokemonTab extends JPanel {
                 JComboBox<String> source = (JComboBox<String>) e.getSource();
                 String size = source.getSelectedItem().toString();
                 pt.setFont(pt.getFont().deriveFont(Float.parseFloat(size)));
-                Config.getConfig().setInt("options.fontsize", Integer.parseInt(size));
+                config.setInt(ConfigKey.FONT_SIZE, Integer.parseInt(size));
                 return null;
             }
         }.execute());
@@ -209,7 +212,7 @@ public class PokemonTab extends JPanel {
     }
 
     private void changeLanguage(String langCode) {
-        Config.getConfig().setString("options.lang", langCode);
+        config.setString(ConfigKey.LANGUAGE, langCode);
         refreshPkmn();
     }
 
@@ -230,7 +233,7 @@ public class PokemonTab extends JPanel {
                 (skipped.getValue() > 0 ? "\nSkipped: " + skipped.getValue() : "") +
                 (err.getValue() > 0 ? "\nErrors: " + err.getValue() : "");
 
-        if (Config.getConfig().getBool("popup.afterBulk", true)) {
+        if (config.getBool(ConfigKey.SHOW_BULK_POPUP)) {
             JOptionPane.showMessageDialog(null, finishText);
         } else {
             System.out.println(finishText);
@@ -268,8 +271,8 @@ public class PokemonTab extends JPanel {
 
             // If not last element and API was queried, sleep until the next one
             if (!selection.get(selection.size() - 1).equals(pokemon)) {
-                int sleepMin = Config.getConfig().getInt("delay.rename.min", 1000);
-                int sleepMax = Config.getConfig().getInt("delay.rename.max", 5000);
+                int sleepMin = config.getInt(ConfigKey.DELAY_RENAME_MIN);
+                int sleepMax = config.getInt(ConfigKey.DELAY_RENAME_MAX);
                 Utilities.sleepRandom(sleepMin, sleepMax);
             }
         };
@@ -321,8 +324,8 @@ public class PokemonTab extends JPanel {
 
                     // If not last element, sleep until the next one
                     if (!selection.get(selection.size() - 1).equals(poke)) {
-                        int sleepMin = Config.getConfig().getInt("delay.transfer.min", 1000);
-                        int sleepMax = Config.getConfig().getInt("delay.transfer.max", 5000);
+                        int sleepMin = config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
+                        int sleepMax = config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
                         Utilities.sleepRandom(sleepMin, sleepMax);
                     }
                 } catch (Exception e) {
@@ -367,7 +370,7 @@ public class PokemonTab extends JPanel {
                             int newHp = newPoke.getStamina();
                             System.out.println(
                                     "Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: Success!");
-                            if (Config.getConfig().getBool("transfer.afterEvolve", false)) {
+                            if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
                                 ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke.transferPokemon();
                                 System.out.println("Transferring " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + ", Result: " + result);
                                 System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "]");
@@ -383,8 +386,8 @@ public class PokemonTab extends JPanel {
 
                         // If not last element, sleep until the next one
                         if (!selection.get(selection.size() - 1).equals(poke)) {
-                            int sleepMin = Config.getConfig().getInt("delay.evolve.min", 3000);
-                            int sleepMax = Config.getConfig().getInt("delay.evolve.max", 12000);
+                            int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
+                            int sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
                             Utilities.sleepRandom(sleepMin, sleepMax);
                         }
                     } catch (Exception e) {
@@ -399,7 +402,7 @@ public class PokemonTab extends JPanel {
                 }
                 SwingUtilities.invokeLater(this::refreshList);
                 showFinishedText("Pokémon batch evolve"
-                        + ((Config.getConfig().getBool("transfer.afterEvolve", false)) ? "/transfer" : "")
+                        + (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : "")
                         + " complete!", selection.size(), success, skipped, err);
             }
         }
@@ -443,8 +446,8 @@ public class PokemonTab extends JPanel {
 
                         // If not last element, sleep until the next one
                         if (!selection.get(selection.size() - 1).equals(poke)) {
-                            int sleepMin = Config.getConfig().getInt("delay.powerUp.min", 1000);
-                            int sleepMax = Config.getConfig().getInt("delay.powerUp.max", 5000);
+                            int sleepMin = config.getInt(ConfigKey.DELAY_POWERUP_MIN);
+                            int sleepMax = config.getInt(ConfigKey.DELAY_POWERUP_MAX);
                             Utilities.sleepRandom(sleepMin, sleepMax);
                         }
                     } catch (Exception e) {
@@ -490,8 +493,8 @@ public class PokemonTab extends JPanel {
 
                         // If not last element, sleep until the next one
                         if (!selection.get(selection.size() - 1).equals(poke)) {
-                            int sleepMin = Config.getConfig().getInt("delay.favorite.min", 1000);
-                            int sleepMax = Config.getConfig().getInt("delay.favorite.max", 3000);
+                            int sleepMin = config.getInt(ConfigKey.DELAY_FAVORITE_MIN);
+                            int sleepMax = config.getInt(ConfigKey.DELAY_FAVORITE_MAX);
                             Utilities.sleepRandom(sleepMin, sleepMax);
                         }
                     } catch (Exception e) {
@@ -609,14 +612,19 @@ public class PokemonTab extends JPanel {
     private void refreshList() {
         List<Pokemon> pokes = new ArrayList<>();
         String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans").toLowerCase();
+        String[] terms = search.split(";");
         try {
             go.getInventories().getPokebank().getPokemons().forEach(poke -> {
                 String searchme = PokeHandler.getLocalPokeName(poke) + "" + poke.getPokemonFamily() + poke.getNickname()
                         + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2()
                         + poke.getPokeball();
                 searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
-                if (searchme.contains(search)) {
-                    pokes.add(poke);
+                for (String s : terms) {
+                    if (searchme.contains(s)) {
+                        pokes.add(poke);
+                        // Break, so that a Pokémon isn't added twice even if it matches more than one criteria
+                        break;
+                    }
                 }
             });
             pt.constructNewTableModel(go, (search.equals("") || search.equals("searchpokémon...")
@@ -625,15 +633,15 @@ public class PokemonTab extends JPanel {
                 JTableColumnPacker.packColumn(pt, i, 4);
             }
 
-            //Custom cell renderers
-            //@todo magic numbers pulled from max values of their respective columns in the moveset rankings spreadsheet calculations
-            //@see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+            // Custom cell renderers
+            // Magic numbers pulled from max values of their respective columns in the moveset rankings spreadsheet calculations
+            // @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
             TableColumn duelAbilityCol = this.pt.getColumnModel().getColumn(24);
-            duelAbilityCol.setCellRenderer(new moveSetRankingRenderer(21_858_183_256L));
+            duelAbilityCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUAL_ABILITY_MAX));
             TableColumn gymAttackCol = this.pt.getColumnModel().getColumn(25);
-            gymAttackCol.setCellRenderer(new moveSetRankingRenderer(510_419L));
+            gymAttackCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
             TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
-            gymDefenseCol.setCellRenderer(new moveSetRankingRenderer(9_530_079_725L));
+            gymDefenseCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -642,21 +650,32 @@ public class PokemonTab extends JPanel {
     /**
      * Provide custom formatting for the moveset ranking columns while allowing sorting on original values
      */
-    private static class moveSetRankingRenderer extends JLabel implements TableCellRenderer {
+    private static class MoveSetRankingRenderer extends JLabel implements TableCellRenderer {
 
         private final long scale;
 
-        public moveSetRankingRenderer(long scale) {
+        public MoveSetRankingRenderer(long scale) {
             this.scale = scale;
         }
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int rowIndex, int vColIndex) {
-            setText( NumberFormat.getInstance().format(Math.ceil(Double.parseDouble(value.toString()) / this.scale * 100) - 1 ));
+                                                       boolean hasFocus, int rowIndex, int vColIndex) {
+            setText(Utilities.percentageWithTwoCharacters(Double.parseDouble(value.toString()), this.scale));
             setToolTipText(NumberFormat.getInstance().format(value));
-
+            setOpaque(true);
+            setDefaultSelectionColors(table, isSelected, this);
             return this;
+        }
+    }
+
+    private static void setDefaultSelectionColors(JTable table, boolean isSelected, JLabel tcr) {
+        if (isSelected) {
+            tcr.setBackground(table.getSelectionBackground());
+            tcr.setForeground(table.getSelectionForeground());
+        } else {
+            tcr.setBackground(table.getBackground());
+            tcr.setForeground(table.getForeground());
         }
     }
 
@@ -748,6 +767,8 @@ public class PokemonTab extends JPanel {
 
     private static class PokemonTableModel extends AbstractTableModel {
 
+        PokemonTable pt;
+
         private final ArrayList<Pokemon> pokeCol = new ArrayList<>();
         private final ArrayList<Integer> numIdCol = new ArrayList<>();//0
         private final ArrayList<String> nickCol = new ArrayList<>(),//1
@@ -778,7 +799,6 @@ public class PokemonTab extends JPanel {
         private final ArrayList<Long> gymDefenseCol = new ArrayList<>();//26
         private final ArrayList<Double> move1RatingCol = new ArrayList<>(),//27
                 move2RatingCol = new ArrayList<>();//28
-        PokemonTable pt;
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
