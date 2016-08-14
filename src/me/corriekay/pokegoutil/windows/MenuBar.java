@@ -7,6 +7,8 @@ import com.pokegoapi.api.player.PlayerProfile.Currency;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.DATA.controllers.AccountController;
 import me.corriekay.pokegoutil.utils.Config;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 import javax.swing.*;
@@ -15,6 +17,7 @@ import javax.swing.*;
 public class MenuBar extends JMenuBar {
 
     private final PokemonGo go;
+    private ConfigNew config = ConfigNew.getConfig();
 
     public MenuBar(PokemonGo go) {
         this.go = go;
@@ -50,14 +53,14 @@ public class MenuBar extends JMenuBar {
         settings = new JMenu("Settings");
 
         JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer After Evolve");
-        tAfterE.setSelected(Config.getConfig().getBool("transfer.afterEvolve", false));
-        tAfterE.addItemListener(e -> Config.getConfig().setBool("transfer.afterEvolve", tAfterE.isSelected()));
+        tAfterE.setSelected(config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE));
+        tAfterE.addItemListener(e -> config.setBool(ConfigKey.TRANSFER_AFTER_EVOLVE, tAfterE.isSelected()));
         settings.add(tAfterE);
 
         JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion");
-        doNotShowBulkPopup.setSelected(Config.getConfig().getBool("popup.afterBulk", true));
+        doNotShowBulkPopup.setSelected(config.getBool(ConfigKey.SHOW_BULK_POPUP));
         doNotShowBulkPopup
-                .addItemListener(e -> Config.getConfig().setBool("popup.afterBulk", doNotShowBulkPopup.isSelected()));
+                .addItemListener(e -> config.setBool(ConfigKey.SHOW_BULK_POPUP, doNotShowBulkPopup.isSelected()));
         settings.add(doNotShowBulkPopup);
 
         add(settings);

@@ -8,6 +8,8 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.util.PokeNames;
 import me.corriekay.pokegoutil.utils.Config;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 import org.apache.commons.lang3.StringUtils;
 
@@ -91,7 +93,7 @@ public class PokeHandler {
     private static NicknamePokemonResponse.Result renWPattern(String pattern, Pokemon pokemon, Pattern regex) {
         String pokeNick = generatePokemonNickname(pattern, pokemon, regex);
 
-        if(pokeNick.equals(pokemon.getNickname())) {
+        if (pokeNick.equals(pokemon.getNickname())) {
             // Why renaming to the same nickname?
             return NicknamePokemonResponse.Result.UNSET; // We need to use UNSET here. No chance to extend the enum
         }
@@ -114,7 +116,7 @@ public class PokeHandler {
      */
     public static String getLocalPokeName(int id) {
         // TODO: change call to getConfigItem to config class once implemented
-        String lang = Config.getConfig().getString("options.lang", "en");
+        String lang = ConfigNew.getConfig().getString(ConfigKey.LANGUAGE);
 
         Locale locale;
         String[] langar = lang.split("_");
@@ -204,21 +206,21 @@ public class PokeHandler {
             @Override
             public String get(Pokemon p) {
                 String name = getLocalPokeName(p);
-                return (name.length() <= 4) ? name : name.substring(0, 3)+".";
+                return (name.length() <= 4) ? name : name.substring(0, 3) + ".";
             }
         },
         NAME_6("Pokémon Name (First six letters)") {
             @Override
             public String get(Pokemon p) {
                 String name = getLocalPokeName(p);
-                return (name.length() <= 4) ? name : name.substring(0, 5)+".";
+                return (name.length() <= 4) ? name : name.substring(0, 5) + ".";
             }
         },
         NAME_8("Pokémon Name (First eight letters)") {
             @Override
             public String get(Pokemon p) {
                 String name = getLocalPokeName(p);
-                return (name.length() <= 8) ? name : name.substring(0, 7)+".";
+                return (name.length() <= 8) ? name : name.substring(0, 7) + ".";
             }
         },
         CP("Combat Points") {
@@ -363,11 +365,11 @@ public class PokeHandler {
             return (rounded < 100) ? String.valueOf(rounded) : "XX";
         }
 
-        private static String abbreviateType(String type){
-            if(type.equalsIgnoreCase("fire")||type.equalsIgnoreCase("ground")){
-                return type.substring(0,1).toUpperCase() + type.substring(type.length()-1).toLowerCase();
-            }else{
-                return StringUtils.capitalize(type.substring(0,2).toLowerCase());
+        private static String abbreviateType(String type) {
+            if (type.equalsIgnoreCase("fire") || type.equalsIgnoreCase("ground")) {
+                return type.substring(0, 1).toUpperCase() + type.substring(type.length() - 1).toLowerCase();
+            } else {
+                return StringUtils.capitalize(type.substring(0, 2).toLowerCase());
             }
         }
 
