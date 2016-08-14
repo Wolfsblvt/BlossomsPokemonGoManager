@@ -637,7 +637,7 @@ public class PokemonTab extends JPanel {
             // Magic numbers pulled from max values of their respective columns in the moveset rankings spreadsheet calculations
             // @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
             TableColumn duelAbilityCol = this.pt.getColumnModel().getColumn(24);
-            duelAbilityCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUAL_ABILITY_MAX));
+            duelAbilityCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_MAX));
             TableColumn gymAttackCol = this.pt.getColumnModel().getColumn(25);
             gymAttackCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
             TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
