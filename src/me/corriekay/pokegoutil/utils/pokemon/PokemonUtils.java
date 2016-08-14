@@ -9,6 +9,10 @@ import org.apache.commons.lang3.StringUtils;
 public final class PokemonUtils {
     private PokemonUtils() { /* Prevent initializing this class */ }
 
+    public static final long DUAL_ABILITY_MAX = 21_858_183_256L;
+    public static final long GYM_OFFENSE_MAX = 510_419L;
+    public static final long GYM_DEFENSE_MAX = 9_530_079_725L;
+
     public static String convertTeamColorToName(int teamValue) {
         Team[] teams = Team.values();
 
@@ -56,73 +60,73 @@ public final class PokemonUtils {
     }
 
     /**
-        * Duel Ability is Tankiness * Gym Offense. A reasonable measure if you don't often/ever dodge,
-        * as then you can only attack for as long as you  can stay positive on HP.
-        *
-        * @param p A Pokemon object
-        * @return Rating of a Pokemon's overall attacking power considering damage, health & defense
-        * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-        * @see i607ch00
-        */
+     * Duel Ability is Tankiness * Gym Offense. A reasonable measure if you don't often/ever dodge,
+     * as then you can only attack for as long as you  can stay positive on HP.
+     *
+     * @param p A Pokemon object
+     * @return Rating of a Pokemon's overall attacking power considering damage, health & defense
+     * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @see i607ch00
+     */
     public static long duelAbility(Pokemon p) {
         return PokemonUtils.gymOffense(p) * PokemonUtils.tankiness(p);
     }
 
     /**
-        * Gym Offense takes the better of No Weave/Weave Damage over 100s and multiplies by the
-        * Pokemon's base attack to arrive at a ranking of raw damage output.
-        *
-        * @param p A Pokemon object
-        * @return Rating of a Pokemon's pure offensive ability over time considering move set
-        * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-        * @see i607ch00
-        */
+     * Gym Offense takes the better of No Weave/Weave Damage over 100s and multiplies by the
+     * Pokemon's base attack to arrive at a ranking of raw damage output.
+     *
+     * @param p A Pokemon object
+     * @return Rating of a Pokemon's pure offensive ability over time considering move set
+     * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @see i607ch00
+     */
     public static long gymOffense(Pokemon p) {
-        double gymOffense = Math.max(PokemonUtils.dpsForMove(p, true) * 100, PokemonUtils.weaveDPS(p, 0)) * p.getMeta().getBaseAttack();
+        double gymOffense = Math.max(PokemonUtils.dpsForMove(p, true) * 100, PokemonUtils.weaveDPS(p, 0)) * (p.getMeta().getBaseAttack() + p.getIndividualAttack());
         return Math.round(gymOffense);
     }
 
     /**
-        * Gym Defense takes the calculated Gym Weave Damage over 100s and multiplies by Tankiness
-        * to arrive at a ranking of how much damage a Pokemon will output when defending a gym.
-        *
-        * @param p A Pokemon object
-        * @return Rating of a Pokemon's AI controlled gym defense over time considering move set
-        * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-        * @see i607ch00
-        */
+     * Gym Defense takes the calculated Gym Weave Damage over 100s and multiplies by Tankiness
+     * to arrive at a ranking of how much damage a Pokemon will output when defending a gym.
+     *
+     * @param p A Pokemon object
+     * @return Rating of a Pokemon's AI controlled gym defense over time considering move set
+     * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @see i607ch00
+     */
     public static long gymDefense(Pokemon p) {
-        double gymDefense = PokemonUtils.weaveDPS(p, 2000) * p.getMeta().getBaseAttack() * PokemonUtils.tankiness(p);
+        double gymDefense = PokemonUtils.weaveDPS(p, 2000) * (p.getMeta().getBaseAttack() + p.getIndividualAttack()) * PokemonUtils.tankiness(p);
         return Math.round(gymDefense);
     }
 
     /**
-        * Tankiness is basically Base HP * Base Def. An approximation of a Pokemon's relative ability
-        * to soak damage compared to other species.
-        *
-        * Used for duel ability & gym defense calculations
-        *
-        * @param p A Pokemon object
-        * @return Rating of a Pokemon's tankiness :)
-        * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-        * @see i607ch00
-        */
+     * Tankiness is basically Base HP * Base Def. An approximation of a Pokemon's relative ability
+     * to soak damage compared to other species.
+     * <p>
+     * Used for duel ability & gym defense calculations
+     *
+     * @param p A Pokemon object
+     * @return Rating of a Pokemon's tankiness :)
+     * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @see i607ch00
+     */
     public static long tankiness(Pokemon p) {
-        return p.getMeta().getBaseStamina() * p.getMeta().getBaseDefense();
+        return (p.getMeta().getBaseStamina() + p.getIndividualStamina()) * (p.getMeta().getBaseDefense() + p.getIndividualDefense());
     }
 
     /**
-        * Weave Damage/100s is determined by figuring out the total Power achieved over 100 seconds
-        * by using basic attack enough to charge up enough energy to do a charge attack, and then
-        * using charge attack as soon as possible to not waste energy. It is highlighted in green if doing
-        * this is the best way to output damage for a moveset.
-        *
-        * @param p A Pokemon object
-        * @param additionalDelay Allow a delay in milliseconds for gym offense (0ms) vs gym defense (2000ms)
-        * @return Damage over 100 seconds for a Pokemon's moveset
-        * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-        * @see i607ch00
-        */
+     * Weave Damage/100s is determined by figuring out the total Power achieved over 100 seconds
+     * by using basic attack enough to charge up enough energy to do a charge attack, and then
+     * using charge attack as soon as possible to not waste energy. It is highlighted in green if doing
+     * this is the best way to output damage for a moveset.
+     *
+     * @param p               A Pokemon object
+     * @param additionalDelay Allow a delay in milliseconds for gym offense (0ms) vs gym defense (2000ms)
+     * @return Damage over 100 seconds for a Pokemon's moveset
+     * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @see i607ch00
+     */
     public static double weaveDPS(Pokemon p, Integer additionalDelay) {
         double critDamageBonus = 0.5;
         int chargeDelayMS = 500;
