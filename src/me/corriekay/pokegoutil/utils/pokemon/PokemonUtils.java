@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 public final class PokemonUtils {
     private PokemonUtils() { /* Prevent initializing this class */ }
 
-    public static final long DUAL_ABILITY_MAX = 21_858_183_256L;
+    public static final long DUEL_ABILITY_MAX = 21_858_183_256L;
     public static final long GYM_OFFENSE_MAX = 510_419L;
     public static final long GYM_DEFENSE_MAX = 9_530_079_725L;
 

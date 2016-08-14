@@ -276,11 +276,11 @@ public class PokeHandler {
                 return String.valueOf(p.getIndividualStamina());
             }
         },
-        DUAL_ABILITY_RATING("Dual Ability in two digits (XX for 100%)") {
+        DUEL_ABILITY_RATING("Duel Ability in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                long dualAbility = PokemonUtils.duelAbility(p);
-                return Utilities.percentageWithTwoCharacters(dualAbility, PokemonUtils.DUAL_ABILITY_MAX);
+                long duelAbility = PokemonUtils.duelAbility(p);
+                return Utilities.percentageWithTwoCharacters(duelAbility, PokemonUtils.DUEL_ABILITY_MAX);
             }
         },
         GYM_OFFENSE_RATING("Gym Offense in two digits (XX for 100%)") {
