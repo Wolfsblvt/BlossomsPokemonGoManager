@@ -610,14 +610,18 @@ public class PokemonTab extends JPanel {
     private void refreshList() {
         List<Pokemon> pokes = new ArrayList<>();
         String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans").toLowerCase();
+        String[] terms = search.split(";");
         try {
             go.getInventories().getPokebank().getPokemons().forEach(poke -> {
                 String searchme = PokeHandler.getLocalPokeName(poke) + "" + poke.getPokemonFamily() + poke.getNickname()
                         + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2()
                         + poke.getPokeball();
                 searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
-                if (searchme.contains(search)) {
-                    pokes.add(poke);
+                for(String s:terms) {
+                    if (searchme.contains(s)) {
+                        pokes.add(poke);
+                        break;
+                    }
                 }
             });
             pt.constructNewTableModel(go, (search.equals("") || search.equals("searchpokémon...")
