@@ -227,8 +227,8 @@ public class ConfigNew {
         return new FindResult(current, parts.get(parts.size() - 1));
     }
 
-    public void delete(String path) {
-        FindResult res = findNode(path, false);
+    public void delete(ConfigKey configKey) {
+        FindResult res = findNode(configKey.keyName, false);
         res.node().remove(res.name());
     }
 
