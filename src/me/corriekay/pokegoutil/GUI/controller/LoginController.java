@@ -136,7 +136,11 @@ public class LoginController extends StackPane {
 
     @FXML
     void onGoogleAuthBtnClicked(ActionEvent event) {
-        AccountManager.login(Collections.singletonList(new Pair<>("token", tokenField.getText())), LoginType.GOOGLE);
+        try {
+            AccountManager.login(Collections.singletonList(new Pair<>("token", tokenField.getText())), LoginType.GOOGLE);
+        } catch (Exception e) {
+            AccountManager.alertFailedLogin(e.toString());
+        }
         if (AccountManager.isLoggedIn()) {
             rootScene.getWindow().hide();
             openMainWindow();
@@ -145,8 +149,12 @@ public class LoginController extends StackPane {
 
     @FXML
     void onPTCLoginBtnClicked(ActionEvent event) {
-        AccountManager.login(Arrays.asList(new Pair<>("username", usernameField.getText()),
-                new Pair<>("password", passwordField.getText())), LoginType.PTC);
+        try {
+            AccountManager.login(Arrays.asList(new Pair<>("username", usernameField.getText()),
+                    new Pair<>("password", passwordField.getText())), LoginType.PTC);
+        } catch (Exception e) {
+            AccountManager.alertFailedLogin(e.getMessage());
+        }
         if (AccountManager.isLoggedIn()) {
             rootScene.getWindow().hide();
             openMainWindow();

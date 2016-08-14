@@ -4,9 +4,12 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="487.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/8.0.60">
+<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+      minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0"
+      xmlns="http://javafx.com/javafx/8.0.60">
     <children>
-        <MenuBar prefHeight="25.0" prefWidth="634.0" VBox.vgrow="NEVER">
+        <MenuBar maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0"
+                 prefWidth="640.0">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
@@ -23,12 +26,12 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <VBox prefHeight="0.0" prefWidth="803.0">
+        <VBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="640.0">
             <children>
-                <HBox fx:id="PlayerInfo">
+                <HBox fx:id="PlayerInfo" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity"
+                      minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="640.0">
                     <children>
-                        <ImageView fx:id="teamIcon" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true"
-                                   preserveRatio="true"/>
+                        <ImageView fx:id="teamIcon" fitHeight="32.0" fitWidth="32.0" preserveRatio="true"/>
                         <Separator maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
                                    orientation="VERTICAL"/>
                         <Label fx:id="playerNameLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
@@ -61,20 +64,43 @@
                 </HBox>
             </children>
         </VBox>
-        <StackPane prefHeight="430.0" prefWidth="775.0">
-            <children>
-                <TabPane tabClosingPolicy="UNAVAILABLE">
-                    <tabs>
-                        <Tab text="LuckyEggGrinder">
-                            <content>
-                                <Button fx:id="openGrinderBtn" prefHeight="25.0" prefWidth="105.0" text="Open"/>
-                                <!-- problem with the embeding atm -->
-                                <!--fx:include fx:id="grinderPane" source="LuckyEggGrinder.fxml" />-->
-                            </content>
-                        </Tab>
-                    </tabs>
-                </TabPane>
-            </children>
-        </StackPane>
+        <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                 prefHeight="424.0" prefWidth="640.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="Pokémon">
+                    <content>
+
+                    </content>
+                    <content>
+                        <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                              prefHeight="396.0" prefWidth="640.0">
+                            <children>
+                                <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                            minWidth="-Infinity" prefHeight="38.0" prefWidth="640.0"/>
+                                <TreeTableView maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                               minWidth="-Infinity" prefHeight="357.0" prefWidth="640.0">
+                                    <columns>
+                                        <TreeTableColumn prefWidth="75.0" text="#"/>
+                                        <TreeTableColumn prefWidth="75.0" text="nickname"/>
+                                    </columns>
+                                </TreeTableView>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+                <Tab text="Items">
+                    <content>
+
+                    </content>
+                </Tab>
+                <Tab text="LuckyEggGrinder">
+                    <content>
+                        <Button fx:id="openGrinderBtn" prefHeight="25.0" prefWidth="105.0" text="Open"/>
+                        <!-- problem with the embeding atm -->
+                        <!--fx:include fx:id="grinderPane" source="LuckyEggGrinder.fxml" />-->
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
     </children>
 </VBox>

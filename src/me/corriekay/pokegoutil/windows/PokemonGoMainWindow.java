@@ -5,13 +5,12 @@ import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.exceptions.InvalidCurrencyException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
-import me.corriekay.pokegoutil.utils.Config;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
-import me.corriekay.pokegoutil.utils.ui.Console;
 import me.corriekay.pokegoutil.utils.helpers.FileHelper;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import me.corriekay.pokegoutil.utils.ui.Console;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,16 +21,11 @@ import java.text.NumberFormat;
 @SuppressWarnings("serial")
 public class PokemonGoMainWindow extends JFrame {
 
+    public static PokemonGoMainWindow window = null;
     private final PokemonGo go;
     private final PlayerProfile pp;
-    public static PokemonGoMainWindow window = null;
-    private ConfigNew config = ConfigNew.getConfig();
-
-    public PokemonGo getPoGo() {
-        return go;
-    }
-
     private final JTabbedPane tab = new JTabbedPane();
+    private ConfigNew config = ConfigNew.getConfig();
 
     public PokemonGoMainWindow(PokemonGo pkmngo, Console console) {
         go = pkmngo;
@@ -86,6 +80,10 @@ public class PokemonGoMainWindow extends JFrame {
         add(console.jsp, BorderLayout.SOUTH);
 
         window = this;
+    }
+
+    public PokemonGo getPoGo() {
+        return go;
     }
 
     public void refreshTitle() {

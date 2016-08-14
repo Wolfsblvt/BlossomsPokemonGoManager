@@ -42,7 +42,7 @@ public final class AccountManager {
         sIsInit = true;
     }
 
-    public static void login(List<Pair> loginData, LoginType loginType) throws Exception{
+    public static void login(List<Pair> loginData, LoginType loginType) throws Exception {
         loginData.forEach(pair -> {
             switch (pair.getKey().toString()) {
                 case "username":
@@ -64,7 +64,7 @@ public final class AccountManager {
         }
     }
 
-    private static void logOnPTC(String username, String password) throws Exception{
+    private static void logOnPTC(String username, String password) throws Exception {
         if (!sIsInit) {
             throw new ExceptionInInitializerError("AccountController needs to be initialized before logging on");
         }
@@ -76,7 +76,7 @@ public final class AccountManager {
         try {
             cp = new PtcCredentialProvider(http, username, password);
             config.setString(ConfigKey.LOGIN_PTC_USERNAME, username);
-            if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH, false)) {
+            if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH)) {
                 config.setString(ConfigKey.LOGIN_PTC_PASSWORD, password);
             } else {
                 deleteLoginData(LoginType.PTC);
@@ -114,9 +114,9 @@ public final class AccountManager {
         http = new OkHttpClient();
 
         boolean refresh = false;
-        if (authCode.equals("Using Previous Token") && config.getBool(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, false)) {
+        if (authCode.equals("Using Previous Token") && config.getBool(ConfigKey.LOGIN_SAVE_AUTH)) {
             // Get credentials
-            authCode = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, null);
+            authCode = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
             refresh = true;
         }
 
@@ -130,7 +130,7 @@ public final class AccountManager {
                 throw new LoginFailedException();
 
             cp = provider;
-            if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH, false)) {
+            if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH)) {
                 if (!refresh)
                     config.setString(ConfigKey.LOGIN_SAVE_AUTH, provider.getRefreshToken());
             } else {
@@ -164,7 +164,7 @@ public final class AccountManager {
         ProfileManager.initialize(go);
     }
 
-    private static void alertFailedLogin(String message) {
+    public static void alertFailedLogin(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error Login");
         alert.setHeaderText("Unfortunately, your login has failed");
@@ -175,18 +175,18 @@ public final class AccountManager {
     public static List<Pair> getLoginData(LoginType type) {
         switch (type) {
             case GOOGLE:
-                String token = config.getString("login.GoogleAuthToken", null);
+                String token = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
                 return (token != null) ? Collections.singletonList(
                         new Pair<>("token", token)) : null;
             case PTC:
-                String username = config.getString(ConfigKey.LOGIN_PTC_USERNAME, null);
-                String password = config.getString(ConfigKey.LOGIN_PTC_PASSWORD, null);
+                String username = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
+                String password = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
                 return (username != null && password != null) ? Arrays.asList(
                         new Pair<>("username", username), new Pair<>("password", password)) : null;
             case BOTH:
-                String token2 = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, null);
-                String username2 = config.getString(ConfigKey.LOGIN_PTC_USERNAME, null);
-                String password2 = config.getString("login.PTCPassword", null);
+                String token2 = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                String username2 = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
+                String password2 = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
                 return (username2 != null && password2 != null && token2 != null) ? Arrays.asList(
                         new Pair<>("username", username2), new Pair<>("password", password2), new Pair<>("token", token2)) : null;
             default:
@@ -199,19 +199,19 @@ public final class AccountManager {
     }
 
     private static void deleteLoginData(LoginType type, boolean justCleanup) {
-        if (!justCleanup) config.delete("login.SaveAuth");
+        if (!justCleanup) config.delete(ConfigKey.LOGIN_SAVE_AUTH);
         switch (type) {
             case BOTH:
-                config.delete("login.GoogleAuthToken");
-                config.delete("login.PTCUsername");
-                config.delete("login.PTCPassword");
+                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
+                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
                 break;
             case GOOGLE:
-                config.delete("login.GoogleAuthToken");
+                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
                 break;
             case PTC:
-                config.delete("login.PTCUsername");
-                config.delete("login.PTCPassword");
+                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
+                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
                 break;
             default:
         }
@@ -250,7 +250,7 @@ public final class AccountManager {
     }
 
     public static void setSaveLogin(boolean save){
-        config.setBool("login.SaveAuth", save);
+        config.setBool(ConfigKey.LOGIN_SAVE_AUTH, save);
     }
 
     public enum LoginType {
