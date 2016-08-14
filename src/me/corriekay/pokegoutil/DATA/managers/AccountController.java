@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.DATA.controllers;
+package me.corriekay.pokegoutil.DATA.managers;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
@@ -29,16 +29,13 @@ public final class AccountController {
 
     private static final AccountController S_INSTANCE = new AccountController();
     private static boolean sIsInit = false;
-
-    private Console console;
-    private boolean logged = false;
-
+    private static ConfigNew config = ConfigNew.getConfig();
     protected PokemonGoMainWindow mainWindow = null;
     protected PokemonGo go = null;
     protected OkHttpClient http;
     protected CredentialProvider cp;
-
-    private static ConfigNew config = ConfigNew.getConfig();
+    private Console console;
+    private boolean logged = false;
 
     private AccountController() {
 
@@ -159,7 +156,7 @@ public final class AccountController {
                     if (refresh) provider.refreshToken(authCode);
                     else provider.login(authCode);
                     cp = provider;
-                    if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH, false) || checkSaveAuth()) {
+                    if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
                         if (!refresh)
                             config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
                         config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
@@ -197,8 +194,8 @@ public final class AccountController {
     }
 
     private static void initOtherControllers(PokemonGo go) {
-        InventoryController.initialize(go);
-        PokemonBagController.initialize(go);
+        InventoryManager.initialize(go);
+        PokemonBagManager.initialize(go);
     }
 
     private static void alertFailedLogin(String message) {
@@ -214,7 +211,7 @@ public final class AccountController {
     }
 
     private static LoginType checkSavedConfig() {
-        if (!config.getBool(ConfigKey.LOGIN_SAVE_AUTH, false)) {
+        if (!config.getBool(ConfigKey.LOGIN_SAVE_AUTH)) {
             return LoginType.NONE;
         } else {
             if (getLoginData(LoginType.GOOGLE) != null) return LoginType.GOOGLE;
