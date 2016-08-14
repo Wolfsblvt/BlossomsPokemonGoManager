@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.DATA.controllers;
+package me.corriekay.pokegoutil.DATA.managers;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
@@ -7,8 +7,8 @@ import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
-import me.corriekay.pokegoutil.utils.helpers.Browser;
 import me.corriekay.pokegoutil.utils.Config;
+import me.corriekay.pokegoutil.utils.helpers.Browser;
 import me.corriekay.pokegoutil.utils.ui.Console;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
@@ -28,14 +28,11 @@ public final class AccountController {
 
     private static final AccountController S_INSTANCE = new AccountController();
     private static boolean sIsInit = false;
-
-    private Console console;
-    private boolean logged = false;
-
+    private static Config config = Config.getConfig();
     protected PokemonGoMainWindow mainWindow = null;
     protected PokemonGo go = null;
-
-    private static Config config = Config.getConfig();
+    private Console console;
+    private boolean logged = false;
 
     private AccountController() {
 
@@ -194,8 +191,8 @@ public final class AccountController {
     }
 
     private static void initOtherControllers(PokemonGo go) {
-        InventoryController.initialize(go);
-        PokemonBagController.initialize(go);
+        InventoryManager.initialize(go);
+        PokemonBagManager.initialize(go);
     }
 
     private static void alertFailedLogin(String message) {

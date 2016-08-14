@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
-import me.corriekay.pokegoutil.DATA.controllers.AccountController;
+import me.corriekay.pokegoutil.DATA.managers.AccountController;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.ui.Console;
 
@@ -64,6 +64,7 @@ public class ChooseGuiWindowController extends Pane {
     @FXML
     void onNewGuiBtnClicked(ActionEvent event) {
         new LoginController();
+
         BlossomsPoGoManager.getPrimaryStage().show();
     }
 
@@ -71,7 +72,6 @@ public class ChooseGuiWindowController extends Pane {
     void onOldGuiBtnClicked(ActionEvent event) {
         rootScene.getWindow().hide();
         SwingUtilities.invokeLater(new Runnable() {
-
             private Console console;
 
             @Override
