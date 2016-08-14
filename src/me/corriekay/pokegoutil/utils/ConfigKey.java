@@ -14,8 +14,9 @@ public enum ConfigKey {
     WINDOW_POS_X("options.window.posx", 0, Integer.class),
     WINDOW_POS_Y("options.window.posy", 0, Integer.class),
 
-    TRANSFER_AFTER_EVOLVE("transfer.afterEvolve", false, Boolean.class),
-    SHOW_BULK_POPUP("popup.afterBulk", true, Boolean.class),
+    TRANSFER_AFTER_EVOLVE("settings.transferAfterEvolve", false, Boolean.class),
+    SHOW_BULK_POPUP("settings.popupAfterBulk", true, Boolean.class),
+    INCLUDE_FAMILY("settings.includeFamily", true, Boolean.class),
 
     LANGUAGE("options.lang", "en", String.class),
     FONT_SIZE("options.fontsize", 0, Integer.class),

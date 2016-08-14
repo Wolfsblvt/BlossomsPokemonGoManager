@@ -56,11 +56,15 @@ public class MenuBar extends JMenuBar {
         tAfterE.addItemListener(e -> config.setBool(ConfigKey.TRANSFER_AFTER_EVOLVE, tAfterE.isSelected()));
         settings.add(tAfterE);
 
-        JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion");
+        JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion Window");
         doNotShowBulkPopup.setSelected(config.getBool(ConfigKey.SHOW_BULK_POPUP));
-        doNotShowBulkPopup
-                .addItemListener(e -> config.setBool(ConfigKey.SHOW_BULK_POPUP, doNotShowBulkPopup.isSelected()));
+        doNotShowBulkPopup.addItemListener(e -> config.setBool(ConfigKey.SHOW_BULK_POPUP, doNotShowBulkPopup.isSelected()));
         settings.add(doNotShowBulkPopup);
+
+        JCheckBoxMenuItem includeFamily = new JCheckBoxMenuItem("Include Family On Searchbar");
+        includeFamily.setSelected(config.getBool(ConfigKey.INCLUDE_FAMILY));
+        includeFamily.addItemListener(e -> config.setBool(ConfigKey.INCLUDE_FAMILY, includeFamily.isSelected()));
+        settings.add(includeFamily);
 
         add(settings);
 

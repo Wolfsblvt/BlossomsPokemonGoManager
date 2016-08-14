@@ -615,7 +615,21 @@ public class PokemonTab extends JPanel {
         String[] terms = search.split(";");
         try {
             go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-                String searchme = PokeHandler.getLocalPokeName(poke) + "" + poke.getPokemonFamily() + poke.getNickname()
+                boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
+                String familyName = "";
+                if (useFamilyName) {
+                    // Try translating family name
+                    try {
+                        PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll("FAMILY_", ""));
+                        familyName = PokeHandler.getLocalPokeName(familyPokemonId.getNumber());
+                    } catch (IllegalArgumentException e) {
+                        familyName = poke.getPokemonFamily().toString();
+                    }
+                }
+
+                String searchme = PokeHandler.getLocalPokeName(poke)
+                        + ((useFamilyName) ? familyName : "")
+                        + poke.getNickname()
                         + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2()
                         + poke.getPokeball();
                 searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
