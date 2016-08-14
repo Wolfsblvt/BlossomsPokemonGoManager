@@ -13,14 +13,16 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
+import javafx.util.Pair;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
-import me.corriekay.pokegoutil.DATA.controllers.AccountManager;
-import me.corriekay.pokegoutil.DATA.controllers.AccountManager.LoginType;
+import me.corriekay.pokegoutil.DATA.managers.AccountManager;
+import me.corriekay.pokegoutil.DATA.managers.AccountManager.LoginType;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class LoginController extends StackPane {
@@ -82,29 +84,22 @@ public class LoginController extends StackPane {
         getTokenBtn.setOnAction(this::onGetToken);
         if(saveCredentials){
             LoginType loginType = AccountManager.checkSavedConfig();
-            List<String> loginData = AccountManager.getLoginData(loginType);
-            switch (loginType) {
-                case BOTH:
-                    usernameField.setText(loginData.get(0));
-                    usernameField.setDisable(true);
-                    passwordField.setText(loginData.get(1));
-                    passwordField.setDisable(true);
-                    tokenField.setText("Using Previous Token");
-                    tokenField.setDisable(true);
-                    getTokenBtn.setDisable(true);
-                    break;
-                case GOOGLE:
-                    tokenField.setText("Using Previous Token");
-                    tokenField.setDisable(true);
-                    getTokenBtn.setDisable(true);
-                    break;
-                case PTC:
-                    usernameField.setText(loginData.get(0));
-                    usernameField.setDisable(true);
-                    passwordField.setText(loginData.get(1));
-                    passwordField.setDisable(true);
-                    break;
-                default:
+            List<Pair> loginData = AccountManager.getLoginData(loginType);
+            if (loginData != null && !loginData.isEmpty()) {
+                loginData.forEach(pair -> {
+                    switch (pair.getKey().toString()) {
+                        case "username":
+                            usernameField.setText(pair.getValue().toString());
+                            usernameField.setDisable(true);
+                        case "password":
+                            passwordField.setText(pair.getValue().toString());
+                            passwordField.setDisable(true);
+                        case "token":
+                            tokenField.setText("Using Previous Token");
+                            tokenField.setDisable(true);
+                            getTokenBtn.setDisable(true);
+                    }
+                });
             }
         }
     }
@@ -141,16 +136,21 @@ public class LoginController extends StackPane {
 
     @FXML
     void onGoogleAuthBtnClicked(ActionEvent event) {
-        AccountManager.logOnGoogleAuth(tokenField.getText());
-        rootScene.getWindow().hide();
-        openMainWindow();
+        AccountManager.login(Collections.singletonList(new Pair<>("token", tokenField.getText())), LoginType.GOOGLE);
+        if (AccountManager.isLoggedIn()) {
+            rootScene.getWindow().hide();
+            openMainWindow();
+        }
     }
 
     @FXML
     void onPTCLoginBtnClicked(ActionEvent event) {
-        AccountManager.logOnPTC(usernameField.getText(), passwordField.getText());
-        rootScene.getWindow().hide();
-        openMainWindow();
+        AccountManager.login(Arrays.asList(new Pair<>("username", usernameField.getText()),
+                new Pair<>("password", passwordField.getText())), LoginType.PTC);
+        if (AccountManager.isLoggedIn()) {
+            rootScene.getWindow().hide();
+            openMainWindow();
+        }
     }
 
     void openMainWindow() {

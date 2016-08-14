@@ -4,7 +4,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox prefHeight="487.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" >
+<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="487.0" prefWidth="599.0" xmlns="http://javafx.com/javafx/8.0.60">
     <children>
         <MenuBar prefHeight="25.0" prefWidth="634.0" VBox.vgrow="NEVER">
             <menus>
@@ -27,26 +27,36 @@
             <children>
                 <HBox fx:id="PlayerInfo">
                     <children>
-                        <ImageView fx:id="teamIcon" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true" preserveRatio="true"/>
-                        <Label fx:id="playerNameLabel" prefHeight="17.0" prefWidth="70.0" text="PlayerName">
+                        <ImageView fx:id="teamIcon" fitHeight="32.0" fitWidth="32.0" pickOnBounds="true"
+                                   preserveRatio="true"/>
+                        <Separator maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                                   orientation="VERTICAL"/>
+                        <Label fx:id="playerNameLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                               minWidth="-Infinity" text="PlayerName">
                             <font>
                                 <Font name="System Bold" size="12.0"/>
                             </font>
                         </Label>
-                        <Label text="   Lvl: "/>
-                        <Label fx:id="playerLvl" prefHeight="17.0" prefWidth="32.0" text="PH_"/>
-                        <Label fx:id="playerStardustLbl" prefHeight="17.0" prefWidth="99.0" text="   ###########">
+                        <Separator maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                                   orientation="VERTICAL"/>
+                        <Label fx:id="playerLvl" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                               minWidth="-Infinity" text="playerLvl"/>
+                        <Separator maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                                   orientation="VERTICAL"/>
+                        <Label fx:id="playerStardustLbl" maxHeight="-Infinity" maxWidth="-Infinity"
+                               minHeight="-Infinity" minWidth="-Infinity" text="   ########### Stardust">
                             <font>
                                 <Font name="System Bold" size="12.0"/>
                             </font>
                         </Label>
-                        <Label text="Stardust"/>
-                        <Separator orientation="VERTICAL" prefHeight="17.0" prefWidth="18.0"/>
-                        <Label fx:id="nbPkmInBagsLbl" text="###/### "/>
-                        <Label text="Pokémon"/>
-                        <Separator orientation="VERTICAL" prefHeight="17.0" prefWidth="18.0"/>
-                        <Label fx:id="nbItemsBagsLbl" text="###/### "/>
-                        <Label text="Items"/>
+                        <Separator maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                                   orientation="VERTICAL"/>
+                        <Label fx:id="nbPkmInBagsLbl" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                               minWidth="-Infinity" text="###/### Pokémon"/>
+                        <Separator maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                                   orientation="VERTICAL"/>
+                        <Label fx:id="nbItemsBagsLbl" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                               minWidth="-Infinity" text="###/### Items"/>
                     </children>
                 </HBox>
             </children>
@@ -57,7 +67,7 @@
                     <tabs>
                         <Tab text="LuckyEggGrinder">
                             <content>
-                                <Button fx:id="openGrinderBtn"  prefHeight="25.0" prefWidth="105.0" text="Open"/>
+                                <Button fx:id="openGrinderBtn" prefHeight="25.0" prefWidth="105.0" text="Open"/>
                                 <!-- problem with the embeding atm -->
                                 <!--fx:include fx:id="grinderPane" source="LuckyEggGrinder.fxml" />-->
                             </content>
