@@ -301,7 +301,7 @@ public class PokemonTab extends JPanel {
                     skipped.increment();
                     return;
                 }
-                if (poke.getFromFort()) {
+                if (!poke.getDeployedFortId().isEmpty()) {
                     System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp() + " CP is in gym, skipping.");
                     skipped.increment();
                     return;
@@ -351,7 +351,7 @@ public class PokemonTab extends JPanel {
                 selection.forEach(poke -> {
                     System.out.println("Doing Evolve " + total.getValue() + " of " + selection.size());
                     total.increment();
-                    if (poke.getFromFort()) {
+                    if (!poke.getDeployedFortId().isEmpty()) {
                         System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp() + " CP is in gym, skipping.");
                         skipped.increment();
                         return;
@@ -417,7 +417,7 @@ public class PokemonTab extends JPanel {
                     try {
                         System.out.println("Doing Power Up " + total.getValue() + " of " + selection.size());
                         total.increment();
-                        if (poke.getFromFort()) {
+                        if (!poke.getDeployedFortId().isEmpty()) {
                             System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp() + " CP is in gym, skipping.");
                             skipped.increment();
                             return;
