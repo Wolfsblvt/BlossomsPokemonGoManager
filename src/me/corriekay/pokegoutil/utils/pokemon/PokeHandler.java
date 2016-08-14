@@ -21,6 +21,7 @@ public class PokeHandler {
     public static final int MAX_NICKNAME_LENGTH = 12;
 
     private ArrayList<Pokemon> mons;
+    private Config config = Config.getConfig();
 
     public PokeHandler(Pokemon pokemon) {
         this(new Pokemon[]{pokemon});
@@ -114,7 +115,7 @@ public class PokeHandler {
      */
     public static String getLocalPokeName(int id) {
         // TODO: change call to getConfigItem to config class once implemented
-        String lang = Config.getConfig().getString("options.lang", "en");
+        String lang = config.getString("options.lang", "en");
 
         Locale locale;
         String[] langar = lang.split("_");
