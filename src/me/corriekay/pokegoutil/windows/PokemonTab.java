@@ -9,13 +9,17 @@ import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.*;
-import me.corriekay.pokegoutil.utils.*;
+import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
-import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import org.apache.commons.lang3.StringUtils;
@@ -25,11 +29,7 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -37,8 +37,6 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -62,15 +60,13 @@ public class PokemonTab extends JPanel {
         powerUpSelected = new JButton("Power Up");
         toggleFavorite = new JButton("Toggle Favorite");
 
-        pt.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent event) {
-                if (event.getValueIsAdjusting() == true) {
-                    int selectedRows = pt.getSelectedRowCount();
-                    if (selectedRows > 1) {
-                        PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
-                    } else {
-                        PokemonGoMainWindow.window.refreshTitle();
-                    }
+        pt.getSelectionModel().addListSelectionListener(event -> {
+            if (event.getValueIsAdjusting()) {
+                int selectedRows = pt.getSelectedRowCount();
+                if (selectedRows > 1) {
+                    PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
+                } else {
+                    PokemonGoMainWindow.window.refreshTitle();
                 }
             }
         });
@@ -243,7 +239,7 @@ public class PokemonTab extends JPanel {
     private void renameSelected() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.size() == 0) return;
-        String renamePattern = inputOperation("Rename", selection);
+        String renamePattern = inputOperation(selection);
 
         MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
         PokeHandler handler = new PokeHandler(selection);
@@ -534,10 +530,10 @@ public class PokemonTab extends JPanel {
         }
     }
 
-    private String inputOperation(String operation, ArrayList<Pokemon> pokes) {
-        JPanel panel = _buildPanelForOperation(operation, pokes);
+    private String inputOperation(ArrayList<Pokemon> pokes) {
+        JPanel panel = _buildPanelForOperation("Rename", pokes);
         String message = "";
-        switch (operation) {
+        switch ("Rename") {
             case "Rename":
                 message = "You want to rename " + pokes.size() + " Pokémon.\nYou can rename with normal text and patterns, or both combined. Patterns are going to be replaced with the Pokémons values.\nExisting patterns:\n";
                 for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
@@ -546,8 +542,7 @@ public class PokemonTab extends JPanel {
                 message += "\n";
         }
 
-        String input = JOptionPane.showInputDialog(panel, message, operation, JOptionPane.PLAIN_MESSAGE);
-        return input;
+        return JOptionPane.showInputDialog(panel, message, "Rename", JOptionPane.PLAIN_MESSAGE);
     }
 
     private boolean confirmOperation(String operation, ArrayList<Pokemon> pokes) {

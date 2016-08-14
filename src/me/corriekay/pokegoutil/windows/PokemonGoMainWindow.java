@@ -82,10 +82,6 @@ public class PokemonGoMainWindow extends JFrame {
         window = this;
     }
 
-    public PokemonGo getPoGo() {
-        return go;
-    }
-
     public void refreshTitle() {
         try {
             NumberFormat f = NumberFormat.getInstance();
