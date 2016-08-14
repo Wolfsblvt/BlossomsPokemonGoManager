@@ -9,13 +9,16 @@ import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.*;
-import me.corriekay.pokegoutil.utils.*;
+import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import me.corriekay.pokegoutil.utils.Config;
+import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
-import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import org.apache.commons.lang3.StringUtils;
@@ -27,9 +30,7 @@ import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -37,8 +38,6 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -59,7 +58,7 @@ public class PokemonTab extends JPanel {
         evolveSelected = new JButton("Evolve");
         powerUpSelected = new JButton("Power Up");
         toggleFavorite = new JButton("Toggle Favorite");
-        
+
         pt.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
         	public void valueChanged(ListSelectionEvent event) {
         		if (event.getValueIsAdjusting() == true) {
@@ -749,8 +748,6 @@ public class PokemonTab extends JPanel {
 
     private static class PokemonTableModel extends AbstractTableModel {
 
-        PokemonTable pt;
-
         private final ArrayList<Pokemon> pokeCol = new ArrayList<>();
         private final ArrayList<Integer> numIdCol = new ArrayList<>();//0
         private final ArrayList<String> nickCol = new ArrayList<>(),//1
@@ -781,6 +778,7 @@ public class PokemonTab extends JPanel {
         private final ArrayList<Long> gymDefenseCol = new ArrayList<>();//26
         private final ArrayList<Double> move1RatingCol = new ArrayList<>(),//27
                 move2RatingCol = new ArrayList<>();//28
+        PokemonTable pt;
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
