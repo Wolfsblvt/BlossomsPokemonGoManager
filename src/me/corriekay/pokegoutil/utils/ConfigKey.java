@@ -1,6 +1,14 @@
 package me.corriekay.pokegoutil.utils;
 
 public enum ConfigKey {
+	
+	DEVELOPFLAG("develop", false, Boolean.class),
+	
+	LOGIN_SAVE_AUTH("login.SaveAuth", false, Boolean.class),
+	LOGIN_GOOGLE_AUTH_TOKEN("login.GoogleAuthToken", null, String.class),
+	LOGIN_PTC_USERNAME("login.PTCUsername", null, String.class),
+	LOGIN_PTC_PASSWORD("login.PTCPassword", null, String.class),
+	
 	WINDOW_WIDTH("options.window.width", 800, Integer.class),
 	WINDOW_HEIGHT("options.window.height", 650, Integer.class),
 	WINDOW_POS_X("options.window.posx", 0, Integer.class),

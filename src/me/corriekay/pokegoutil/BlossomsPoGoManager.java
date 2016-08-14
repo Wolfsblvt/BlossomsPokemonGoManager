@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.DATA.controllers.AccountController;
 import me.corriekay.pokegoutil.utils.Config;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.ui.Console;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 
@@ -28,7 +30,7 @@ public class BlossomsPoGoManager extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        if (Config.getConfig().getBool("develop", false))
+        if (ConfigNew.getConfig().getBool(ConfigKey.DEVELOPFLAG))
             openGUIChooser(primaryStage);
         else
             openOldGui();

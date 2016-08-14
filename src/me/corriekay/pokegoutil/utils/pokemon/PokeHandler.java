@@ -8,6 +8,8 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.util.PokeNames;
 import me.corriekay.pokegoutil.utils.Config;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 import org.apache.commons.lang3.StringUtils;
 
@@ -114,7 +116,7 @@ public class PokeHandler {
      */
     public static String getLocalPokeName(int id) {
         // TODO: change call to getConfigItem to config class once implemented
-        String lang = Config.getConfig().getString("options.lang", "en");
+        String lang = ConfigNew.getConfig().getString(ConfigKey.LANGUAGE);
 
         Locale locale;
         String[] langar = lang.split("_");
