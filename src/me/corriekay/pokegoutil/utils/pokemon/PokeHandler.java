@@ -125,6 +125,12 @@ public class PokeHandler {
             locale = new Locale(langar[0], langar[1]);
         }
 
+        // For non-latin
+        if (!Utilities.isLatin(locale))
+        {
+             return PokeNames.getDisplayName(id, locale);
+        }
+
         String name = null;
         try {
             name = new String(PokeNames.getDisplayName(id, locale).getBytes("ISO-8859-1"), "UTF-8");

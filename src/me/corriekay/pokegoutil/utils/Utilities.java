@@ -4,16 +4,23 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public final class Utilities {
     private Utilities() { /* Prevent initializing this class */ }
 
+    private static final Locale[] latins = { Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN };
     private static final Random random = new Random(System.currentTimeMillis());
 
     public static boolean isEven(long i) {
         return i % 2 == 0;
+    }
+
+    public static boolean isLatin(Locale locale) {
+        return Arrays.stream(latins).anyMatch(x -> x.equals(locale));
     }
 
     /**
