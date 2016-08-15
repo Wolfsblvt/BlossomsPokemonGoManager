@@ -1,24 +1,21 @@
 package me.corriekay.pokegoutil;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-import me.corriekay.pokegoutil.DATA.controllers.AccountController;
-import me.corriekay.pokegoutil.utils.Config;
-import me.corriekay.pokegoutil.utils.ui.Console;
+import me.corriekay.pokegoutil.DATA.managers.AccountController;
+import me.corriekay.pokegoutil.GUI.controller.ChooseGuiWindowController;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
+import me.corriekay.pokegoutil.utils.ui.Console;
 
 import javax.swing.*;
-import java.io.IOException;
 
 
 public class BlossomsPoGoManager extends Application {
 
     public static final String VERSION = "v0.1.2-alpha.2";
+    private static Stage sPrimaryStage;
 
     private ClassLoader classLoader = getClass().getClassLoader();
 
@@ -26,10 +23,23 @@ public class BlossomsPoGoManager extends Application {
         launch(args);
     }
 
+    public static Stage getPrimaryStage() {
+        return sPrimaryStage;
+    }
+
+    public static void setNewPrimaryStage(Stage stage) {
+        if (sPrimaryStage != null && sPrimaryStage.isShowing())
+            sPrimaryStage.hide();
+        sPrimaryStage = stage;
+    }
+
     @Override
     public void start(Stage primaryStage) {
-        if (Config.getConfig().getBool("develop", false))
-            openGUIChooser(primaryStage);
+
+        if (ConfigNew.getConfig().getBool(ConfigKey.DEVELOPFLAG)) {
+            new ChooseGuiWindowController();
+            sPrimaryStage.show();
+        }
         else
             openOldGui();
     }
@@ -47,21 +57,5 @@ public class BlossomsPoGoManager extends Application {
                 AccountController.logOn();
             }
         });
-    }
-
-    public void openGUIChooser(Stage primaryStage) {
-        Parent root;
-        try {
-            root = FXMLLoader.load(classLoader.getResource("layout/ChooseGUIWindow.fxml"));
-        } catch (IOException e) {
-            System.err.println("Problem loading .fxml file: " + e.toString());
-            return;
-        }
-        primaryStage.setScene(new Scene(root));
-        primaryStage.getIcons().add(new Image(classLoader.getResource("icon/PokeBall-icon.png").toExternalForm()));
-        primaryStage.setTitle("Choose a GUI");
-        primaryStage.initStyle(StageStyle.UTILITY);
-        primaryStage.setResizable(false);
-        primaryStage.show();
     }
 }

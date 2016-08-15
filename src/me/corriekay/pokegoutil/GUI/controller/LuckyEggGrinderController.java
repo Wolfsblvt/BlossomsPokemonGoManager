@@ -2,12 +2,24 @@ package me.corriekay.pokegoutil.GUI.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
+import java.io.IOException;
+import java.net.URL;
 
 public class LuckyEggGrinderController extends AnchorPane {
 
+    private final String fxmlLayout = "layout/LuckyEggGrinder.fxml";
+    private final URL icon;
+    private ClassLoader classLoader = getClass().getClassLoader();
+    private Scene rootScene;
     @FXML
     private BorderPane luckyEggGrinderPane;
 
@@ -101,6 +113,25 @@ public class LuckyEggGrinderController extends AnchorPane {
     @FXML
     private CheckBox enableOptionsChkBox;
 
+    public LuckyEggGrinderController() {
+        FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
+        fxmlLoader.setController(this);
+        try {
+            fxmlLoader.load();
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+        rootScene = new Scene(fxmlLoader.getRoot());
+        Stage stage = new Stage();
+        icon = classLoader.getResource("icon/PokeBall-icon.png");
+        stage.getIcons().add(new Image(icon.toExternalForm()));
+        stage.setTitle("LuckyEggGrinder");
+        stage.initStyle(StageStyle.UTILITY);
+        stage.setResizable(false);
+        stage.setScene(rootScene);
+        stage.show();
+    }
+
     @FXML
     void onEnableOptions(ActionEvent event) {
 
@@ -115,7 +146,6 @@ public class LuckyEggGrinderController extends AnchorPane {
     void onTransferFav(ActionEvent event) {
 
     }
-
 
     @FXML
     void initialize() {

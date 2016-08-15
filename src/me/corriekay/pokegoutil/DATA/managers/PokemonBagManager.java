@@ -1,22 +1,22 @@
-package me.corriekay.pokegoutil.DATA.controllers;
+package me.corriekay.pokegoutil.DATA.managers;
 
 import com.pokegoapi.api.PokemonGo;
 
 /*
  * This controller takes care of handling pokémon
  */
-public class PokemonBagController {
+public class PokemonBagManager {
 
-    private static final PokemonBagController S_INSTANCE = new PokemonBagController();
+    private static final PokemonBagManager S_INSTANCE = new PokemonBagManager();
     private static boolean sIsInit = false;
 
     private PokemonGo go;
 
-    private PokemonBagController() {
+    private PokemonBagManager() {
 
     }
 
-    public static PokemonBagController getInstance() {
+    public static PokemonBagManager getInstance() {
         return S_INSTANCE;
     }
 
