@@ -134,8 +134,6 @@ public class PokeHandler {
         String name = null;
         try {
             name = new String(PokeNames.getDisplayName(id, locale).getBytes("ISO-8859-1"), "UTF-8");
-            name = StringUtils.capitalize(name.toLowerCase());
-            name = name.replaceAll("_male", "♂").replaceAll("_female", "♀");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
