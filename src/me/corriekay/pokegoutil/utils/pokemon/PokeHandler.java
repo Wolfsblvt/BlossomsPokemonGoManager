@@ -1,8 +1,11 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
+import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
 import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
@@ -188,6 +191,45 @@ public class PokeHandler {
             public String get(Pokemon p) {
                 return String.valueOf(p.getCp());
             }
+        },
+        CP_EVOLVED("CP if pokemon was fully evolved (equals %cp% for highest species in the family)") {
+            @Override
+            public String get(Pokemon p) {
+                PokemonFamilyId familyId = p.getPokemonFamily();
+		PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
+		int iv_attack = p.getIndividualAttack();
+		int iv_defense = p.getIndividualDefense();
+		int iv_stamina = p.getIndividualStamina();
+		float level = p.getLevel();
+                if (familyId.getNumber() == PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
+                    if (p.getPokemonId().getNumber() == PokemonId.EEVEE.getNumber()) {
+                        PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonId.VAPOREON);
+                        PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonId.FLAREON);
+                        PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonId.JOLTEON);
+                        if (vap != null && fla != null && jol != null) {
+                            Comparator<PokemonMeta> cMeta = (m1, m2) -> {
+                                int comb1 = PokemonCpUtils.getCpForPokemonLevel(m1.getBaseAttack() + iv_attack, m1.getBaseDefense() + iv_defense, m1.getBaseStamina() + iv_stamina, level);
+                                int comb2 = PokemonCpUtils.getCpForPokemonLevel(m2.getBaseAttack() + iv_attack, m2.getBaseDefense() + iv_defense, m2.getBaseStamina() + iv_stamina, level);
+                                return comb1 - comb2;
+                            };
+                            highestFamilyId = PokemonId.forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                        }
+                    } else {
+                        // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
+                        // We correct that here
+                        highestFamilyId = p.getPokemonId();
+		    }
+		}
+		/** 
+		 * This calculation is redundant for pokemon already evolved, but as
+		 * rename has delays anyway, this won't hurt performance.
+		 */
+		PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
+		int attack = highestFamilyMeta.getBaseAttack() + iv_attack;
+		int defense = highestFamilyMeta.getBaseDefense() + iv_defense;
+		int stamina = highestFamilyMeta.getBaseStamina() + iv_stamina;
+		return String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, level));
+	    }
         },
         HP("Hit Points") {
             @Override
