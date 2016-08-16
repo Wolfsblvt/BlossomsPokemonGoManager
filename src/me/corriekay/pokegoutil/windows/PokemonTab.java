@@ -720,7 +720,7 @@ public class PokemonTab extends JPanel {
          * 16 Integer - Max Evolved CP (Current)
          * 17 Integer - Max Evolved CP
          * 18 Integer - Candies of type
-         * 19 String - Candies to Evolve
+         * 19 String(Nullable Int) - Candies to Evolve
          * 20 Integer - Star Dust to level
          * 21 String - Pokeball Type
          * 22 String(Date) - Caught at
@@ -730,6 +730,7 @@ public class PokemonTab extends JPanel {
          * 26 Integer - gymDefense
          * 27 String(Percentage) - Move 1 Rating
          * 28 String(Percentage) - Move 2 Rating
+         * 29 String(Nullable Int) - CP Evolved
          */
         ConfigNew config = ConfigNew.getConfig();
 
@@ -794,6 +795,7 @@ public class PokemonTab extends JPanel {
             trs.setComparator(26, cLong);
             trs.setComparator(27, cPercentageWithTwoCharacters);
             trs.setComparator(28, cPercentageWithTwoCharacters);
+            trs.setComparator(29, cNullableInt);
             setRowSorter(trs);
             List<SortKey> sortKeys = new ArrayList<>();
             sortKeys.add(new SortKey(sortColIndex1, sortOrder1));
@@ -859,6 +861,7 @@ public class PokemonTab extends JPanel {
         private final ArrayList<Long> gymDefenseCol = new ArrayList<>();//26
         private final ArrayList<String> move1RatingCol = new ArrayList<>(),//27
                 move2RatingCol = new ArrayList<>();//28
+        private final ArrayList<String> cpEvolvedCol = new ArrayList<>();//29
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
@@ -937,6 +940,7 @@ public class PokemonTab extends JPanel {
                 if (highestFamilyId == p.getPokemonId()) {
                     maxEvolvedCpCurrentCol.add(i.getValue(), maxCpCurrent);
                     maxEvolvedCpCol.add(i.getValue(), maxCp);
+                    cpEvolvedCol.add(i.getValue(), "-");
                 } else if (highestFamilyMeta == null) {
                     System.out.println("Error: Cannot find meta data for " + highestFamilyId.name());
                 } else {
@@ -945,6 +949,7 @@ public class PokemonTab extends JPanel {
                     int stamina = highestFamilyMeta.getBaseStamina() + p.getIndividualStamina();
                     maxEvolvedCpCurrentCol.add(i.getValue(), PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
                     maxEvolvedCpCol.add(i.getValue(), PokemonCpUtils.getMaxCp(attack, defense, stamina));
+                    cpEvolvedCol.add(i.getValue(), String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
                 }
 
                 try {
@@ -1039,6 +1044,8 @@ public class PokemonTab extends JPanel {
                     return "Move 1 Rating";
                 case 28:
                     return "Move 2 Rating";
+                case 29:
+                    return "CP Evolved";
                 default:
                     return "UNKNOWN?";
             }
@@ -1046,7 +1053,7 @@ public class PokemonTab extends JPanel {
 
         @Override
         public int getColumnCount() {
-            return 29;
+            return 30;
         }
 
         @Override
@@ -1115,6 +1122,8 @@ public class PokemonTab extends JPanel {
                     return move1RatingCol.get(rowIndex);
                 case 28:
                     return move2RatingCol.get(rowIndex);
+                case 29:
+                    return cpEvolvedCol.get(rowIndex);
                 default:
                     return null;
             }
