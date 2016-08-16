@@ -763,7 +763,7 @@ public class PokemonTab extends JPanel {
                     s2 = "0";
                 return Integer.parseInt(s1) - Integer.parseInt(s2);
             };
-            Comparator<Long> cLong = (l1, l2) -> l2.compareTo(l1);
+            Comparator<Long> cLong = (l1, l2) -> l1.compareTo(l2);
             trs.setComparator(0, c);
             trs.setComparator(3, cDouble);
             trs.setComparator(4, cDouble);
