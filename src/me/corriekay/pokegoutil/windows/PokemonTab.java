@@ -569,9 +569,13 @@ public class PokemonTab extends JPanel {
 
         JScrollPane scroll = new JScrollPane(innerPanel);
         scroll.setAlignmentX(CENTER_ALIGNMENT);
-        scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
-        panel.setMaximumSize(panel.getSize());
+        // Auto-height? Resizable? Haha. Funny joke.
+        // I hate swing. But we need to get around here some way.
+        // So lets get dirty.
+        // We take 20 px for each row, 5 px buffer, and cap that at may 400 pixel.
+        int height = Math.min(400, pokes.size() * 20 + 5);
+        panel.setPreferredSize(new Dimension(500, height));
 
         pokes.forEach(p -> {
             String str = PokeHandler.getLocalPokeName(p) + " - CP: " + p.getCp() + ", IV: "
