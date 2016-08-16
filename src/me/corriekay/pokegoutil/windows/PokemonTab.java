@@ -597,7 +597,7 @@ public class PokemonTab extends JPanel {
         return panel;
     }
 
-    private ArrayList<Pokemon> getSelectedPokemon() {
+    public ArrayList<Pokemon> getSelectedPokemon() {
         ArrayList<Pokemon> pokes = new ArrayList<>();
         PokemonTableModel model = (PokemonTableModel) pt.getModel();
         for (int i : pt.getSelectedRows()) {
@@ -609,7 +609,7 @@ public class PokemonTab extends JPanel {
         return pokes;
     }
 
-    private void refreshList() {
+    public void refreshList() {
         List<Pokemon> pokes = new ArrayList<>();
         String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans").toLowerCase();
         String[] terms = search.split(";");

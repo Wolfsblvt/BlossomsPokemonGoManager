@@ -18,7 +18,7 @@ public class MenuBar extends JMenuBar {
     private final PokemonGo go;
     private ConfigNew config = ConfigNew.getConfig();
 
-    public MenuBar(PokemonGo go) {
+    public MenuBar(PokemonGo go, PokemonTab pokemonTab) {
         this.go = go;
 
         JMenu file, settings, help;
@@ -63,12 +63,20 @@ public class MenuBar extends JMenuBar {
 
         JCheckBoxMenuItem includeFamily = new JCheckBoxMenuItem("Include Family On Searchbar");
         includeFamily.setSelected(config.getBool(ConfigKey.INCLUDE_FAMILY));
-        includeFamily.addItemListener(e -> config.setBool(ConfigKey.INCLUDE_FAMILY, includeFamily.isSelected()));
+        includeFamily.addItemListener(e -> {
+            config.setBool(ConfigKey.INCLUDE_FAMILY, includeFamily.isSelected());
+            if (!pokemonTab.getSelectedPokemon().isEmpty()) {
+                SwingUtilities.invokeLater(pokemonTab::refreshList);
+            }
+        });
         settings.add(includeFamily);
 
         JCheckBoxMenuItem alternativeIVCalculation = new JCheckBoxMenuItem("Use Alternative IV Calculation (weighted stats)");
         alternativeIVCalculation.setSelected(config.getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION));
-        alternativeIVCalculation.addItemListener(e -> config.setBool(ConfigKey.ALTERNATIVE_IV_CALCULATION, alternativeIVCalculation.isSelected()));
+        alternativeIVCalculation.addItemListener(e -> {
+            config.setBool(ConfigKey.ALTERNATIVE_IV_CALCULATION, alternativeIVCalculation.isSelected());
+            SwingUtilities.invokeLater(pokemonTab::refreshList);
+        });
         settings.add(alternativeIVCalculation);
 
         add(settings);
