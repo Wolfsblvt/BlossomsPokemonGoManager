@@ -19,6 +19,7 @@ import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
+import me.corriekay.pokegoutil.utils.pokemon.PokeNick;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
@@ -252,8 +253,10 @@ public class PokemonTab extends JPanel {
             System.out.println("Doing Rename " + total.getValue() + " of " + selection.size());
             total.increment();
 
+            PokeNick pokeNick = PokeHandler.generatePokemonNickname(renamePattern, pokemon);
+
             // We check if the Pokemon was skipped
-            boolean isSkipped = (pokemon.getNickname().equals(PokeHandler.generatePokemonNickname(renamePattern, pokemon))
+            boolean isSkipped = (pokeNick.equals(pokemon.getNickname())
                     && result.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE);
             if (isSkipped) {
                 System.out.println("Skipped renaming " + PokeHandler.getLocalPokeName(pokemon) + ", already named " + pokemon.getNickname());
@@ -263,6 +266,9 @@ public class PokemonTab extends JPanel {
 
             if (result.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
                 success.increment();
+                if (pokeNick.isTooLong()) {
+                    System.out.println("WARNING: Nickname \"" + pokeNick.fullNickname + "\" is too long. Get's cut to: " + pokeNick.toString());
+                }
                 System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " from \"" + pokemon.getNickname() + "\" to \"" + PokeHandler.generatePokemonNickname(renamePattern, pokemon) + "\", Result: Success!");
             } else {
                 err.increment();
