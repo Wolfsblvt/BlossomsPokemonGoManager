@@ -125,15 +125,14 @@ public class PokeHandler {
             locale = new Locale(langar[0], langar[1]);
         }
 
+        String name = PokeNames.getDisplayName(id, locale);
         // For non-latin
-        if (!Utilities.isLatin(locale))
-        {
-             return PokeNames.getDisplayName(id, locale);
+        if (!Utilities.isLatin(name)) {
+             return name;
         }
 
-        String name = null;
         try {
-            name = new String(PokeNames.getDisplayName(id, locale).getBytes("ISO-8859-1"), "UTF-8");
+            name = new String(name.getBytes("ISO-8859-1"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
