@@ -807,10 +807,6 @@ public class PokemonTab extends JPanel {
                         if (sorter != null) {
                             List<SortKey> keys = sorter.getSortKeys();
                             if (keys.size() > 0) {
-                                System.out.println("DEBUG-> Size: " + keys.size());
-                                for (SortKey key : keys) {
-                                    System.out.println("SortKey: { column: " + key.getColumn() + ", order: " + key.getSortOrder().toString() + "}");
-                                }
                                 SortKey prim = keys.get(0);
                                 sortOrder1 = prim.getSortOrder();
                                 config.setString(ConfigKey.SORT_ORDER_1, sortOrder1.toString());
