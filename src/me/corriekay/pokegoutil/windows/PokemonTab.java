@@ -164,7 +164,7 @@ public class PokemonTab extends JPanel {
         topPanel.add(searchBar, gbc);
 
         // pokemon name language drop down
-        String[] locales = {"en", "de", "fr", "ru", "zh_CN", "zh_HK"};
+        String[] locales = {"en", "de", "fr", "ru", "zh_CN", "zh_HK", "ja"};
         JComboBox<String> pokelang = new JComboBox<>(locales);
         String locale = config.getString(ConfigKey.LANGUAGE);
         pokelang.setSelectedItem(locale);
