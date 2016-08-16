@@ -656,6 +656,12 @@ public class PokemonTab extends JPanel {
             gymAttackCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
             TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
             gymDefenseCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
+            TableColumn duelAbilityIVCol = this.pt.getColumnModel().getColumn(29);
+            duelAbilityIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_IV_MAX));
+            TableColumn gymAttackIVCol = this.pt.getColumnModel().getColumn(30);
+            gymAttackIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_IV_MAX));
+            TableColumn gymDefenseIVCol = this.pt.getColumnModel().getColumn(31);
+            gymDefenseIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_IV_MAX));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -722,10 +728,13 @@ public class PokemonTab extends JPanel {
          * 22 String(Date) - Caught at
          * 23 Boolean - Favorite
          * 24 Long - duelAbility
-         * 25 Integer - gymOffense
-         * 26 Integer - gymDefense
+         * 25 Double - gymOffense
+         * 26 Long - gymDefense
          * 27 Double - Move 1 Rating
          * 28 Double - Move 2 Rating
+         * 29 Long - duelAbility IV
+         * 30 Double - gymOffense IV
+         * 31 Long - gymDefense IV
          */
         ConfigNew config = ConfigNew.getConfig();
 
@@ -781,10 +790,13 @@ public class PokemonTab extends JPanel {
             trs.setComparator(20, c);
             trs.setComparator(22, cDate);
             trs.setComparator(24, cLong);
-            trs.setComparator(25, cLong);
+            trs.setComparator(25, cDouble);
             trs.setComparator(26, cLong);
             trs.setComparator(27, cDouble);
             trs.setComparator(28, cDouble);
+            trs.setComparator(29, cLong);
+            trs.setComparator(30, cDouble);
+            trs.setComparator(31, cLong);
             setRowSorter(trs);
             List<SortKey> sortKeys = new ArrayList<>();
             sortKeys.add(new SortKey(sortColIndex1, sortOrder1));
@@ -850,10 +862,13 @@ public class PokemonTab extends JPanel {
                 caughtCol = new ArrayList<>(),//22
                 favCol = new ArrayList<>();//23
         private final ArrayList<Long> duelAbilityCol = new ArrayList<>();//24
-        private final ArrayList<Long> gymOffenseCol = new ArrayList<>();//25
+        private final ArrayList<Double> gymOffenseCol = new ArrayList<>();//25
         private final ArrayList<Long> gymDefenseCol = new ArrayList<>();//26
         private final ArrayList<Double> move1RatingCol = new ArrayList<>(),//27
                 move2RatingCol = new ArrayList<>();//28
+        private final ArrayList<Long> duelAbilityIVCol = new ArrayList<>();//29
+        private final ArrayList<Double> gymOffenseIVCol = new ArrayList<>();//30
+        private final ArrayList<Long> gymDefenseIVCol = new ArrayList<>();//31
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
@@ -955,9 +970,12 @@ public class PokemonTab extends JPanel {
                 pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
                 caughtCol.add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
                 favCol.add(i.getValue(), (p.isFavorite()) ? "True" : "");
-                duelAbilityCol.add(i.getValue(), PokemonUtils.duelAbility(p));
-                gymOffenseCol.add(i.getValue(), PokemonUtils.gymOffense(p));
-                gymDefenseCol.add(i.getValue(), PokemonUtils.gymDefense(p));
+                duelAbilityCol.add(i.getValue(), PokemonUtils.duelAbility(p, false));
+                gymOffenseCol.add(i.getValue(), PokemonUtils.gymOffense(p, false));
+                gymDefenseCol.add(i.getValue(), PokemonUtils.gymDefense(p, false));
+                duelAbilityIVCol.add(i.getValue(), PokemonUtils.duelAbility(p, true));
+                gymOffenseIVCol.add(i.getValue(), PokemonUtils.gymOffense(p, true));
+                gymDefenseIVCol.add(i.getValue(), PokemonUtils.gymDefense(p, true));
                 move1RatingCol.add(i.getValue(), PokemonUtils.moveRating(p, true));
                 move2RatingCol.add(i.getValue(), PokemonUtils.moveRating(p, false));
                 i.increment();
@@ -1034,6 +1052,12 @@ public class PokemonTab extends JPanel {
                     return "Move 1 Rating";
                 case 28:
                     return "Move 2 Rating";
+                case 29:
+                    return "Duel Ability IV";
+                case 30:
+                    return "Gym Offense IV";
+                case 31:
+                    return "Gym Defense IV";
                 default:
                     return "UNKNOWN?";
             }
@@ -1041,7 +1065,7 @@ public class PokemonTab extends JPanel {
 
         @Override
         public int getColumnCount() {
-            return 29;
+            return 32;
         }
 
         @Override
@@ -1110,6 +1134,12 @@ public class PokemonTab extends JPanel {
                     return move1RatingCol.get(rowIndex);
                 case 28:
                     return move2RatingCol.get(rowIndex);
+                case 29:
+                    return duelAbilityIVCol.get(rowIndex);
+                case 30:
+                    return gymOffenseIVCol.get(rowIndex);
+                case 31:
+                    return gymDefenseIVCol.get(rowIndex);
                 default:
                     return null;
             }
