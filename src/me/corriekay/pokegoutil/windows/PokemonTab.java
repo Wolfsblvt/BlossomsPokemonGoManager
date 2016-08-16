@@ -764,8 +764,8 @@ public class PokemonTab extends JPanel {
             PokemonTableModel ptm = new PokemonTableModel(go, pokes, this);
             setModel(ptm);
             TableRowSorter<TableModel> trs = new TableRowSorter<>(getModel());
-            Comparator<Integer> c = (i1, i2) -> i1 - i2;
-            Comparator<Double> cDouble = (d1, d2) -> (int) (d1 - d2);
+            Comparator<Integer> c = Integer::compareTo;
+            Comparator<Double> cDouble = Double::compareTo;
             Comparator<String> cDate = (date1, date2) -> DateHelper.fromString(date1).compareTo(DateHelper.fromString(date2));
             Comparator<String> cNullableInt = (s1, s2) -> {
                 if ("-".equals(s1))
@@ -774,12 +774,12 @@ public class PokemonTab extends JPanel {
                     s2 = "0";
                 return Integer.parseInt(s1) - Integer.parseInt(s2);
             };
+            Comparator<Long> cLong = Long::compareTo;
             Comparator<String> cPercentageWithTwoCharacters = (s1, s2) -> {
                 int i1 = ("XX".equals(s1)) ? 100 : Integer.parseInt(s1);
                 int i2 = ("XX".equals(s2)) ? 100 : Integer.parseInt(s2);
                 return i1 - i2;
             };
-            Comparator<Long> cLong = (l1, l2) -> l2.compareTo(l1);
             trs.setComparator(0, c);
             trs.setComparator(3, cPercentageWithTwoCharacters);
             trs.setComparator(4, cDouble);
