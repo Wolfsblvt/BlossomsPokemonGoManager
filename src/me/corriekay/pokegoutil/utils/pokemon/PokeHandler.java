@@ -125,11 +125,14 @@ public class PokeHandler {
             locale = new Locale(langar[0], langar[1]);
         }
 
-        String name = null;
+        String name = PokeNames.getDisplayName(id, locale);
+        // For non-latin
+        if (!Utilities.isLatin(name)) {
+             return name;
+        }
+
         try {
-            name = new String(PokeNames.getDisplayName(id, locale).getBytes("ISO-8859-1"), "UTF-8");
-            name = StringUtils.capitalize(name.toLowerCase());
-            name = name.replaceAll("_male", "♂").replaceAll("_female", "♀");
+            name = new String(name.getBytes("ISO-8859-1"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -243,13 +246,7 @@ public class PokeHandler {
         IV_RATING("IV Rating in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                return Utilities.percentageWithTwoCharacters(p.getIvRatio());
-            }
-        },
-        IV_RATING_LONG("IV Rating") {
-            @Override
-            public String get(Pokemon p) {
-                return String.valueOf(Utilities.percentage(p.getIvRatio()));
+                return Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p));
             }
         },
         IV_HEX("IV Values in hexadecimal, like \"9FA\" (F = 15)") {
@@ -350,13 +347,13 @@ public class PokeHandler {
         DPS_1_RATING("Rating for Move 1 (Percentage of max possible) in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                return Utilities.percentageWithTwoCharacters(PokemonUtils.moveRating(p, true));
+                return PokemonUtils.moveRating(p, true);
             }
         },
         DPS_2_RATING("Rating for Move 2 (Percentage of max possible) in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                return Utilities.percentageWithTwoCharacters(PokemonUtils.moveRating(p, false));
+                return PokemonUtils.moveRating(p, false);
             }
         },
         TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh)") {
