@@ -243,13 +243,7 @@ public class PokeHandler {
         IV_RATING("IV Rating in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                return Utilities.percentageWithTwoCharacters(p.getIvRatio());
-            }
-        },
-        IV_RATING_LONG("IV Rating") {
-            @Override
-            public String get(Pokemon p) {
-                return String.valueOf(Utilities.percentage(p.getIvRatio()));
+                return Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p));
             }
         },
         IV_HEX("IV Values in hexadecimal, like \"9FA\" (F = 15)") {
@@ -350,13 +344,13 @@ public class PokeHandler {
         DPS_1_RATING("Rating for Move 1 (Percentage of max possible) in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                return Utilities.percentageWithTwoCharacters(PokemonUtils.moveRating(p, true));
+                return PokemonUtils.moveRating(p, true);
             }
         },
         DPS_2_RATING("Rating for Move 2 (Percentage of max possible) in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                return Utilities.percentageWithTwoCharacters(PokemonUtils.moveRating(p, false));
+                return PokemonUtils.moveRating(p, false);
             }
         },
         TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh)") {
