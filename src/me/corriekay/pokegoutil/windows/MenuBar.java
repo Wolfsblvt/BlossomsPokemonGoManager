@@ -66,6 +66,11 @@ public class MenuBar extends JMenuBar {
         includeFamily.addItemListener(e -> config.setBool(ConfigKey.INCLUDE_FAMILY, includeFamily.isSelected()));
         settings.add(includeFamily);
 
+        JCheckBoxMenuItem alternativeIVCalculation = new JCheckBoxMenuItem("Use Alternative IV Calculation (weighted stats)");
+        alternativeIVCalculation.setSelected(config.getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION));
+        alternativeIVCalculation.addItemListener(e -> config.setBool(ConfigKey.ALTERNATIVE_IV_CALCULATION, alternativeIVCalculation.isSelected()));
+        settings.add(alternativeIVCalculation);
+
         add(settings);
 
         // Help menu
