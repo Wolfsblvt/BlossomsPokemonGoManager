@@ -9,15 +9,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -32,7 +31,7 @@ import java.text.NumberFormat;
 
 import static POGOProtos.Data.PlayerDataOuterClass.PlayerData;
 
-public class MainWindowController extends VBox {
+public class MainWindowController extends BorderPane {
 
     private final String fxmlLayout = "layout/MainWindow.fxml";
     private final URL icon;
@@ -72,9 +71,6 @@ public class MainWindowController extends VBox {
     @FXML
     private Label nbItemsBagsLbl;
 
-    @FXML
-    private Button openGrinderBtn;
-
     public MainWindowController() {
         FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
         fxmlLoader.setController(this);
@@ -96,7 +92,9 @@ public class MainWindowController extends VBox {
             stage.setTitle("Blossom's Pokémon Go Manager");
         }
         stage.initStyle(StageStyle.DECORATED);
-        stage.setResizable(false);
+        //stage.setResizable(false);
+        //stage.setMinHeight(480);
+        //stage.setMinWidth(640);
         stage.setScene(rootScene);
 
         BlossomsPoGoManager.setNewPrimaryStage(stage);
@@ -105,7 +103,6 @@ public class MainWindowController extends VBox {
     @FXML
     //TODO fix exceptions
     private void initialize() {
-        openGrinderBtn.setOnAction(this::onOpenGrinderClicked);
         quitMenuItem.setOnAction(this::onQuitClicked);
         logOffMenuItem.setOnAction(this::onLogOffClicked);
 
@@ -182,10 +179,6 @@ public class MainWindowController extends VBox {
         BlossomsPoGoManager.getPrimaryStage().show();
     }
 
-    @FXML
-    void onOpenGrinderClicked(ActionEvent event) {
-        new LuckyEggGrinderController();
-    }
 
     @FXML
     void onQuitClicked(ActionEvent event) {
