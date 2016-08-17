@@ -11,6 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
@@ -23,7 +25,9 @@ import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.DATA.managers.AccountManager;
 import me.corriekay.pokegoutil.DATA.managers.InventoryManager;
+import me.corriekay.pokegoutil.DATA.managers.PokemonBagManager;
 import me.corriekay.pokegoutil.DATA.managers.ProfileManager;
+import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -71,6 +75,14 @@ public class MainWindowController extends BorderPane {
     @FXML
     private Label nbItemsBagsLbl;
 
+    @FXML
+    private TableView<PokemonModel> pokemonTableView;
+
+    @FXML
+    private TableColumn<PokemonModel, Integer> numberCol;
+    @FXML
+    private TableColumn<PokemonModel, String> nickCol;
+
     public MainWindowController() {
         FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
         fxmlLoader.setController(this);
@@ -107,6 +119,11 @@ public class MainWindowController extends BorderPane {
         logOffMenuItem.setOnAction(this::onLogOffClicked);
 
         PlayerProfile pp = ProfileManager.getProfile();
+        // TODO finish implementing
+        // Initialize the person table with the two columns.
+        numberCol.setCellValueFactory(cellData -> cellData.getValue().numIdProperty().asObject());
+        nickCol.setCellValueFactory(cellData -> cellData.getValue().nicknameProperty());
+
         refreshGUI(pp);
     }
 
@@ -152,7 +169,7 @@ public class MainWindowController extends BorderPane {
                     NumberFormat f = NumberFormat.getInstance();
                     playerStardustLbl.setText(f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))
                             + " Stardust");
-                    nbPkmInBagsLbl.setText(Integer.toString(InventoryManager.getInventories().getPokebank().getPokemons().size())
+                    nbPkmInBagsLbl.setText(Integer.toString(PokemonBagManager.getNbPokemon())
                             + "/" + Integer.toString(pp.getPlayerData().getMaxPokemonStorage())
                             + " Pokémon");
                     nbItemsBagsLbl.setText(Integer.toString(InventoryManager.getInventories().getItemBag().getItemsCount())
@@ -164,6 +181,7 @@ public class MainWindowController extends BorderPane {
                 }
             }
         }
+        pokemonTableView.setItems(PokemonBagManager.getAllPokemon());
     }
 
     @FXML
