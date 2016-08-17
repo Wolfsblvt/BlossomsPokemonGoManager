@@ -21,62 +21,59 @@ import java.util.Comparator;
 
 public class PokemonModel {
 
-    private final IntegerProperty numId;
-    private final StringProperty nickname;
-    private final StringProperty species;
-    private final DoubleProperty level;
-    private final StringProperty IV;
-    private final IntegerProperty atk;
-    private final IntegerProperty def;
-    private final IntegerProperty stam;
-    private final StringProperty type1;
-    private final StringProperty type2;
-    private final StringProperty move1;
-    private final StringProperty move2;
-    private final IntegerProperty cp;
-    private final IntegerProperty hp;
-    private final IntegerProperty maxCp;
-    private final IntegerProperty maxCpCurrent;
-    private final IntegerProperty maxEvolvedCpCurrent;
-    private final IntegerProperty maxEvolvedCp;
-    private final IntegerProperty candies;
-    private final StringProperty candies2Evlv;
-    private final IntegerProperty dustToLevel;
-    private final StringProperty pokeball;
-    private final StringProperty caughtDate;
-    private final BooleanProperty isFavorite;
-    private final LongProperty duelAbility;
-    private final LongProperty gymOffense;
-    private final LongProperty gymDefense;
-    private final StringProperty move1Rating;
-    private final StringProperty move2Rating;
-    private final StringProperty cpEvolved;
-
-    private PokemonModel() {
-        this(null);
-    }
+    private final IntegerProperty numId = new SimpleIntegerProperty();
+    private final StringProperty nickname = new SimpleStringProperty();
+    private final StringProperty species = new SimpleStringProperty();
+    private final DoubleProperty level = new SimpleDoubleProperty();
+    private final StringProperty IV = new SimpleStringProperty();
+    private final IntegerProperty atk = new SimpleIntegerProperty();
+    private final IntegerProperty def = new SimpleIntegerProperty();
+    private final IntegerProperty stam = new SimpleIntegerProperty();
+    private final StringProperty type1 = new SimpleStringProperty();
+    private final StringProperty type2 = new SimpleStringProperty();
+    private final StringProperty move1 = new SimpleStringProperty();
+    private final StringProperty move2 = new SimpleStringProperty();
+    private final IntegerProperty cp = new SimpleIntegerProperty();
+    private final IntegerProperty hp = new SimpleIntegerProperty();
+    private final IntegerProperty maxCp = new SimpleIntegerProperty();
+    private final IntegerProperty maxCpCurrent = new SimpleIntegerProperty();
+    private final IntegerProperty maxEvolvedCpCurrent = new SimpleIntegerProperty();
+    private final IntegerProperty maxEvolvedCp = new SimpleIntegerProperty();
+    private final IntegerProperty candies = new SimpleIntegerProperty();
+    private final StringProperty candies2Evlv = new SimpleStringProperty();
+    private final IntegerProperty dustToLevel = new SimpleIntegerProperty();
+    private final StringProperty pokeball = new SimpleStringProperty();
+    private final StringProperty caughtDate = new SimpleStringProperty();
+    private final BooleanProperty isFavorite = new SimpleBooleanProperty();
+    private final LongProperty duelAbility = new SimpleLongProperty();
+    private final LongProperty gymOffense = new SimpleLongProperty();
+    private final LongProperty gymDefense = new SimpleLongProperty();
+    private final StringProperty move1Rating = new SimpleStringProperty();
+    private final StringProperty move2Rating = new SimpleStringProperty();
+    private final StringProperty cpEvolved = new SimpleStringProperty();
 
     public PokemonModel(Pokemon p) {
+        super();
         PokemonMeta meta = p.getMeta() != null? p.getMeta():new PokemonMeta();
 
-        this.numId = new SimpleIntegerProperty(meta.getNumber());
-        this.nickname = new SimpleStringProperty(p.getNickname()) ;
-        this.species = new SimpleStringProperty(PokeHandler.getLocalPokeName(p));
-        this.level = new SimpleDoubleProperty((double) p.getLevel());
-        this.IV = new SimpleStringProperty(Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
-        this.atk = new SimpleIntegerProperty(p.getIndividualAttack());
-        this.def = new SimpleIntegerProperty(p.getIndividualDefense());
-        this.stam = new SimpleIntegerProperty(p.getIndividualStamina());
-        this.type1 = new SimpleStringProperty(StringUtils.capitalize(meta.getType1().toString().toLowerCase()));
-        this.type2 = new SimpleStringProperty(StringUtils.capitalize(meta.getType2().toString().toLowerCase()));
+        setNumId(meta.getNumber());
+        setNickname(p.getNickname());
+        setSpecies(PokeHandler.getLocalPokeName(p));
+        setLevel((double) p.getLevel());
+        setIV(Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
+        setAtk(p.getIndividualAttack());
+        setDef(p.getIndividualDefense());
+        setStam(p.getIndividualStamina());
+        setType1(StringUtils.capitalize(meta.getType1().toString().toLowerCase()));
+        setType2(StringUtils.capitalize(meta.getType2().toString().toLowerCase()));
 
         Double dps1 = PokemonUtils.dpsForMove(p, true);
         Double dps2 = PokemonUtils.dpsForMove(p, false);
-        this.move1 = new SimpleStringProperty(WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1) + "dps)");
-        this.move2 = new SimpleStringProperty(WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " (" + String.format("%.2f", dps2) + "dps)");
+        setMove1(WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1) + "dps)");
+        setMove2(WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " (" + String.format("%.2f", dps2) + "dps)");
 
-        this.cp = new SimpleIntegerProperty(p.getCp());
-        this.hp = new SimpleIntegerProperty(p.getMaxStamina());
+        setCp(p.getCp());
+        setHp(p.getMaxStamina());
 
         int trainerLevel = 1;
         try {
@@ -93,8 +90,8 @@ public class PokemonModel {
         int stamina = p.getIndividualStamina() + meta.getBaseStamina();
         maxCpCurrent = PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel);
         maxCp = PokemonCpUtils.getMaxCp(attack, defense, stamina);
-        this.maxCp = new SimpleIntegerProperty(maxCp);
-        this.maxCpCurrent = new SimpleIntegerProperty(maxCpCurrent);
+        setMaxCp(maxCp);
+        setMaxCpCurrent(maxCpCurrent);
 
         // Max CP calculation for highest evolution of current PokemonModel
         PokemonFamilyIdOuterClass.PokemonFamilyId familyId = p.getPokemonFamily();
@@ -126,16 +123,16 @@ public class PokemonModel {
             System.out.println("Error: Cannot find meta data for " + highestFamilyId.name());
         }
         if (highestFamilyId == p.getPokemonId()) {
-            this.maxEvolvedCpCurrent = new SimpleIntegerProperty(maxCpCurrent);
-            this.maxEvolvedCp = new SimpleIntegerProperty(maxCp);
-            this.cpEvolved = new SimpleStringProperty("-");
+            setMaxEvolvedCpCurrent(maxCpCurrent);
+            setMaxEvolvedCp(maxCp);
+            setCpEvolved("-");
         } else {
             attack = highestFamilyMeta.getBaseAttack() + p.getIndividualAttack();
             defense = highestFamilyMeta.getBaseDefense() + p.getIndividualDefense();
             stamina = highestFamilyMeta.getBaseStamina() + p.getIndividualStamina();
-            this.maxEvolvedCpCurrent = new SimpleIntegerProperty(PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
-            this.maxEvolvedCp = new SimpleIntegerProperty(PokemonCpUtils.getMaxCp(attack, defense, stamina));
-            this.cpEvolved = new SimpleStringProperty(String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
+            setMaxEvolvedCpCurrent(PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
+            setMaxEvolvedCp(PokemonCpUtils.getMaxCp(attack, defense, stamina));
+            setCpEvolved(String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
         }
 
         int candies = 0;
@@ -144,25 +141,24 @@ public class PokemonModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.candies = new SimpleIntegerProperty(candies);
+        setCandies(candies);
         if (p.getCandiesToEvolve() != 0)
-            this.candies2Evlv = new SimpleStringProperty(String.valueOf(p.getCandiesToEvolve()));
+            setCandies2Evlv(String.valueOf(p.getCandiesToEvolve()));
         else
-            this.candies2Evlv = new SimpleStringProperty("-");
-        this.dustToLevel = new SimpleIntegerProperty(p.getStardustCostsForPowerup());
-        this.pokeball = new SimpleStringProperty(WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
-        this.caughtDate = new SimpleStringProperty(DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
-        this.isFavorite = new SimpleBooleanProperty(p.isFavorite());
-        this.duelAbility = new SimpleLongProperty(PokemonUtils.duelAbility(p));
-        this.gymOffense = new SimpleLongProperty(PokemonUtils.gymOffense(p));
-        this.gymDefense = new SimpleLongProperty(PokemonUtils.gymDefense(p));
-        this.move1Rating = new SimpleStringProperty(PokemonUtils.moveRating(p, true));
-        this.move2Rating = new SimpleStringProperty(PokemonUtils.moveRating(p, false));
+            setCandies2Evlv("-");
+        setDustToLevel(p.getStardustCostsForPowerup());
+        setPokeball(WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
+        setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
+        setIsFavorite(p.isFavorite());
+        setDuelAbility(PokemonUtils.duelAbility(p));
+        setGymOffense(PokemonUtils.gymOffense(p));
+        setGymDefense(PokemonUtils.gymDefense(p));
+        setMove1Rating(PokemonUtils.moveRating(p, true));
+        setMove2Rating(PokemonUtils.moveRating(p, false));
     }
 
-    // Bunch of getters and setters:
-    //
-    //
+    // Bunch of getters and setters
+
 
     public int getNumId() {
         return numId.get();
