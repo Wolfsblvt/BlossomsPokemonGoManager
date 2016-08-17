@@ -72,12 +72,12 @@
                                        <children>
                                           <ScrollPane prefHeight="309.0" prefWidth="576.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <content>
-                                                           <TreeTableView fx:id="treeTableView" prefHeight="470.0" prefWidth="963.0">
+                                                           <TableView fx:id="pokemonTableView" prefHeight="470.0" prefWidth="963.0">
                                                                <columns>
-                                                                   <TreeTableColumn text="#" />
-                                                                   <TreeTableColumn text="nickname" />
+                                                                   <TableColumn fx:id="numberCol" text="#" />
+                                                                   <TableColumn fx:id="nickCol" text="nickname" />
                                                                </columns>
-                                                           </TreeTableView>
+                                                           </TableView>
                                              </content>
                                           </ScrollPane>
                                        </children>

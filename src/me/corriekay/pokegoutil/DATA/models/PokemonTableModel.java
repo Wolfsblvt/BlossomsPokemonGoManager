@@ -18,6 +18,10 @@ import org.apache.commons.lang3.text.WordUtils;
 import javax.swing.table.AbstractTableModel;
 import java.util.*;
 
+/*
+actually not gonna use this
+ */
+@Deprecated
 public class PokemonTableModel extends AbstractTableModel {
 
     PokemonModel pt;
