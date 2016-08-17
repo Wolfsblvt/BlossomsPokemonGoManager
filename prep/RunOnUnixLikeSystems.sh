@@ -1,1 +1,1 @@
-start javaw -jar BlossomsPogoManager.jar
+start java -jar BlossomsPogoManager.jar
