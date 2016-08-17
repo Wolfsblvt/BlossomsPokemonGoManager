@@ -4,16 +4,23 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public final class Utilities {
     private Utilities() { /* Prevent initializing this class */ }
 
+    private static final CharsetEncoder iso88591Encoder = Charset.forName("ISO-8859-1").newEncoder();
     private static final Random random = new Random(System.currentTimeMillis());
 
     public static boolean isEven(long i) {
         return i % 2 == 0;
+    }
+
+    public static boolean isLatin(String str) {
+        return iso88591Encoder.canEncode(str);
     }
 
     /**

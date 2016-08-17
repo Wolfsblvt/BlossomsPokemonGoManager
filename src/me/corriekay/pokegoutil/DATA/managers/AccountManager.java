@@ -132,7 +132,7 @@ public final class AccountManager {
             cp = provider;
             if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH)) {
                 if (!refresh)
-                    config.setString(ConfigKey.LOGIN_SAVE_AUTH, provider.getRefreshToken());
+                    config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
             } else {
                 deleteLoginData(LoginType.GOOGLE);
             }

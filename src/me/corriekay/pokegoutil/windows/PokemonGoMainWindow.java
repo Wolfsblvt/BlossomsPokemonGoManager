@@ -70,8 +70,9 @@ public class PokemonGoMainWindow extends JFrame {
         int posy = config.getInt(ConfigKey.WINDOW_POS_Y, pt.y);
         setLocation(posx, posy);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setJMenuBar(new MenuBar(go));
-        tab.add("Pokémon", new PokemonTab(go));
+        PokemonTab pokemonTab = new PokemonTab(go);
+        setJMenuBar(new MenuBar(go, pokemonTab));
+        tab.add("Pokémon", pokemonTab);
 
         add(tab, BorderLayout.CENTER);
 

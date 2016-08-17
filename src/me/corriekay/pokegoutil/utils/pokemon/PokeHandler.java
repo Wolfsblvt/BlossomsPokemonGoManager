@@ -1,8 +1,11 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
+import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
 import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
@@ -19,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PokeHandler {
-    public static final int MAX_NICKNAME_LENGTH = 12;
 
     private ArrayList<Pokemon> mons;
 
@@ -37,29 +39,9 @@ public class PokeHandler {
 
     // region Static helper methods to handle Pokémon
 
-    public static String generatePokemonNickname(String pattern, Pokemon pokemon) {
-        return generatePokemonNickname(pattern, pokemon, getRenamePattern());
-    }
-
-    private static String generatePokemonNickname(String pattern, Pokemon pokemon, Pattern regex) {
-        String pokeNick = pattern;
-        Matcher m = regex.matcher(pattern);
-        while (m.find()) {
-            String fullExpr = m.group(1);
-            String exprName = m.group(2);
-
-            try {
-                // Get ReplacePattern Object and use its get method
-                // to get the replacement string.
-                // Replace in nickname.
-                ReplacePattern rep = ReplacePattern.valueOf(exprName.toUpperCase());
-                String repStr = rep.get(pokemon);
-                pokeNick = pokeNick.replace(fullExpr, repStr);
-            } catch (IllegalArgumentException iae) {
-                // Do nothing, nothing to replace
-            }
-        }
-        return StringUtils.substring(pokeNick, 0, MAX_NICKNAME_LENGTH);
+    public static PokeNick generatePokemonNickname(String pattern, Pokemon pokemon) {
+        PokeNick nick = new PokeNick(pattern, pokemon);
+        return nick;
     }
 
     /**
@@ -70,27 +52,7 @@ public class PokeHandler {
      * @return The result of type <c>NicknamePokemonResponse.Result</c>
      */
     public static NicknamePokemonResponse.Result renameWithPattern(String pattern, Pokemon pokemon) {
-        return renWPattern(pattern, pokemon, getRenamePattern());
-    }
-
-    /**
-     * Helper method to get the rename Regex-Pattern so we don't have to rebuild
-     * it every time we process a pokemon. This should save resources.
-     */
-    private static Pattern getRenamePattern() {
-        return Pattern.compile("(%([a-zA-Z0-9_]+)%)");
-    }
-
-    /**
-     * Renames a pokemon according to a regex pattern.
-     *
-     * @param pattern The pattern to use for renaming
-     * @param pokemon The Pokemon to rename
-     * @param regex   The regex to replace
-     * @return The result of type <c>NicknamePokemonResponse.Result</c>
-     */
-    private static NicknamePokemonResponse.Result renWPattern(String pattern, Pokemon pokemon, Pattern regex) {
-        String pokeNick = generatePokemonNickname(pattern, pokemon, regex);
+        PokeNick pokeNick = generatePokemonNickname(pattern, pokemon);
 
         if (pokeNick.equals(pokemon.getNickname())) {
             // Why renaming to the same nickname?
@@ -99,7 +61,7 @@ public class PokeHandler {
 
         // Actually renaming the Pokémon with the calculated nickname
         try {
-            NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick);
+            NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick.toString());
             return result;
         } catch (LoginFailedException | RemoteServerException e) {
             System.out.println("Error while renaming " + getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! " + Utilities.getRealExceptionMessage(e));
@@ -125,11 +87,14 @@ public class PokeHandler {
             locale = new Locale(langar[0], langar[1]);
         }
 
-        String name = null;
+        String name = PokeNames.getDisplayName(id, locale);
+        // For non-latin
+        if (!Utilities.isLatin(name)) {
+             return name;
+        }
+
         try {
-            name = new String(PokeNames.getDisplayName(id, locale).getBytes("ISO-8859-1"), "UTF-8");
-            name = StringUtils.capitalize(name.toLowerCase());
-            name = name.replaceAll("_male", "♂").replaceAll("_female", "♀");
+            name = new String(name.getBytes("ISO-8859-1"), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -162,9 +127,8 @@ public class PokeHandler {
 
         LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> results = new LinkedHashMap<>();
 
-        Pattern regex = getRenamePattern();
         mons.forEach(p -> {
-            NicknamePokemonResponse.Result result = renWPattern(pattern, p, regex);
+            NicknamePokemonResponse.Result result = renameWithPattern(pattern, p);
             if (perPokeCallback != null) {
                 perPokeCallback.accept(result, p);
             }
@@ -228,6 +192,45 @@ public class PokeHandler {
                 return String.valueOf(p.getCp());
             }
         },
+        CP_EVOLVED("CP if pokemon was fully evolved (equals %cp% for highest species in the family)") {
+            @Override
+            public String get(Pokemon p) {
+                PokemonFamilyId familyId = p.getPokemonFamily();
+		PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
+		int iv_attack = p.getIndividualAttack();
+		int iv_defense = p.getIndividualDefense();
+		int iv_stamina = p.getIndividualStamina();
+		float level = p.getLevel();
+                if (familyId.getNumber() == PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
+                    if (p.getPokemonId().getNumber() == PokemonId.EEVEE.getNumber()) {
+                        PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonId.VAPOREON);
+                        PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonId.FLAREON);
+                        PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonId.JOLTEON);
+                        if (vap != null && fla != null && jol != null) {
+                            Comparator<PokemonMeta> cMeta = (m1, m2) -> {
+                                int comb1 = PokemonCpUtils.getCpForPokemonLevel(m1.getBaseAttack() + iv_attack, m1.getBaseDefense() + iv_defense, m1.getBaseStamina() + iv_stamina, level);
+                                int comb2 = PokemonCpUtils.getCpForPokemonLevel(m2.getBaseAttack() + iv_attack, m2.getBaseDefense() + iv_defense, m2.getBaseStamina() + iv_stamina, level);
+                                return comb1 - comb2;
+                            };
+                            highestFamilyId = PokemonId.forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                        }
+                    } else {
+                        // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
+                        // We correct that here
+                        highestFamilyId = p.getPokemonId();
+		    }
+		}
+		/** 
+		 * This calculation is redundant for pokemon already evolved, but as
+		 * rename has delays anyway, this won't hurt performance.
+		 */
+		PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
+		int attack = highestFamilyMeta.getBaseAttack() + iv_attack;
+		int defense = highestFamilyMeta.getBaseDefense() + iv_defense;
+		int stamina = highestFamilyMeta.getBaseStamina() + iv_stamina;
+		return String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, level));
+	    }
+        },
         HP("Hit Points") {
             @Override
             public String get(Pokemon p) {
@@ -243,13 +246,7 @@ public class PokeHandler {
         IV_RATING("IV Rating in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                return Utilities.percentageWithTwoCharacters(p.getIvRatio());
-            }
-        },
-        IV_RATING_LONG("IV Rating") {
-            @Override
-            public String get(Pokemon p) {
-                return String.valueOf(Utilities.percentage(p.getIvRatio()));
+                return Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p));
             }
         },
         IV_HEX("IV Values in hexadecimal, like \"9FA\" (F = 15)") {
@@ -350,13 +347,13 @@ public class PokeHandler {
         DPS_1_RATING("Rating for Move 1 (Percentage of max possible) in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                return Utilities.percentageWithTwoCharacters(PokemonUtils.moveRating(p, true));
+                return PokemonUtils.moveRating(p, true);
             }
         },
         DPS_2_RATING("Rating for Move 2 (Percentage of max possible) in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                return Utilities.percentageWithTwoCharacters(PokemonUtils.moveRating(p, false));
+                return PokemonUtils.moveRating(p, false);
             }
         },
         TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh)") {
