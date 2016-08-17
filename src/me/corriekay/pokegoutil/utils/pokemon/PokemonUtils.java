@@ -3,6 +3,8 @@ package me.corriekay.pokegoutil.utils.pokemon;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 import com.pokegoapi.api.player.Team;
 import com.pokegoapi.api.pokemon.*;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,6 +14,18 @@ public final class PokemonUtils {
     public static final long DUEL_ABILITY_MAX = 21_858_183_256L;
     public static final long GYM_OFFENSE_MAX = 510_419L;
     public static final long GYM_DEFENSE_MAX = 9_530_079_725L;
+
+    public static double ivRating(Pokemon p) {
+        if (ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION)) {
+            PokemonMeta meta = p.getMeta();
+            double cpMax = (meta.getBaseAttack() + 15) * Math.pow(meta.getBaseDefense() + 15, 0.5) * Math.pow(meta.getBaseStamina() + 15, 0.5);
+            double cpMin = meta.getBaseAttack() * Math.pow(meta.getBaseDefense(), 0.5) * Math.pow(meta.getBaseStamina(), 0.5);
+            double cpIv = (meta.getBaseAttack() + p.getIndividualAttack()) * Math.pow(meta.getBaseDefense() + p.getIndividualDefense(), 0.5) * Math.pow(meta.getBaseStamina() + p.getIndividualStamina(), 0.5);
+            return (cpIv - cpMin) / (cpMax - cpMin);
+        } else {
+            return (p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina()) / 45.0;
+        }
+    }
 
     public static String convertTeamColorToName(int teamValue) {
         Team[] teams = Team.values();
@@ -24,7 +38,7 @@ public final class PokemonUtils {
         return "UNKNOWN_TEAM";
     }
 
-    public static double moveRating(Pokemon p, boolean primary) {
+    public static String moveRating(Pokemon p, boolean primary) {
         PokemonMeta pMeta = p.getMeta();
 
         double highestDps = 0;
@@ -36,7 +50,7 @@ public final class PokemonUtils {
 
         // Now rate it
         double currentDps = dpsForMove(p, primary);
-        return Utilities.percentage(currentDps / highestDps);
+        return Utilities.percentageWithTwoCharacters(currentDps, highestDps);
     }
 
     public static double dpsForMove(Pokemon p, boolean primary) {
@@ -65,8 +79,8 @@ public final class PokemonUtils {
      *
      * @param p A Pokemon object
      * @return Rating of a Pokemon's overall attacking power considering damage, health & defense
-     * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-     * @see i607ch00
+     * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @link i607ch00
      */
     public static long duelAbility(Pokemon p) {
         return PokemonUtils.gymOffense(p) * PokemonUtils.tankiness(p);
@@ -78,8 +92,8 @@ public final class PokemonUtils {
      *
      * @param p A Pokemon object
      * @return Rating of a Pokemon's pure offensive ability over time considering move set
-     * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-     * @see i607ch00
+     * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @link i607ch00
      */
     public static long gymOffense(Pokemon p) {
         double gymOffense = Math.max(PokemonUtils.dpsForMove(p, true) * 100, PokemonUtils.weaveDPS(p, 0)) * (p.getMeta().getBaseAttack() + p.getIndividualAttack());
@@ -92,8 +106,8 @@ public final class PokemonUtils {
      *
      * @param p A Pokemon object
      * @return Rating of a Pokemon's AI controlled gym defense over time considering move set
-     * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-     * @see i607ch00
+     * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @link i607ch00
      */
     public static long gymDefense(Pokemon p) {
         double gymDefense = PokemonUtils.weaveDPS(p, 2000) * (p.getMeta().getBaseAttack() + p.getIndividualAttack()) * PokemonUtils.tankiness(p);
@@ -108,8 +122,8 @@ public final class PokemonUtils {
      *
      * @param p A Pokemon object
      * @return Rating of a Pokemon's tankiness :)
-     * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-     * @see i607ch00
+     * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @link i607ch00
      */
     public static long tankiness(Pokemon p) {
         return (p.getMeta().getBaseStamina() + p.getIndividualStamina()) * (p.getMeta().getBaseDefense() + p.getIndividualDefense());
@@ -124,8 +138,8 @@ public final class PokemonUtils {
      * @param p               A Pokemon object
      * @param additionalDelay Allow a delay in milliseconds for gym offense (0ms) vs gym defense (2000ms)
      * @return Damage over 100 seconds for a Pokemon's moveset
-     * @see https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-     * @see i607ch00
+     * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @link i607ch00
      */
     public static double weaveDPS(Pokemon p, Integer additionalDelay) {
         double critDamageBonus = 0.5;

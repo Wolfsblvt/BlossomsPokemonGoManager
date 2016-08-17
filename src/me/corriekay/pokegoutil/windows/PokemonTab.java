@@ -9,13 +9,18 @@ import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.*;
-import me.corriekay.pokegoutil.utils.*;
+import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
+import me.corriekay.pokegoutil.utils.pokemon.PokeNick;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
-import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import org.apache.commons.lang3.StringUtils;
@@ -27,9 +32,7 @@ import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -37,8 +40,6 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -164,7 +165,7 @@ public class PokemonTab extends JPanel {
         topPanel.add(searchBar, gbc);
 
         // pokemon name language drop down
-        String[] locales = {"en", "de", "fr", "ru", "zh_CN", "zh_HK"};
+        String[] locales = {"en", "de", "fr", "ru", "zh_CN", "zh_HK", "ja"};
         JComboBox<String> pokelang = new JComboBox<>(locales);
         String locale = config.getString(ConfigKey.LANGUAGE);
         pokelang.setSelectedItem(locale);
@@ -252,8 +253,10 @@ public class PokemonTab extends JPanel {
             System.out.println("Doing Rename " + total.getValue() + " of " + selection.size());
             total.increment();
 
+            PokeNick pokeNick = PokeHandler.generatePokemonNickname(renamePattern, pokemon);
+
             // We check if the Pokemon was skipped
-            boolean isSkipped = (pokemon.getNickname().equals(PokeHandler.generatePokemonNickname(renamePattern, pokemon))
+            boolean isSkipped = (pokeNick.equals(pokemon.getNickname())
                     && result.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE);
             if (isSkipped) {
                 System.out.println("Skipped renaming " + PokeHandler.getLocalPokeName(pokemon) + ", already named " + pokemon.getNickname());
@@ -263,6 +266,9 @@ public class PokemonTab extends JPanel {
 
             if (result.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
                 success.increment();
+                if (pokeNick.isTooLong()) {
+                    System.out.println("WARNING: Nickname \"" + pokeNick.fullNickname + "\" is too long. Get's cut to: " + pokeNick.toString());
+                }
                 System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " from \"" + pokemon.getNickname() + "\" to \"" + PokeHandler.generatePokemonNickname(renamePattern, pokemon) + "\", Result: Success!");
             } else {
                 err.increment();
@@ -569,13 +575,17 @@ public class PokemonTab extends JPanel {
 
         JScrollPane scroll = new JScrollPane(innerPanel);
         scroll.setAlignmentX(CENTER_ALIGNMENT);
-        scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
 
-        panel.setMaximumSize(panel.getSize());
+        // Auto-height? Resizable? Haha. Funny joke.
+        // I hate swing. But we need to get around here some way.
+        // So lets get dirty.
+        // We take 20 px for each row, 5 px buffer, and cap that at may 400 pixel.
+        int height = Math.min(400, pokes.size() * 20 + 5);
+        panel.setPreferredSize(new Dimension(500, height));
 
         pokes.forEach(p -> {
             String str = PokeHandler.getLocalPokeName(p) + " - CP: " + p.getCp() + ", IV: "
-                    + Utilities.percentage(p.getIvRatio()) + "%";
+                    + Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)) + "%";
             switch (operation) {
                 case "Evolve":
                     str += " Cost: " + p.getCandiesToEvolve();
@@ -597,7 +607,7 @@ public class PokemonTab extends JPanel {
         return panel;
     }
 
-    private ArrayList<Pokemon> getSelectedPokemon() {
+    public ArrayList<Pokemon> getSelectedPokemon() {
         ArrayList<Pokemon> pokes = new ArrayList<>();
         PokemonTableModel model = (PokemonTableModel) pt.getModel();
         for (int i : pt.getSelectedRows()) {
@@ -609,13 +619,27 @@ public class PokemonTab extends JPanel {
         return pokes;
     }
 
-    private void refreshList() {
+    public void refreshList() {
         List<Pokemon> pokes = new ArrayList<>();
         String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans").toLowerCase();
         String[] terms = search.split(";");
         try {
             go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-                String searchme = PokeHandler.getLocalPokeName(poke) + "" + poke.getPokemonFamily() + poke.getNickname()
+                boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
+                String familyName = "";
+                if (useFamilyName) {
+                    // Try translating family name
+                    try {
+                        PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll("FAMILY_", ""));
+                        familyName = PokeHandler.getLocalPokeName(familyPokemonId.getNumber());
+                    } catch (IllegalArgumentException e) {
+                        familyName = poke.getPokemonFamily().toString();
+                    }
+                }
+
+                String searchme = PokeHandler.getLocalPokeName(poke)
+                        + ((useFamilyName) ? familyName : "")
+                        + poke.getNickname()
                         + poke.getMeta().getType1() + poke.getMeta().getType2() + poke.getMove1() + poke.getMove2()
                         + poke.getPokeball();
                 searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "").replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
@@ -686,7 +710,7 @@ public class PokemonTab extends JPanel {
          * 0 String - Nickname
          * 1 Integer - Pokemon Number
          * 2 String - Type / Pokemon
-         * 3 Double - IV %
+         * 3 String(Percentage) - IV Rating
          * 4 Double - Level
          * 5 Integer - Attack
          * 6 Integer - Defense
@@ -702,7 +726,7 @@ public class PokemonTab extends JPanel {
          * 16 Integer - Max Evolved CP (Current)
          * 17 Integer - Max Evolved CP
          * 18 Integer - Candies of type
-         * 19 String - Candies to Evolve
+         * 19 String(Nullable Int) - Candies to Evolve
          * 20 Integer - Star Dust to level
          * 21 String - Pokeball Type
          * 22 String(Date) - Caught at
@@ -710,23 +734,38 @@ public class PokemonTab extends JPanel {
          * 24 Long - duelAbility
          * 25 Integer - gymOffense
          * 26 Integer - gymDefense
-         * 27 Double - Move 1 Rating
-         * 28 Double - Move 2 Rating
+         * 27 String(Percentage) - Move 1 Rating
+         * 28 String(Percentage) - Move 2 Rating
+         * 29 String(Nullable Int) - CP Evolved
          */
-        int sortColIndex = 0;
-        SortOrder so = SortOrder.ASCENDING;
+        ConfigNew config = ConfigNew.getConfig();
+
+        int sortColIndex1, sortColIndex2;
+        SortOrder sortOrder1, sortOrder2;
 
         private PokemonTable() {
             setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
             setAutoResizeMode(AUTO_RESIZE_OFF);
+
+            // Load sort configs
+            sortColIndex1 = config.getInt(ConfigKey.SORT_COLINDEX_1);
+            sortColIndex2 = config.getInt(ConfigKey.SORT_COLINDEX_2);
+            try {
+                sortOrder1 = SortOrder.valueOf(config.getString(ConfigKey.SORT_ORDER_1));
+                sortOrder2 = SortOrder.valueOf(config.getString(ConfigKey.SORT_ORDER_2));
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+                sortOrder1 = SortOrder.ASCENDING;
+                sortOrder2 = SortOrder.ASCENDING;
+            }
         }
 
         private void constructNewTableModel(PokemonGo go, List<Pokemon> pokes) {
             PokemonTableModel ptm = new PokemonTableModel(go, pokes, this);
             setModel(ptm);
             TableRowSorter<TableModel> trs = new TableRowSorter<>(getModel());
-            Comparator<Integer> c = (i1, i2) -> Math.round(i1 - i2);
-            Comparator<Double> cDouble = (d1, d2) -> (int) (d1 - d2);
+            Comparator<Integer> c = Integer::compareTo;
+            Comparator<Double> cDouble = Double::compareTo;
             Comparator<String> cDate = (date1, date2) -> DateHelper.fromString(date1).compareTo(DateHelper.fromString(date2));
             Comparator<String> cNullableInt = (s1, s2) -> {
                 if ("-".equals(s1))
@@ -735,9 +774,14 @@ public class PokemonTab extends JPanel {
                     s2 = "0";
                 return Integer.parseInt(s1) - Integer.parseInt(s2);
             };
-            Comparator<Long> cLong = (l1, l2) -> l2.compareTo(l1);
+            Comparator<Long> cLong = Long::compareTo;
+            Comparator<String> cPercentageWithTwoCharacters = (s1, s2) -> {
+                int i1 = ("XX".equals(s1)) ? 100 : Integer.parseInt(s1);
+                int i2 = ("XX".equals(s2)) ? 100 : Integer.parseInt(s2);
+                return i1 - i2;
+            };
             trs.setComparator(0, c);
-            trs.setComparator(3, cDouble);
+            trs.setComparator(3, cPercentageWithTwoCharacters);
             trs.setComparator(4, cDouble);
             trs.setComparator(5, c);
             trs.setComparator(6, c);
@@ -755,13 +799,37 @@ public class PokemonTab extends JPanel {
             trs.setComparator(24, cLong);
             trs.setComparator(25, cLong);
             trs.setComparator(26, cLong);
-            trs.setComparator(27, cDouble);
-            trs.setComparator(28, cDouble);
+            trs.setComparator(27, cPercentageWithTwoCharacters);
+            trs.setComparator(28, cPercentageWithTwoCharacters);
+            trs.setComparator(29, cNullableInt);
             setRowSorter(trs);
-            trs.toggleSortOrder(sortColIndex);
             List<SortKey> sortKeys = new ArrayList<>();
-            sortKeys.add(new SortKey(sortColIndex, so));
+            sortKeys.add(new SortKey(sortColIndex1, sortOrder1));
+            sortKeys.add(new SortKey(sortColIndex2, sortOrder2));
             trs.setSortKeys(sortKeys);
+
+            // Add listener to save those sorting values
+            trs.addRowSorterListener(
+                    e -> {
+                        RowSorter sorter = e.getSource();
+                        if (sorter != null) {
+                            List<SortKey> keys = sorter.getSortKeys();
+                            if (keys.size() > 0) {
+                                SortKey prim = keys.get(0);
+                                sortOrder1 = prim.getSortOrder();
+                                config.setString(ConfigKey.SORT_ORDER_1, sortOrder1.toString());
+                                sortColIndex1 = prim.getColumn();
+                                config.setInt(ConfigKey.SORT_COLINDEX_1, sortColIndex1);
+                            }
+                            if (keys.size() > 1) {
+                                SortKey sec = keys.get(1);
+                                sortOrder2 = sec.getSortOrder();
+                                config.setString(ConfigKey.SORT_ORDER_2, sortOrder2.toString());
+                                sortColIndex2 = sec.getColumn();
+                                config.setInt(ConfigKey.SORT_COLINDEX_2, sortColIndex2);
+                            }
+                        }
+                    });
         }
     }
 
@@ -772,9 +840,9 @@ public class PokemonTab extends JPanel {
         private final ArrayList<Pokemon> pokeCol = new ArrayList<>();
         private final ArrayList<Integer> numIdCol = new ArrayList<>();//0
         private final ArrayList<String> nickCol = new ArrayList<>(),//1
-                speciesCol = new ArrayList<>();//2
-        private final ArrayList<Double> ivCol = new ArrayList<>(),//3
-                levelCol = new ArrayList<>();//4
+                speciesCol = new ArrayList<>(),//2
+                ivCol = new ArrayList<>();//3
+        private final ArrayList<Double> levelCol = new ArrayList<>();//4
         private final ArrayList<Integer> atkCol = new ArrayList<>(),//5
                 defCol = new ArrayList<>(),//6
                 stamCol = new ArrayList<>();//7
@@ -797,8 +865,9 @@ public class PokemonTab extends JPanel {
         private final ArrayList<Long> duelAbilityCol = new ArrayList<>();//24
         private final ArrayList<Long> gymOffenseCol = new ArrayList<>();//25
         private final ArrayList<Long> gymDefenseCol = new ArrayList<>();//26
-        private final ArrayList<Double> move1RatingCol = new ArrayList<>(),//27
+        private final ArrayList<String> move1RatingCol = new ArrayList<>(),//27
                 move2RatingCol = new ArrayList<>();//28
+        private final ArrayList<String> cpEvolvedCol = new ArrayList<>();//29
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
@@ -811,7 +880,7 @@ public class PokemonTab extends JPanel {
                 speciesCol.add(i.getValue(),
                         PokeHandler.getLocalPokeName(p));
                 levelCol.add(i.getValue(), (double) p.getLevel());
-                ivCol.add(i.getValue(), Utilities.percentage(p.getIvRatio()));
+                ivCol.add(i.getValue(), Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
                 cpCol.add(i.getValue(), p.getCp());
                 atkCol.add(i.getValue(), p.getIndividualAttack());
                 defCol.add(i.getValue(), p.getIndividualDefense());
@@ -877,6 +946,7 @@ public class PokemonTab extends JPanel {
                 if (highestFamilyId == p.getPokemonId()) {
                     maxEvolvedCpCurrentCol.add(i.getValue(), maxCpCurrent);
                     maxEvolvedCpCol.add(i.getValue(), maxCp);
+                    cpEvolvedCol.add(i.getValue(), "-");
                 } else if (highestFamilyMeta == null) {
                     System.out.println("Error: Cannot find meta data for " + highestFamilyId.name());
                 } else {
@@ -885,6 +955,7 @@ public class PokemonTab extends JPanel {
                     int stamina = highestFamilyMeta.getBaseStamina() + p.getIndividualStamina();
                     maxEvolvedCpCurrentCol.add(i.getValue(), PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
                     maxEvolvedCpCol.add(i.getValue(), PokemonCpUtils.getMaxCp(attack, defense, stamina));
+                    cpEvolvedCol.add(i.getValue(), String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
                 }
 
                 try {
@@ -979,6 +1050,8 @@ public class PokemonTab extends JPanel {
                     return "Move 1 Rating";
                 case 28:
                     return "Move 2 Rating";
+                case 29:
+                    return "CP Evolved";
                 default:
                     return "UNKNOWN?";
             }
@@ -986,7 +1059,7 @@ public class PokemonTab extends JPanel {
 
         @Override
         public int getColumnCount() {
-            return 29;
+            return 30;
         }
 
         @Override
@@ -1055,6 +1128,8 @@ public class PokemonTab extends JPanel {
                     return move1RatingCol.get(rowIndex);
                 case 28:
                     return move2RatingCol.get(rowIndex);
+                case 29:
+                    return cpEvolvedCol.get(rowIndex);
                 default:
                     return null;
             }
