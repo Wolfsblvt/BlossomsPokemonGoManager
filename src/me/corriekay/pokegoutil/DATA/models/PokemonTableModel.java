@@ -6,7 +6,6 @@ import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
-import me.corriekay.pokegoutil.GUI.Model.PokemonTableViewSelectionModel;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
@@ -21,7 +20,7 @@ import java.util.*;
 
 public class PokemonTableModel extends AbstractTableModel {
 
-    PokemonTableViewSelectionModel pt;
+    PokemonModel pt;
 
     private final ArrayList<Pokemon> pokeCol = new ArrayList<>();
     private final ArrayList<Integer> numIdCol = new ArrayList<>();//0
@@ -56,7 +55,7 @@ public class PokemonTableModel extends AbstractTableModel {
     private final ArrayList<String> cpEvolvedCol = new ArrayList<>();//29
 
     @Deprecated
-    private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTableViewSelectionModel pt) {
+    private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonModel pt) {
         this.pt = pt;
         MutableInt i = new MutableInt();
         pokes.forEach(p -> {
@@ -88,8 +87,8 @@ public class PokemonTableModel extends AbstractTableModel {
                 e1.printStackTrace();
             }
 
-            // Max CP calculation for current Pokemon
-            PokemonMeta pokemonMeta = PokemonMetaRegistry.getMeta(p.getPokemonId());
+            // Max CP calculation for current PokemonModel
+            PokemonMeta pokemonMeta = p.getMeta();
             int maxCpCurrent = 0, maxCp = 0;
             if (pokemonMeta == null) {
                 System.out.println("Error: Cannot find meta data for " + p.getPokemonId().name());
@@ -103,7 +102,7 @@ public class PokemonTableModel extends AbstractTableModel {
                 maxCpCol.add(i.getValue(), maxCp);
             }
 
-            // Max CP calculation for highest evolution of current Pokemon
+            // Max CP calculation for highest evolution of current PokemonModel
             PokemonFamilyIdOuterClass.PokemonFamilyId familyId = p.getPokemonFamily();
             PokemonIdOuterClass.PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
 
@@ -168,7 +167,7 @@ public class PokemonTableModel extends AbstractTableModel {
 
     private Pokemon getPokemonByIndex(int i) {
         try {
-            return pokeCol.get(pt.getSelectedIndex());
+            return pokeCol.get(0);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
