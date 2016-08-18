@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class PokemonModel {
-
     private final IntegerProperty numId = new SimpleIntegerProperty();
     private final StringProperty nickname = new SimpleStringProperty();
     private final StringProperty species = new SimpleStringProperty();

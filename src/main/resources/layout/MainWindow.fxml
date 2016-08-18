@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <AnchorPane prefHeight="592.0" prefWidth="576.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
+    <children>
         <MenuBar prefHeight="25.0" prefWidth="576.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
@@ -24,68 +23,55 @@
                 </Menu>
             </menus>
         </MenuBar>
-          <HBox fx:id="PlayerInfo" alignment="CENTER_LEFT" layoutY="25.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="576.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
-              <children>
-                  <ImageView fx:id="teamIcon" fitHeight="32.0" fitWidth="32.0" preserveRatio="true" />
-                  <Separator orientation="VERTICAL" />
-                  <Label fx:id="playerNameLabel" text="PlayerName">
-                      <font>
-                          <Font name="System Bold" size="12.0" />
-                      </font>
-                  </Label>
-                  <Separator orientation="VERTICAL" />
-                  <Label fx:id="playerLvl" text="playerLvl" />
-                  <Separator orientation="VERTICAL" />
-                  <Label fx:id="playerStardustLbl" text="   ########### Stardust">
-                      <font>
-                          <Font name="System Bold" />
-                      </font>
-                  </Label>
-                  <Separator orientation="VERTICAL" />
-                  <Label fx:id="nbPkmInBagsLbl" text="###/### Pokémon" />
-                  <Separator orientation="VERTICAL" />
-                  <Label fx:id="nbItemsBagsLbl" text="###/### Items" />
-              </children>
-          </HBox>
-      <AnchorPane layoutY="57.0" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="57.0">
-         <children>
+        <HBox fx:id="PlayerInfo" alignment="CENTER_LEFT" layoutY="25.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="576.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+            <children>
+                <ImageView fx:id="teamIcon" fitHeight="32.0" fitWidth="32.0" preserveRatio="true" />
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="playerNameLabel" text="PlayerName">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="playerLvl" text="playerLvl" />
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="playerStardustLbl" text="   ########### Stardust">
+                    <font>
+                        <Font name="System Bold" />
+                    </font>
+                </Label>
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="nbPkmInBagsLbl" text="###/### Pokémon" />
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="nbItemsBagsLbl" text="###/### Items" />
+            </children>
+        </HBox>
+        <AnchorPane layoutY="57.0" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="57.0">
+            <children>
                 <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <tabs>
                         <Tab text="Pokémon">
                             <content>
-                        <AnchorPane>
-                           <children>
+                                <AnchorPane>
+                                    <children>
                                         <HBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <children>
                                                 <TextField fx:id="searchField" promptText="Search..." />
                                                 <Button fx:id="selectBtn" text="Select" />
                                             </children>
                                         </HBox>
-                              <VBox layoutY="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
-                                 <children>
-                                              <Accordion>
-                                                  <panes>
-                                                      <TitledPane animated="false" prefHeight="232.0" prefWidth="576.0" text="Filters" />
-                                                  </panes>
-                                              </Accordion>
-                                    <AnchorPane prefHeight="400.0" prefWidth="576.0" VBox.vgrow="ALWAYS">
-                                       <children>
-                                          <ScrollPane prefHeight="309.0" prefWidth="576.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <content>
-                                                           <TableView fx:id="pokemonTableView" prefHeight="470.0" prefWidth="963.0">
-                                                               <columns>
-                                                                   <TableColumn fx:id="numberCol" text="#" />
-                                                                   <TableColumn fx:id="nickCol" text="nickname" />
-                                                               </columns>
-                                                           </TableView>
-                                             </content>
-                                          </ScrollPane>
-                                       </children>
-                                    </AnchorPane>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
+                                        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+                                            <children>
+                                                <Accordion>
+                                                    <panes>
+                                                        <TitledPane maxHeight="-Infinity" prefHeight="136.0" prefWidth="576.0" text="Filters" />
+                                                    </panes>
+                                                </Accordion>
+                                                <AnchorPane fx:id="pokemontable" />
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </AnchorPane>
                             </content>
                         </Tab>
                         <Tab text="Items">
@@ -100,10 +86,10 @@
                         </Tab>
                     </tabs>
                 </TabPane>
-         </children>
-      </AnchorPane>
-        <ToolBar fx:id="statusBar" blendMode="SRC_ATOP" layoutY="463.0" maxHeight="-Infinity" prefHeight="27.0" prefWidth="576.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            </children>
+        </AnchorPane>
+        <ToolBar fx:id="statusBar" maxHeight="-Infinity" prefHeight="27.0" prefWidth="576.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <Label fx:id="statusBarLeftText" text="Status" />
         </ToolBar>
-   </children>
+    </children>
 </AnchorPane>

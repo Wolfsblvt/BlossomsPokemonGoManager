@@ -11,12 +11,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -27,7 +26,6 @@ import me.corriekay.pokegoutil.DATA.managers.AccountManager;
 import me.corriekay.pokegoutil.DATA.managers.InventoryManager;
 import me.corriekay.pokegoutil.DATA.managers.PokemonBagManager;
 import me.corriekay.pokegoutil.DATA.managers.ProfileManager;
-import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 
 import java.io.IOException;
 import java.net.URL;
@@ -76,12 +74,10 @@ public class MainWindowController extends BorderPane {
     private Label nbItemsBagsLbl;
 
     @FXML
-    private TableView<PokemonModel> pokemonTableView;
+    private AnchorPane pokemontable;
 
     @FXML
-    private TableColumn<PokemonModel, Integer> numberCol;
-    @FXML
-    private TableColumn<PokemonModel, String> nickCol;
+    private PokemonTableController pokemontableController;
 
     public MainWindowController() {
         FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
@@ -103,6 +99,8 @@ public class MainWindowController extends BorderPane {
         } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException | NullPointerException e) {
             stage.setTitle("Blossom's Pokémon Go Manager");
         }
+
+        pokemontableController = new PokemonTableController(pokemontable);
         stage.initStyle(StageStyle.DECORATED);
         //stage.setResizable(false);
         //stage.setMinHeight(480);
@@ -119,11 +117,6 @@ public class MainWindowController extends BorderPane {
         logOffMenuItem.setOnAction(this::onLogOffClicked);
 
         PlayerProfile pp = ProfileManager.getProfile();
-        // TODO finish implementing
-        // Initialize the person table with the two columns.
-        numberCol.setCellValueFactory(cellData -> cellData.getValue().numIdProperty().asObject());
-        nickCol.setCellValueFactory(cellData -> cellData.getValue().nicknameProperty());
-
         refreshGUI(pp);
     }
 
@@ -181,7 +174,6 @@ public class MainWindowController extends BorderPane {
                 }
             }
         }
-        pokemonTableView.setItems(PokemonBagManager.getAllPokemon());
     }
 
     @FXML
