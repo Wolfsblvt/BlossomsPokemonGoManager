@@ -249,7 +249,7 @@ public class PokemonTab extends JPanel {
         MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(), total = new MutableInt(1);
         PokeHandler handler = new PokeHandler(selection);
 
-        BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback = (result, pokemon) -> {
+        BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback = (renameResult, pokemon) -> {
             System.out.println("Doing Rename " + total.getValue() + " of " + selection.size());
             total.increment();
 
@@ -257,14 +257,14 @@ public class PokemonTab extends JPanel {
 
             // We check if the Pokemon was skipped
             boolean isSkipped = (pokeNick.equals(pokemon.getNickname())
-                    && result.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE);
+                    && renameResult.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE);
             if (isSkipped) {
                 System.out.println("Skipped renaming " + PokeHandler.getLocalPokeName(pokemon) + ", already named " + pokemon.getNickname());
                 skipped.increment();
                 return;
             }
 
-            if (result.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
+            if (renameResult.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
                 success.increment();
                 if (pokeNick.isTooLong()) {
                     System.out.println("WARNING: Nickname \"" + pokeNick.fullNickname + "\" is too long. Get's cut to: " + pokeNick.toString());
@@ -272,7 +272,7 @@ public class PokemonTab extends JPanel {
                 System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " from \"" + pokemon.getNickname() + "\" to \"" + PokeHandler.generatePokemonNickname(renamePattern, pokemon) + "\", Result: Success!");
             } else {
                 err.increment();
-                System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " failed! Code: " + result.toString() + "; Nick: " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
+                System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " failed! Code: " + renameResult.toString() + "; Nick: " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
             }
 
             // If not last element and API was queried, sleep until the next one
@@ -315,16 +315,15 @@ public class PokemonTab extends JPanel {
 
                 try {
                     int candies = poke.getCandy();
-                    ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = poke.transferPokemon();
+                    ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result transferResult = poke.transferPokemon();
 
-                    if (result == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
+                    if (transferResult == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
                         int newCandies = poke.getCandy();
                         System.out.println("Transferring " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
                         System.out.println("Stat changes: (Candies : " + newCandies + "[+" + (newCandies - candies) + "])");
                         success.increment();
                     } else {
-                        System.out.println(
-                                "Error transferring " + PokeHandler.getLocalPokeName(poke) + ", result: " + result);
+                        System.out.println("Error transferring " + PokeHandler.getLocalPokeName(poke) + ", result: " + transferResult.toString());
                         err.increment();
                     }
 
@@ -368,14 +367,21 @@ public class PokemonTab extends JPanel {
                         int candiesToEvolve = poke.getCandiesToEvolve();
                         int cp = poke.getCp();
                         int hp = poke.getMaxStamina();
-                        EvolutionResult er = poke.evolve();
-                        if (er.isSuccessful()) {
-                            Pokemon newPoke = er.getEvolvedPokemon();
+
+                        // Check if user has enough candy, otherwise we don't need to call server
+                        if (candies < candiesToEvolve) {
+                            err.increment();
+                            System.out.println("Error. Not enough candy to evolve " + PokeHandler.getLocalPokeName(poke) + ". " + candies + " available, " + candiesToEvolve + " needed.");
+                            return;
+                        }
+
+                        EvolutionResult evolutionResultWrapper = poke.evolve();
+                        if (evolutionResultWrapper.isSuccessful()) {
+                            Pokemon newPoke = evolutionResultWrapper.getEvolvedPokemon();
                             int newCandies = newPoke.getCandy();
                             int newCp = newPoke.getCp();
                             int newHp = newPoke.getStamina();
-                            System.out.println(
-                                    "Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: Success!");
+                            System.out.println("Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: " + evolutionResultWrapper.getResult().toString());
                             if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
                                 ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke.transferPokemon();
                                 System.out.println("Transferring " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + ", Result: " + result);
@@ -387,7 +393,7 @@ public class PokemonTab extends JPanel {
                             success.increment();
                         } else {
                             err.increment();
-                            System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + ", result: " + er.toString());
+                            System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + ", result: " + evolutionResultWrapper.getResult().toString());
                         }
 
                         // If not last element, sleep until the next one
@@ -429,25 +435,32 @@ public class PokemonTab extends JPanel {
                             return;
                         }
 
+                        int stardust = go.getPlayerProfile().getCurrency(Currency.STARDUST);
                         int candies = poke.getCandy();
                         int cp = poke.getCp();
                         int hp = poke.getMaxStamina();
-                        int stardustUsed = poke.getStardustCostsForPowerup();
+                        int stardustToPowerUp = poke.getStardustCostsForPowerup();
                         int candiesToPowerUp = poke.getCandyCostsForPowerup();
-                        UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result result = poke.powerUp();
+
+                        // Check if user has enough candy and stardust, otherwise we don't need to call server
+                        if (candies < candiesToPowerUp || stardust < stardustToPowerUp) {
+                            err.increment();
+                            System.out.println("Error. Not enough candy/stardust to power up " + PokeHandler.getLocalPokeName(poke) + ". Stardust: " + stardust + "/" + stardustToPowerUp + ", Candy: " + candies + "/" + candiesToPowerUp);
+                            return;
+                        }
+
+                        UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result upgradeResult = poke.powerUp();
                         go.getPlayerProfile().updateProfile();
-                        if (result == UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result.SUCCESS) {
+                        if (upgradeResult == UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result.SUCCESS) {
                             int newCandies = poke.getCandy();
                             int newCp = poke.getCp();
                             int newHp = poke.getMaxStamina();
-                            System.out.println(
-                                    "Powering Up " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
-                            System.out.println("Stat changes: (Candies : " + newCandies + "[" + candies + "-" + candiesToPowerUp + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]) Stardust used " + stardustUsed + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
+                            System.out.println("Powering Up " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
+                            System.out.println("Stat changes: (Candies : " + newCandies + "[" + candies + "-" + candiesToPowerUp + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]) Stardust used " + stardustToPowerUp + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
                             success.increment();
                         } else {
                             err.increment();
-                            System.out.println(
-                                    "Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: " + result.toString());
+                            System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: " + upgradeResult.toString());
                         }
 
                         // If not last element, sleep until the next one
@@ -483,18 +496,16 @@ public class PokemonTab extends JPanel {
                     try {
                         System.out.println("Toggling favorite " + total.getValue() + " of " + selection.size());
                         total.increment();
-                        SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result result = poke.setFavoritePokemon(!poke.isFavorite());
+                        SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result favoriteResult = poke.setFavoritePokemon(!poke.isFavorite());
                         System.out.println("Attempting to set favorite for " + PokeHandler.getLocalPokeName(poke) + " to " + !poke.isFavorite() + "...");
                         go.getPlayerProfile().updateProfile();
 
-                        if (result == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
-                            System.out.println(
-                                    "Favorite for " + PokeHandler.getLocalPokeName(poke) + " set to " + !poke.isFavorite() + ", Result: Success!");
+                        if (favoriteResult == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
+                            System.out.println("Favorite for " + PokeHandler.getLocalPokeName(poke) + " set to " + !poke.isFavorite() + ", Result: Success!");
                             success.increment();
                         } else {
                             err.increment();
-                            System.out.println(
-                                    "Error toggling favorite for " + PokeHandler.getLocalPokeName(poke) + ", result: " + result.toString());
+                            System.out.println("Error toggling favorite for " + PokeHandler.getLocalPokeName(poke) + ", result: " + favoriteResult.toString());
                         }
 
                         // If not last element, sleep until the next one
