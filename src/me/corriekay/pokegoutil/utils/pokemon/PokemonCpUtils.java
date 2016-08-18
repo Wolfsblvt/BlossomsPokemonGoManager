@@ -156,7 +156,7 @@ public class PokemonCpUtils {
     public static int getCpForPokemonLevel(int attack, int defense, int stamina, float level) {
         float pokemonLevel = Math.min(40.5f, level);
         float cpMultiplier = LEVEL_CPMULTIPLIER.get(pokemonLevel);
-        return (int) ((double) attack * Math.pow((double) defense, 0.5D) * Math.pow((double) stamina, 0.5D) * Math.pow((double) cpMultiplier, 2.0D) / 10.0D);
+        return (int) Math.round((double) attack * Math.pow((double) defense, 0.5D) * Math.pow((double) stamina, 0.5D) * Math.pow((double) cpMultiplier, 2.0D) / 10.0D);
     }
 
     /**
