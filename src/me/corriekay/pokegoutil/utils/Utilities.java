@@ -74,4 +74,16 @@ public final class Utilities {
         }
         return message;
     }
+    
+    public static String concatString(char delimeter, String ... strings){
+        if(strings.length == 0){
+            return "";
+        }else{
+            String s = strings[0];
+            for(int i = 1; i < strings.length; i ++){
+                s += delimeter + strings[i];
+            }
+            return s;
+        }
+    }
 }
