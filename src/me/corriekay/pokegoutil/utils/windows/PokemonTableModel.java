@@ -27,39 +27,13 @@ import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
-@SuppressWarnings({"serial","rawtypes"})
+@SuppressWarnings({ "serial", "rawtypes" })
 
 public class PokemonTableModel extends AbstractTableModel {
 
     PokemonTable pt;
 
     private ArrayList<Pokemon> pokeCol = new ArrayList<>();
-    /*
-     * private ArrayList<Integer> numIdCol = new ArrayList<>();// 0 private
-     * ArrayList<String> nickCol = new ArrayList<>(), // 1 speciesCol = new
-     * ArrayList<>(), // 2 ivCol = new ArrayList<>();// 3 private
-     * ArrayList<Double> levelCol = new ArrayList<>();// 4 private
-     * ArrayList<Integer> atkCol = new ArrayList<>(), // 5 defCol = new
-     * ArrayList<>(), // 6 stamCol = new ArrayList<>();// 7 private
-     * ArrayList<String> type1Col = new ArrayList<>(), // 8 type2Col = new
-     * ArrayList<>(), // 9 move1Col = new ArrayList<>(), // 10 move2Col = new
-     * ArrayList<>();// 11 private ArrayList<Integer> cpCol = new ArrayList<>(),
-     * // 12 hpCol = new ArrayList<>(), // 13 maxCpCurrentCol = new
-     * ArrayList<>(), // 14 maxCpCol = new ArrayList<>(), // 15
-     * maxEvolvedCpCurrentCol = new ArrayList<>(), // 16 maxEvolvedCpCol = new
-     * ArrayList<>(), // 17 candiesCol = new ArrayList<>();// 18 private
-     * ArrayList<String> candies2EvlvCol = new ArrayList<>();// 19 private
-     * ArrayList<Integer> dustToLevelCol = new ArrayList<>();// 20 private
-     * ArrayList<String> pokeballCol = new ArrayList<>(), // 21 caughtCol = new
-     * ArrayList<>(), // 22 favCol = new ArrayList<>();// 23 private
-     * ArrayList<Long> duelAbilityCol = new ArrayList<>();// 24 private
-     * ArrayList<Long> gymOffenseCol = new ArrayList<>();// 25 private
-     * ArrayList<Long> gymDefenseCol = new ArrayList<>();// 26 private
-     * ArrayList<String> move1RatingCol = new ArrayList<>(), // 27
-     * move2RatingCol = new ArrayList<>();// 28 private ArrayList<String>
-     * cpEvolvedCol = new ArrayList<>(), // 29 evolvableCol = new
-     * ArrayList<>();// 30
-     */
     private PokemonGo go;
 
     private ArrayList<AbstractMap.SimpleEntry<String, ArrayList>> data;
@@ -69,50 +43,42 @@ public class PokemonTableModel extends AbstractTableModel {
         this.pt = pt;
         this.go = go;
 
-        data = new ArrayList<AbstractMap.SimpleEntry<String,ArrayList>>();
-        
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Id", new ArrayList<Integer>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Nickname", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Species", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("IV %", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Lvl", new ArrayList<Double>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Atk", new ArrayList<Integer>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Def", new ArrayList<Integer>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Stam", new ArrayList<Integer>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Type 1", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Type 2", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Move 1", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Move 2", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("CP", new ArrayList<Integer>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("HP", new ArrayList<Integer>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Max CP (Cur)", new ArrayList<Integer>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Max CP (40)", new ArrayList<Integer>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Max Evolved CP (Cur)",
-                new ArrayList<Integer>()));
-        data.add(
-                new AbstractMap.SimpleEntry<String, ArrayList>("Max Evolved CP (40)", new ArrayList<Integer>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Candies", new ArrayList<Integer>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("To Evolve", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Stardust", new ArrayList<Integer>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Caught With", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Time Caught", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Favorite", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Duel Ability", new ArrayList<Long>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Gym Offense", new ArrayList<Long>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Gym Defense", new ArrayList<Long>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Move 1 Rating", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Move 2 Rating", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("CP Evolved", new ArrayList<String>()));
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Evolvable", new ArrayList<String>()));
-        
+        data = new ArrayList<AbstractMap.SimpleEntry<String, ArrayList>>();
+
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Id", new ArrayList<Integer>())); // 0
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Nickname", new ArrayList<String>()));// 1
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Species", new ArrayList<String>()));// 2
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("IV %", new ArrayList<String>()));// 3
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Lvl", new ArrayList<Double>()));// 4
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Atk", new ArrayList<Integer>()));// 5
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Def", new ArrayList<Integer>()));// 6
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Stam", new ArrayList<Integer>()));// 7
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Type 1", new ArrayList<String>()));// 8
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Type 2", new ArrayList<String>()));// 9
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Move 1", new ArrayList<String>()));// 10
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Move 2", new ArrayList<String>()));// 11
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("CP", new ArrayList<Integer>()));// 12
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("HP", new ArrayList<Integer>()));// 13
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Max CP (Cur)", new ArrayList<Integer>()));// 14
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Max CP (40)", new ArrayList<Integer>()));// 15
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Max Evolved CP (Cur)", new ArrayList<Integer>()));// 16
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Max Evolved CP (40)", new ArrayList<Integer>()));// 17
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Candies", new ArrayList<Integer>()));// 18
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("To Evolve", new ArrayList<String>()));// 19
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Stardust", new ArrayList<Integer>()));// 20
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Caught With", new ArrayList<String>()));// 21
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Time Caught", new ArrayList<String>()));// 22
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Favorite", new ArrayList<String>()));// 23
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Duel Ability", new ArrayList<Long>()));// 24
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Gym Offense", new ArrayList<Long>()));// 25
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Gym Defense", new ArrayList<Long>()));// 26
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Move 1 Rating", new ArrayList<String>()));// 27
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Move 2 Rating", new ArrayList<String>()));// 28
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("CP Evolved", new ArrayList<String>()));// 29
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Evolvable", new ArrayList<String>()));// 30
+
         ChangeTableData(pokes);
     }
-
-    // private AbstractMap.SimpleEntry<String,ArrayList> CreateEntry(String
-    // key){
-    // return new AbstractMap.SimpleEntry<String, ArrayList>(key, new
-    // ArrayList<>());
-    // }
 
     private ArrayList getColumnList(int columnIndex) {
         return data.get(columnIndex).getValue();
@@ -126,29 +92,30 @@ public class PokemonTableModel extends AbstractTableModel {
 
         pokes.forEach(p -> {
             pokeCol.add(i.getValue(), p);
-            getColumnList(0).add(i.getValue(),p.getMeta().getNumber());
-            getColumnList(1).add(i.getValue(),p.getNickname());
-            getColumnList(2).add(i.getValue(),PokeHandler.getLocalPokeName(p));            
-            getColumnList(3).add(i.getValue(),Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
-            getColumnList(4).add(i.getValue(),p.getLevel());
-            getColumnList(12).add(i.getValue(),p.getCp());
-            getColumnList(5).add(i.getValue(),p.getIndividualAttack());
-            getColumnList(6).add(i.getValue(),p.getIndividualDefense());
-            getColumnList(7).add(i.getValue(),p.getIndividualStamina());
-            getColumnList(8).add(i.getValue(),StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()));
-            getColumnList(9).add(i.getValue(),StringUtils.capitalize(
+            getColumnList(0).add(i.getValue(), p.getMeta().getNumber());
+            getColumnList(1).add(i.getValue(), p.getNickname());
+            getColumnList(2).add(i.getValue(), PokeHandler.getLocalPokeName(p));
+            getColumnList(3).add(i.getValue(), Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
+            getColumnList(4).add(i.getValue(), p.getLevel());
+            getColumnList(12).add(i.getValue(), p.getCp());
+            getColumnList(5).add(i.getValue(), p.getIndividualAttack());
+            getColumnList(6).add(i.getValue(), p.getIndividualDefense());
+            getColumnList(7).add(i.getValue(), p.getIndividualStamina());
+            getColumnList(8).add(i.getValue(), StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()));
+            getColumnList(9).add(i.getValue(), StringUtils.capitalize(
                     p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
 
             Double dps1 = PokemonUtils.dpsForMove(p, true);
             Double dps2 = PokemonUtils.dpsForMove(p, false);
 
-            getColumnList(10).add(i.getValue(),WordUtils.capitalize(
+            getColumnList(10).add(i.getValue(), WordUtils.capitalize(
                     p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " "))
                     + " (" + String.format("%.2f", dps1) + "dps)");
             getColumnList(11)
-                    .add(i.getValue(),WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " ("
-                            + String.format("%.2f", dps2) + "dps)");
-            getColumnList(13).add(i.getValue(),p.getMaxStamina());
+                    .add(i.getValue(),
+                            WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " ("
+                                    + String.format("%.2f", dps2) + "dps)");
+            getColumnList(13).add(i.getValue(), p.getMaxStamina());
 
             int trainerLevel = 1;
             try {
@@ -168,8 +135,8 @@ public class PokemonTableModel extends AbstractTableModel {
                 int stamina = p.getIndividualStamina() + pokemonMeta.getBaseStamina();
                 maxCpCurrent = PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel);
                 maxCp = PokemonCpUtils.getMaxCp(attack, defense, stamina);
-                getColumnList(14).add(i.getValue(),maxCpCurrent);
-                getColumnList(15).add(i.getValue(),maxCp);
+                getColumnList(14).add(i.getValue(), maxCpCurrent);
+                getColumnList(15).add(i.getValue(), maxCp);
             }
 
             // Max CP calculation for highest evolution of current Pokemon
@@ -204,9 +171,9 @@ public class PokemonTableModel extends AbstractTableModel {
 
             PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
             if (highestFamilyId == p.getPokemonId()) {
-                getColumnList(16).add(i.getValue(),maxCpCurrent);
-                getColumnList(17).add(i.getValue(),maxCp);
-                getColumnList(29).add(i.getValue(),"-");
+                getColumnList(16).add(i.getValue(), maxCpCurrent);
+                getColumnList(17).add(i.getValue(), maxCp);
+                getColumnList(29).add(i.getValue(), "-");
             } else if (highestFamilyMeta == null) {
                 System.out.println("Error: Cannot find meta data for " + highestFamilyId.name());
             } else {
@@ -214,40 +181,41 @@ public class PokemonTableModel extends AbstractTableModel {
                 int defense = highestFamilyMeta.getBaseDefense() + p.getIndividualDefense();
                 int stamina = highestFamilyMeta.getBaseStamina() + p.getIndividualStamina();
 
-                getColumnList(16).add(i.getValue(),PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
-                getColumnList(17).add(i.getValue(),PokemonCpUtils.getMaxCp(attack, defense, stamina));
-                getColumnList(29).add(i.getValue(),String
+                getColumnList(16).add(i.getValue(),
+                        PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
+                getColumnList(17).add(i.getValue(), PokemonCpUtils.getMaxCp(attack, defense, stamina));
+                getColumnList(29).add(i.getValue(), String
                         .valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
             }
 
             int candies = 0;
             try {
                 candies = p.getCandy();
-                getColumnList(18).add(i.getValue(),candies);
-                
+                getColumnList(18).add(i.getValue(), candies);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
             if (p.getCandiesToEvolve() != 0) {
-                getColumnList(19).add(i.getValue(),String.valueOf(p.getCandiesToEvolve()));
-                getColumnList(30).add(i.getValue(),String.valueOf(GetEvolvable(candies, p.getCandiesToEvolve())));
+                getColumnList(19).add(i.getValue(), String.valueOf(p.getCandiesToEvolve()));
+                getColumnList(30).add(i.getValue(), String.valueOf(GetEvolvable(candies, p.getCandiesToEvolve())));
             } else {
-                getColumnList(19).add(i.getValue(),"-");
-                getColumnList(30).add(i.getValue(),"-");
+                getColumnList(19).add(i.getValue(), "-");
+                getColumnList(30).add(i.getValue(), "-");
             }
-            getColumnList(20).add(i.getValue(),p.getStardustCostsForPowerup());
-            getColumnList(21).add(i.getValue(),WordUtils.capitalize(
+            getColumnList(20).add(i.getValue(), p.getStardustCostsForPowerup());
+            getColumnList(21).add(i.getValue(), WordUtils.capitalize(
                     p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
-            getColumnList(22).add(i.getValue(),DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
+            getColumnList(22).add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
             getColumnList(23).add(i.getValue(), (p.isFavorite()) ? "True" : "");
-            getColumnList(24).add(i.getValue(),PokemonUtils.duelAbility(p));
-            getColumnList(25).add(i.getValue(),PokemonUtils.gymOffense(p));
-            getColumnList(26).add(i.getValue(),PokemonUtils.gymDefense(p));
-            getColumnList(27).add(i.getValue(),PokemonUtils.moveRating(p, true));
-            getColumnList(28).add(i.getValue(),PokemonUtils.moveRating(p, false));
+            getColumnList(24).add(i.getValue(), PokemonUtils.duelAbility(p));
+            getColumnList(25).add(i.getValue(), PokemonUtils.gymOffense(p));
+            getColumnList(26).add(i.getValue(), PokemonUtils.gymDefense(p));
+            getColumnList(27).add(i.getValue(), PokemonUtils.moveRating(p, true));
+            getColumnList(28).add(i.getValue(), PokemonUtils.moveRating(p, false));
             i.increment();
         });
-        
+
         fireTableDataChanged();
     }
 

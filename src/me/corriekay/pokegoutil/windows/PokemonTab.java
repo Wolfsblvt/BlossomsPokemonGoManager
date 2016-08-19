@@ -243,7 +243,9 @@ public class PokemonTab extends JPanel {
             return;
         String renamePattern = inputOperation("Rename", selection);
 
-        MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(),
+        MutableInt err = new MutableInt(),
+                skipped = new MutableInt(),
+                success = new MutableInt(),
                 total = new MutableInt(1);
         PokeHandler handler = new PokeHandler(selection);
 
@@ -257,7 +259,9 @@ public class PokemonTab extends JPanel {
             boolean isSkipped = (pokeNick.equals(pokemon.getNickname())
                     && renameResult.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE);
             if (isSkipped) {
-                System.out.println("Skipped renaming " + PokeHandler.getLocalPokeName(pokemon) + ", already named "
+                System.out.println("Skipped renaming "
+                        + PokeHandler.getLocalPokeName(pokemon)
+                        + ", already named "
                         + pokemon.getNickname());
                 skipped.increment();
                 return;
@@ -266,15 +270,22 @@ public class PokemonTab extends JPanel {
             if (renameResult.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
                 success.increment();
                 if (pokeNick.isTooLong()) {
-                    System.out.println("WARNING: Nickname \"" + pokeNick.fullNickname + "\" is too long. Get's cut to: "
+                    System.out.println("WARNING: Nickname \""
+                            + pokeNick.fullNickname
+                            + "\" is too long. Get's cut to: "
                             + pokeNick.toString());
                 }
-                System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " from \""
+                System.out.println("Renaming "
+                        + PokeHandler.getLocalPokeName(pokemon)
+                        + " from \""
                         + pokemon.getNickname() + "\" to \""
-                        + PokeHandler.generatePokemonNickname(renamePattern, pokemon) + "\", Result: Success!");
+                        + PokeHandler.generatePokemonNickname(renamePattern, pokemon)
+                        + "\", Result: Success!");
             } else {
                 err.increment();
-                System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon) + " failed! Code: "
+                System.out.println("Renaming "
+                        + PokeHandler.getLocalPokeName(pokemon)
+                        + " failed! Code: "
                         + renameResult.toString() + "; Nick: "
                         + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
             }
@@ -303,20 +314,25 @@ public class PokemonTab extends JPanel {
         if (selection.size() == 0)
             return;
         if (confirmOperation("Transfer", selection)) {
-            MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(),
+            MutableInt err = new MutableInt(),
+                    skipped = new MutableInt(),
+                    success = new MutableInt(),
                     total = new MutableInt(1);
             selection.forEach(poke -> {
                 System.out.println("Doing Transfer " + total.getValue() + " of " + selection.size());
                 total.increment();
                 if (poke.isFavorite()) {
-                    System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp()
+                    System.out.println(PokeHandler.getLocalPokeName(poke)
+                            + " with " + poke.getCp()
                             + " CP is favorite, skipping.");
                     skipped.increment();
                     return;
                 }
                 if (!poke.getDeployedFortId().isEmpty()) {
                     System.out.println(
-                            PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp() + " CP is in gym, skipping.");
+                            PokeHandler.getLocalPokeName(poke)
+                                    + " with " + poke.getCp()
+                                    + " CP is in gym, skipping.");
                     skipped.increment();
                     return;
                 }
@@ -330,10 +346,15 @@ public class PokemonTab extends JPanel {
                         int newCandies = poke.getCandy();
                         System.out.println("Transferring " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
                         System.out.println(
-                                "Stat changes: (Candies : " + newCandies + "[+" + (newCandies - candies) + "])");
+                                "Stat changes: (Candies : "
+                                        + newCandies
+                                        + "[+" + (newCandies - candies)
+                                        + "])");
                         success.increment();
                     } else {
-                        System.out.println("Error transferring " + PokeHandler.getLocalPokeName(poke) + ", result: "
+                        System.out.println("Error transferring "
+                                + PokeHandler.getLocalPokeName(poke)
+                                + ", result: "
                                 + transferResult.toString());
                         err.increment();
                     }
@@ -346,7 +367,9 @@ public class PokemonTab extends JPanel {
                     }
                 } catch (Exception e) {
                     err.increment();
-                    System.out.println("Error transferring " + PokeHandler.getLocalPokeName(poke) + "! "
+                    System.out.println("Error transferring "
+                            + PokeHandler.getLocalPokeName(poke)
+                            + "! "
                             + Utilities.getRealExceptionMessage(e));
                 }
             });
@@ -364,13 +387,17 @@ public class PokemonTab extends JPanel {
         ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.size() > 0) {
             if (confirmOperation("Evolve", selection)) {
-                MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(),
+                MutableInt err = new MutableInt(),
+                        skipped = new MutableInt(),
+                        success = new MutableInt(),
                         total = new MutableInt(1);
                 selection.forEach(poke -> {
-                    System.out.println("Doing Evolve " + total.getValue() + " of " + selection.size());
+                    System.out.println("Doing Evolve " + total.getValue()
+                            + " of " + selection.size());
                     total.increment();
                     if (!poke.getDeployedFortId().isEmpty()) {
-                        System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp()
+                        System.out.println(PokeHandler.getLocalPokeName(poke)
+                                + " with " + poke.getCp()
                                 + " CP is in gym, skipping.");
                         skipped.increment();
                         return;
@@ -386,8 +413,10 @@ public class PokemonTab extends JPanel {
                         // need to call server
                         if (candies < candiesToEvolve) {
                             err.increment();
-                            System.out.println("Error. Not enough candy to evolve " + PokeHandler.getLocalPokeName(poke)
-                                    + ". " + candies + " available, " + candiesToEvolve + " needed.");
+                            System.out.println("Error. Not enough candy to evolve "
+                                    + PokeHandler.getLocalPokeName(poke) + ". "
+                                    + candies + " available, "
+                                    + candiesToEvolve + " needed.");
                             return;
                         }
 
@@ -397,7 +426,9 @@ public class PokemonTab extends JPanel {
                             int newCandies = newPoke.getCandy();
                             int newCp = newPoke.getCp();
                             int newHp = newPoke.getStamina();
-                            System.out.println("Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: "
+                            System.out.println("Evolving "
+                                    + PokeHandler.getLocalPokeName(poke)
+                                    + ". Evolve result: "
                                     + evolutionResultWrapper.getResult().toString());
                             if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
                                 ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke
@@ -405,12 +436,15 @@ public class PokemonTab extends JPanel {
                                 System.out.println("Transferring "
                                         + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase())
                                         + ", Result: " + result);
-                                System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-"
-                                        + candiesToEvolve + "]");
+                                System.out.println("Stat changes: " +
+                                        "(Candies: " + newCandies
+                                        + "[" + candies + "-" + candiesToEvolve + "]");
+
                             } else {
-                                System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-"
-                                        + candiesToEvolve + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp
-                                        + "[+" + (newHp - hp) + "])");
+                                System.out.println("Stat changes: "
+                                        + "(Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "],"
+                                        + " CP: " + newCp + "[+" + (newCp - cp) + "],"
+                                        + " HP: " + newHp + "[+" + (newHp - hp) + "])");
                             }
                             go.getInventories().updateInventories(true);
                             success.increment();
@@ -428,8 +462,9 @@ public class PokemonTab extends JPanel {
                         }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + "! "
-                                + Utilities.getRealExceptionMessage(e));
+                        System.out.println("Error evolving "
+                                + PokeHandler.getLocalPokeName(poke)
+                                + "! " + Utilities.getRealExceptionMessage(e));
                     }
                 });
                 try {
@@ -449,14 +484,17 @@ public class PokemonTab extends JPanel {
         ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.size() > 0) {
             if (confirmOperation("PowerUp", selection)) {
-                MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(),
+                MutableInt err = new MutableInt(),
+                        skipped = new MutableInt(),
+                        success = new MutableInt(),
                         total = new MutableInt(1);
                 selection.forEach(poke -> {
                     try {
                         System.out.println("Doing Power Up " + total.getValue() + " of " + selection.size());
                         total.increment();
                         if (!poke.getDeployedFortId().isEmpty()) {
-                            System.out.println(PokeHandler.getLocalPokeName(poke) + " with " + poke.getCp()
+                            System.out.println(PokeHandler.getLocalPokeName(poke)
+                                    + " with " + poke.getCp()
                                     + " CP is in gym, skipping.");
                             skipped.increment();
                             return;
@@ -474,8 +512,9 @@ public class PokemonTab extends JPanel {
                         if (candies < candiesToPowerUp || stardust < stardustToPowerUp) {
                             err.increment();
                             System.out.println("Error. Not enough candy/stardust to power up "
-                                    + PokeHandler.getLocalPokeName(poke) + ". Stardust: " + stardust + "/"
-                                    + stardustToPowerUp + ", Candy: " + candies + "/" + candiesToPowerUp);
+                                    + PokeHandler.getLocalPokeName(poke)
+                                    + ". Stardust: " + stardust + "/" + stardustToPowerUp
+                                    + ", Candy: " + candies + "/" + candiesToPowerUp);
                             return;
                         }
 
@@ -487,10 +526,12 @@ public class PokemonTab extends JPanel {
                             int newHp = poke.getMaxStamina();
                             System.out.println(
                                     "Powering Up " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
-                            System.out.println("Stat changes: (Candies : " + newCandies + "[" + candies + "-"
-                                    + candiesToPowerUp + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp
-                                    + "[+" + (newHp - hp) + "]) Stardust used " + stardustToPowerUp + "[remaining: "
-                                    + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
+                            System.out.println("Stat changes: " +
+                                    "(Candies : " + newCandies + "[" + candies + "-" + candiesToPowerUp + "], "
+                                    + "CP: " + newCp + "[+" + (newCp - cp) + "], "
+                                    + "HP: " + newHp + "[+" + (newHp - hp) + "]) "
+                                    + "Stardust used " + stardustToPowerUp
+                                    + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
                             success.increment();
                         } else {
                             err.increment();
@@ -586,9 +627,9 @@ public class PokemonTab extends JPanel {
         }
         pt.clearSelection();
         System.out.println("Selecting Pokemon with IV less than: " + ivTransfer.getText());
-        
+
         for (int i = 0; i < pt.getRowCount(); i++) {
-            double pIv = Double.parseDouble((String) pt.getValueAt(i,3));
+            double pIv = Double.parseDouble((String) pt.getValueAt(i, 3));
             if (pIv < ivLessThan) {
                 pt.getSelectionModel().addSelectionInterval(i, i);
             }
@@ -707,7 +748,7 @@ public class PokemonTab extends JPanel {
                         poke.getPokeball().toString());
                 searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "")
                         .replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
-                
+
                 for (String s : terms) {
                     if (searchme.contains(s)) {
                         pokes.add(poke);
@@ -719,22 +760,7 @@ public class PokemonTab extends JPanel {
             });
             pt.constructNewTableModel((search.equals("") || search.equals("searchpokémon...")
                     ? go.getInventories().getPokebank().getPokemons() : pokes));
-            
-           // for (int i = 0; i < pt.getModel().getColumnCount(); i++) {
-            //    JTableColumnPacker.packColumn(pt, i, 4);
-            //}
 
-            // Custom cell renderers
-            // Magic numbers pulled from max values of their respective columns
-            // in the moveset rankings spreadsheet calculations
-            // @see
-            // https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-            //TableColumn duelAbilityCol = this.pt.getColumnModel().getColumn(24);
-            //duelAbilityCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_MAX));
-            //TableColumn gymAttackCol = this.pt.getColumnModel().getColumn(25);
-            //gymAttackCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
-            //TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
-            //gymDefenseCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
         } catch (Exception e) {
             e.printStackTrace();
         }
