@@ -666,11 +666,11 @@ public class PokemonTab extends JPanel {
             gymAttackCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
             TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
             gymDefenseCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
-            TableColumn duelAbilityIVCol = this.pt.getColumnModel().getColumn(29);
+            TableColumn duelAbilityIVCol = this.pt.getColumnModel().getColumn(30);
             duelAbilityIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_IV_MAX));
-            TableColumn gymAttackIVCol = this.pt.getColumnModel().getColumn(30);
+            TableColumn gymAttackIVCol = this.pt.getColumnModel().getColumn(31);
             gymAttackIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_IV_MAX));
-            TableColumn gymDefenseIVCol = this.pt.getColumnModel().getColumn(31);
+            TableColumn gymDefenseIVCol = this.pt.getColumnModel().getColumn(32);
             gymDefenseIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_IV_MAX));
         } catch (Exception e) {
             e.printStackTrace();
@@ -880,9 +880,9 @@ public class PokemonTab extends JPanel {
         private final ArrayList<String> move1RatingCol = new ArrayList<>(),//27
                 move2RatingCol = new ArrayList<>();//28
         private final ArrayList<String> cpEvolvedCol = new ArrayList<>();//29
-        private final ArrayList<Long> duelAbilityIVCol = new ArrayList<>();//29
-        private final ArrayList<Double> gymOffenseIVCol = new ArrayList<>();//30
-        private final ArrayList<Long> gymDefenseIVCol = new ArrayList<>();//31
+        private final ArrayList<Long> duelAbilityIVCol = new ArrayList<>();//30
+        private final ArrayList<Double> gymOffenseIVCol = new ArrayList<>();//31
+        private final ArrayList<Long> gymDefenseIVCol = new ArrayList<>();//32
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
