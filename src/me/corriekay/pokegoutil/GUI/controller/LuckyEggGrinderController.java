@@ -69,13 +69,13 @@ public class LuckyEggGrinderController extends AnchorPane {
     private ComboBox<?> optionsComboBox;
 
     @FXML
-    private RadioButton noTransferLowerThanRadioBtn;
+    private CheckBox noTransferLowerThanRadioBtn;
 
     @FXML
     private Spinner<?> noTransferLowerThanSpinner;
 
     @FXML
-    private RadioButton transferFavRadioBtn;
+    private CheckBox transferFavRadioBtn;
 
     @FXML
     private AnchorPane commandRequestPane;
@@ -84,13 +84,13 @@ public class LuckyEggGrinderController extends AnchorPane {
     private Label headerLabel;
 
     @FXML
-    private RadioButton caterpieRadioBtn1;
+    private CheckBox caterpieRadioBtn1;
 
     @FXML
-    private RadioButton weedleRadioBtn1;
+    private CheckBox weedleRadioBtn1;
 
     @FXML
-    private RadioButton pidgeyRadioBtn1;
+    private CheckBox pidgeyRadioBtn1;
 
     @FXML
     private Label requestLbl;

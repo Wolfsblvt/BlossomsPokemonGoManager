@@ -17,8 +17,6 @@ public class BlossomsPoGoManager extends Application {
     public static final String VERSION = "v0.1.2-alpha.2";
     private static Stage sPrimaryStage;
 
-    private ClassLoader classLoader = getClass().getClassLoader();
-
     public static void main(String[] args) {
         launch(args);
     }
