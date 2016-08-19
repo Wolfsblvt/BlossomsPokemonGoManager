@@ -24,6 +24,7 @@ public enum ConfigKey {
     TRANSFER_AFTER_EVOLVE("settings.transferAfterEvolve", false, Boolean.class),
     SHOW_BULK_POPUP("settings.popupAfterBulk", true, Boolean.class),
     INCLUDE_FAMILY("settings.includeFamily", true, Boolean.class),
+    ALTERNATIVE_IV_CALCULATION("settings.alternativeIvCalculation", false, Boolean.class),
 
     LANGUAGE("options.lang", "en", String.class),
     FONT_SIZE("options.fontsize", 0, Integer.class),
