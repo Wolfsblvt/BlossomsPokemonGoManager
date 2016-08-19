@@ -16,6 +16,9 @@ public class ConfigNew {
     private static JSONObject json;
     private static ConfigNew cfg = new ConfigNew();
 
+    // Save file modified time
+    private long lastModified = file.lastModified();
+
     private ConfigNew() {
         if (!file.exists()) {
 
@@ -213,6 +216,7 @@ public class ConfigNew {
     }
 
     private FindResult findNode(String path, boolean create) {
+        checkModified();
         ArrayList<String> parts = new ArrayList<String>(Arrays.asList(path.split("\\.")));
         JSONObject current = json;
         for (String item : parts.subList(0, parts.size() - 1)) {
@@ -225,6 +229,15 @@ public class ConfigNew {
         }
 
         return new FindResult(current, parts.get(parts.size() - 1));
+    }
+
+    private void checkModified() {
+        long currentModifiedTime = file.lastModified();
+        if (currentModifiedTime != lastModified) {
+            // Re-read the file now
+            json = new JSONObject(FileHelper.readFile(file));
+            lastModified = currentModifiedTime;
+        }
     }
 
     public void delete(ConfigKey configKey) {
