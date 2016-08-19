@@ -270,24 +270,18 @@ public class PokemonTab extends JPanel {
             if (renameResult.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
                 success.increment();
                 if (pokeNick.isTooLong()) {
-                    System.out.println("WARNING: Nickname \""
-                            + pokeNick.fullNickname
-                            + "\" is too long. Get's cut to: "
-                            + pokeNick.toString());
+                    System.out.println("WARNING: Nickname \"" + pokeNick.fullNickname
+                            + "\" is too long. Get's cut to: " + pokeNick.toString());
                 }
-                System.out.println("Renaming "
-                        + PokeHandler.getLocalPokeName(pokemon)
-                        + " from \""
-                        + pokemon.getNickname() + "\" to \""
-                        + PokeHandler.generatePokemonNickname(renamePattern, pokemon)
+                System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon)
+                        + " from \"" + pokemon.getNickname()
+                        + "\" to \"" + PokeHandler.generatePokemonNickname(renamePattern, pokemon)
                         + "\", Result: Success!");
             } else {
                 err.increment();
-                System.out.println("Renaming "
-                        + PokeHandler.getLocalPokeName(pokemon)
-                        + " failed! Code: "
-                        + renameResult.toString() + "; Nick: "
-                        + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
+                System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon)
+                        + " failed! Code: " + renameResult.toString()
+                        + "; Nick: " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
             }
 
             // If not last element and API was queried, sleep until the next one
@@ -322,17 +316,15 @@ public class PokemonTab extends JPanel {
                 System.out.println("Doing Transfer " + total.getValue() + " of " + selection.size());
                 total.increment();
                 if (poke.isFavorite()) {
-                    System.out.println(PokeHandler.getLocalPokeName(poke)
-                            + " with " + poke.getCp()
-                            + " CP is favorite, skipping.");
+                    System.out.println(PokeHandler.getLocalPokeName(poke) + " with "
+                            + poke.getCp() + " CP is favorite, skipping.");
                     skipped.increment();
                     return;
                 }
                 if (!poke.getDeployedFortId().isEmpty()) {
                     System.out.println(
-                            PokeHandler.getLocalPokeName(poke)
-                                    + " with " + poke.getCp()
-                                    + " CP is in gym, skipping.");
+                            PokeHandler.getLocalPokeName(poke) + " with "
+                                    + poke.getCp() + " CP is in gym, skipping.");
                     skipped.increment();
                     return;
                 }
@@ -345,11 +337,9 @@ public class PokemonTab extends JPanel {
                     if (transferResult == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
                         int newCandies = poke.getCandy();
                         System.out.println("Transferring " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
-                        System.out.println(
-                                "Stat changes: (Candies : "
-                                        + newCandies
-                                        + "[+" + (newCandies - candies)
-                                        + "])");
+                        System.out.println("Stat changes: "
+                                + "(Candies : " + newCandies
+                                + "[+" + (newCandies - candies) + "])");
                         success.increment();
                     } else {
                         System.out.println("Error transferring "
@@ -396,9 +386,8 @@ public class PokemonTab extends JPanel {
                             + " of " + selection.size());
                     total.increment();
                     if (!poke.getDeployedFortId().isEmpty()) {
-                        System.out.println(PokeHandler.getLocalPokeName(poke)
-                                + " with " + poke.getCp()
-                                + " CP is in gym, skipping.");
+                        System.out.println(PokeHandler.getLocalPokeName(poke) + " with "
+                                + poke.getCp() + " CP is in gym, skipping.");
                         skipped.increment();
                         return;
                     }
@@ -415,8 +404,7 @@ public class PokemonTab extends JPanel {
                             err.increment();
                             System.out.println("Error. Not enough candy to evolve "
                                     + PokeHandler.getLocalPokeName(poke) + ". "
-                                    + candies + " available, "
-                                    + candiesToEvolve + " needed.");
+                                    + candies + " available, " + candiesToEvolve + " needed.");
                             return;
                         }
 
@@ -493,9 +481,8 @@ public class PokemonTab extends JPanel {
                         System.out.println("Doing Power Up " + total.getValue() + " of " + selection.size());
                         total.increment();
                         if (!poke.getDeployedFortId().isEmpty()) {
-                            System.out.println(PokeHandler.getLocalPokeName(poke)
-                                    + " with " + poke.getCp()
-                                    + " CP is in gym, skipping.");
+                            System.out.println(PokeHandler.getLocalPokeName(poke) + " with "
+                                    + poke.getCp() + " CP is in gym, skipping.");
                             skipped.increment();
                             return;
                         }
@@ -581,8 +568,9 @@ public class PokemonTab extends JPanel {
                         go.getPlayerProfile().updateProfile();
 
                         if (favoriteResult == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
-                            System.out.println("Favorite for " + PokeHandler.getLocalPokeName(poke) + " set to "
-                                    + !poke.isFavorite() + ", Result: Success!");
+                            System.out.println("Favorite for " + PokeHandler.getLocalPokeName(poke)
+                                    + " set to " + !poke.isFavorite()
+                                    + ", Result: Success!");
                             success.increment();
                         } else {
                             err.increment();
@@ -598,8 +586,9 @@ public class PokemonTab extends JPanel {
                         }
                     } catch (Exception e) {
                         err.increment();
-                        System.out.println("Error toggling favorite for " + PokeHandler.getLocalPokeName(poke) + "! "
-                                + Utilities.getRealExceptionMessage(e));
+                        System.out.println("Error toggling favorite for "
+                                + PokeHandler.getLocalPokeName(poke)
+                                + "! " + Utilities.getRealExceptionMessage(e));
                     }
                 });
                 try {
@@ -642,7 +631,8 @@ public class PokemonTab extends JPanel {
         switch (operation) {
         case "Rename":
             message = "You want to rename " + pokes.size()
-                    + " Pokémon.\nYou can rename with normal text and patterns, or both combined. Patterns are going to be replaced with the Pokémons values.\nExisting patterns:\n";
+                    + " Pokémon.\nYou can rename with normal text and patterns, or both combined. "
+                    + "Patterns are going to be replaced with the Pokémons values.\nExisting patterns:\n";
             for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
                 message += "%" + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
             }
