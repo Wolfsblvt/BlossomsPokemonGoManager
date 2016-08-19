@@ -19,7 +19,7 @@ You can even submit your own suggestions.
 ## Installation / Usage
 #### Latest Stable Release
 1. You need at least **Java 8** installed to run this tool. Verify your Java version [here](https://www.java.com/verify/) or download [the latest Java JRE release](https://www.java.com/download/) and install it.
-2. Download [the latest stable version of this tool](https://github.com/Blossomforth/BlossomsPokemonGoManager/releases) from releases.
+2. Download [the latest stable version of this tool](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases) from releases.
 3. Double-Click the extracted `.jar` file and run it.
 4. Log in with your credentials. PTC account directly, for Google follow the instructions and copy the session token.
 5. Enjoy the tool!
