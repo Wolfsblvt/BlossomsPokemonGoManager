@@ -748,6 +748,7 @@ public class PokemonTab extends JPanel {
          * 27 String(Percentage) - Move 1 Rating
          * 28 String(Percentage) - Move 2 Rating
          * 29 String(Nullable Int) - CP Evolved
+         * 30 String(Nullable Int) - Evolvable
          */
         ConfigNew config = ConfigNew.getConfig();
 
@@ -813,6 +814,7 @@ public class PokemonTab extends JPanel {
             trs.setComparator(27, cPercentageWithTwoCharacters);
             trs.setComparator(28, cPercentageWithTwoCharacters);
             trs.setComparator(29, cNullableInt);
+            trs.setComparator(30, cNullableInt);
             setRowSorter(trs);
             List<SortKey> sortKeys = new ArrayList<>();
             sortKeys.add(new SortKey(sortColIndex1, sortOrder1));
@@ -878,7 +880,8 @@ public class PokemonTab extends JPanel {
         private final ArrayList<Long> gymDefenseCol = new ArrayList<>();//26
         private final ArrayList<String> move1RatingCol = new ArrayList<>(),//27
                 move2RatingCol = new ArrayList<>();//28
-        private final ArrayList<String> cpEvolvedCol = new ArrayList<>();//29
+        private final ArrayList<String> cpEvolvedCol = new ArrayList<>(),//29
+                evolvableCol = new ArrayList<>();//30
 
         @Deprecated
         private PokemonTableModel(PokemonGo go, List<Pokemon> pokes, PokemonTable pt) {
@@ -969,15 +972,21 @@ public class PokemonTab extends JPanel {
                     cpEvolvedCol.add(i.getValue(), String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
                 }
 
+                int candies = 0;
                 try {
-                    candiesCol.add(i.getValue(), p.getCandy());
+                    candies = p.getCandy();
+                    candiesCol.add(i.getValue(), candies);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (p.getCandiesToEvolve() != 0)
+                if (p.getCandiesToEvolve() != 0) {
                     candies2EvlvCol.add(i.getValue(), String.valueOf(p.getCandiesToEvolve()));
-                else
+                    evolvableCol.add(i.getValue(), String.valueOf((int)((double) candies / p.getCandiesToEvolve()))); // Rounded down candies / toEvolve
+                }
+                else {
                     candies2EvlvCol.add(i.getValue(), "-");
+                    evolvableCol.add(i.getValue(), "-");
+                }
                 dustToLevelCol.add(i.getValue(), p.getStardustCostsForPowerup());
                 pokeballCol.add(i.getValue(), WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
                 caughtCol.add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
@@ -1063,6 +1072,8 @@ public class PokemonTab extends JPanel {
                     return "Move 2 Rating";
                 case 29:
                     return "CP Evolved";
+                case 30:
+                    return "Evolvable";
                 default:
                     return "UNKNOWN?";
             }
@@ -1070,7 +1081,7 @@ public class PokemonTab extends JPanel {
 
         @Override
         public int getColumnCount() {
-            return 30;
+            return 31;
         }
 
         @Override
@@ -1141,6 +1152,8 @@ public class PokemonTab extends JPanel {
                     return move2RatingCol.get(rowIndex);
                 case 29:
                     return cpEvolvedCol.get(rowIndex);
+                case 30:
+                    return evolvableCol.get(rowIndex);
                 default:
                     return null;
             }
