@@ -167,9 +167,7 @@ public class PokemonTab extends JPanel {
         pokelang.setSelectedItem(locale);
         pokelang.addActionListener(e -> new SwingWorker<Void, Void>() {
             protected Void doInBackground() throws Exception {
-                @SuppressWarnings("unchecked")
-                JComboBox<String> pokelang1 = (JComboBox<String>) e.getSource();
-                String lang = (String) pokelang1.getSelectedItem();
+                String lang = (String) pokelang.getSelectedItem();
                 changeLanguage(lang);
                 return null;
             }
@@ -189,9 +187,7 @@ public class PokemonTab extends JPanel {
         fontSize.setSelectedItem(String.valueOf(size));
         fontSize.addActionListener(e -> new SwingWorker<Void, Void>() {
             protected Void doInBackground() throws Exception {
-                @SuppressWarnings("unchecked")
-                JComboBox<String> source = (JComboBox<String>) e.getSource();
-                String size = source.getSelectedItem().toString();
+                String size = fontSize.getSelectedItem().toString();
                 pt.setFont(pt.getFont().deriveFont(Float.parseFloat(size)));
                 config.setInt(ConfigKey.FONT_SIZE, Integer.parseInt(size));
                 return null;

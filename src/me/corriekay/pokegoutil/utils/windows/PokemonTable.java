@@ -9,7 +9,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.event.TableModelEvent;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -22,37 +21,55 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
-import me.corriekay.pokegoutil.windows.PokemonTab;
 import me.corriekay.pokegoutil.windows.PokemonTab.MoveSetRankingRenderer;
 
+@SuppressWarnings("serial")
 public class PokemonTable extends JTable {
 
-    /**
-     * data types: 0 String - Nickname 1 Integer - Pokemon Number 2 String -
-     * Type / Pokemon 3 String(Percentage) - IV Rating 4 Double - Level 5
-     * Integer - Attack 6 Integer - Defense 7 Integer - Stamina 8 String -
-     * Type 1 9 String - Type 2 10 String - Move 1 11 String - Move 2 12
-     * Integer - CP 13 Integer - HP 14 Integer - Max CP (Current) 15 Integer
-     * - Max CP 16 Integer - Max Evolved CP (Current) 17 Integer - Max
-     * Evolved CP 18 Integer - Candies of type 19 String(Nullable Int) -
-     * Candies to Evolve 20 Integer - Star Dust to level 21 String -
-     * Pokeball Type 22 String(Date) - Caught at 23 Boolean - Favorite 24
-     * Long - duelAbility 25 Integer - gymOffense 26 Integer - gymDefense 27
-     * String(Percentage) - Move 1 Rating 28 String(Percentage) - Move 2
-     * Rating 29 String(Nullable Int) - CP Evolved 30 String(Nullable Int) -
-     * Evolvable
-     */
+    // data types:
+    // 0 String - Nickname
+    // 1 Integer - Pokemon Number
+    // 2 String - Type / Pokemon
+    // 3 String(Percentage) - IV Rating
+    // 4 Double - Level
+    // 5 Integer - Attack
+    // 6 Integer - Defense
+    // 7 Integer - Stamina
+    // 8 String - Type 1
+    // 9 String - Type 2
+    // 10 String - Move 1
+    // 11 String - Move 2
+    // 12 Integer - CP
+    // 13 Integer - HP
+    // 14 Integer - Max CP (Current)
+    // 15 Integer - Max CP
+    // 16 Integer - Max Evolved CP (Current)
+    // 17 Integer - Max Evolved CP
+    // 18 Integer - Candies of type
+    // 19 String(Nullable Int) - Candies to Evolve
+    // 20 Integer Star Dust to level
+    // 21 String - Pokeball Type
+    // 22 String(Date) - Caught at
+    // 23 Boolean - Favorite
+    // 24 Long - duelAbility
+    // 25 Integer - gymOffense
+    // 26 Integer - gymDefense
+    // 27 String(Percentage) Move 1 Rating
+    // 28 String(Percentage) - Move 2 Rating
+    // 29 String(Nullable Int) - CP Evolved
+    // 30 String(Nullable Int) - Evolvable
+
     private ConfigNew config = ConfigNew.getConfig();
 
-    private  int sortColIndex1, sortColIndex2;
-    private  SortOrder sortOrder1, sortOrder2;
-    
+    private int sortColIndex1, sortColIndex2;
+    private SortOrder sortOrder1, sortOrder2;
+
     private PokemonTableModel ptm;
 
     public PokemonTable(PokemonGo go) {
         setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         setAutoResizeMode(AUTO_RESIZE_OFF);
-        
+
         ptm = new PokemonTableModel(go, new ArrayList<Pokemon>(), this);
         setModel(ptm);
 
@@ -67,7 +84,7 @@ public class PokemonTable extends JTable {
             sortOrder1 = SortOrder.ASCENDING;
             sortOrder2 = SortOrder.ASCENDING;
         }
-        
+
         TableRowSorter<TableModel> trs = new TableRowSorter<>(ptm);
         Comparator<Integer> c = Integer::compareTo;
         Comparator<Double> cDouble = Double::compareTo;
@@ -121,9 +138,10 @@ public class PokemonTable extends JTable {
         // Add listener to save those sorting values
         trs.addRowSorterListener(
                 e -> {
-                    RowSorter sorter = e.getSource();
+                    RowSorter<TableModel> sorter = trs;
                     if (sorter != null) {
-                        List<SortKey> keys = sorter.getSortKeys();
+                        @SuppressWarnings("unchecked")
+                        List<SortKey> keys = (List<SortKey>) sorter.getSortKeys();
                         if (keys.size() > 0) {
                             SortKey prim = keys.get(0);
                             sortOrder1 = prim.getSortOrder();
@@ -140,7 +158,7 @@ public class PokemonTable extends JTable {
                         }
                     }
                 });
-        
+
         // Custom cell renderers
         // Magic numbers pulled from max values of their respective columns
         // in the moveset rankings spreadsheet calculations
@@ -170,14 +188,13 @@ public class PokemonTable extends JTable {
         //TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
         //gymDefenseCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
     }
-    
 
     public void constructNewTableModel(List<Pokemon> pokes) {
-        ptm.ChangeTableData(pokes);        
+        ptm.ChangeTableData(pokes);
         pack();
     }
-    
-    private void pack(){
+
+    private void pack() {
         for (int ii = 0; ii < ptm.getColumnCount(); ii++) {
             JTableColumnPacker.packColumn(this, ii, 4);
         }
