@@ -305,300 +305,314 @@ public class PokemonTab extends JPanel {
         ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.size() == 0)
             return;
-        if (confirmOperation("Transfer", selection)) {
-            MutableInt err = new MutableInt(),
-                    skipped = new MutableInt(),
-                    success = new MutableInt(),
-                    total = new MutableInt(1);
-            selection.forEach(poke -> {
-                System.out.println("Doing Transfer " + total.getValue() + " of " + selection.size());
-                total.increment();
-                if (poke.isFavorite()) {
-                    System.out.println(PokeHandler.getLocalPokeName(poke) + " with "
-                            + poke.getCp() + " CP is favorite, skipping.");
-                    skipped.increment();
-                    return;
-                }
-                if (!poke.getDeployedFortId().isEmpty()) {
-                    System.out.println(
-                            PokeHandler.getLocalPokeName(poke) + " with "
-                                    + poke.getCp() + " CP is in gym, skipping.");
-                    skipped.increment();
-                    return;
-                }
 
-                try {
-                    int candies = poke.getCandy();
-                    ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result transferResult = poke
-                            .transferPokemon();
+        if (!confirmOperation("Transfer", selection))
+            return;
 
-                    if (transferResult == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
-                        int newCandies = poke.getCandy();
-                        System.out.println("Transferring " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
-                        System.out.println("Stat changes: "
-                                + "(Candies : " + newCandies
-                                + "[+" + (newCandies - candies) + "])");
-                        success.increment();
-                    } else {
-                        System.out.println("Error transferring "
-                                + PokeHandler.getLocalPokeName(poke)
-                                + ", result: "
-                                + transferResult.toString());
-                        err.increment();
-                    }
+        MutableInt err = new MutableInt(),
+                skipped = new MutableInt(),
+                success = new MutableInt(),
+                total = new MutableInt(1);
 
-                    // If not last element, sleep until the next one
-                    if (!selection.get(selection.size() - 1).equals(poke)) {
-                        int sleepMin = config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
-                        int sleepMax = config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
-                        Utilities.sleepRandom(sleepMin, sleepMax);
-                    }
-                } catch (Exception e) {
-                    err.increment();
+        selection.forEach(poke -> {
+            System.out.println("Doing Transfer " + total.getValue() + " of " + selection.size());
+            total.increment();
+            if (poke.isFavorite()) {
+                System.out.println(PokeHandler.getLocalPokeName(poke) + " with "
+                        + poke.getCp() + " CP is favorite, skipping.");
+                skipped.increment();
+                return;
+            }
+
+            if (!poke.getDeployedFortId().isEmpty()) {
+                System.out.println(
+                        PokeHandler.getLocalPokeName(poke) + " with "
+                                + poke.getCp() + " CP is in gym, skipping.");
+                skipped.increment();
+                return;
+            }
+
+            try {
+                int candies = poke.getCandy();
+                ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result transferResult = poke
+                        .transferPokemon();
+
+                if (transferResult == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
+                    int newCandies = poke.getCandy();
+                    System.out.println("Transferring " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
+                    System.out.println("Stat changes: "
+                            + "(Candies : " + newCandies
+                            + "[+" + (newCandies - candies) + "])");
+                    success.increment();
+                } else {
                     System.out.println("Error transferring "
                             + PokeHandler.getLocalPokeName(poke)
-                            + "! "
-                            + Utilities.getRealExceptionMessage(e));
+                            + ", result: "
+                            + transferResult.toString());
+                    err.increment();
                 }
-            });
-            try {
-                go.getInventories().updateInventories(true);
+
+                // If not last element, sleep until the next one
+                if (!selection.get(selection.size() - 1).equals(poke)) {
+                    int sleepMin = config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
+                    int sleepMax = config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
+                    Utilities.sleepRandom(sleepMin, sleepMax);
+                }
             } catch (Exception e) {
-                e.printStackTrace();
+                err.increment();
+                System.out.println("Error transferring "
+                        + PokeHandler.getLocalPokeName(poke)
+                        + "! "
+                        + Utilities.getRealExceptionMessage(e));
             }
-            SwingUtilities.invokeLater(this::refreshList);
-            showFinishedText("Pokémon batch transfer complete!", selection.size(), success, skipped, err);
+        });
+        try {
+            go.getInventories().updateInventories(true);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        SwingUtilities.invokeLater(this::refreshList);
+        showFinishedText("Pokémon batch transfer complete!", selection.size(), success, skipped, err);
+
     }
 
     private void evolveSelected() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
-        if (selection.size() > 0) {
-            if (confirmOperation("Evolve", selection)) {
-                MutableInt err = new MutableInt(),
-                        skipped = new MutableInt(),
-                        success = new MutableInt(),
-                        total = new MutableInt(1);
-                selection.forEach(poke -> {
-                    System.out.println("Doing Evolve " + total.getValue()
-                            + " of " + selection.size());
-                    total.increment();
-                    if (!poke.getDeployedFortId().isEmpty()) {
-                        System.out.println(PokeHandler.getLocalPokeName(poke) + " with "
-                                + poke.getCp() + " CP is in gym, skipping.");
-                        skipped.increment();
-                        return;
-                    }
+        if (selection.size() == 0)
+            return;
 
-                    try {
-                        int candies = poke.getCandy();
-                        int candiesToEvolve = poke.getCandiesToEvolve();
-                        int cp = poke.getCp();
-                        int hp = poke.getMaxStamina();
+        if (!confirmOperation("Evolve", selection))
+            return;
 
-                        // Check if user has enough candy, otherwise we don't
-                        // need to call server
-                        if (candies < candiesToEvolve) {
-                            err.increment();
-                            System.out.println("Error. Not enough candy to evolve "
-                                    + PokeHandler.getLocalPokeName(poke) + ". "
-                                    + candies + " available, " + candiesToEvolve + " needed.");
-                            return;
-                        }
+        MutableInt err = new MutableInt(),
+                skipped = new MutableInt(),
+                success = new MutableInt(),
+                total = new MutableInt(1);
+        selection.forEach(poke -> {
+            System.out.println("Doing Evolve " + total.getValue()
+                    + " of " + selection.size());
+            total.increment();
 
-                        EvolutionResult evolutionResultWrapper = poke.evolve();
-                        if (evolutionResultWrapper.isSuccessful()) {
-                            Pokemon newPoke = evolutionResultWrapper.getEvolvedPokemon();
-                            int newCandies = newPoke.getCandy();
-                            int newCp = newPoke.getCp();
-                            int newHp = newPoke.getStamina();
-                            System.out.println("Evolving "
-                                    + PokeHandler.getLocalPokeName(poke)
-                                    + ". Evolve result: "
-                                    + evolutionResultWrapper.getResult().toString());
-                            if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
-                                ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke
-                                        .transferPokemon();
-                                System.out.println("Transferring "
-                                        + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase())
-                                        + ", Result: " + result);
-                                System.out.println("Stat changes: " +
-                                        "(Candies: " + newCandies
-                                        + "[" + candies + "-" + candiesToEvolve + "]");
-
-                            } else {
-                                System.out.println("Stat changes: "
-                                        + "(Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "],"
-                                        + " CP: " + newCp + "[+" + (newCp - cp) + "],"
-                                        + " HP: " + newHp + "[+" + (newHp - hp) + "])");
-                            }
-                            go.getInventories().updateInventories(true);
-                            success.increment();
-                        } else {
-                            err.increment();
-                            System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + ", result: "
-                                    + evolutionResultWrapper.getResult().toString());
-                        }
-
-                        // If not last element, sleep until the next one
-                        if (!selection.get(selection.size() - 1).equals(poke)) {
-                            int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
-                            int sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
-                            Utilities.sleepRandom(sleepMin, sleepMax);
-                        }
-                    } catch (Exception e) {
-                        err.increment();
-                        System.out.println("Error evolving "
-                                + PokeHandler.getLocalPokeName(poke)
-                                + "! " + Utilities.getRealExceptionMessage(e));
-                    }
-                });
-                try {
-                    go.getInventories().updateInventories(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                SwingUtilities.invokeLater(this::refreshList);
-                showFinishedText("Pokémon batch evolve"
-                        + (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : "")
-                        + " complete!", selection.size(), success, skipped, err);
+            if (!poke.getDeployedFortId().isEmpty()) {
+                System.out.println(PokeHandler.getLocalPokeName(poke) + " with "
+                        + poke.getCp() + " CP is in gym, skipping.");
+                skipped.increment();
+                return;
             }
+
+            try {
+                int candies = poke.getCandy();
+                int candiesToEvolve = poke.getCandiesToEvolve();
+                int cp = poke.getCp();
+                int hp = poke.getMaxStamina();
+
+                // Check if user has enough candy, otherwise we don't
+                // need to call server
+                if (candies < candiesToEvolve) {
+                    err.increment();
+                    System.out.println("Error. Not enough candy to evolve "
+                            + PokeHandler.getLocalPokeName(poke) + ". "
+                            + candies + " available, " + candiesToEvolve + " needed.");
+                    return;
+                }
+
+                EvolutionResult evolutionResultWrapper = poke.evolve();
+                if (evolutionResultWrapper.isSuccessful()) {
+                    Pokemon newPoke = evolutionResultWrapper.getEvolvedPokemon();
+                    int newCandies = newPoke.getCandy();
+                    int newCp = newPoke.getCp();
+                    int newHp = newPoke.getStamina();
+                    System.out.println("Evolving "
+                            + PokeHandler.getLocalPokeName(poke)
+                            + ". Evolve result: "
+                            + evolutionResultWrapper.getResult().toString());
+                    if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
+                        ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke
+                                .transferPokemon();
+                        System.out.println("Transferring "
+                                + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase())
+                                + ", Result: " + result);
+                        System.out.println("Stat changes: " +
+                                "(Candies: " + newCandies
+                                + "[" + candies + "-" + candiesToEvolve + "]");
+
+                    } else {
+                        System.out.println("Stat changes: "
+                                + "(Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "],"
+                                + " CP: " + newCp + "[+" + (newCp - cp) + "],"
+                                + " HP: " + newHp + "[+" + (newHp - hp) + "])");
+                    }
+                    go.getInventories().updateInventories(true);
+                    success.increment();
+                } else {
+                    err.increment();
+                    System.out.println("Error evolving " + PokeHandler.getLocalPokeName(poke) + ", result: "
+                            + evolutionResultWrapper.getResult().toString());
+                }
+
+                // If not last element, sleep until the next one
+                if (!selection.get(selection.size() - 1).equals(poke)) {
+                    int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
+                    int sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
+                    Utilities.sleepRandom(sleepMin, sleepMax);
+                }
+            } catch (Exception e) {
+                err.increment();
+                System.out.println("Error evolving "
+                        + PokeHandler.getLocalPokeName(poke)
+                        + "! " + Utilities.getRealExceptionMessage(e));
+            }
+        });
+        try {
+            go.getInventories().updateInventories(true);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        SwingUtilities.invokeLater(this::refreshList);
+        showFinishedText("Pokémon batch evolve"
+                + (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : "")
+                + " complete!", selection.size(), success, skipped, err);
     }
 
     private void powerUpSelected() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
-        if (selection.size() > 0) {
-            if (confirmOperation("PowerUp", selection)) {
-                MutableInt err = new MutableInt(),
-                        skipped = new MutableInt(),
-                        success = new MutableInt(),
-                        total = new MutableInt(1);
-                selection.forEach(poke -> {
-                    try {
-                        System.out.println("Doing Power Up " + total.getValue() + " of " + selection.size());
-                        total.increment();
-                        if (!poke.getDeployedFortId().isEmpty()) {
-                            System.out.println(PokeHandler.getLocalPokeName(poke) + " with "
-                                    + poke.getCp() + " CP is in gym, skipping.");
-                            skipped.increment();
-                            return;
-                        }
+        if (selection.size() == 0)
+            return;
 
-                        int stardust = go.getPlayerProfile().getCurrency(Currency.STARDUST);
-                        int candies = poke.getCandy();
-                        int cp = poke.getCp();
-                        int hp = poke.getMaxStamina();
-                        int stardustToPowerUp = poke.getStardustCostsForPowerup();
-                        int candiesToPowerUp = poke.getCandyCostsForPowerup();
+        if (!confirmOperation("PowerUp", selection))
+            return;
 
-                        // Check if user has enough candy and stardust,
-                        // otherwise we don't need to call server
-                        if (candies < candiesToPowerUp || stardust < stardustToPowerUp) {
-                            err.increment();
-                            System.out.println("Error. Not enough candy/stardust to power up "
-                                    + PokeHandler.getLocalPokeName(poke)
-                                    + ". Stardust: " + stardust + "/" + stardustToPowerUp
-                                    + ", Candy: " + candies + "/" + candiesToPowerUp);
-                            return;
-                        }
-
-                        UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result upgradeResult = poke.powerUp();
-                        go.getPlayerProfile().updateProfile();
-                        if (upgradeResult == UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result.SUCCESS) {
-                            int newCandies = poke.getCandy();
-                            int newCp = poke.getCp();
-                            int newHp = poke.getMaxStamina();
-                            System.out.println(
-                                    "Powering Up " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
-                            System.out.println("Stat changes: " +
-                                    "(Candies : " + newCandies + "[" + candies + "-" + candiesToPowerUp + "], "
-                                    + "CP: " + newCp + "[+" + (newCp - cp) + "], "
-                                    + "HP: " + newHp + "[+" + (newHp - hp) + "]) "
-                                    + "Stardust used " + stardustToPowerUp
-                                    + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
-                            success.increment();
-                        } else {
-                            err.increment();
-                            System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: "
-                                    + upgradeResult.toString());
-                        }
-
-                        // If not last element, sleep until the next one
-                        if (!selection.get(selection.size() - 1).equals(poke)) {
-                            int sleepMin = config.getInt(ConfigKey.DELAY_POWERUP_MIN);
-                            int sleepMax = config.getInt(ConfigKey.DELAY_POWERUP_MAX);
-                            Utilities.sleepRandom(sleepMin, sleepMax);
-                        }
-                    } catch (Exception e) {
-                        err.increment();
-                        System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + "! "
-                                + Utilities.getRealExceptionMessage(e));
-                    }
-                });
-                try {
-                    go.getInventories().updateInventories(true);
-                    PokemonGoMainWindow.window.refreshTitle();
-                } catch (Exception e) {
-                    e.printStackTrace();
+        MutableInt err = new MutableInt(),
+                skipped = new MutableInt(),
+                success = new MutableInt(),
+                total = new MutableInt(1);
+        selection.forEach(poke -> {
+            try {
+                System.out.println("Doing Power Up " + total.getValue() + " of " + selection.size());
+                total.increment();
+                if (!poke.getDeployedFortId().isEmpty()) {
+                    System.out.println(PokeHandler.getLocalPokeName(poke) + " with "
+                            + poke.getCp() + " CP is in gym, skipping.");
+                    skipped.increment();
+                    return;
                 }
-                SwingUtilities.invokeLater(this::refreshList);
-                showFinishedText("Pokémon batch powerup complete!", selection.size(), success, skipped, err);
+
+                int stardust = go.getPlayerProfile().getCurrency(Currency.STARDUST);
+                int candies = poke.getCandy();
+                int cp = poke.getCp();
+                int hp = poke.getMaxStamina();
+                int stardustToPowerUp = poke.getStardustCostsForPowerup();
+                int candiesToPowerUp = poke.getCandyCostsForPowerup();
+
+                // Check if user has enough candy and stardust,
+                // otherwise we don't need to call server
+                if (candies < candiesToPowerUp || stardust < stardustToPowerUp) {
+                    err.increment();
+                    System.out.println("Error. Not enough candy/stardust to power up "
+                            + PokeHandler.getLocalPokeName(poke)
+                            + ". Stardust: " + stardust + "/" + stardustToPowerUp
+                            + ", Candy: " + candies + "/" + candiesToPowerUp);
+                    return;
+                }
+
+                UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result upgradeResult = poke.powerUp();
+                go.getPlayerProfile().updateProfile();
+                if (upgradeResult == UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result.SUCCESS) {
+                    int newCandies = poke.getCandy();
+                    int newCp = poke.getCp();
+                    int newHp = poke.getMaxStamina();
+                    System.out.println(
+                            "Powering Up " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
+                    System.out.println("Stat changes: " +
+                            "(Candies : " + newCandies + "[" + candies + "-" + candiesToPowerUp + "], "
+                            + "CP: " + newCp + "[+" + (newCp - cp) + "], "
+                            + "HP: " + newHp + "[+" + (newHp - hp) + "]) "
+                            + "Stardust used " + stardustToPowerUp
+                            + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
+                    success.increment();
+                } else {
+                    err.increment();
+                    System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: "
+                            + upgradeResult.toString());
+                }
+
+                // If not last element, sleep until the next one
+                if (!selection.get(selection.size() - 1).equals(poke)) {
+                    int sleepMin = config.getInt(ConfigKey.DELAY_POWERUP_MIN);
+                    int sleepMax = config.getInt(ConfigKey.DELAY_POWERUP_MAX);
+                    Utilities.sleepRandom(sleepMin, sleepMax);
+                }
+            } catch (Exception e) {
+                err.increment();
+                System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + "! "
+                        + Utilities.getRealExceptionMessage(e));
             }
+        });
+        try {
+            go.getInventories().updateInventories(true);
+            PokemonGoMainWindow.window.refreshTitle();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        SwingUtilities.invokeLater(this::refreshList);
+        showFinishedText("Pokémon batch powerup complete!", selection.size(), success, skipped, err);
+
     }
 
     // feature added by Ben Kauffman
     private void toggleFavorite() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
-        if (selection.size() > 0) {
-            if (confirmOperation("Toggle Favorite", selection)) {
-                MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(),
-                        total = new MutableInt(1);
-                selection.forEach(poke -> {
-                    try {
-                        System.out.println("Toggling favorite " + total.getValue() + " of " + selection.size());
-                        total.increment();
-                        SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result favoriteResult = poke
-                                .setFavoritePokemon(!poke.isFavorite());
-                        System.out.println("Attempting to set favorite for " + PokeHandler.getLocalPokeName(poke)
-                                + " to " + !poke.isFavorite() + "...");
-                        go.getPlayerProfile().updateProfile();
+        if (selection.size() == 0)
+            return;
 
-                        if (favoriteResult == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
-                            System.out.println("Favorite for " + PokeHandler.getLocalPokeName(poke)
-                                    + " set to " + !poke.isFavorite()
-                                    + ", Result: Success!");
-                            success.increment();
-                        } else {
-                            err.increment();
-                            System.out.println("Error toggling favorite for " + PokeHandler.getLocalPokeName(poke)
-                                    + ", result: " + favoriteResult.toString());
-                        }
+        if (!confirmOperation("Toggle Favorite", selection))
+            return;
 
-                        // If not last element, sleep until the next one
-                        if (!selection.get(selection.size() - 1).equals(poke)) {
-                            int sleepMin = config.getInt(ConfigKey.DELAY_FAVORITE_MIN);
-                            int sleepMax = config.getInt(ConfigKey.DELAY_FAVORITE_MAX);
-                            Utilities.sleepRandom(sleepMin, sleepMax);
-                        }
-                    } catch (Exception e) {
-                        err.increment();
-                        System.out.println("Error toggling favorite for "
-                                + PokeHandler.getLocalPokeName(poke)
-                                + "! " + Utilities.getRealExceptionMessage(e));
-                    }
-                });
-                try {
-                    PokemonGoMainWindow.window.refreshTitle();
-                } catch (Exception e) {
-                    e.printStackTrace();
+        MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(),
+                total = new MutableInt(1);
+        selection.forEach(poke -> {
+            try {
+                System.out.println("Toggling favorite " + total.getValue() + " of " + selection.size());
+                total.increment();
+                SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result favoriteResult = poke
+                        .setFavoritePokemon(!poke.isFavorite());
+                System.out.println("Attempting to set favorite for " + PokeHandler.getLocalPokeName(poke)
+                        + " to " + !poke.isFavorite() + "...");
+                go.getPlayerProfile().updateProfile();
+
+                if (favoriteResult == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
+                    System.out.println("Favorite for " + PokeHandler.getLocalPokeName(poke)
+                            + " set to " + !poke.isFavorite()
+                            + ", Result: Success!");
+                    success.increment();
+                } else {
+                    err.increment();
+                    System.out.println("Error toggling favorite for " + PokeHandler.getLocalPokeName(poke)
+                            + ", result: " + favoriteResult.toString());
                 }
-                SwingUtilities.invokeLater(this::refreshPkmn);
-                showFinishedText("Pokémon batch \"toggle favorite\" complete!", selection.size(), success, skipped,
-                        err);
+
+                // If not last element, sleep until the next one
+                if (!selection.get(selection.size() - 1).equals(poke)) {
+                    int sleepMin = config.getInt(ConfigKey.DELAY_FAVORITE_MIN);
+                    int sleepMax = config.getInt(ConfigKey.DELAY_FAVORITE_MAX);
+                    Utilities.sleepRandom(sleepMin, sleepMax);
+                }
+            } catch (Exception e) {
+                err.increment();
+                System.out.println("Error toggling favorite for "
+                        + PokeHandler.getLocalPokeName(poke)
+                        + "! " + Utilities.getRealExceptionMessage(e));
             }
+        });
+        try {
+            PokemonGoMainWindow.window.refreshTitle();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        SwingUtilities.invokeLater(this::refreshPkmn);
+        showFinishedText("Pokémon batch \"toggle favorite\" complete!", selection.size(), success, skipped,
+                err);
+
     }
 
     private void selectLessThanIv() {
