@@ -459,9 +459,9 @@ public class PokemonTab extends JPanel {
                     } else {
                         System.out.println(String.format(
                                 "Stat changes: "
-                                        + "(Candies: %d[%d-%d],"
-                                        + " CP: %d[+%d],"
-                                        + " HP: %d[+%d])",
+                                        + "(Candies: %d[%d-%d], "
+                                        + "CP: %d[+%d], "
+                                        + "HP: %d[+%d])",
                                 newCandies, candies, candiesToEvolve,
                                 newCp, (newCp - cp),
                                 newHp, (newHp - hp)));
@@ -514,13 +514,18 @@ public class PokemonTab extends JPanel {
                 skipped = new MutableInt(),
                 success = new MutableInt(),
                 total = new MutableInt(1);
+
         selection.forEach(poke -> {
             try {
-                System.out.println("Doing Power Up " + total.getValue() + " of " + selection.size());
+                System.out.println(String.format("Doing Power Up %d of %d",
+                        total.getValue(),
+                        selection.size()));
                 total.increment();
                 if (!poke.getDeployedFortId().isEmpty()) {
-                    System.out.println(PokeHandler.getLocalPokeName(poke) + " with "
-                            + poke.getCp() + " CP is in gym, skipping.");
+                    System.out.println(String.format(
+                            "%s with %d CP is in gym, skipping.",
+                            PokeHandler.getLocalPokeName(poke),
+                            +poke.getCp()));
                     skipped.increment();
                     return;
                 }
@@ -536,10 +541,13 @@ public class PokemonTab extends JPanel {
                 // otherwise we don't need to call server
                 if (candies < candiesToPowerUp || stardust < stardustToPowerUp) {
                     err.increment();
-                    System.out.println("Error. Not enough candy/stardust to power up "
-                            + PokeHandler.getLocalPokeName(poke)
-                            + ". Stardust: " + stardust + "/" + stardustToPowerUp
-                            + ", Candy: " + candies + "/" + candiesToPowerUp);
+                    System.out.println(String.format(
+                            "Error. Not enough candy/stardust to power up %s. "
+                                    + "Stardust: %d/%d, "
+                                    + "Candy: %d/%d",
+                            PokeHandler.getLocalPokeName(poke),
+                            stardust, stardustToPowerUp,
+                            candies, candiesToPowerUp));
                     return;
                 }
 
@@ -549,19 +557,29 @@ public class PokemonTab extends JPanel {
                     int newCandies = poke.getCandy();
                     int newCp = poke.getCp();
                     int newHp = poke.getMaxStamina();
-                    System.out.println(
-                            "Powering Up " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
-                    System.out.println("Stat changes: " +
-                            "(Candies : " + newCandies + "[" + candies + "-" + candiesToPowerUp + "], "
-                            + "CP: " + newCp + "[+" + (newCp - cp) + "], "
-                            + "HP: " + newHp + "[+" + (newHp - hp) + "]) "
-                            + "Stardust used " + stardustToPowerUp
-                            + "[remaining: " + go.getPlayerProfile().getCurrency(Currency.STARDUST) + "]");
+                    System.out.println(String.format(
+                            "Powering Up %s, Result: Success!",
+                            PokeHandler.getLocalPokeName(poke)));
+
+                    System.out.println(String.format(
+                            "Stat changes: "
+                                    + "(Candies : %d[%d-%d], "
+                                    + "CP: %d[+%d], "
+                                    + "HP: %d[+%d], "
+                                    + "Stardust used %d[remainding: %d])",
+                            newCandies, candies, candiesToPowerUp,
+                            newCp, (newCp - cp),
+                            newHp, (newHp - hp),
+                            stardustToPowerUp,
+                            go.getPlayerProfile().getCurrency(Currency.STARDUST)));
+
                     success.increment();
                 } else {
                     err.increment();
-                    System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + ", result: "
-                            + upgradeResult.toString());
+                    System.out.println(String.format(
+                            "Error powering up %s, result: %s",
+                            PokeHandler.getLocalPokeName(poke),
+                            upgradeResult.toString()));
                 }
 
                 // If not last element, sleep until the next one
@@ -572,8 +590,10 @@ public class PokemonTab extends JPanel {
                 }
             } catch (Exception e) {
                 err.increment();
-                System.out.println("Error powering up " + PokeHandler.getLocalPokeName(poke) + "! "
-                        + Utilities.getRealExceptionMessage(e));
+                System.out.println(String.format(
+                        "Error powering up %s! %s",
+                        PokeHandler.getLocalPokeName(poke),
+                        Utilities.getRealExceptionMessage(e)));
             }
         });
         try {
