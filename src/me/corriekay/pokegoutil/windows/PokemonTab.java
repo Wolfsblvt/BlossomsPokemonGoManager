@@ -616,27 +616,38 @@ public class PokemonTab extends JPanel {
         if (!confirmOperation("Toggle Favorite", selection))
             return;
 
-        MutableInt err = new MutableInt(), skipped = new MutableInt(), success = new MutableInt(),
+        MutableInt err = new MutableInt(),
+                skipped = new MutableInt(),
+                success = new MutableInt(),
                 total = new MutableInt(1);
+
         selection.forEach(poke -> {
             try {
-                System.out.println("Toggling favorite " + total.getValue() + " of " + selection.size());
+                System.out.println(String.format(
+                        "Toggling favorite %d of %d",
+                        total.getValue(),
+                        selection.size()));
                 total.increment();
                 SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result favoriteResult = poke
                         .setFavoritePokemon(!poke.isFavorite());
-                System.out.println("Attempting to set favorite for " + PokeHandler.getLocalPokeName(poke)
-                        + " to " + !poke.isFavorite() + "...");
+                System.out.println(String.format(
+                        "Attempting to set favorite for %s to %b...",
+                        PokeHandler.getLocalPokeName(poke),
+                        !poke.isFavorite()));
                 go.getPlayerProfile().updateProfile();
 
                 if (favoriteResult == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
-                    System.out.println("Favorite for " + PokeHandler.getLocalPokeName(poke)
-                            + " set to " + !poke.isFavorite()
-                            + ", Result: Success!");
+                    System.out.println(String.format(
+                            "Favorite for %s set to %b, Result: Seccess!",
+                            PokeHandler.getLocalPokeName(poke),
+                            !poke.isFavorite()));
                     success.increment();
                 } else {
                     err.increment();
-                    System.out.println("Error toggling favorite for " + PokeHandler.getLocalPokeName(poke)
-                            + ", result: " + favoriteResult.toString());
+                    System.out.println(String.format(
+                            "Error toggling favorite for %s, result: %s",
+                            PokeHandler.getLocalPokeName(poke),
+                            favoriteResult.toString()));
                 }
 
                 // If not last element, sleep until the next one
@@ -647,9 +658,10 @@ public class PokemonTab extends JPanel {
                 }
             } catch (Exception e) {
                 err.increment();
-                System.out.println("Error toggling favorite for "
-                        + PokeHandler.getLocalPokeName(poke)
-                        + "! " + Utilities.getRealExceptionMessage(e));
+                System.out.println(String.format(
+                        "Error toggling favorite for %s! %s",
+                        PokeHandler.getLocalPokeName(poke),
+                        Utilities.getRealExceptionMessage(e)));
             }
         });
         try {
@@ -660,7 +672,6 @@ public class PokemonTab extends JPanel {
         SwingUtilities.invokeLater(this::refreshPkmn);
         showFinishedText("Pokémon batch \"toggle favorite\" complete!", selection.size(), success, skipped,
                 err);
-
     }
 
     private void selectLessThanIv() {
