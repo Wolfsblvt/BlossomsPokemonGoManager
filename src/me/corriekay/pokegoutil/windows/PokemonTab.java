@@ -246,7 +246,10 @@ public class PokemonTab extends JPanel {
         PokeHandler handler = new PokeHandler(selection);
 
         BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback = (renameResult, pokemon) -> {
-            System.out.println(String.format("Doing Rename %d of %d", total.getValue(), selection.size()));
+            System.out.println(String.format(
+                    "Doing Rename %d of %d",
+                    total.getValue(),
+                    selection.size()));
             total.increment();
 
             PokeNick pokeNick = PokeHandler.generatePokemonNickname(renamePattern, pokemon);
@@ -255,7 +258,8 @@ public class PokemonTab extends JPanel {
             boolean isSkipped = (pokeNick.equals(pokemon.getNickname())
                     && renameResult.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE);
             if (isSkipped) {
-                System.out.println(String.format("Skipped renaming %s, already named %s",
+                System.out.println(String.format(
+                        "Skipped renaming %s, already named %s",
                         PokeHandler.getLocalPokeName(pokemon),
                         pokemon.getNickname()));
                 skipped.increment();
@@ -270,13 +274,15 @@ public class PokemonTab extends JPanel {
                             pokeNick.fullNickname,
                             pokeNick.toString()));
                 }
-                System.out.println(String.format("Renaming %s from \"%s\" to \"%s\", Result: Success!",
+                System.out.println(String.format(
+                        "Renaming %s from \"%s\" to \"%s\", Result: Success!",
                         PokeHandler.getLocalPokeName(pokemon),
                         pokemon.getNickname(),
                         PokeHandler.generatePokemonNickname(renamePattern, pokemon)));
             } else {
                 err.increment();
-                System.out.println(String.format("Renaming %s failed! Code: %s; Nick: %s",
+                System.out.println(String.format(
+                        "Renaming %s failed! Code: %s; Nick: %s",
                         PokeHandler.getLocalPokeName(pokemon),
                         renameResult.toString(),
                         PokeHandler.generatePokemonNickname(renamePattern, pokemon)));
@@ -315,40 +321,45 @@ public class PokemonTab extends JPanel {
                 total = new MutableInt(1);
 
         selection.forEach(poke -> {
-            System.out.println("Doing Transfer " + total.getValue() + " of " + selection.size());
+            System.out.println(String.format("Doing Transfer %d of %d", total.getValue(), selection.size()));
             total.increment();
             if (poke.isFavorite()) {
-                System.out.println(PokeHandler.getLocalPokeName(poke) + " with "
-                        + poke.getCp() + " CP is favorite, skipping.");
+                System.out.println(String.format(
+                        "%s with %d CP is favorite, skipping.",
+                        PokeHandler.getLocalPokeName(poke),
+                        poke.getCp()));
                 skipped.increment();
                 return;
             }
 
             if (!poke.getDeployedFortId().isEmpty()) {
                 System.out.println(
-                        PokeHandler.getLocalPokeName(poke) + " with "
-                                + poke.getCp() + " CP is in gym, skipping.");
+                        String.format("%s with %d CP is in gym, skipping.",
+                                PokeHandler.getLocalPokeName(poke),
+                                poke.getCp()));
                 skipped.increment();
                 return;
             }
 
             try {
                 int candies = poke.getCandy();
-                ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result transferResult = poke
-                        .transferPokemon();
+                ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result transferResult = poke.transferPokemon();
 
                 if (transferResult == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
                     int newCandies = poke.getCandy();
-                    System.out.println("Transferring " + PokeHandler.getLocalPokeName(poke) + ", Result: Success!");
-                    System.out.println("Stat changes: "
-                            + "(Candies : " + newCandies
-                            + "[+" + (newCandies - candies) + "])");
+                    System.out.println(String.format(
+                            "Transferring %s, Result: Success!",
+                            PokeHandler.getLocalPokeName(poke)));
+                    System.out.println(String.format(
+                            "Stat changes: (Candies : %d[+%d])",
+                            newCandies,
+                            (newCandies - candies)));
                     success.increment();
                 } else {
-                    System.out.println("Error transferring "
-                            + PokeHandler.getLocalPokeName(poke)
-                            + ", result: "
-                            + transferResult.toString());
+                    System.out.println(String.format(
+                            "Error transferring %s, result: %s",
+                            PokeHandler.getLocalPokeName(poke),
+                            transferResult.toString()));
                     err.increment();
                 }
 
@@ -360,10 +371,10 @@ public class PokemonTab extends JPanel {
                 }
             } catch (Exception e) {
                 err.increment();
-                System.out.println("Error transferring "
-                        + PokeHandler.getLocalPokeName(poke)
-                        + "! "
-                        + Utilities.getRealExceptionMessage(e));
+                System.out.println(String.format(
+                        "Error transferring %s! %s",
+                        PokeHandler.getLocalPokeName(poke),
+                        Utilities.getRealExceptionMessage(e)));
             }
         });
         try {
