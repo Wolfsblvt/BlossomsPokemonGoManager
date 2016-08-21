@@ -246,7 +246,7 @@ public class PokemonTab extends JPanel {
         PokeHandler handler = new PokeHandler(selection);
 
         BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback = (renameResult, pokemon) -> {
-            System.out.println("Doing Rename " + total.getValue() + " of " + selection.size());
+            System.out.println(String.format("Doing Rename %d of %d", total.getValue(), selection.size()));
             total.increment();
 
             PokeNick pokeNick = PokeHandler.generatePokemonNickname(renamePattern, pokemon);
@@ -255,10 +255,9 @@ public class PokemonTab extends JPanel {
             boolean isSkipped = (pokeNick.equals(pokemon.getNickname())
                     && renameResult.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE);
             if (isSkipped) {
-                System.out.println("Skipped renaming "
-                        + PokeHandler.getLocalPokeName(pokemon)
-                        + ", already named "
-                        + pokemon.getNickname());
+                System.out.println(String.format("Skipped renaming %s, already named %s",
+                        PokeHandler.getLocalPokeName(pokemon),
+                        pokemon.getNickname()));
                 skipped.increment();
                 return;
             }
@@ -266,18 +265,21 @@ public class PokemonTab extends JPanel {
             if (renameResult.getNumber() == NicknamePokemonResponse.Result.SUCCESS_VALUE) {
                 success.increment();
                 if (pokeNick.isTooLong()) {
-                    System.out.println("WARNING: Nickname \"" + pokeNick.fullNickname
-                            + "\" is too long. Get's cut to: " + pokeNick.toString());
+                    System.out.println(String.format(
+                            "WARNING: Nickname \"%s\" is too long. Get's cut to: %s",
+                            pokeNick.fullNickname,
+                            pokeNick.toString()));
                 }
-                System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon)
-                        + " from \"" + pokemon.getNickname()
-                        + "\" to \"" + PokeHandler.generatePokemonNickname(renamePattern, pokemon)
-                        + "\", Result: Success!");
+                System.out.println(String.format("Renaming %s from \"%s\" to \"%s\", Result: Success!",
+                        PokeHandler.getLocalPokeName(pokemon),
+                        pokemon.getNickname(),
+                        PokeHandler.generatePokemonNickname(renamePattern, pokemon)));
             } else {
                 err.increment();
-                System.out.println("Renaming " + PokeHandler.getLocalPokeName(pokemon)
-                        + " failed! Code: " + renameResult.toString()
-                        + "; Nick: " + PokeHandler.generatePokemonNickname(renamePattern, pokemon));
+                System.out.println(String.format("Renaming %s failed! Code: %s; Nick: %s",
+                        PokeHandler.getLocalPokeName(pokemon),
+                        renameResult.toString(),
+                        PokeHandler.generatePokemonNickname(renamePattern, pokemon)));
             }
 
             // If not last element and API was queried, sleep until the next one
@@ -758,8 +760,7 @@ public class PokemonTab extends JPanel {
     }
 
     /**
-     * Provide custom formatting for the moveset ranking columns while allowing
-     * sorting on original values
+     * Provide custom formatting for the moveset ranking columns while allowing sorting on original values
      */
     public static class MoveSetRankingRenderer extends JLabel implements TableCellRenderer {
 
