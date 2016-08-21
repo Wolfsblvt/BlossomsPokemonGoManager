@@ -24,7 +24,7 @@ public class PokeHandler {
     private ArrayList<Pokemon> mons;
 
     public PokeHandler(Pokemon pokemon) {
-        this(new Pokemon[]{pokemon});
+        this(new Pokemon[] { pokemon });
     }
 
     public PokeHandler(Pokemon[] pokemon) {
@@ -54,7 +54,9 @@ public class PokeHandler {
 
         if (pokeNick.equals(pokemon.getNickname())) {
             // Why renaming to the same nickname?
-            return NicknamePokemonResponse.Result.UNSET; // We need to use UNSET here. No chance to extend the enum
+            return NicknamePokemonResponse.Result.UNSET; // We need to use UNSET here. No
+                                                         // chance to
+                                                         // extend the enum
         }
 
         // Actually renaming the Pokémon with the calculated nickname
@@ -62,7 +64,9 @@ public class PokeHandler {
             NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick.toString());
             return result;
         } catch (LoginFailedException | RemoteServerException e) {
-            System.out.println("Error while renaming " + getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! " + Utilities.getRealExceptionMessage(e));
+            System.out.println("Error while renaming "
+                    + getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
+                    + Utilities.getRealExceptionMessage(e));
             return NicknamePokemonResponse.Result.UNRECOGNIZED;
         }
     }
@@ -88,7 +92,7 @@ public class PokeHandler {
         String name = PokeNames.getDisplayName(id, locale);
         // For non-latin
         if (!Utilities.isLatin(name)) {
-             return name;
+            return name;
         }
 
         try {
@@ -121,8 +125,7 @@ public class PokeHandler {
      * value.
      */
     public LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> bulkRenameWithPattern(String pattern,
-                                                                                        BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback) {
-
+            BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback) {
         LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> results = new LinkedHashMap<>();
 
         mons.forEach(p -> {
@@ -194,11 +197,11 @@ public class PokeHandler {
             @Override
             public String get(Pokemon p) {
                 PokemonFamilyId familyId = p.getPokemonFamily();
-		PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
-		int iv_attack = p.getIndividualAttack();
-		int iv_defense = p.getIndividualDefense();
-		int iv_stamina = p.getIndividualStamina();
-		float level = p.getLevel();
+                PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
+                int iv_attack = p.getIndividualAttack();
+                int iv_defense = p.getIndividualDefense();
+                int iv_stamina = p.getIndividualStamina();
+                float level = p.getLevel();
                 if (familyId.getNumber() == PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
                     if (p.getPokemonId().getNumber() == PokemonId.EEVEE.getNumber()) {
                         PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonId.VAPOREON);
@@ -206,28 +209,35 @@ public class PokeHandler {
                         PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonId.JOLTEON);
                         if (vap != null && fla != null && jol != null) {
                             Comparator<PokemonMeta> cMeta = (m1, m2) -> {
-                                int comb1 = PokemonCpUtils.getCpForPokemonLevel(m1.getBaseAttack() + iv_attack, m1.getBaseDefense() + iv_defense, m1.getBaseStamina() + iv_stamina, level);
-                                int comb2 = PokemonCpUtils.getCpForPokemonLevel(m2.getBaseAttack() + iv_attack, m2.getBaseDefense() + iv_defense, m2.getBaseStamina() + iv_stamina, level);
+                                int comb1 = PokemonCpUtils.getCpForPokemonLevel(
+                                        m1.getBaseAttack() + iv_attack,
+                                        m1.getBaseDefense() + iv_defense,
+                                        m1.getBaseStamina() + iv_stamina, level);
+                                int comb2 = PokemonCpUtils.getCpForPokemonLevel(
+                                        m2.getBaseAttack() + iv_attack,
+                                        m2.getBaseDefense() + iv_defense,
+                                        m2.getBaseStamina() + iv_stamina, level);
                                 return comb1 - comb2;
                             };
-                            highestFamilyId = PokemonId.forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                            highestFamilyId = PokemonId
+                                    .forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
                         }
                     } else {
                         // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
                         // We correct that here
                         highestFamilyId = p.getPokemonId();
-		    }
-		}
-		/** 
-		 * This calculation is redundant for pokemon already evolved, but as
-		 * rename has delays anyway, this won't hurt performance.
-		 */
-		PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
-		int attack = highestFamilyMeta.getBaseAttack() + iv_attack;
-		int defense = highestFamilyMeta.getBaseDefense() + iv_defense;
-		int stamina = highestFamilyMeta.getBaseStamina() + iv_stamina;
-		return String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, level));
-	    }
+                    }
+                }
+                /**
+                 * This calculation is redundant for pokemon already evolved, but as rename has delays anyway, this
+                 * won't hurt performance.
+                 */
+                PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
+                int attack = highestFamilyMeta.getBaseAttack() + iv_attack;
+                int defense = highestFamilyMeta.getBaseDefense() + iv_defense;
+                int stamina = highestFamilyMeta.getBaseStamina() + iv_stamina;
+                return String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, level));
+            }
         },
         HP("Hit Points") {
             @Override
@@ -250,7 +260,9 @@ public class PokeHandler {
         IV_HEX("IV Values in hexadecimal, like \"9FA\" (F = 15)") {
             @Override
             public String get(Pokemon p) {
-                return (Integer.toHexString(p.getIndividualAttack()) + Integer.toHexString(p.getIndividualDefense()) + Integer.toHexString(p.getIndividualStamina())).toUpperCase();
+                return (Integer.toHexString(p.getIndividualAttack())
+                        + Integer.toHexString(p.getIndividualDefense())
+                        + Integer.toHexString(p.getIndividualStamina())).toUpperCase();
             }
         },
         IV_ATT("IV Attack") {

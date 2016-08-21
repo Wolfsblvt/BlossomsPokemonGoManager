@@ -58,25 +58,31 @@ public class MenuBar extends JMenuBar {
 
         JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion Window");
         doNotShowBulkPopup.setSelected(config.getBool(ConfigKey.SHOW_BULK_POPUP));
-        doNotShowBulkPopup.addItemListener(e -> config.setBool(ConfigKey.SHOW_BULK_POPUP, doNotShowBulkPopup.isSelected()));
+        doNotShowBulkPopup.addItemListener(
+                e -> {
+                    config.setBool(ConfigKey.SHOW_BULK_POPUP, doNotShowBulkPopup.isSelected());
+                });
         settings.add(doNotShowBulkPopup);
 
         JCheckBoxMenuItem includeFamily = new JCheckBoxMenuItem("Include Family On Searchbar");
         includeFamily.setSelected(config.getBool(ConfigKey.INCLUDE_FAMILY));
-        includeFamily.addItemListener(e -> {
-            config.setBool(ConfigKey.INCLUDE_FAMILY, includeFamily.isSelected());
-            if (!pokemonTab.getSelectedPokemon().isEmpty()) {
-                SwingUtilities.invokeLater(pokemonTab::refreshList);
-            }
-        });
+        includeFamily.addItemListener(
+                e -> {
+                    config.setBool(ConfigKey.INCLUDE_FAMILY, includeFamily.isSelected());
+                    if (!pokemonTab.getSelectedPokemon().isEmpty()) {
+                        SwingUtilities.invokeLater(pokemonTab::refreshList);
+                    }
+                });
         settings.add(includeFamily);
 
-        JCheckBoxMenuItem alternativeIVCalculation = new JCheckBoxMenuItem("Use Alternative IV Calculation (weighted stats)");
+        JCheckBoxMenuItem alternativeIVCalculation = new JCheckBoxMenuItem(
+                "Use Alternative IV Calculation (weighted stats)");
         alternativeIVCalculation.setSelected(config.getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION));
-        alternativeIVCalculation.addItemListener(e -> {
-            config.setBool(ConfigKey.ALTERNATIVE_IV_CALCULATION, alternativeIVCalculation.isSelected());
-            SwingUtilities.invokeLater(pokemonTab::refreshList);
-        });
+        alternativeIVCalculation.addItemListener(
+                e -> {
+                    config.setBool(ConfigKey.ALTERNATIVE_IV_CALCULATION, alternativeIVCalculation.isSelected());
+                    SwingUtilities.invokeLater(pokemonTab::refreshList);
+                });
         settings.add(alternativeIVCalculation);
 
         add(settings);
@@ -121,11 +127,12 @@ public class MenuBar extends JMenuBar {
         go.getInventories().updateInventories(true);
         PlayerProfile pp = go.getPlayerProfile();
         Stats stats = pp.getStats();
-        Object[] tstats = {"Trainer Name: " + pp.getPlayerData().getUsername(),
+        Object[] tstats = {
+                "Trainer Name: " + pp.getPlayerData().getUsername(),
                 "Team: " + PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue()),
-                "Level: " + stats.getLevel(), "XP: " + stats.getExperience() + " ("
-                + (stats.getNextLevelXp() - stats.getExperience()) + " to next level)",
-                "Stardust: " + pp.getCurrency(Currency.STARDUST)};
+                "Level: " + stats.getLevel(), "XP: " + stats.getExperience()
+                        + " (" + (stats.getNextLevelXp() - stats.getExperience()) + " to next level)",
+                "Stardust: " + pp.getCurrency(Currency.STARDUST) };
         JOptionPane.showMessageDialog(null, tstats, "Trainer Stats", JOptionPane.PLAIN_MESSAGE);
     }
 }

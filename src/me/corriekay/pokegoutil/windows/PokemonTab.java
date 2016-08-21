@@ -160,7 +160,7 @@ public class PokemonTab extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         topPanel.add(searchBar, gbc);
 
-        // pokemon name language drop down
+        // Pokemon name language drop down
         String[] locales = { "en", "de", "fr", "ru", "zh_CN", "zh_HK", "ja" };
         JComboBox<String> pokelang = new JComboBox<>(locales);
         String locale = config.getString(ConfigKey.LANGUAGE);
