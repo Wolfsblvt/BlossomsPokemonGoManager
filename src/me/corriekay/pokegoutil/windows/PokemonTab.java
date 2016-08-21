@@ -701,11 +701,14 @@ public class PokemonTab extends JPanel {
         String message = "";
         switch (operation) {
         case "Rename":
-            message = "You want to rename " + pokes.size()
-                    + " Pokémon.\nYou can rename with normal text and patterns, or both combined. "
-                    + "Patterns are going to be replaced with the Pokémons values.\nExisting patterns:\n";
+            message = String.format("You want to rename %d Pokémon.", pokes.size())
+                    + "\nYou can rename with normal text and patterns, or both combined. "
+                    + "Patterns are going to be replaced with the Pokémons values."
+                    + "\nExisting patterns:\n";
             for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
-                message += "%" + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
+                message += String.format("%% %s%% -> %s\n",
+                        pattern.name().toLowerCase(),
+                        pattern.toString());
             }
             message += "\n";
         }
@@ -718,7 +721,11 @@ public class PokemonTab extends JPanel {
         JPanel panel = _buildPanelForOperation(operation, pokes);
 
         int response = JOptionPane.showConfirmDialog(null, panel,
-                "Please confirm " + operation + " of " + pokes.size() + " Pokémon", JOptionPane.OK_CANCEL_OPTION,
+                String.format(
+                        "Please confirm %s of %d Pokémon",
+                        operation,
+                        pokes.size()),
+                JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE);
         return response == JOptionPane.OK_OPTION;
     }
@@ -743,8 +750,11 @@ public class PokemonTab extends JPanel {
         panel.setPreferredSize(new Dimension(500, height));
 
         pokes.forEach(p -> {
-            String str = PokeHandler.getLocalPokeName(p) + " - CP: " + p.getCp() + ", IV: "
-                    + Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)) + "%";
+            String str = String.format("%s - CP: %d, IV: %s%%",
+                    PokeHandler.getLocalPokeName(p),
+                    p.getCp(),
+                    Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
+
             switch (operation) {
             case "Evolve":
                 str += " Cost: " + p.getCandiesToEvolve();
