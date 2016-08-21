@@ -128,11 +128,13 @@ public class MenuBar extends JMenuBar {
         PlayerProfile pp = go.getPlayerProfile();
         Stats stats = pp.getStats();
         Object[] tstats = {
-                "Trainer Name: " + pp.getPlayerData().getUsername(),
-                "Team: " + PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue()),
-                "Level: " + stats.getLevel(), "XP: " + stats.getExperience()
-                        + " (" + (stats.getNextLevelXp() - stats.getExperience()) + " to next level)",
-                "Stardust: " + pp.getCurrency(Currency.STARDUST) };
+                String.format("Trainer Name: %s", pp.getPlayerData().getUsername()),
+                String.format("Team: %s", PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue())),
+                String.format("Level: %d", stats.getLevel()),
+                String.format("XP: %d (%d to next level)",
+                        stats.getExperience(),
+                        (stats.getNextLevelXp() - stats.getExperience())),
+                String.format("Stardust: %d", pp.getCurrency(Currency.STARDUST)) };
         JOptionPane.showMessageDialog(null, tstats, "Trainer Stats", JOptionPane.PLAIN_MESSAGE);
     }
 }
