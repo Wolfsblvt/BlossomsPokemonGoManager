@@ -12,6 +12,8 @@ import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
@@ -55,13 +57,14 @@ public class PokemonTab extends JPanel {
         setLayout(new BorderLayout());
         this.go = go;
         JPanel topPanel = new JPanel(new GridBagLayout());
-        JButton refreshPkmn, renameSelected, transferSelected, evolveSelected, powerUpSelected, toggleFavorite;
+        JButton refreshPkmn, renameSelected, transferSelected, evolveSelected, powerUpSelected, toggleFavorite, toggleShowEvolvable;
         refreshPkmn = new JButton("Refresh List");
         renameSelected = new JButton("Rename");
         transferSelected = new JButton("Transfer");
         evolveSelected = new JButton("Evolve");
         powerUpSelected = new JButton("Power Up");
         toggleFavorite = new JButton("Toggle Favorite");
+        toggleShowEvolvable = new JButton("Show evolvable");
 
         pt.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
@@ -116,6 +119,13 @@ public class PokemonTab extends JPanel {
         toggleFavorite.addActionListener(l -> new SwingWorker<Void, Void>() {
             protected Void doInBackground() throws Exception {
                 toggleFavorite();
+                return null;
+            }
+        }.execute());
+        topPanel.add(toggleShowEvolvable, gbc);
+        toggleShowEvolvable.addActionListener(l -> new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                toggleShowEvolvable();
                 return null;
             }
         }.execute());
@@ -530,6 +540,11 @@ public class PokemonTab extends JPanel {
         }
     }
 
+    private void toggleShowEvolvable() {
+        pt.toggleShowEvolvable();
+        refreshList();
+    }
+
     private void selectLessThanIv() {
         if (!NumberUtils.isNumber(ivTransfer.getText())) {
             System.out.println("Please select a valid IV value (0-100)");
@@ -677,6 +692,14 @@ public class PokemonTab extends JPanel {
             gymAttackCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
             TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
             gymDefenseCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
+
+            if (pt.showEvolvable()) {
+                for (int i = 0; i < pt.getModel().getColumnCount(); i++) {
+                    TableColumn col = this.pt.getColumnModel().getColumn(i);
+                    PokemonTableModel pokemonTableModel = (PokemonTableModel) pt.getModel();
+                    col.setCellRenderer(new BackgroundEvolvableRenderer(pokemonTableModel));
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -699,18 +722,45 @@ public class PokemonTab extends JPanel {
             setText(Utilities.percentageWithTwoCharacters(Double.parseDouble(value.toString()), this.scale));
             setToolTipText(NumberFormat.getInstance().format(value));
             setOpaque(true);
-            setDefaultSelectionColors(table, isSelected, this);
+            setDefaultSelectionColors(table, isSelected, this, table.getBackground());
             return this;
         }
     }
 
-    private static void setDefaultSelectionColors(JTable table, boolean isSelected, JLabel tcr) {
+    private static void setDefaultSelectionColors(JTable table, boolean isSelected, JLabel tcr, Color background) {
         if (isSelected) {
             tcr.setBackground(table.getSelectionBackground());
             tcr.setForeground(table.getSelectionForeground());
         } else {
-            tcr.setBackground(table.getBackground());
+            tcr.setBackground(background);
             tcr.setForeground(table.getForeground());
+        }
+    }
+
+    private static class BackgroundEvolvableRenderer extends JLabel implements TableCellRenderer {
+        private final PokemonTableModel model;
+
+        public BackgroundEvolvableRenderer(PokemonTableModel model) {
+            this.model = model;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                       boolean hasFocus, int rowIndex, int vColIndex) {
+            setText(value.toString());
+            Pokemon pokemon = model.getPokemonByIndex(rowIndex);
+            Color background = table.getBackground();
+            try {
+                boolean isEvolvable = pokemon != null && pokemon.getCandiesToEvolve() != 0 && pokemon.getCandiesToEvolve() < pokemon.getCandy();
+                if (isEvolvable) {
+                    background = Color.decode("#CCCCCC");
+                }
+            } catch (LoginFailedException | RemoteServerException e) {
+                e.printStackTrace();
+            }
+            setDefaultSelectionColors(table, isSelected, this, background);
+            setOpaque(true);
+            return this;
         }
     }
 
@@ -754,6 +804,7 @@ public class PokemonTab extends JPanel {
 
         int sortColIndex1, sortColIndex2;
         SortOrder sortOrder1, sortOrder2;
+        private boolean showEvolvable;
 
         private PokemonTable() {
             setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -843,6 +894,14 @@ public class PokemonTab extends JPanel {
                             }
                         }
                     });
+        }
+
+        void toggleShowEvolvable() {
+            showEvolvable = !showEvolvable;
+        }
+
+        boolean showEvolvable() {
+            return showEvolvable;
         }
     }
 
