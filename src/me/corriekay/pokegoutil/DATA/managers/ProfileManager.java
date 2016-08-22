@@ -7,7 +7,7 @@ public class ProfileManager {
     private static final ProfileManager S_INSTANCE = new ProfileManager();
     private static boolean sIsInit = false;
 
-    private PokemonGo go;
+    private PlayerProfile pp;
 
     private ProfileManager() {
 
@@ -17,12 +17,12 @@ public class ProfileManager {
         if (sIsInit)
             return;
 
-        S_INSTANCE.go = go;
+        S_INSTANCE.pp = go.getPlayerProfile();
 
         sIsInit = true;
     }
 
     public static PlayerProfile getProfile() {
-        return sIsInit ? S_INSTANCE.go.getPlayerProfile() : null;
+        return sIsInit ? S_INSTANCE.pp : null;
     }
 }
