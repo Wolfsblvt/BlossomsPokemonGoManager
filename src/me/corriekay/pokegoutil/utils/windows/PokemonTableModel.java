@@ -70,7 +70,7 @@ public class PokemonTableModel extends AbstractTableModel {
         data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Time Caught", new ArrayList<String>()));// 22
         data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Favorite", new ArrayList<String>()));// 23
         data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Duel Ability", new ArrayList<Long>()));// 24
-        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Gym Offense", new ArrayList<Long>()));// 25
+        data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Gym Offense", new ArrayList<Double>()));// 25
         data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Gym Defense", new ArrayList<Long>()));// 26
         data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Move 1 Rating", new ArrayList<String>()));// 27
         data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Move 2 Rating", new ArrayList<String>()));// 28

@@ -58,6 +58,9 @@ public class PokemonTable extends JTable {
     // 28 String(Percentage) - Move 2 Rating
     // 29 String(Nullable Int) - CP Evolved
     // 30 String(Nullable Int) - Evolvable
+    // 31 Long - duelAbility IV
+    // 32 Double - gymOffense IV
+    // 33 Long - gymDefense IV
 
     private ConfigNew config = ConfigNew.getConfig();
 
@@ -120,7 +123,7 @@ public class PokemonTable extends JTable {
         trs.setComparator(20, c);
         trs.setComparator(22, cDate);
         trs.setComparator(24, cLong);
-        trs.setComparator(25, cLong);
+        trs.setComparator(25, cDouble);
         trs.setComparator(26, cLong);
         trs.setComparator(27, cPercentageWithTwoCharacters);
         trs.setComparator(28, cPercentageWithTwoCharacters);
@@ -176,17 +179,17 @@ public class PokemonTable extends JTable {
         gymAttackIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_IV_MAX));
         TableColumn gymDefenseIVCol = getColumnModel().getColumn(33);
         gymDefenseIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_IV_MAX));
-        
+
         // Magic numbers pulled from max values of their respective columns
         // in the moveset rankings spreadsheet calculations
         // @see
         // https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-        //TableColumn duelAbilityCol = this.pt.getColumnModel().getColumn(24);
-        //duelAbilityCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_MAX));
-        //TableColumn gymAttackCol = this.pt.getColumnModel().getColumn(25);
-        //gymAttackCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
-        //TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
-        //gymDefenseCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
+        // TableColumn duelAbilityCol = this.pt.getColumnModel().getColumn(24);
+        // duelAbilityCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_MAX));
+        // TableColumn gymAttackCol = this.pt.getColumnModel().getColumn(25);
+        // gymAttackCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
+        // TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
+        // gymDefenseCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
     }
 
     public void constructNewTableModel(List<Pokemon> pokes) {
