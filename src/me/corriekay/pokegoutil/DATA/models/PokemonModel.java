@@ -45,7 +45,7 @@ public class PokemonModel {
     private final StringProperty caughtDate = new SimpleStringProperty();
     private final BooleanProperty isFavorite = new SimpleBooleanProperty();
     private final LongProperty duelAbility = new SimpleLongProperty();
-    private final LongProperty gymOffense = new SimpleLongProperty();
+    private final DoubleProperty gymOffense = new SimpleDoubleProperty();
     private final LongProperty gymDefense = new SimpleLongProperty();
     private final StringProperty move1Rating = new SimpleStringProperty();
     private final StringProperty move2Rating = new SimpleStringProperty();
@@ -82,7 +82,7 @@ public class PokemonModel {
         }
 
         // Max CP calculation for current PokemonModel
-        int maxCpCurrent = 0, maxCp = 0;
+        int maxCpCurrent, maxCp;
 
         int attack = p.getIndividualAttack() + meta.getBaseAttack();
         int defense = p.getIndividualDefense() + meta.getBaseDefense();
@@ -121,17 +121,19 @@ public class PokemonModel {
         if (highestFamilyMeta == null) {
             System.out.println("Error: Cannot find meta data for " + highestFamilyId.name());
         }
-        if (highestFamilyId == p.getPokemonId()) {
-            setMaxEvolvedCpCurrent(maxCpCurrent);
-            setMaxEvolvedCp(maxCp);
-            setCpEvolved("-");
-        } else {
-            attack = highestFamilyMeta.getBaseAttack() + p.getIndividualAttack();
-            defense = highestFamilyMeta.getBaseDefense() + p.getIndividualDefense();
-            stamina = highestFamilyMeta.getBaseStamina() + p.getIndividualStamina();
-            setMaxEvolvedCpCurrent(PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
-            setMaxEvolvedCp(PokemonCpUtils.getMaxCp(attack, defense, stamina));
-            setCpEvolved(String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
+        else {
+            if (highestFamilyId == p.getPokemonId()) {
+                setMaxEvolvedCpCurrent(maxCpCurrent);
+                setMaxEvolvedCp(maxCp);
+                setCpEvolved("-");
+            } else {
+                attack = highestFamilyMeta.getBaseAttack() + p.getIndividualAttack();
+                defense = highestFamilyMeta.getBaseDefense() + p.getIndividualDefense();
+                stamina = highestFamilyMeta.getBaseStamina() + p.getIndividualStamina();
+                setMaxEvolvedCpCurrent(PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
+                setMaxEvolvedCp(PokemonCpUtils.getMaxCp(attack, defense, stamina));
+                setCpEvolved(String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
+            }
         }
 
         int candies = 0;
@@ -149,9 +151,9 @@ public class PokemonModel {
         setPokeball(WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
         setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
         setIsFavorite(p.isFavorite());
-        setDuelAbility(PokemonUtils.duelAbility(p));
-        setGymOffense(PokemonUtils.gymOffense(p));
-        setGymDefense(PokemonUtils.gymDefense(p));
+        setDuelAbility(PokemonUtils.duelAbility(p, false));
+        setGymOffense(PokemonUtils.gymOffense(p, false));
+        setGymDefense(PokemonUtils.gymDefense(p, false));
         setMove1Rating(PokemonUtils.moveRating(p, true));
         setMove2Rating(PokemonUtils.moveRating(p, false));
     }
@@ -459,15 +461,15 @@ public class PokemonModel {
         this.duelAbility.set(duelAbility);
     }
 
-    public long getGymOffense() {
+    public double getGymOffense() {
         return gymOffense.get();
     }
 
-    public LongProperty gymOffenseProperty() {
+    public DoubleProperty gymOffenseProperty() {
         return gymOffense;
     }
 
-    public void setGymOffense(long gymOffense) {
+    public void setGymOffense(double gymOffense) {
         this.gymOffense.set(gymOffense);
     }
 
