@@ -831,12 +831,7 @@ public class PokemonTab extends JPanel {
             });
             pt.constructNewTableModel((search.equals("") || search.equals("searchpokémon...")
                     ? go.getInventories().getPokebank().getPokemons() : pokes));
-            
-           // for (int i = 0; i < pt.getModel().getColumnCount(); i++) {
-            //    JTableColumnPacker.packColumn(pt, i, 4);
-            //}
 
-            // Custom cell renderers
         } catch (Exception e) {
             e.printStackTrace();
         }
