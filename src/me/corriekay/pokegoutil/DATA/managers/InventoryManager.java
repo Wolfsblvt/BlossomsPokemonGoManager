@@ -13,7 +13,7 @@ public final class InventoryManager {
     private static final InventoryManager S_INSTANCE = new InventoryManager();
     private static boolean sIsInit = false;
 
-    private PokemonGo go;
+    private Inventories inventories;
 
     private InventoryManager() {
 
@@ -23,13 +23,17 @@ public final class InventoryManager {
         if (sIsInit)
             return;
 
-        S_INSTANCE.go = go;
+        try {
+            S_INSTANCE.inventories = go.getInventories();
+        } catch (Exception e) {
+            //TODO sumthin here
+            return;
+        }
 
         sIsInit = true;
     }
 
-
     public static Inventories getInventories() throws LoginFailedException, RemoteServerException {
-        return sIsInit ? S_INSTANCE.go.getInventories() : null;
+        return sIsInit ? S_INSTANCE.inventories : null;
     }
 }
