@@ -381,20 +381,21 @@ public class PokemonTab extends JPanel {
                             int newCandies = newPoke.getCandy();
                             int newCp = newPoke.getCp();
                             int newHp = newPoke.getStamina();
+                            int candyRefund = 1;
+                            String stats = ", CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "]";
                             System.out.println("Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: " + evolutionResultWrapper.getResult().toString());
                             if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
                                 if (newPoke.isFavorite()) {
                                     System.out.println("Skipping \"Transfer After Evolve\" for " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + " because favorite.");
-                                    System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "+1], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "])");
                                 } else {
                                     ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke.transferPokemon();
-                                    newCandies = newPoke.getCandy();
                                     System.out.println("Transferring " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + ", Result: " + result);
-                                    System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "+2]");
+                                    newCandies = newPoke.getCandy();
+                                    candyRefund++;
+                                    stats = "";
                                 }
-                            } else {
-                                System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "+1], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "])");
                             }
+                            System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "+" + candyRefund + "]" + stats + ")");
                             go.getInventories().updateInventories(true);
                             success.increment();
                         } else {
