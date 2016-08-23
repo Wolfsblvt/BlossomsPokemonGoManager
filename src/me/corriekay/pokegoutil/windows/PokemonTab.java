@@ -383,9 +383,15 @@ public class PokemonTab extends JPanel {
                             int newHp = newPoke.getStamina();
                             System.out.println("Evolving " + PokeHandler.getLocalPokeName(poke) + ". Evolve result: " + evolutionResultWrapper.getResult().toString());
                             if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
-                                ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke.transferPokemon();
-                                System.out.println("Transferring " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + ", Result: " + result);
-                                System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "]");
+                                if (newPoke.isFavorite()) {
+                                    System.out.println("Skipping \"Transfer After Evolve\" for " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + " because favorite.");
+                                    System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "])");
+                                }
+                                else {
+                                    ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke.transferPokemon();
+                                    System.out.println("Transferring " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + ", Result: " + result);
+                                    System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "]");
+                                }
                             } else {
                                 System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "])");
                             }
