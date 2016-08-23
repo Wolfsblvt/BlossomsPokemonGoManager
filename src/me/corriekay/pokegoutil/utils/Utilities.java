@@ -38,8 +38,7 @@ public final class Utilities {
     }
     public static String percentageWithTwoCharacters(double decimalNumber) {
         long rounded = Math.round(percentage(decimalNumber));
-        //return (rounded <= 100) ? StringUtils.leftPad(String.valueOf(rounded), 2, '0') : "XX";
-        return String.valueOf(rounded);
+        return (rounded < 100) ? StringUtils.leftPad(String.valueOf(rounded), 2, '0') : "XX";
 
     }
 
