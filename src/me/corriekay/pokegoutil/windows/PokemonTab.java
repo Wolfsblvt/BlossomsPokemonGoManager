@@ -385,14 +385,15 @@ public class PokemonTab extends JPanel {
                             if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
                                 if (newPoke.isFavorite()) {
                                     System.out.println("Skipping \"Transfer After Evolve\" for " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + " because favorite.");
-                                    System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "])");
+                                    System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "+1], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "])");
                                 } else {
                                     ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke.transferPokemon();
+                                    newCandies = newPoke.getCandy();
                                     System.out.println("Transferring " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + ", Result: " + result);
-                                    System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "]");
+                                    System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "+2]");
                                 }
                             } else {
-                                System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "])");
+                                System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "+1], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "])");
                             }
                             go.getInventories().updateInventories(true);
                             success.increment();
