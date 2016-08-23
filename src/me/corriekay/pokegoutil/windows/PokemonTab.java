@@ -367,6 +367,7 @@ public class PokemonTab extends JPanel {
                         int candiesToEvolve = poke.getCandiesToEvolve();
                         int cp = poke.getCp();
                         int hp = poke.getMaxStamina();
+                        boolean afterTransfer = false;
 
                         // Check if user has enough candy, otherwise we don't need to call server
                         if (candies < candiesToEvolve) {
@@ -387,7 +388,13 @@ public class PokemonTab extends JPanel {
                                     System.out.println("Skipping \"Transfer After Evolve\" for " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + " because favorite.");
                                     System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "], CP: " + newCp + "[+" + (newCp - cp) + "], HP: " + newHp + "[+" + (newHp - hp) + "])");
                                 } else {
+                                    // Sleep before transferring
+                                    int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
+                                    int sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
+                                    Utilities.sleepRandom(sleepMin, sleepMax);
+
                                     ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke.transferPokemon();
+                                    afterTransfer = true;
                                     System.out.println("Transferring " + StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()) + ", Result: " + result);
                                     System.out.println("Stat changes: (Candies: " + newCandies + "[" + candies + "-" + candiesToEvolve + "]");
                                 }
@@ -403,8 +410,8 @@ public class PokemonTab extends JPanel {
 
                         // If not last element, sleep until the next one
                         if (!selection.get(selection.size() - 1).equals(poke)) {
-                            int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
-                            int sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
+                            int sleepMin = afterTransfer ? config.getInt(ConfigKey.DELAY_TRANSFER_MIN) : config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
+                            int sleepMax = afterTransfer ? config.getInt(ConfigKey.DELAY_TRANSFER_MAX) : config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
                             Utilities.sleepRandom(sleepMin, sleepMax);
                         }
                     } catch (Exception e) {
