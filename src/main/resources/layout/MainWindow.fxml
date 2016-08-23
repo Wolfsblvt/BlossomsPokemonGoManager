@@ -67,7 +67,9 @@
                                                         <TitledPane maxHeight="-Infinity" prefHeight="136.0" prefWidth="576.0" text="Filters" />
                                                     </panes>
                                                 </Accordion>
-                                                <AnchorPane fx:id="pokemontable" />
+                                                <ScrollPane>
+                                                    <AnchorPane fx:id="pokemontable" />
+                                                </ScrollPane>
                                             </children>
                                         </VBox>
                                     </children>

@@ -47,9 +47,13 @@ public class PokemonModel {
     private final LongProperty duelAbility = new SimpleLongProperty();
     private final DoubleProperty gymOffense = new SimpleDoubleProperty();
     private final LongProperty gymDefense = new SimpleLongProperty();
+    private final LongProperty duelAbilityIV = new SimpleLongProperty();
+    private final DoubleProperty gymOffenseIV = new SimpleDoubleProperty();
+    private final LongProperty gymDefenseIV = new SimpleLongProperty();
     private final StringProperty move1Rating = new SimpleStringProperty();
     private final StringProperty move2Rating = new SimpleStringProperty();
     private final StringProperty cpEvolved = new SimpleStringProperty();
+    private final StringProperty evolvable = new SimpleStringProperty();
 
     public PokemonModel(Pokemon p) {
         super();
@@ -143,10 +147,14 @@ public class PokemonModel {
             e.printStackTrace();
         }
         setCandies(candies);
-        if (p.getCandiesToEvolve() != 0)
+        if (p.getCandiesToEvolve() != 0) {
             setCandies2Evlv(String.valueOf(p.getCandiesToEvolve()));
-        else
+            setEvolvable(String.valueOf((int)((double) candies / p.getCandiesToEvolve()))); // Rounded down candies / toEvolve
+        }
+        else {
             setCandies2Evlv("-");
+            setEvolvable("-");
+        }
         setDustToLevel(p.getStardustCostsForPowerup());
         setPokeball(WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
         setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
@@ -154,6 +162,10 @@ public class PokemonModel {
         setDuelAbility(PokemonUtils.duelAbility(p, false));
         setGymOffense(PokemonUtils.gymOffense(p, false));
         setGymDefense(PokemonUtils.gymDefense(p, false));
+
+        setDuelAbilityIV(PokemonUtils.duelAbility(p, true));
+        setGymOffenseIV(PokemonUtils.gymOffense(p, true));
+        setGymDefenseIV(PokemonUtils.gymDefense(p, true));
         setMove1Rating(PokemonUtils.moveRating(p, true));
         setMove2Rating(PokemonUtils.moveRating(p, false));
     }
@@ -485,6 +497,42 @@ public class PokemonModel {
         this.gymDefense.set(gymDefense);
     }
 
+    public long getDuelAbilityIV() {
+        return duelAbilityIV.get();
+    }
+
+    public LongProperty duelAbilityIVProperty() {
+        return duelAbilityIV;
+    }
+
+    public void setDuelAbilityIV(long duelAbilityIV) {
+        this.duelAbilityIV.set(duelAbilityIV);
+    }
+
+    public double getGymOffenseIV() {
+        return gymOffenseIV.get();
+    }
+
+    public DoubleProperty gymOffenseIVProperty() {
+        return gymOffenseIV;
+    }
+
+    public void setGymOffenseIV(double gymOffenseIV) {
+        this.gymOffenseIV.set(gymOffenseIV);
+    }
+
+    public long getGymDefenseIV() {
+        return gymDefenseIV.get();
+    }
+
+    public LongProperty gymDefenseIVProperty() {
+        return gymDefenseIV;
+    }
+
+    public void setGymDefenseIV(long gymDefenseIV) {
+        this.gymDefenseIV.set(gymDefenseIV);
+    }
+
     public String getMove1Rating() {
         return move1Rating.get();
     }
@@ -519,5 +567,17 @@ public class PokemonModel {
 
     public void setCpEvolved(String cpEvolved) {
         this.cpEvolved.set(cpEvolved);
+    }
+
+    public String getEvolvable() {
+        return evolvable.get();
+    }
+
+    public StringProperty evolvableProperty() {
+        return evolvable;
+    }
+
+    public void setEvolvable(String evolvable) {
+        this.evolvable.set(evolvable);
     }
 }
