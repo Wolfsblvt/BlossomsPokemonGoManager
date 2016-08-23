@@ -13,13 +13,13 @@ It was made for easier management of Pokémon, deciding which to keep, and which
 - Batch operation tools, allowing you to quickly rename, transfer, evolve, and power-up your pokemon.
 - Tons of sort options, allowing you to sort your pokemon quickly by nickname, pokedex number, species, IV%, types, moves (with DPS), CP, Max CP, HP, total candies, candies to evolve, stardust to powerup, caught date, and what the pokemon was caught with.
 
-A lot more features are planned! Check [Issue page for enhancements](https://github.com/Blossomforth/BlossomsPokemonGoManager/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) for an overview.  
+A lot more features are planned! Check [Issue page for enhancements](/../../issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) for an overview.  
 You can even submit your own suggestions.
 
 ## Installation / Usage
 #### Latest Stable Release
 1. You need at least **Java 8** installed to run this tool. Verify your Java version [here](https://www.java.com/verify/) or download [the latest Java JRE release](https://www.java.com/download/) and install it.
-2. Download [the latest stable version of this tool](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases) from releases.
+2. Download [the latest stable version of this tool](/../../releases) from releases.
 3. Double-Click the extracted `.jar` file and run it.
 4. Log in with your credentials. PTC account directly, for Google follow the instructions and copy the session token.
 5. Enjoy the tool!
@@ -28,7 +28,7 @@ You can even submit your own suggestions.
 **WARNING!** This version might be unstable, so use at your own risk.
 
 1. Java SDK for Java 8 has to be installed.
-2. Clone the repository on the [develop branch](https://github.com/Blossomforth/BlossomsPokemonGoManager/tree/develop) locally or download the ZIP of this branch.
+2. Clone the repository on the [develop branch](/../../tree/develop) locally or download the ZIP of this branch.
 3. Build the project with either maven compiler, or your IDE of choice (Eclipse, IntelliJ)  .
 To use it in an IDE, you have to import the project as a Maven project.
 4. Run it as an Application, with `me.corriekay.pokegoutil.BlossomsPoGoManager` as entry file.
@@ -75,6 +75,9 @@ We use discord to organize our development and answer questions. We also post im
 
 #### Q: Is the IV calculated somehow? Is it the correct value or maybe wrong? My IV calculator says something different.
 - **A:** The IV isn't calculated, it is directly taken from the API response. It's the exact value like the game has it.
+
+#### Q: What is this alternative IV calculation mode? What does it do?
+- **A:** Usual IV rating weighs every three values the same, so 1/3. The alterative mode takes in mind that attack is more important when calculating things like CP of the Pokémon. For a detailed information and a real-life example see the issue about it: [#165](/../../issues/165)
 
 #### Q: Can you add catching of Pokémon and using PokéStops?
 - **A:** No. We'll include lucky egg support for evolving, but that's it. We are not just another botting tool. We want to keep the use of our tool as fair as possible and just make managing Pokémon easier.
