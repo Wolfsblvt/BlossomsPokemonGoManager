@@ -22,6 +22,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokeNick;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import me.corriekay.pokegoutil.utils.pokemon.Evolves;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -220,6 +221,7 @@ public class PokemonTab extends JPanel {
     private void refreshPkmn() {
         try {
             go.getInventories().updateInventories(true);
+            Evolves.print(go);
         } catch (Exception e) {
             e.printStackTrace();
         }
