@@ -19,7 +19,7 @@ public final class Utilities {
         return i % 2 == 0;
     }
 
-    public static boolean isLatin(String str) {
+    public static synchronized boolean isLatin(String str) {
         return iso88591Encoder.canEncode(str);
     }
 
