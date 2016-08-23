@@ -445,17 +445,32 @@ public class PokemonTab extends JPanel {
                             PokeHandler.getLocalPokeName(poke),
                             evolutionResultWrapper.getResult().toString()));
                     if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
-                        ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke
-                                .transferPokemon();
-                        System.out.println(String.format(
-                                "Transferring %s, Result: %s",
-                                StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()),
-                                result));
-                        System.out.println(String.format(
-                                "Stat changes: (Candies: %d[%d-%d]",
-                                newCandies,
-                                candies,
-                                candiesToEvolve));
+                        if (newPoke.isFavorite()) {
+                            System.out.println(String.format(
+                                    "Skipping \"Transfer After Evolve\" for %s because favorite.",
+                                    StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase())));
+
+                            System.out.println(String.format(
+                                    "Stat changes: "
+                                            + "(Candies: %d[%d-%d], "
+                                            + "CP: %d[+%d], "
+                                            + "HP: %d[+%d])",
+                                    newCandies, candies, candiesToEvolve,
+                                    newCp, (newCp - cp),
+                                    newHp, (newHp - hp)));
+                        } else {
+                            ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke
+                                    .transferPokemon();
+                            System.out.println(String.format(
+                                    "Transferring %s, Result: %s",
+                                    StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()),
+                                    result));
+                            System.out.println(String.format(
+                                    "Stat changes: (Candies: %d[%d-%d]",
+                                    newCandies,
+                                    candies,
+                                    candiesToEvolve));
+                        }
                     } else {
                         System.out.println(String.format(
                                 "Stat changes: "
