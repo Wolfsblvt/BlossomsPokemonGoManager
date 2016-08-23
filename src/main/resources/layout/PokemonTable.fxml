@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<fx:root fx:id="pokemonTableViewRoot" type="javafx.scene.layout.AnchorPane" xmlns:fx="http://javafx.com/fxml" >
+    <children>
+        <TableView fx:id="pokemonTableView" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" />
+    </children>
+</fx:root>

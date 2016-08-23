@@ -131,7 +131,7 @@ public class PokemonCpUtils {
     }
 
     /**
-     * Get the maximum CP from the values
+     * Get the maximum CP for the given values
      *
      * @param attack       All attack values combined
      * @param defense      All defense values combined
@@ -141,8 +141,22 @@ public class PokemonCpUtils {
      */
     public static int getMaxCpForTrainerLevel(int attack, int defense, int stamina, int trainerLevel) {
         float maxPokemonLevel = Math.min(40.5f, trainerLevel + 1.5F);
-        float maxCpMultplier = LEVEL_CPMULTIPLIER.get(maxPokemonLevel);
-        return (int) ((double) attack * Math.pow((double) defense, 0.5D) * Math.pow((double) stamina, 0.5D) * Math.pow((double) maxCpMultplier, 2.0D) / 10.0D);
+        return getCpForPokemonLevel(attack, defense, stamina, maxPokemonLevel);
+    }
+
+    /**
+     * Get the CP for the given values
+     *
+     * @param attack       All attack values combined
+     * @param defense      All defense values combined
+     * @param stamina      All stamina values combined
+     * @param level the Pokémon level for which the CP should be calculated
+     * @return Maximum CP for these levels
+     */
+    public static int getCpForPokemonLevel(int attack, int defense, int stamina, float level) {
+        float pokemonLevel = Math.min(40.5f, level);
+        float cpMultiplier = LEVEL_CPMULTIPLIER.get(pokemonLevel);
+        return (int) Math.round((double) attack * Math.pow((double) defense, 0.5D) * Math.pow((double) stamina, 0.5D) * Math.pow((double) cpMultiplier, 2.0D) / 10.0D);
     }
 
     /**
