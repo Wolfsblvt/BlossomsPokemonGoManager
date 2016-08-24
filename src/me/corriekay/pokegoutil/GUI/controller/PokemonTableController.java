@@ -27,10 +27,10 @@ public class PokemonTableController extends AnchorPane {
     private ClassLoader classLoader = getClass().getClassLoader();
 
     @FXML
-    private TableView pokemonTableView;
+    private ScrollPane scrollPane;
 
     @FXML
-    private ScrollPane scrollPane;
+    private TableView pokemonTableView;
 
     private List<TableColumn<PokemonModel, ?>> columns = new ArrayList<>();
 
@@ -52,7 +52,7 @@ public class PokemonTableController extends AnchorPane {
     @FXML
     private void initialize() {
         pokemonTableView.getColumns().clear();
-        setColumns();
+        initColumns();
         pokemonTableView.getColumns().addAll(columns);
         pokemonTableView.setItems(PokemonBagManager.getAllPokemon());
         pokemonTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -91,17 +91,21 @@ public class PokemonTableController extends AnchorPane {
         return pokemonTableView.getColumns();
     }
 
-    private void setColumns() {
+    public ObservableList getSelectedItems(){
+        return pokemonTableView.getSelectionModel().getSelectedItems();
+    }
+
+    private void initColumns() {
         columns.clear();
 
         ArrayList<ColumnID> columnOrder = getColumnOrderFromConfig();
+        // set default values
         if (columnOrder.isEmpty()) {
             ColumnID[] ids = ColumnID.values();
             for (int i = 0; i < ids.length; i++) {
                 columnOrder.add(ids[i]);
             }
         }
-
         columnOrder.forEach(c -> {
             TableColumn<PokemonModel, Property> col = new TableColumn<>(c.getTitle());
             switch (c) {
