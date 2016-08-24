@@ -559,16 +559,23 @@ public class PokemonTab extends JPanel {
     private String inputOperation(String operation, ArrayList<Pokemon> pokes) {
         JPanel panel = _buildPanelForOperation(operation, pokes);
         String message = "";
+        String savedPattern = "";
+
         switch (operation) {
-            case "Rename":
-                message = "You want to rename " + pokes.size() + " Pokémon.\nYou can rename with normal text and patterns, or both combined. Patterns are going to be replaced with the Pokémons values.\nExisting patterns:\n";
-                for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
-                    message += "%" + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
-                }
-                message += "\n";
+        	case "Rename":
+	        	savedPattern = config.getString(ConfigKey.RENAME_PATTERN);
+	        	message = "You want to rename " + pokes.size() + " Pokémon.\nYou can rename with normal text and patterns, or both combined. Patterns are going to be replaced with the Pokémons values.\nExisting patterns:\n";
+	        	for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
+	        		message += "%" + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
+	        	}
+	        	message += "\n";
         }
 
-        String input = JOptionPane.showInputDialog(panel, message, operation, JOptionPane.PLAIN_MESSAGE);
+        String input = (String) JOptionPane.showInputDialog(panel, message, operation, JOptionPane.PLAIN_MESSAGE, null, null, savedPattern);
+        switch (operation) {
+        	case "Rename":
+        		config.setString(ConfigKey.RENAME_PATTERN, input);
+        }
         return input;
     }
 
