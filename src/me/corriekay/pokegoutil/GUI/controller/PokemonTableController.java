@@ -1,6 +1,7 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
 import javafx.beans.property.Property;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -55,7 +56,35 @@ public class PokemonTableController extends AnchorPane {
         pokemonTableView.getColumns().addAll(columns);
         pokemonTableView.setItems(PokemonBagManager.getAllPokemon());
         pokemonTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        pokemonTableView.getColumns().addListener((ListChangeListener) c -> {
+            saveOrderToConfig();
+        });
+    }
 
+    private ArrayList<ColumnID> getColumnOrderFromConfig() {
+        ArrayList<ColumnID> list = new ArrayList<>();
+        String config = ConfigNew.getConfig().getString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE);
+        if (config == null || config.isEmpty())
+            return list;
+        String[] split = config.split("-");
+        ColumnID[] ids = ColumnID.values();
+        for (String s : split) {
+            list.add(ids[Integer.valueOf(s)]);
+        }
+        return list;
+    }
+
+    private void saveOrderToConfig() {
+        String columnOrder = "";
+        int i = 0;
+        for (Object c : getColumns()){
+            if (i!=0)
+                columnOrder+="-";
+            columnOrder += String.valueOf(ColumnID.get(((TableColumn)c).getText()).ordinal());
+            i++;
+        }
+
+        ConfigNew.getConfig().setString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE,columnOrder);
     }
 
     public ObservableList getColumns() {
@@ -181,29 +210,5 @@ public class PokemonTableController extends AnchorPane {
             }
             columns.add(col);
         } );
-    }
-
-    private ArrayList<ColumnID> getColumnOrderFromConfig() {
-        ArrayList<ColumnID> list = new ArrayList<>();
-        String config = ConfigNew.getConfig().getString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE);
-        if (config == null || config.isEmpty())
-                return list;
-        for (String s : config.split(".")) {
-            list.add(ColumnID.get(s));
-        }
-        return list;
-    }
-
-    private void saveOrderToConfig() {
-        String columnOrder = "";
-        int i = 0;
-        for (TableColumn c : columns){
-            if (i!=0)
-                columnOrder.concat(".");
-            columnOrder = String.valueOf(ColumnID.valueOf(c.getText()).ordinal());
-            i++;
-        }
-
-        ConfigNew.getConfig().setString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE,columnOrder);
     }
 }
