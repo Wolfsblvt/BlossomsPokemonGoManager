@@ -22,6 +22,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokeNick;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokeHandler.ReplacePattern;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -34,8 +35,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.*;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
@@ -557,24 +562,25 @@ public class PokemonTab extends JPanel {
     }
 
     private String inputOperation(String operation, ArrayList<Pokemon> pokes) {
-        JPanel panel = _buildPanelForOperation(operation, pokes);
-        String message = "";
+    	JPanel panel = null;
+    	String message = "";
         String savedPattern = "";
 
         switch (operation) {
         	case "Rename":
+        		panel = _buildPanelForRename();
 	        	savedPattern = config.getString(ConfigKey.RENAME_PATTERN);
-	        	message = "You want to rename " + pokes.size() + " Pokémon.\nYou can rename with normal text and patterns, or both combined. Patterns are going to be replaced with the Pokémons values.\nExisting patterns:\n";
-	        	for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
-	        		message += "%" + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
-	        	}
-	        	message += "\n";
+	        	message = "Renaming " + pokes.size() + " Pokémon.";
+	        default:
+//	    		panel = _buildPanelForOperation(operation, pokes);
         }
 
-        String input = (String) JOptionPane.showInputDialog(panel, message, operation, JOptionPane.PLAIN_MESSAGE, null, null, savedPattern);
-        switch (operation) {
+        String input = (String) JOptionPane.showInputDialog(null, panel, message, JOptionPane.PLAIN_MESSAGE, null, null, savedPattern);
+        if(input!=null)  {
+        	switch (operation) {
         	case "Rename":
         		config.setString(ConfigKey.RENAME_PATTERN, input);
+        	}
         }
         return input;
     }
@@ -620,6 +626,9 @@ public class PokemonTab extends JPanel {
                     str += " " + p.getStardustCostsForPowerup() + " Stardust";
                     break;
                 case "Rename":
+                	for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
+    	        		str += "%" + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
+    	        	}
                     break;
                 case "Transfer":
                     break;
@@ -628,6 +637,47 @@ public class PokemonTab extends JPanel {
         });
         panel.add(scroll);
         return panel;
+    }
+    
+    private JPanel _buildPanelForRename() {
+    	JPanel panel = new JPanel();
+    	panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    	panel.setAlignmentX(LEFT_ALIGNMENT);
+    	
+    	JPanel innerPanel = new JPanel();
+    	innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
+    	innerPanel.setAlignmentX(LEFT_ALIGNMENT);
+    	
+    	JScrollPane scroll = new JScrollPane(innerPanel);
+    	scroll.setAlignmentX(LEFT_ALIGNMENT);
+    	
+    	panel.setPreferredSize(new Dimension(500, 400));
+    	
+    	panel.add(new JLabel("You can rename with normal text and patterns, or both combined."));
+    	panel.add(new JLabel("Patterns are going to be replaced with the Pokémons values."));
+    	panel.add(new JLabel("Existing patterns: (double click on item to copy)"));
+
+    	JList<ReplacePattern> listPattern = new JList<>(ReplacePattern.values());
+    	listPattern.setCellRenderer(new ReplacePatternRenderer());
+    	
+    	listPattern.addMouseListener(new MouseAdapter() {
+    		public void mouseClicked(MouseEvent mouseEvent) {
+                @SuppressWarnings("unchecked")
+				JList<ReplacePattern> theList = ((JList<ReplacePattern>) mouseEvent.getSource());
+                if (mouseEvent.getClickCount() == 2) {
+                  int index = theList.locationToIndex(mouseEvent.getPoint());
+                  if (index >= 0) {
+                	  ReplacePattern o = (ReplacePattern) theList.getModel().getElementAt(index);
+                	  Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+                	  cb.setContents(new StringSelection("%" + o.name().toLowerCase() + "%"), null);
+                  }
+                }
+              }
+		});
+    	
+    	innerPanel.add(listPattern);
+    	panel.add(scroll);
+    	return panel;
     }
 
     public ArrayList<Pokemon> getSelectedPokemon() {
@@ -700,6 +750,35 @@ public class PokemonTab extends JPanel {
         }
     }
 
+    /**
+     * Provide custom formatting for the list of patterns
+     */
+    private class ReplacePatternRenderer extends JLabel implements ListCellRenderer<ReplacePattern>
+	{
+    	public ReplacePatternRenderer() {
+    	    setOpaque(true);
+    	}
+    	
+		@Override
+		public Component getListCellRendererComponent(JList<? extends ReplacePattern> list, ReplacePattern value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			 //Get the selected index. (The index param isn't always valid, so just use the value.)
+	        if (isSelected) {
+	            setBackground(list.getSelectionBackground());
+	            setForeground(list.getSelectionForeground());
+	        } else {
+	            setBackground(list.getBackground());
+	            setForeground(list.getForeground());
+	        }
+
+	        String str = "%" + value.name().toLowerCase() + "% -> " + value.toString() + "\n";
+	        setText(str);
+	        setFont(list.getFont());
+
+	        return this;
+		}
+	}
+    
     /**
      * Provide custom formatting for the moveset ranking columns while allowing sorting on original values
      */
