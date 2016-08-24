@@ -3,13 +3,14 @@ package me.corriekay.pokegoutil.GUI.controller;
 import javafx.beans.property.Property;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import me.corriekay.pokegoutil.DATA.managers.PokemonBagManager;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
@@ -58,6 +59,49 @@ public class PokemonTableController extends AnchorPane {
         pokemonTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         pokemonTableView.getColumns().addListener((ListChangeListener) c -> {
             saveOrderToConfig();
+        });
+        initRightClickMenu();
+    }
+
+    private void initRightClickMenu() {
+        final ContextMenu cm = new ContextMenu();
+        MenuItem cmItem1 = new MenuItem("Transfer");
+        cmItem1.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
+                // transfer
+                System.out.println("transfer");
+            }
+        });
+        MenuItem cmItem2 = new MenuItem("Level");
+        cmItem2.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
+                // level
+                System.out.println("level");
+            }
+        });
+        MenuItem cmItem3 = new MenuItem("Evolve");
+        cmItem3.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
+                // evolve
+                System.out.println("evolve");
+            }
+        });
+        MenuItem cmItem4 = new MenuItem("Rename");
+        cmItem4.setOnAction(new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
+                // evolve
+                System.out.println("rename");
+            }
+        });
+        cm.getItems().add(cmItem1);
+        cm.getItems().add(cmItem2);
+        cm.getItems().add(cmItem3);
+        cm.getItems().add(cmItem4);
+
+        pokemonTableView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            if (e.getButton() == MouseButton.SECONDARY) {
+                cm.show(pokemonTableView, e.getScreenX(), e.getScreenY());
+            }
         });
     }
 
