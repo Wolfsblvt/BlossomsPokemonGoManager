@@ -484,7 +484,7 @@ public class PokemonTab extends JPanel {
                     } else {
                         System.out.println(String.format(
                                 "Stat changes: "
-                                        + "(Candies: %d[%d-%d+1], "
+                                        + "(Candies: %d[%d-%d+%d], "
                                         + "CP: %d[+%d], "
                                         + "HP: %d[+%d])",
                                 newCandies, candies, candiesToEvolve, candyRefund,
