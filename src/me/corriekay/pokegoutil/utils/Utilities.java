@@ -10,7 +10,9 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public final class Utilities {
-    private Utilities() { /* Prevent initializing this class */ }
+    /* Prevent initializing this class */
+    private Utilities() {
+    }
 
     private static final CharsetEncoder iso88591Encoder = Charset.forName("ISO-8859-1").newEncoder();
     private static final Random random = new Random(System.currentTimeMillis());
@@ -36,6 +38,7 @@ public final class Utilities {
     public static String percentageWithTwoCharacters(double number, double maximum) {
         return percentageWithTwoCharacters(Math.min(number / maximum, maximum));
     }
+
     public static String percentageWithTwoCharacters(double decimalNumber) {
         long rounded = Math.round(percentage(decimalNumber));
         return (rounded < 100) ? StringUtils.leftPad(String.valueOf(rounded), 2, '0') : "XX";
@@ -70,8 +73,22 @@ public final class Utilities {
     public static String getRealExceptionMessage(Exception e) {
         String message = e.getMessage();
         if (e instanceof InvalidProtocolBufferException || "Contents of buffer are null".equals(message)) {
-            message = "Server hasn't responded in time. Seems to be busy. The action may have been successful though. (" + message + ")";
+            message = "Server hasn't responded in time. "
+                    + "Seems to be busy. "
+                    + "The action may have been successful though. (" + message + ")";
         }
         return message;
+    }
+
+    public static String concatString(char delimeter, String... strings) {
+        if (strings.length == 0) {
+            return "";
+        }
+
+        String s = strings[0];
+        for (int i = 1; i < strings.length; i++) {
+            s += delimeter + strings[i];
+        }
+        return s;
     }
 }
