@@ -425,6 +425,7 @@ public class PokemonTab extends JPanel {
                 int candiesToEvolve = poke.getCandiesToEvolve();
                 int cp = poke.getCp();
                 int hp = poke.getMaxStamina();
+                boolean afterTransfer = false;
 
                 // Check if user has enough candy, otherwise we don't
                 // need to call server
@@ -464,8 +465,14 @@ public class PokemonTab extends JPanel {
                                     newCp, (newCp - cp),
                                     newHp, (newHp - hp)));
                         } else {
+                            // Sleep before transferring
+                            int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
+                            int sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
+                            Utilities.sleepRandom(sleepMin, sleepMax);
+
                             ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke
                                     .transferPokemon();
+                            afterTransfer = true;
                             if (result == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
                                 newCandies = newPoke.getCandy();
                                 candyRefund++;
@@ -503,8 +510,16 @@ public class PokemonTab extends JPanel {
 
                 // If not last element, sleep until the next one
                 if (!selection.get(selection.size() - 1).equals(poke)) {
-                    int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
-                    int sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
+                    int sleepMin;
+                    int sleepMax;
+                    if (afterTransfer) {
+                        sleepMin = config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
+                        sleepMax = config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
+                    }
+                    else {
+                        sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
+                        sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
+                    }
                     Utilities.sleepRandom(sleepMin, sleepMax);
                 }
             } catch (Exception e) {
