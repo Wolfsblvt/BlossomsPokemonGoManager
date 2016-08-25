@@ -444,6 +444,7 @@ public class PokemonTab extends JPanel {
                     int newCandies = newPoke.getCandy();
                     int newCp = newPoke.getCp();
                     int newHp = newPoke.getStamina();
+                    int candyRefund = 1;
                     System.out.println(String.format(
                             "Evolving %s. Evolve result: %s",
                             PokeHandler.getLocalPokeName(poke),
@@ -456,32 +457,37 @@ public class PokemonTab extends JPanel {
 
                             System.out.println(String.format(
                                     "Stat changes: "
-                                            + "(Candies: %d[%d-%d], "
+                                            + "(Candies: %d[%d-%d+%d], "
                                             + "CP: %d[+%d], "
                                             + "HP: %d[+%d])",
-                                    newCandies, candies, candiesToEvolve,
+                                    newCandies, candies, candiesToEvolve, candyRefund,
                                     newCp, (newCp - cp),
                                     newHp, (newHp - hp)));
                         } else {
                             ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke
                                     .transferPokemon();
+                            if (result == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
+                                newCandies = newPoke.getCandy();
+                                candyRefund++;
+                            }
                             System.out.println(String.format(
                                     "Transferring %s, Result: %s",
                                     StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()),
                                     result));
                             System.out.println(String.format(
-                                    "Stat changes: (Candies: %d[%d-%d]",
+                                    "Stat changes: (Candies: %d[%d-%d+%d]",
                                     newCandies,
                                     candies,
-                                    candiesToEvolve));
+                                    candiesToEvolve,
+                                    candyRefund));
                         }
                     } else {
                         System.out.println(String.format(
                                 "Stat changes: "
-                                        + "(Candies: %d[%d-%d], "
+                                        + "(Candies: %d[%d-%d+%d], "
                                         + "CP: %d[+%d], "
                                         + "HP: %d[+%d])",
-                                newCandies, candies, candiesToEvolve,
+                                newCandies, candies, candiesToEvolve, candyRefund,
                                 newCp, (newCp - cp),
                                 newHp, (newHp - hp)));
                     }
