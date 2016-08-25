@@ -17,14 +17,19 @@ A lot more features are planned! Check [Issue page for enhancements](/../../issu
 You can even submit your own suggestions.
 
 ## Installation / Usage
-#### Latest Stable Release
+#### **Latest Stable Release**
 1. You need at least **Java 8** installed to run this tool. Verify your Java version [here](https://www.java.com/verify/) or download [the latest Java JRE release](https://www.java.com/download/) and install it.
 2. Download [the latest stable version of this tool](/../../releases) from releases.
 3. Double-Click the extracted `.jar` file and run it.
 4. Log in with your credentials. PTC account directly, for Google follow the instructions and copy the session token.
 5. Enjoy the tool!
 
-#### Using the Dev Version
+If the tool is not working under Linux/Ubuntu, try the following steps:
+
+1. Give execution right to the shell script: `chmod +x RunOnUnixLikeSystems.sh`
+2. Use Oracle JDK instead of Open JDK. (See issue [#306](/../../issues/306) for more details)
+
+#### **Using the Dev Version**
 **WARNING!** This version might be unstable, so use at your own risk.
 
 1. Java SDK for Java 8 has to be installed.
