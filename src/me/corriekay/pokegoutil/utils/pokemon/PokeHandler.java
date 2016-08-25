@@ -409,7 +409,11 @@ public class PokeHandler {
         };
 
         private static String abbreviateType(String type) {
-            if (type.equalsIgnoreCase("fire") || type.equalsIgnoreCase("ground")) {
+            if (type.equalsIgnoreCase("none")) {
+                return "__";
+            }
+            else if (type.equalsIgnoreCase("fighting") || type.equalsIgnoreCase("ground")) {
+                // "Gr" is Grass, so we make Ground "Gd". "Fi" is Fire, so we make Fighting "Fg"
                 return type.substring(0, 1).toUpperCase() + type.substring(type.length() - 1).toLowerCase();
             } else {
                 return StringUtils.capitalize(type.substring(0, 2).toLowerCase());

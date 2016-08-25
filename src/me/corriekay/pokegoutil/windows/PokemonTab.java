@@ -62,7 +62,11 @@ public class PokemonTab extends JPanel {
 
         pt.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
-                if (event.getValueIsAdjusting() == true) {
+                if (event.getValueIsAdjusting()) {
+                    // We need a break here. Cause otherwise mouse selection would trigger twice. (Yeah, that's swing)
+                    return;
+                }
+                if (event.getSource() == pt.getSelectionModel() && pt.getRowSelectionAllowed()) {
                     int selectedRows = pt.getSelectedRowCount();
                     if (selectedRows > 1) {
                         PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
