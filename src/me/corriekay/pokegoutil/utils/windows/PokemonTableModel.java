@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.text.WordUtils;
@@ -27,7 +29,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
-@SuppressWarnings({ "serial", "rawtypes" })
+@SuppressWarnings({"serial", "rawtypes"})
 
 public class PokemonTableModel extends AbstractTableModel {
 
@@ -79,7 +81,7 @@ public class PokemonTableModel extends AbstractTableModel {
         data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Duel Ability IV", new ArrayList<Long>()));
         data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Gym Offense IV", new ArrayList<Double>()));
         data.add(new AbstractMap.SimpleEntry<String, ArrayList>("Gym Defense IV", new ArrayList<Long>()));
-      
+
         ChangeTableData(pokes);
     }
 
@@ -211,15 +213,15 @@ public class PokemonTableModel extends AbstractTableModel {
                     p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
             getColumnList(22).add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
             getColumnList(23).add(i.getValue(), (p.isFavorite()) ? "True" : "");
-            getColumnList(24).add(i.getValue(),PokemonUtils.duelAbility(p, false));
-            getColumnList(25).add(i.getValue(),PokemonUtils.gymOffense(p, false));
-            getColumnList(26).add(i.getValue(),PokemonUtils.gymDefense(p, false));
-            getColumnList(27).add(i.getValue(),PokemonUtils.moveRating(p, true));
-            getColumnList(28).add(i.getValue(),PokemonUtils.moveRating(p, false));
-            getColumnList(31).add(i.getValue(),PokemonUtils.duelAbility(p, true));
-            getColumnList(32).add(i.getValue(),PokemonUtils.gymOffense(p, true));
-            getColumnList(33).add(i.getValue(),PokemonUtils.gymDefense(p, false));
-            
+            getColumnList(24).add(i.getValue(), PokemonUtils.duelAbility(p, false));
+            getColumnList(25).add(i.getValue(), PokemonUtils.gymOffense(p, false));
+            getColumnList(26).add(i.getValue(), PokemonUtils.gymDefense(p, false));
+            getColumnList(27).add(i.getValue(), PokemonUtils.moveRating(p, true));
+            getColumnList(28).add(i.getValue(), PokemonUtils.moveRating(p, false));
+            getColumnList(31).add(i.getValue(), PokemonUtils.duelAbility(p, true));
+            getColumnList(32).add(i.getValue(), PokemonUtils.gymOffense(p, true));
+            getColumnList(33).add(i.getValue(), PokemonUtils.gymDefense(p, false));
+
             i.increment();
         });
 
@@ -235,7 +237,20 @@ public class PokemonTableModel extends AbstractTableModel {
 
     // Rounded down candies / toEvolve
     private int GetEvolvable(int candies, int candiesToEvolve) {
-        return (int) ((double) candies / candiesToEvolve);
+        int evolvable = (int) ((double) candies / candiesToEvolve);
+        int rest = (candies % candiesToEvolve);
+
+        // We iterate and get how many candies are added while evolving and if that can make up for some more evolves
+        int newEvolvable;
+        do {
+            int candyGiven = evolvable + ((ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) ? evolvable : 0);
+            newEvolvable = (int) ((double) (candyGiven + rest) / candiesToEvolve);
+            evolvable = evolvable + newEvolvable;
+            rest = (candyGiven + rest) % candiesToEvolve;
+        }
+        while (newEvolvable > 0);
+
+        return evolvable;
     }
 
     public Pokemon getPokemonByIndex(int i) {
