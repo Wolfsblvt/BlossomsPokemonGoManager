@@ -583,4 +583,8 @@ public class PokemonModel {
     public void setEvolvable(String evolvable) {
         this.evolvable.set(evolvable);
     }
+
+    public String getSummary() {
+        return getNickname() + " (" + getSpecies() + ")" + " IV: " + getIV() + " CP: " + getCp();
+    }
 }

@@ -1,5 +1,6 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
+import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

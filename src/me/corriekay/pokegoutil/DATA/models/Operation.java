@@ -12,18 +12,18 @@ import java.util.ArrayList;
 public class Operation {
     private OperationID id;
     private Integer delay;
-    private Pokemon pokemon;
+    private PokemonModel pokemonModel;
 
-    public Operation(OperationID id,Pokemon pokemon) {
+    public Operation(OperationID id,PokemonModel pokemon) {
         this.id = id;
         this.delay = setDelayForOperation(id);
-        this.pokemon = pokemon;
+        this.pokemonModel = pokemon;
     }
 
     public static ArrayList<Operation> makeOperationList(String operation, ObservableList<PokemonModel> list) {
         ArrayList<Operation> returnList = new ArrayList<>();
-        list.forEach(pokemonModel -> {
-            returnList.add(new Operation(OperationID.get(operation), pokemonModel.getPokemon()));
+        list.forEach(model -> {
+            returnList.add(new Operation(OperationID.get(operation), model));
         });
         return returnList;
     }
@@ -60,23 +60,24 @@ public class Operation {
     }
 
     public void execute(){
-        if(this.id == null || this.delay == 0 || this.pokemon == null)
+        if(this.id == null || this.delay == 0 || this.pokemonModel == null)
             return;
+        Pokemon p = this.pokemonModel.getPokemon();
         switch (this.id) {
             case RENAME:
-                rename(this.pokemon);
+                rename(p);
                 break;
             case TRANSFER:
-                transfer(this.pokemon);
+                transfer(p);
                 break;
             case POWERUP:
-                powerUp(this.pokemon);
+                powerUp(p);
                 break;
             case EVOLVE:
-                evolve(this.pokemon);
+                evolve(p);
                 break;
             case FAVORITE:
-                favorite(this.pokemon);
+                favorite(p);
                 break;
         }
     }
@@ -100,4 +101,8 @@ public class Operation {
         System.out.println("favorite");
     }
 
+    @Override
+    public String toString(){
+        return id.getActionName() + " " + pokemonModel.getSummary();
+    }
 }
