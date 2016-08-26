@@ -1,7 +1,7 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
-import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -19,9 +19,9 @@ import me.corriekay.pokegoutil.DATA.models.Operation;
 import java.io.IOException;
 import java.net.URL;
 
-public class OperationConfirmationController {
+public class OperationConfirmationController extends AnchorPane{
 
-    private final String fxmlLayout = "layout/ComfirmOperationWindow.fxml";
+    private final String fxmlLayout = "layout/ConfirmOperationWindow.fxml";
     private final URL icon;
     private ClassLoader classLoader = getClass().getClassLoader();
 
@@ -75,6 +75,20 @@ public class OperationConfirmationController {
 
     @FXML
     public void initialize(){
+        startBtn.setOnAction(this::startOperations);
+        pauseBtn.setOnAction(this::pauseOperations);
+        cancelBtn.setOnAction(this::cancelOperations);
+    }
 
+    private void startOperations(ActionEvent actionEvent) {
+        operationListView.getItems().forEach(operation -> operation.execute());
+        System.out.println("Batch Operation Done");
+    }
+
+    private void pauseOperations(ActionEvent actionEvent) {
+    }
+
+    private void cancelOperations(ActionEvent actionEvent) {
+        rootScene.getWindow().hide();
     }
 }

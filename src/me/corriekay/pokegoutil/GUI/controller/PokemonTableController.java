@@ -61,9 +61,7 @@ public class PokemonTableController extends GridPane {
         pokemonTableView.setItems(PokemonBagManager.getAllPokemon());
         pokemonTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         pokemonTableView.prefHeightProperty().bind(Bindings.size(pokemonTableView.getItems()).multiply(pokemonTableView.getFixedCellSize()).add(30));
-        pokemonTableView.getColumns().addListener((ListChangeListener) c -> {
-            saveOrderToConfig();
-        });
+        pokemonTableView.getColumns().addListener((ListChangeListener) c -> { saveOrderToConfig(); });
         initRightClickMenu();
     }
 

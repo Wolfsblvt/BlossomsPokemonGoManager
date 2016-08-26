@@ -63,6 +63,7 @@ public class Operation {
         if(this.id == null || this.delay == 0 || this.pokemonModel == null)
             return;
         Pokemon p = this.pokemonModel.getPokemon();
+        System.out.println(id.getActionVerbDuring() + " " + pokemonModel.getSummary());
         switch (this.id) {
             case RENAME:
                 rename(p);
@@ -80,25 +81,28 @@ public class Operation {
                 favorite(p);
                 break;
         }
+        System.out.println(id.getActionVerbFinished() + " " + pokemonModel.getSummary());
+        System.out.println("Waiting " + this.delay.toString() + " ms before next operation");
+        Utilities.sleep(this.delay);
     }
     private void rename(Pokemon pokemon) {
-        System.out.println("rename");
+        //System.out.println(id.getActionVerbDuring() + pokemonModel.getSummary());
     }
 
     private void transfer(Pokemon pokemon) {
-        System.out.println("transfer");
+        //System.out.println(id.getActionVerbDuring() + " " + pokemonModel.getSummary());
     }
 
     private void powerUp(Pokemon pokemon) {
-        System.out.println("powerup");
+        //System.out.println(id.getActionVerbDuring() + " " + pokemonModel.getSummary());
     }
 
     private void evolve(Pokemon pokemon) {
-        System.out.println("evolve");
+        //System.out.println(id.getActionVerbDuring() + " " + pokemonModel.getSummary());
     }
 
     private void favorite(Pokemon pokemon) {
-        System.out.println("favorite");
+        //System.out.println(id.getActionVerbDuring() + " " + pokemonModel.getSummary());
     }
 
     @Override

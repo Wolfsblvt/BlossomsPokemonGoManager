@@ -50,7 +50,7 @@ public final class Utilities {
         return c;
     }
 
-    public static void sleep(long milliseconds) {
+    public static void sleep(int milliseconds) {
         try {
             TimeUnit.MILLISECONDS.sleep(milliseconds);
         } catch (InterruptedException e) {
