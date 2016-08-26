@@ -102,9 +102,6 @@ public class MainWindowController extends BorderPane {
 
         pokemontableController = new PokemonTableController(pokemontable);
         stage.initStyle(StageStyle.DECORATED);
-        //stage.setResizable(false);
-        //stage.setMinHeight(480);
-        //stage.setMinWidth(640);
         stage.setScene(rootScene);
 
         BlossomsPoGoManager.setNewPrimaryStage(stage);

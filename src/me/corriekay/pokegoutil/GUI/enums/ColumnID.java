@@ -94,5 +94,4 @@ public enum ColumnID {
     public static ColumnID get(String title) {
         return titleMap.get(title);
     }
-
 }

@@ -1,22 +1,23 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
+import com.sun.javafx.collections.ObservableListWrapper;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.collections.ObservableListBase;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import me.corriekay.pokegoutil.DATA.managers.PokemonBagManager;
+import me.corriekay.pokegoutil.DATA.models.Operation;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.ColumnID;
+import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 
@@ -68,44 +69,26 @@ public class PokemonTableController extends GridPane {
 
     private void initRightClickMenu() {
         final ContextMenu cm = new ContextMenu();
-        MenuItem cmItem1 = new MenuItem("Transfer");
-        cmItem1.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                // transfer
-                System.out.println("transfer");
-            }
-        });
-        MenuItem cmItem2 = new MenuItem("Level");
-        cmItem2.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                // level
-                System.out.println("level");
-            }
-        });
-        MenuItem cmItem3 = new MenuItem("Evolve");
-        cmItem3.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                // evolve
-                System.out.println("evolve");
-            }
-        });
-        MenuItem cmItem4 = new MenuItem("Rename");
-        cmItem4.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e) {
-                // evolve
-                System.out.println("rename");
-            }
-        });
-        cm.getItems().add(cmItem1);
-        cm.getItems().add(cmItem2);
-        cm.getItems().add(cmItem3);
-        cm.getItems().add(cmItem4);
+        OperationID[] operations = OperationID.values();
+        for (int i = 0; i < operations.length; i++) {
+            final String actionName = operations[i].getActionName();
+            MenuItem cmItem = new MenuItem(actionName);
+            cmItem.setOnAction(e -> {
+                comfirmOperation(actionName);
+            });
+            cm.getItems().add(cmItem);
+        }
 
         pokemonTableView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
             if (e.getButton() == MouseButton.SECONDARY) {
                 cm.show(pokemonTableView, e.getScreenX(), e.getScreenY());
             }
         });
+    }
+
+    private void comfirmOperation(String operation){
+        ArrayList<Operation> operations = Operation.makeOperationList(operation,getSelectedItems());
+        new OperationConfirmationController(new ObservableListWrapper<>(operations));
     }
 
     private ArrayList<ColumnID> getColumnOrderFromConfig() {

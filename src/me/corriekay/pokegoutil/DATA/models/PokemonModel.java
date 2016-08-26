@@ -55,8 +55,10 @@ public class PokemonModel {
     private final StringProperty cpEvolved = new SimpleStringProperty();
     private final StringProperty evolvable = new SimpleStringProperty();
 
+    private final Pokemon pokemon;
+
     public PokemonModel(Pokemon p) {
-        super();
+        this.pokemon = p;
         PokemonMeta meta = p.getMeta() != null? p.getMeta():new PokemonMeta();
 
         setNumId(meta.getNumber());
@@ -172,6 +174,7 @@ public class PokemonModel {
 
     // Bunch of getters and setters
 
+    public Pokemon getPokemon() { return pokemon; }
 
     public int getNumId() {
         return numId.get();
