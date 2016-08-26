@@ -1,5 +1,6 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -12,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import me.corriekay.pokegoutil.DATA.managers.PokemonBagManager;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.ColumnID;
@@ -23,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PokemonTableController extends AnchorPane {
+public class PokemonTableController extends GridPane {
     private final String fxmlLayout = "layout/PokemonTable.fxml";
     private ClassLoader classLoader = getClass().getClassLoader();
 
@@ -35,7 +37,7 @@ public class PokemonTableController extends AnchorPane {
 
     private List<TableColumn<PokemonModel, ?>> columns = new ArrayList<>();
 
-    public PokemonTableController(AnchorPane pane) {
+    public PokemonTableController(GridPane pane) {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(classLoader.getResource(fxmlLayout));
         loader.setRoot(this);
@@ -57,6 +59,7 @@ public class PokemonTableController extends AnchorPane {
         pokemonTableView.getColumns().addAll(columns);
         pokemonTableView.setItems(PokemonBagManager.getAllPokemon());
         pokemonTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        pokemonTableView.prefHeightProperty().bind(Bindings.size(pokemonTableView.getItems()).multiply(pokemonTableView.getFixedCellSize()).add(30));
         pokemonTableView.getColumns().addListener((ListChangeListener) c -> {
             saveOrderToConfig();
         });

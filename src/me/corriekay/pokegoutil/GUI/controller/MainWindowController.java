@@ -15,8 +15,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -74,7 +74,7 @@ public class MainWindowController extends BorderPane {
     private Label nbItemsBagsLbl;
 
     @FXML
-    private AnchorPane pokemontable;
+    private GridPane pokemontable;
 
     @FXML
     private PokemonTableController pokemontableController;

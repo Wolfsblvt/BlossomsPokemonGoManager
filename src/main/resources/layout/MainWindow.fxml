@@ -46,51 +46,45 @@
                 <Label fx:id="nbItemsBagsLbl" text="###/### Items" />
             </children>
         </HBox>
-        <AnchorPane layoutY="57.0" AnchorPane.bottomAnchor="32.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="57.0">
-            <children>
-                <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <tabs>
-                        <Tab text="Pokémon">
-                            <content>
-                                <AnchorPane>
+        <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="57">
+            <tabs>
+                <Tab text="Pokémon" >
+                    <content>
+                        <AnchorPane>
+                            <children>
+                                <HBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
-                                        <HBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                            <children>
-                                                <TextField fx:id="searchField" promptText="Search..." />
-                                                <Button fx:id="selectBtn" text="Select" />
-                                            </children>
-                                        </HBox>
-                                        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
-                                            <children>
-                                                <Accordion>
-                                                    <panes>
-                                                        <TitledPane maxHeight="-Infinity" prefHeight="136.0" prefWidth="576.0" text="Filters" />
-                                                    </panes>
-                                                </Accordion>
-                                                <ScrollPane>
-                                                    <AnchorPane fx:id="pokemontable" />
-                                                </ScrollPane>
-                                            </children>
-                                        </VBox>
+                                        <TextField fx:id="searchField" promptText="Search..." />
+                                        <Button fx:id="selectBtn" text="Select" />
+                                    </children>
+                                </HBox>
+                                <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
+                                    <children>
+                                        <Accordion AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <panes>
+                                                <TitledPane maxHeight="-Infinity" prefHeight="136.0" prefWidth="576.0" text="Filters" />
+                                            </panes>
+                                        </Accordion>
+                                        <GridPane fx:id="pokemontable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                                     </children>
                                 </AnchorPane>
-                            </content>
-                        </Tab>
-                        <Tab text="Items">
-                            <content>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
+                <Tab text="Items">
+                    <content>
 
-                            </content>
-                        </Tab>
-                        <Tab text="LuckyEggGrinder">
-                            <content>
-                                <fx:include fx:id="luckyEggGrinderPane" source="LuckyEggGrinder.fxml" />
-                            </content>
-                        </Tab>
-                    </tabs>
-                </TabPane>
-            </children>
-        </AnchorPane>
-        <ToolBar fx:id="statusBar" maxHeight="-Infinity" prefHeight="27.0" prefWidth="576.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                    </content>
+                </Tab>
+                <Tab text="LuckyEggGrinder">
+                    <content>
+                        <fx:include fx:id="luckyEggGrinderPane" source="LuckyEggGrinder.fxml" />
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+        <ToolBar fx:id="statusBar" prefHeight="27.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <Label fx:id="statusBarLeftText" text="Status" />
         </ToolBar>
     </children>

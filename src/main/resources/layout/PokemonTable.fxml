@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.*?>
-<fx:root fx:id="pokemonTableViewRoot" type="javafx.scene.layout.AnchorPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<fx:root fx:id="pokemonTableViewRoot" maxHeight="1.7976931348623157E308" type="javafx.scene.layout.GridPane" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <TableView fx:id="pokemonTableView" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+        <TableView fx:id="pokemonTableView" fixedCellSize="25.0" maxHeight="Infinity" tableMenuButtonVisible="true" GridPane.columnIndex="0" GridPane.fillHeight="TRUE" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" />
     </children>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
 </fx:root>
