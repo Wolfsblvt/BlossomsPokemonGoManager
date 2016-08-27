@@ -38,6 +38,8 @@ public class MainWindowController extends BorderPane {
     private final String fxmlLayout = "layout/MainWindow.fxml";
     private final URL icon;
     private ClassLoader classLoader = getClass().getClassLoader();
+    
+    private AccountManager accountManager = AccountManager.getInstance();
 
     private Scene rootScene;
     @FXML
@@ -93,7 +95,7 @@ public class MainWindowController extends BorderPane {
         stage.getIcons().add(new Image(icon.toExternalForm()));
         try {
             NumberFormat f = NumberFormat.getInstance();
-            PlayerProfile pp = AccountManager.getPlayerProfile();
+            PlayerProfile pp = accountManager.getPlayerProfile();
             stage.setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
                     f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
         } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException | NullPointerException e) {
@@ -183,7 +185,7 @@ public class MainWindowController extends BorderPane {
 
     @FXML
     void onLogOffClicked(ActionEvent event) {
-        AccountManager.logOff();
+        accountManager.logOff();
         rootScene.getWindow().hide();
         new LoginController();
         BlossomsPoGoManager.getPrimaryStage().show();

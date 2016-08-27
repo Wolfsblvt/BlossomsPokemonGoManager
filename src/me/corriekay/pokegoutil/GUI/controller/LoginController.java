@@ -29,6 +29,10 @@ public class LoginController extends StackPane {
     private final URL icon;
     private ClassLoader classLoader = getClass().getClassLoader();
     private Scene rootScene;
+    
+    private AccountManager accountManager = AccountManager.getInstance();
+    
+    //UI elements
     @FXML
     private TextField usernameField;
 
@@ -72,19 +76,19 @@ public class LoginController extends StackPane {
 
     @FXML
     private void initialize() {
-        AccountManager.initialize();
+        AccountManager.getInstance();
 
         googleAuthBtn.setOnAction(this::onGoogleAuthBtnClicked);
         ptcLoginBtn.setOnAction(this::onPTCLoginBtnClicked);
         saveAuthChkbx.setOnAction(this::onAutoRelogChanged);
         getTokenBtn.setOnAction(this::onGetToken);
 
-        boolean saveCredentials = AccountManager.checkForSavedCredentials();
+        boolean saveCredentials = accountManager.checkForSavedCredentials();
         saveAuthChkbx.setSelected(saveCredentials);
 
         if (saveCredentials) {
-            LoginType loginType = AccountManager.checkSavedConfig();
-            LoginData loginData = AccountManager.getLoginData(loginType);
+            LoginType loginType = accountManager.checkSavedConfig();
+            LoginData loginData = accountManager.getLoginData(loginType);
 
             if (loginData.hasUsername()) {
                 usernameField.setText(loginData.getUsername());
@@ -104,15 +108,55 @@ public class LoginController extends StackPane {
         }
     }
 
+    private void onAutoRelogChanged(ActionEvent actionEvent) {
+        boolean saveCredentials = ((CheckBox) actionEvent.getSource()).isSelected();
+        accountManager.setSaveLogin(saveCredentials);
+        toggleFields(saveCredentials);
+    }
+
     private void onGetToken(ActionEvent actionEvent) {
         tokenField.setDisable(false);
         Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
     }
 
-    private void onAutoRelogChanged(ActionEvent actionEvent) {
-        boolean saveCredentials = ((CheckBox) actionEvent.getSource()).isSelected();
-        AccountManager.setSaveLogin(saveCredentials);
-        toggleFields(saveCredentials);
+    @FXML
+    void onGoogleAuthBtnClicked(ActionEvent event) {
+        try {
+            LoginData loginData = new LoginData();
+            loginData.setToken(tokenField.getText());
+            loginData.setLoginType(LoginType.GOOGLE);
+
+            accountManager.login(loginData);
+        } catch (Exception e) {
+            accountManager.alertFailedLogin(e.toString());
+        }
+        if (accountManager.isLoggedIn()) {
+            rootScene.getWindow().hide();
+            openMainWindow();
+        }
+    }
+
+    @FXML
+    void onPTCLoginBtnClicked(ActionEvent event) {
+        try {
+            LoginData loginData = new LoginData();
+            loginData.setUsername(usernameField.getText());
+            loginData.setPassword(passwordField.getText());
+            loginData.setLoginType(LoginType.PTC);
+            
+            accountManager.login(loginData);
+        } catch (Exception e) {
+            accountManager.alertFailedLogin(e.getMessage());
+        }
+        if (accountManager.isLoggedIn()) {
+            rootScene.getWindow().hide();
+            openMainWindow();
+        }
+    }
+
+    void openMainWindow() {
+        new MainWindowController();
+        BlossomsPoGoManager.getPrimaryStage().show();
     }
 
     private void toggleFields(boolean save) {
@@ -132,45 +176,5 @@ public class LoginController extends StackPane {
             tokenField.setDisable(true);
 
         getTokenBtn.setDisable(false);
-    }
-
-    @FXML
-    void onGoogleAuthBtnClicked(ActionEvent event) {
-        try {
-            LoginData loginData = new LoginData();
-            loginData.setToken(tokenField.getText());
-            loginData.setLoginType(LoginType.GOOGLE);
-
-            AccountManager.login(loginData);
-        } catch (Exception e) {
-            AccountManager.alertFailedLogin(e.toString());
-        }
-        if (AccountManager.isLoggedIn()) {
-            rootScene.getWindow().hide();
-            openMainWindow();
-        }
-    }
-
-    @FXML
-    void onPTCLoginBtnClicked(ActionEvent event) {
-        try {
-            LoginData loginData = new LoginData();
-            loginData.setUsername(usernameField.getText());
-            loginData.setPassword(passwordField.getText());
-            loginData.setLoginType(LoginType.PTC);
-            
-            AccountManager.login(loginData);
-        } catch (Exception e) {
-            AccountManager.alertFailedLogin(e.getMessage());
-        }
-        if (AccountManager.isLoggedIn()) {
-            rootScene.getWindow().hide();
-            openMainWindow();
-        }
-    }
-
-    void openMainWindow() {
-        new MainWindowController();
-        BlossomsPoGoManager.getPrimaryStage().show();
     }
 }

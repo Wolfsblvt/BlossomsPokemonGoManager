@@ -19,9 +19,8 @@ import okhttp3.OkHttpClient;
  */
 public final class AccountManager {
 
-    private static final AccountManager S_INSTANCE = new AccountManager();
-    private static boolean sIsInit = false;
-    private static ConfigNew config = ConfigNew.getConfig();
+    private static AccountManager S_INSTANCE;
+    private ConfigNew config = ConfigNew.getConfig();
 
     private PokemonGo go = null;
     private boolean loggedIn = false;
@@ -30,13 +29,15 @@ public final class AccountManager {
 
     }
 
-    public static void initialize() {
-        if (sIsInit)
-            return;
-        sIsInit = true;
+    public static AccountManager getInstance() {
+        if (S_INSTANCE == null) {
+            S_INSTANCE = new AccountManager();
+            //DO any required initialization stuff here
+        }
+        return S_INSTANCE;
     }
 
-    public static void login(LoginData loginData) throws Exception {
+    public void login(LoginData loginData) throws Exception {
               
         switch (loginData.getLoginType()) {
             case GOOGLE:
@@ -49,10 +50,7 @@ public final class AccountManager {
         }
     }
 
-    private static void logOnPTC(String username, String password) throws Exception {
-        if (!sIsInit) {
-            throw new ExceptionInInitializerError("AccountController needs to be initialized before logging on");
-        }
+    private void logOnPTC(String username, String password) throws Exception {
         OkHttpClient http;
         CredentialProvider cp;
         PokemonGo go;
@@ -89,10 +87,7 @@ public final class AccountManager {
         S_INSTANCE.loggedIn = true;
     }
 
-    private static void logOnGoogleAuth(String authCode) {
-        if (!sIsInit) {
-            throw new ExceptionInInitializerError("AccountController needs to be initialized before logging on");
-        }
+    private void logOnGoogleAuth(String authCode) {
         OkHttpClient http;
         CredentialProvider cp;
         PokemonGo go;
@@ -143,13 +138,13 @@ public final class AccountManager {
         S_INSTANCE.loggedIn = true;
     }
 
-    private static void initOtherControllers(PokemonGo go) {
+    private void initOtherControllers(PokemonGo go) {
         InventoryManager.initialize(go);
         PokemonBagManager.initialize(go);
         ProfileManager.initialize(go);
     }
 
-    public static void alertFailedLogin(String message) {
+    public void alertFailedLogin(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error Login");
         alert.setHeaderText("Unfortunately, your login has failed");
@@ -157,7 +152,7 @@ public final class AccountManager {
         alert.showAndWait();
     }
 
-    public static LoginData getLoginData(LoginType type) {
+    public LoginData getLoginData(LoginType type) {
         LoginData loginData = new LoginData();
         
         switch (type) {
@@ -178,11 +173,11 @@ public final class AccountManager {
         return loginData;
     }
 
-    private static void deleteLoginData(LoginType type) {
+    private void deleteLoginData(LoginType type) {
         deleteLoginData(type, false);
     }
 
-    private static void deleteLoginData(LoginType type, boolean justCleanup) {
+    private void deleteLoginData(LoginType type, boolean justCleanup) {
         if (!justCleanup) config.delete(ConfigKey.LOGIN_SAVE_AUTH);
         switch (type) {
             case BOTH:
@@ -201,14 +196,14 @@ public final class AccountManager {
         }
     }
 
-    public static boolean checkForSavedCredentials() {
+    public boolean checkForSavedCredentials() {
         LoginType savedLogin = checkSavedConfig();
         // TODO: Implement choose if you want to login with that saved data
         if (savedLogin == LoginType.NONE) return false;
         else return true;
     }
 
-    public static LoginType checkSavedConfig() {
+    public LoginType checkSavedConfig() {
         if (!config.getBool(ConfigKey.LOGIN_SAVE_AUTH)) {
             return LoginType.NONE;
         } else {
@@ -221,19 +216,19 @@ public final class AccountManager {
         }
     }
 
-    public static PlayerProfile getPlayerProfile() {
+    public PlayerProfile getPlayerProfile() {
         return S_INSTANCE.go != null ? S_INSTANCE.go.getPlayerProfile() : null;
     }
 
-    public static void logOff() {
+    public void logOff() {
         S_INSTANCE.loggedIn = false;
     }
 
-    public static boolean isLoggedIn() {
+    public boolean isLoggedIn() {
         return S_INSTANCE.loggedIn;
     }
 
-    public static void setSaveLogin(boolean save){
+    public void setSaveLogin(boolean save){
         config.setBool(ConfigKey.LOGIN_SAVE_AUTH, save);
     }
 }
