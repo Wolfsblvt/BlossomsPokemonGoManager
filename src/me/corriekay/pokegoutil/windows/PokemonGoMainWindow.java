@@ -32,23 +32,19 @@ public class PokemonGoMainWindow extends JFrame {
         pp = go.getPlayerProfile();
 
         console.clearAllLines();
-        try {
-            System.out.println(String.format("Successfully logged in. Welcome, %s.", pp.getPlayerData().getUsername()));
-            System.out.println(String.format("Stats: Lvl %d %s player.",
-                    pp.getStats().getLevel(),
-                    PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue())));
 
-            String msg = String.format("Pokédex - Types Caught: %d, ", pp.getStats().getUniquePokedexEntries());
-            msg += String.format("Total Pokémon Caught: %d, ", pp.getStats().getPokemonsCaptured());
-            msg += String.format("Total Current Pokémon: %d (+%d Eggs)",
-                    go.getInventories().getPokebank().getPokemons().size(),
-                    go.getInventories().getHatchery().getEggs().size());
-            System.out.println(msg);
+        System.out.println(String.format("Successfully logged in. Welcome, %s.", pp.getPlayerData().getUsername()));
+        System.out.println(String.format("Stats: Lvl %d %s player.",
+                pp.getStats().getLevel(),
+                PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue())));
 
-        } catch (RemoteServerException | LoginFailedException e) {
-            // System.out.println("Unable to login!");
-            // e.printStackTrace();
-        }
+        String msg = String.format("Pokédex - Types Caught: %d, ", pp.getStats().getUniquePokedexEntries());
+        msg += String.format("Total Pokémon Caught: %d, ", pp.getStats().getPokemonsCaptured());
+        msg += String.format("Total Current Pokémon: %d (+%d Eggs)",
+                go.getInventories().getPokebank().getPokemons().size(),
+                go.getInventories().getHatchery().getEggs().size());
+        System.out.println(msg);
+
         refreshTitle();
         setLayout(new BorderLayout());
         setIconImage(FileHelper.loadImage("icon/PokeBall-icon.png"));
@@ -96,14 +92,11 @@ public class PokemonGoMainWindow extends JFrame {
     }
 
     public void refreshTitle() {
-        try {
-            NumberFormat f = NumberFormat.getInstance();
-            setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager",
-                    pp.getPlayerData().getUsername(),
-                    f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
-        } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException e) {
-            setTitle("Blossom's Pokémon Go Manager");
-        }
+
+        NumberFormat f = NumberFormat.getInstance();
+        setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager",
+                pp.getPlayerData().getUsername(),
+                f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
     }
 
     public void start() {

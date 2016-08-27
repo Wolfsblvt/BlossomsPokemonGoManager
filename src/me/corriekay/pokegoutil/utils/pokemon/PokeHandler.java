@@ -197,7 +197,7 @@ public class PokeHandler {
             @Override
             public String get(Pokemon p) {
                 PokemonFamilyId familyId = p.getPokemonFamily();
-                PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
+                PokemonId highestFamilyId = PokemonMetaRegistry.getHighestForFamily(familyId);
                 int iv_attack = p.getIndividualAttack();
                 int iv_defense = p.getIndividualDefense();
                 int iv_stamina = p.getIndividualStamina();

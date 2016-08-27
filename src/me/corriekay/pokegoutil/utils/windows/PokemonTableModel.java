@@ -146,7 +146,7 @@ public class PokemonTableModel extends AbstractTableModel {
 
             // Max CP calculation for highest evolution of current Pokemon
             PokemonFamilyId familyId = p.getPokemonFamily();
-            PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
+            PokemonId highestFamilyId = PokemonMetaRegistry.getHighestForFamily(familyId);
 
             // Eeveelutions exception handling
             if (familyId.getNumber() == PokemonFamilyId.FAMILY_EEVEE.getNumber()) {

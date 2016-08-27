@@ -177,9 +177,10 @@ public final class AccountController {
             UIManager.put("OptionPane.okButtonText", "Ok");
             UIManager.put("OptionPane.cancelButtonText", "Cancel");
 
+            go = new PokemonGo(http);
             if (cp != null)
                 try {
-                    go = new PokemonGo(cp, http);
+                    go.login(cp);
                 } catch (LoginFailedException | RemoteServerException e) {
                     alertFailedLogin(e.getMessage());
                     deleteLoginData(LoginType.BOTH);

@@ -138,7 +138,7 @@ public final class AccountManager {
         }
 
         try {
-            prepareLogin(cp, http);
+            prepareLogin(http, cp);
             return new LoginResult();
         } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.BOTH);
@@ -169,7 +169,7 @@ public final class AccountManager {
         }
 
         try {
-            prepareLogin(cp, http);
+            prepareLogin(http,cp);
             return new LoginResult();
         } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.BOTH);
@@ -178,9 +178,10 @@ public final class AccountManager {
 
     }
 
-    private void prepareLogin(CredentialProvider cp, OkHttpClient http)
+    private void prepareLogin(OkHttpClient http, CredentialProvider cp)
             throws LoginFailedException, RemoteServerException {
-        go = new PokemonGo(cp, http);
+        go = new PokemonGo(http);
+        go.login(cp);
         initOtherControllers();
     }
 
