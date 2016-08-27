@@ -34,7 +34,7 @@ public class LoginController extends StackPane {
 
     private AccountManager accountManager = AccountManager.getInstance();
 
-    private LoginData configLoginData;
+    private LoginData configLoginData = new LoginData();
 
     // UI elements
     @FXML
