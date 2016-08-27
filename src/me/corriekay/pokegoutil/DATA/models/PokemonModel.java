@@ -55,7 +55,8 @@ public class PokemonModel {
     private final StringProperty cpEvolved = new SimpleStringProperty();
     private final StringProperty evolvable = new SimpleStringProperty();
 
-    private final Pokemon pokemon;
+    private final Pokemon pokemon;    
+    private AccountManager accountManager = AccountManager.getInstance();  
 
     public PokemonModel(Pokemon p) {
         this.pokemon = p;
@@ -82,7 +83,7 @@ public class PokemonModel {
 
         int trainerLevel = 1;
         try {
-            trainerLevel = AccountManager.getPlayerProfile().getStats().getLevel();
+            trainerLevel = accountManager.getPlayerProfile().getStats().getLevel();
         } catch (Exception e1) {
             System.out.println("Error: Cannot find meta data for trainer level");
         }
