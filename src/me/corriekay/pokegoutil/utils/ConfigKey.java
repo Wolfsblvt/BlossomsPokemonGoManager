@@ -21,6 +21,8 @@ public enum ConfigKey {
     SORT_COLINDEX_2("options.sort.2.colIndex", 12, Integer.class),
     SORT_ORDER_2("options.sort.2.order", SortOrder.DESCENDING.toString(), String.class),
 
+    COLUMN_ORDER_POKEMON_TABLE("options.column.pokemontable", null, String.class),
+
     TRANSFER_AFTER_EVOLVE("settings.transferAfterEvolve", false, Boolean.class),
     SHOW_BULK_POPUP("settings.popupAfterBulk", true, Boolean.class),
     INCLUDE_FAMILY("settings.includeFamily", true, Boolean.class),

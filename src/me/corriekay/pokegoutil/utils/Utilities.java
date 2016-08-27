@@ -50,7 +50,7 @@ public final class Utilities {
         return c;
     }
 
-    public static void sleep(long milliseconds) {
+    public static void sleep(int milliseconds) {
         try {
             TimeUnit.MILLISECONDS.sleep(milliseconds);
         } catch (InterruptedException e) {
@@ -59,15 +59,19 @@ public final class Utilities {
     }
 
     public static void sleepRandom(int minMilliseconds, int maxMilliseconds) {
-        int from = Math.max(minMilliseconds, maxMilliseconds);
-        int to = Math.min(minMilliseconds, maxMilliseconds);
         try {
-            int randomInt = random.nextInt((from - to) + 1) + to;
+            int randomInt = getRandom(minMilliseconds,maxMilliseconds);
             System.out.println("Waiting " + (randomInt / 1000.0F) + " seconds.");
             TimeUnit.MILLISECONDS.sleep(randomInt);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static int getRandom(int minMilliseconds, int maxMilliseconds) {
+        int from = Math.max(minMilliseconds, maxMilliseconds);
+        int to = Math.min(minMilliseconds, maxMilliseconds);
+        return random.nextInt((from - to) + 1) + to;
     }
 
     public static String getRealExceptionMessage(Exception e) {
