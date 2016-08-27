@@ -45,7 +45,6 @@ public class ChooseGuiWindowController extends Pane {
         icon = classLoader.getResource("icon/PokeBall-icon.png");
         stage.getIcons().add(new Image(icon.toExternalForm()));
         stage.setTitle("Choose a GUI");
-        stage.initStyle(StageStyle.UTILITY);
         stage.setResizable(false);
 
         BlossomsPoGoManager.setNewPrimaryStage(stage);

@@ -7,6 +7,8 @@ import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+
+import me.corriekay.pokegoutil.DATA.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
@@ -286,12 +288,5 @@ public final class AccountController {
 
     public static PlayerProfile getPlayerProfile() {
         return S_INSTANCE.go != null ? S_INSTANCE.go.getPlayerProfile() : null;
-    }
-
-    public enum LoginType {
-        GOOGLE,
-        PTC,
-        BOTH,
-        NONE
     }
 }
