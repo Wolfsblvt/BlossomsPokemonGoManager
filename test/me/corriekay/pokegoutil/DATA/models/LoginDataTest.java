@@ -68,7 +68,4 @@ public class LoginDataTest {
     public void TestPTCIsValid(){
         assertThat(loginData.isValidPTCLogin(), is(expectedPTCIsValid));
     }
-    
-    
-
 }
