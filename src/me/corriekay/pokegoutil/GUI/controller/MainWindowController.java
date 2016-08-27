@@ -93,14 +93,11 @@ public class MainWindowController extends BorderPane {
         Stage stage = new Stage();
         icon = classLoader.getResource("icon/PokeBall-icon.png");
         stage.getIcons().add(new Image(icon.toExternalForm()));
-        try {
-            NumberFormat f = NumberFormat.getInstance();
-            PlayerProfile pp = accountManager.getPlayerProfile();
-            stage.setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
-                    f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
-        } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException | NullPointerException e) {
-            stage.setTitle("Blossom's Pokémon Go Manager");
-        }
+
+        NumberFormat f = NumberFormat.getInstance();
+        PlayerProfile pp = accountManager.getPlayerProfile();
+        stage.setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
+                f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
 
         pokemontableController = new PokemonTableController(pokemontable);
         stage.initStyle(StageStyle.DECORATED);

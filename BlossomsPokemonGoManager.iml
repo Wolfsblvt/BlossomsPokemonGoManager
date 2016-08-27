@@ -10,12 +10,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.github.Grover-c13:PokeGOAPI-Java:Development-0.2-g13af2ac-290" level="project" />
-    <orderEntry type="library" name="Maven: svarzee.gps:gpsoauth:0.3" level="project" />
-    <orderEntry type="library" name="Maven: com.squareup.okhttp3:okhttp:3.4.1" level="project" />
-    <orderEntry type="library" name="Maven: io.reactivex:rxjava:1.1.8" level="project" />
-    <orderEntry type="library" name="Maven: net.jpountz.lz4:lz4:1.3.0" level="project" />
-    <orderEntry type="library" name="Maven: com.github.Grover-c13:PokeGOAPI-Java:Development-0.2-g13af2ac-290" level="project" />
+    <orderEntry type="library" name="Maven: com.github.Grover-c13:PokeGOAPI-Java:Development-0.2-g1966c89-306" level="project" />
     <orderEntry type="library" name="Maven: svarzee.gps:gpsoauth:0.3" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okio:okio:1.9.0" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.moshi:moshi:1.2.0" level="project" />
@@ -26,5 +21,7 @@
     <orderEntry type="library" name="Maven: net.jpountz.lz4:lz4:1.3.0" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20160212" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.4" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.3" level="project" />
   </component>
 </module>
