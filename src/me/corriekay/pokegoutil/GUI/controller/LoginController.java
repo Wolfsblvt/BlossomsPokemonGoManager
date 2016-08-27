@@ -78,6 +78,14 @@ public class LoginController extends StackPane {
         BlossomsPoGoManager.setNewPrimaryStage(stage);
     }
 
+    private void alertFailedLogin(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error Login");
+        alert.setHeaderText("Unfortunately, your login has failed");
+        alert.setContentText(message != null ? message : "" + "\nPress OK to try again.");
+        alert.showAndWait();
+    }
+
     @FXML
     private void initialize() {
         configLoginData = accountManager.getLoginData();
@@ -146,29 +154,6 @@ public class LoginController extends StackPane {
         tryLogin(loginData);
     }
 
-    private void tryLogin(LoginData loginData) {
-        try {
-            LoginResult loginResult = accountManager.login(loginData);
-
-            if (loginResult.isSuccess()) {
-                rootScene.getWindow().hide();
-                openMainWindow();
-            } else {
-                alertFailedLogin(loginResult.getErrorMessage());
-            }
-        } catch (Exception e) {
-            alertFailedLogin(e.toString());
-        }
-    }
-
-    private void alertFailedLogin(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error Login");
-        alert.setHeaderText("Unfortunately, your login has failed");
-        alert.setContentText(message != null ? message : "" + "\nPress OK to try again.");
-        alert.showAndWait();
-    }
-
     void openMainWindow() {
         new MainWindowController();
         BlossomsPoGoManager.getPrimaryStage().show();
@@ -191,5 +176,20 @@ public class LoginController extends StackPane {
             tokenField.setDisable(true);
 
         getTokenBtn.setDisable(false);
+    }
+
+    private void tryLogin(LoginData loginData) {
+        try {
+            LoginResult loginResult = accountManager.login(loginData);
+
+            if (loginResult.isSuccess()) {
+                rootScene.getWindow().hide();
+                openMainWindow();
+            } else {
+                alertFailedLogin(loginResult.getErrorMessage());
+            }
+        } catch (Exception e) {
+            alertFailedLogin(e.toString());
+        }
     }
 }

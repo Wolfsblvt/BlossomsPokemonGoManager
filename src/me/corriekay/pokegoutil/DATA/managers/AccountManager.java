@@ -20,6 +20,7 @@ import okhttp3.OkHttpClient;
 public final class AccountManager {
 
     private static AccountManager S_INSTANCE;
+
     public static AccountManager getInstance() {
         if (S_INSTANCE == null) {
             S_INSTANCE = new AccountManager();
@@ -64,8 +65,8 @@ public final class AccountManager {
                 config.getString(ConfigKey.LOGIN_PTC_USERNAME),
                 config.getString(ConfigKey.LOGIN_PTC_PASSWORD),
                 config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN));
-        
-        if(loginData.isValidGoogleLogin()){
+
+        if (loginData.isValidGoogleLogin()) {
             loginData.setSavedToken(true);
         }
 
@@ -166,7 +167,7 @@ public final class AccountManager {
             deleteLoginData(LoginType.PTC);
             return new LoginResult(e.getMessage());
         }
-        
+
         try {
             prepareLogin(cp, http);
             return new LoginResult();
