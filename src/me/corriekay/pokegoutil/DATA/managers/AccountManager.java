@@ -56,7 +56,6 @@ public final class AccountManager {
     private LoginResult logOnPTC(LoginData loginData) throws Exception {
         OkHttpClient http;
         CredentialProvider cp;
-        PokemonGo go;
         http = new OkHttpClient();
 
         String username = loginData.getUsername();
@@ -77,10 +76,7 @@ public final class AccountManager {
         }
 
         try {
-            go = new PokemonGo(cp, http);
-            S_INSTANCE.go = go;
-            initOtherControllers(go);
-
+            prepareLogin(cp, http);
             return new LoginResult();
         } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.BOTH);
@@ -92,7 +88,6 @@ public final class AccountManager {
     private LoginResult logOnGoogleAuth(LoginData loginData) {
         OkHttpClient http;
         CredentialProvider cp;
-        PokemonGo go;
         http = new OkHttpClient();
 
         String authCode = loginData.getToken();
@@ -127,10 +122,7 @@ public final class AccountManager {
         }
 
         try {
-            go = new PokemonGo(cp, http);
-            S_INSTANCE.go = go;
-            initOtherControllers(go);
-
+            prepareLogin(cp, http);
             return new LoginResult();
         } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.BOTH);
@@ -216,6 +208,13 @@ public final class AccountManager {
             }
             return LoginType.NONE;
         }
+    }
+
+    private void prepareLogin(CredentialProvider cp, OkHttpClient http)
+            throws LoginFailedException, RemoteServerException {
+        go = new PokemonGo(cp, http);
+        S_INSTANCE.go = go;
+        initOtherControllers(go);
     }
 
     public PlayerProfile getPlayerProfile() {
