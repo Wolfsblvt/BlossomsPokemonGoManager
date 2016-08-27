@@ -13,18 +13,14 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Pair;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
+import me.corriekay.pokegoutil.DATA.enums.LoginType;
 import me.corriekay.pokegoutil.DATA.managers.AccountManager;
-import me.corriekay.pokegoutil.DATA.managers.AccountManager.LoginType;
 import me.corriekay.pokegoutil.DATA.models.LoginData;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class LoginController extends StackPane {
 
@@ -77,34 +73,34 @@ public class LoginController extends StackPane {
     @FXML
     private void initialize() {
         AccountManager.initialize();
-        
+
         googleAuthBtn.setOnAction(this::onGoogleAuthBtnClicked);
         ptcLoginBtn.setOnAction(this::onPTCLoginBtnClicked);
         saveAuthChkbx.setOnAction(this::onAutoRelogChanged);
         getTokenBtn.setOnAction(this::onGetToken);
-                
+
         boolean saveCredentials = AccountManager.checkForSavedCredentials();
         saveAuthChkbx.setSelected(saveCredentials);
-                
+
         if (saveCredentials) {
             LoginType loginType = AccountManager.checkSavedConfig();
             LoginData loginData = AccountManager.getLoginData(loginType);
-            
-            if(loginData.hasUsername()){
+
+            if (loginData.hasUsername()) {
                 usernameField.setText(loginData.getUsername());
                 usernameField.setDisable(true);
             }
-            
-            if(loginData.hasPassword()){
+
+            if (loginData.hasPassword()) {
                 passwordField.setText(loginData.getPassword());
                 passwordField.setDisable(true);
             }
-            
-            if(loginData.hasToken()){
+
+            if (loginData.hasToken()) {
                 tokenField.setText("Using Previous Token");
                 tokenField.setDisable(true);
                 getTokenBtn.setDisable(true);
-            }      
+            }
         }
     }
 
@@ -141,10 +137,11 @@ public class LoginController extends StackPane {
     @FXML
     void onGoogleAuthBtnClicked(ActionEvent event) {
         try {
-            AccountManager.login(
-                    Collections.singletonList(
-                            new Pair<>("token", tokenField.getText())),
-                    LoginType.GOOGLE);
+            LoginData loginData = new LoginData();
+            loginData.setToken(tokenField.getText());
+            loginData.setLoginType(LoginType.GOOGLE);
+
+            AccountManager.login(loginData);
         } catch (Exception e) {
             AccountManager.alertFailedLogin(e.toString());
         }
@@ -157,8 +154,12 @@ public class LoginController extends StackPane {
     @FXML
     void onPTCLoginBtnClicked(ActionEvent event) {
         try {
-            AccountManager.login(Arrays.asList(new Pair<>("username", usernameField.getText()),
-                    new Pair<>("password", passwordField.getText())), LoginType.PTC);
+            LoginData loginData = new LoginData();
+            loginData.setUsername(usernameField.getText());
+            loginData.setPassword(passwordField.getText());
+            loginData.setLoginType(LoginType.PTC);
+            
+            AccountManager.login(loginData);
         } catch (Exception e) {
             AccountManager.alertFailedLogin(e.getMessage());
         }

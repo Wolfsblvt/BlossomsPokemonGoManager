@@ -8,13 +8,11 @@ import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import javafx.scene.control.Alert;
-import javafx.util.Pair;
+import me.corriekay.pokegoutil.DATA.enums.LoginType;
 import me.corriekay.pokegoutil.DATA.models.LoginData;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import okhttp3.OkHttpClient;
-
-import java.util.List;
 
 /*this controller does the login/log off, and different account information (aka player data)
  *
@@ -27,9 +25,6 @@ public final class AccountManager {
 
     private PokemonGo go = null;
     private boolean loggedIn = false;
-    private String username;
-    private String password;
-    private String token;
 
     private AccountManager() {
 
@@ -41,23 +36,14 @@ public final class AccountManager {
         sIsInit = true;
     }
 
-    public static void login(List<Pair> loginData, LoginType loginType) throws Exception {
-        loginData.forEach(pair -> {
-            switch (pair.getKey().toString()) {
-                case "username":
-                    S_INSTANCE.username = pair.getValue().toString();
-                case "password":
-                    S_INSTANCE.password = pair.getValue().toString();
-                case "token":
-                    S_INSTANCE.token = pair.getValue().toString();
-            }
-        });
-        switch (loginType) {
+    public static void login(LoginData loginData) throws Exception {
+              
+        switch (loginData.getLoginType()) {
             case GOOGLE:
-                logOnGoogleAuth(S_INSTANCE.token);
+                logOnGoogleAuth(loginData.getToken());
                 break;
             case PTC:
-                logOnPTC(S_INSTANCE.username, S_INSTANCE.password);
+                logOnPTC(loginData.getUsername(), loginData.getPassword());
                 break;
             default:
         }
@@ -249,12 +235,5 @@ public final class AccountManager {
 
     public static void setSaveLogin(boolean save){
         config.setBool(ConfigKey.LOGIN_SAVE_AUTH, save);
-    }
-
-    public enum LoginType {
-        GOOGLE,
-        PTC,
-        BOTH,
-        NONE
     }
 }
