@@ -1,8 +1,6 @@
 package me.corriekay.pokegoutil.DATA.managers;
 
 import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
 import javafx.collections.ObservableList;
 import me.corriekay.pokegoutil.DATA.models.PokemonBag;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
