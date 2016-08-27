@@ -17,6 +17,7 @@ import javafx.util.Pair;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.DATA.managers.AccountManager;
 import me.corriekay.pokegoutil.DATA.managers.AccountManager.LoginType;
+import me.corriekay.pokegoutil.DATA.models.LoginData;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 
 import java.io.IOException;
@@ -76,31 +77,34 @@ public class LoginController extends StackPane {
     @FXML
     private void initialize() {
         AccountManager.initialize();
-        boolean saveCredentials = AccountManager.checkForSavedCredentials();
+        
         googleAuthBtn.setOnAction(this::onGoogleAuthBtnClicked);
         ptcLoginBtn.setOnAction(this::onPTCLoginBtnClicked);
-        saveAuthChkbx.setSelected(saveCredentials);
         saveAuthChkbx.setOnAction(this::onAutoRelogChanged);
         getTokenBtn.setOnAction(this::onGetToken);
-        if(saveCredentials){
+                
+        boolean saveCredentials = AccountManager.checkForSavedCredentials();
+        saveAuthChkbx.setSelected(saveCredentials);
+                
+        if (saveCredentials) {
             LoginType loginType = AccountManager.checkSavedConfig();
-            List<Pair> loginData = AccountManager.getLoginData(loginType);
-            if (loginData != null && !loginData.isEmpty()) {
-                loginData.forEach(pair -> {
-                    switch (pair.getKey().toString()) {
-                        case "username":
-                            usernameField.setText(pair.getValue().toString());
-                            usernameField.setDisable(true);
-                        case "password":
-                            passwordField.setText(pair.getValue().toString());
-                            passwordField.setDisable(true);
-                        case "token":
-                            tokenField.setText("Using Previous Token");
-                            tokenField.setDisable(true);
-                            getTokenBtn.setDisable(true);
-                    }
-                });
+            LoginData loginData = AccountManager.getLoginData(loginType);
+            
+            if(loginData.hasUsername()){
+                usernameField.setText(loginData.getUsername());
+                usernameField.setDisable(true);
             }
+            
+            if(loginData.hasPassword()){
+                passwordField.setText(loginData.getPassword());
+                passwordField.setDisable(true);
+            }
+            
+            if(loginData.hasToken()){
+                tokenField.setText("Using Previous Token");
+                tokenField.setDisable(true);
+                getTokenBtn.setDisable(true);
+            }      
         }
     }
 
@@ -110,23 +114,23 @@ public class LoginController extends StackPane {
     }
 
     private void onAutoRelogChanged(ActionEvent actionEvent) {
-        boolean saveCredentials = ((CheckBox)actionEvent.getSource()).isSelected();
+        boolean saveCredentials = ((CheckBox) actionEvent.getSource()).isSelected();
         AccountManager.setSaveLogin(saveCredentials);
         toggleFields(saveCredentials);
     }
 
-    private void toggleFields(boolean save){
-        if(usernameField.getText().isEmpty() || !save)
+    private void toggleFields(boolean save) {
+        if (usernameField.getText().isEmpty() || !save)
             usernameField.setDisable(false);
         else
             usernameField.setDisable(true);
 
-        if(passwordField.getText().isEmpty() || !save)
+        if (passwordField.getText().isEmpty() || !save)
             passwordField.setDisable(false);
         else
             passwordField.setDisable(true);
 
-        if(tokenField.getText().isEmpty() || !save)
+        if (tokenField.getText().isEmpty() || !save)
             tokenField.setDisable(false);
         else
             tokenField.setDisable(true);
@@ -137,7 +141,10 @@ public class LoginController extends StackPane {
     @FXML
     void onGoogleAuthBtnClicked(ActionEvent event) {
         try {
-            AccountManager.login(Collections.singletonList(new Pair<>("token", tokenField.getText())), LoginType.GOOGLE);
+            AccountManager.login(
+                    Collections.singletonList(
+                            new Pair<>("token", tokenField.getText())),
+                    LoginType.GOOGLE);
         } catch (Exception e) {
             AccountManager.alertFailedLogin(e.toString());
         }

@@ -9,12 +9,11 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import javafx.scene.control.Alert;
 import javafx.util.Pair;
+import me.corriekay.pokegoutil.DATA.models.LoginData;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import okhttp3.OkHttpClient;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /*this controller does the login/log off, and different account information (aka player data)
@@ -172,26 +171,25 @@ public final class AccountManager {
         alert.showAndWait();
     }
 
-    public static List<Pair> getLoginData(LoginType type) {
+    public static LoginData getLoginData(LoginType type) {
+        LoginData loginData = new LoginData();
+        
         switch (type) {
             case GOOGLE:
-                String token = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
-                return (token != null) ? Collections.singletonList(
-                        new Pair<>("token", token)) : null;
+                 loginData.setToken(config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN));
+                 break;
             case PTC:
-                String username = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
-                String password = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
-                return (username != null && password != null) ? Arrays.asList(
-                        new Pair<>("username", username), new Pair<>("password", password)) : null;
+                loginData.setUsername(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
+                loginData.setPassword(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
+                break;
             case BOTH:
-                String token2 = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
-                String username2 = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
-                String password2 = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
-                return (username2 != null && password2 != null && token2 != null) ? Arrays.asList(
-                        new Pair<>("username", username2), new Pair<>("password", password2), new Pair<>("token", token2)) : null;
+                loginData.setToken(config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN));
+                loginData.setUsername(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
+                loginData.setPassword(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
+                break;
             default:
-                return null;
-        }
+        }        
+        return loginData;
     }
 
     private static void deleteLoginData(LoginType type) {
