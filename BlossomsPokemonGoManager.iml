@@ -10,7 +10,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.github.Grover-c13:PokeGOAPI-Java:Development-0.2-g1966c89-306" level="project" />
+    <orderEntry type="library" name="Maven: com.github.Grover-c13:PokeGOAPI-Java:Development-0.2-g13af2ac-290" level="project" />
     <orderEntry type="library" name="Maven: svarzee.gps:gpsoauth:0.3" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okio:okio:1.9.0" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.moshi:moshi:1.2.0" level="project" />
