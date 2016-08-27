@@ -21,7 +21,6 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
-import me.corriekay.pokegoutil.windows.PokemonTab.MoveSetRankingRenderer;
 
 @SuppressWarnings("serial")
 public class PokemonTable extends JTable {
