@@ -29,7 +29,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
-@SuppressWarnings({"serial", "rawtypes"})
+@SuppressWarnings({ "serial", "rawtypes" })
 
 public class PokemonTableModel extends AbstractTableModel {
 
@@ -239,16 +239,16 @@ public class PokemonTableModel extends AbstractTableModel {
     private int GetEvolvable(int candies, int candiesToEvolve) {
         int evolvable = (int) ((double) candies / candiesToEvolve);
         int rest = (candies % candiesToEvolve);
+        boolean transferAfterEvolve = ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE);
 
         // We iterate and get how many candies are added while evolving and if that can make up for some more evolves
-        int newEvolvable;
+        int newEvolvable = evolvable;
         do {
-            int candyGiven = evolvable + ((ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) ? evolvable : 0);
+            int candyGiven = newEvolvable + (transferAfterEvolve ? newEvolvable : 0);
             newEvolvable = (int) ((double) (candyGiven + rest) / candiesToEvolve);
             evolvable = evolvable + newEvolvable;
             rest = (candyGiven + rest) % candiesToEvolve;
-        }
-        while (newEvolvable > 0);
+        } while (newEvolvable > 0);
 
         return evolvable;
     }
