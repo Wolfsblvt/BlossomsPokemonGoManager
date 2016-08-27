@@ -87,9 +87,10 @@ public final class AccountManager {
             return;
         }
 
+        go = new PokemonGo(http);
         if (cp != null) {
             try {
-                go = new PokemonGo(cp, http);
+                go.login(cp);
             } catch (LoginFailedException | RemoteServerException e) {
                 alertFailedLogin(e.getMessage());
                 deleteLoginData(LoginType.BOTH);
@@ -142,9 +143,10 @@ public final class AccountManager {
             return;
         }
 
+        go = new PokemonGo(http);
         if (cp != null)
             try {
-                go = new PokemonGo(cp, http);
+                go.login(cp);
             } catch (LoginFailedException | RemoteServerException e) {
                 alertFailedLogin(e.getMessage());
                 deleteLoginData(LoginType.BOTH);
