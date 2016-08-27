@@ -9,6 +9,28 @@ public class LoginData {
     private String password;
     private LoginType loginType;
     private boolean savedToken;
+    
+    public LoginData(){
+        this.loginType = LoginType.NONE;
+    }
+    
+    public LoginData(String token){
+        this.token = token;
+        this.loginType = LoginType.GOOGLE;
+    }
+    
+    public LoginData(String username, String password){
+        this.username = username;
+        this.password = password;
+        this.loginType = LoginType.PTC;        
+    }
+    
+    public LoginData(String username, String password, String token){
+        this.username = username;
+        this.password = password;
+        this.token = token;
+        this.loginType = LoginType.BOTH;
+    }
 
     public LoginType getLoginType() {
         return loginType;
