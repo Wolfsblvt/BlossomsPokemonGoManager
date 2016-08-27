@@ -8,6 +8,7 @@ public class LoginData {
     private String username;
     private String password;
     private LoginType loginType;
+    private boolean savedToken;
 
     public LoginType getLoginType() {
         return loginType;
@@ -37,12 +38,20 @@ public class LoginData {
         return username != null;
     }
 
+    public boolean isSavedToken() {
+        return savedToken;
+    }
+
     public void setLoginType(LoginType loginType) {
         this.loginType = loginType;
     }
-    
+
     public void setPassword(String password) {
         this.password = password;
+    }
+    
+    public void setSavedToken(boolean savedToken) {
+        this.savedToken = savedToken;
     }
     
     public void setToken(String token) {

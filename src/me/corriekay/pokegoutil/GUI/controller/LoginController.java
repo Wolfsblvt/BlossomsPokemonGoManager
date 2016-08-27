@@ -32,6 +32,8 @@ public class LoginController extends StackPane {
     
     private AccountManager accountManager = AccountManager.getInstance();
     
+    private LoginData configLoginData;
+    
     //UI elements
     @FXML
     private TextField usernameField;
@@ -89,6 +91,7 @@ public class LoginController extends StackPane {
         if (saveCredentials) {
             LoginType loginType = accountManager.checkSavedConfig();
             LoginData loginData = accountManager.getLoginData(loginType);
+            configLoginData = loginData;
 
             if (loginData.hasUsername()) {
                 usernameField.setText(loginData.getUsername());
@@ -121,36 +124,40 @@ public class LoginController extends StackPane {
 
     @FXML
     void onGoogleAuthBtnClicked(ActionEvent event) {
-        try {
-            LoginData loginData = new LoginData();
-            loginData.setToken(tokenField.getText());
-            loginData.setLoginType(LoginType.GOOGLE);
+        LoginData loginData = new LoginData();
 
-            accountManager.login(loginData);
-        } catch (Exception e) {
-            accountManager.alertFailedLogin(e.toString());
+        if (configLoginData.hasToken()) {
+            loginData.setToken(configLoginData.getToken());
+            loginData.setSavedToken(true);
+        } else {
+            loginData.setToken(tokenField.getText());
         }
-        if (accountManager.isLoggedIn()) {
-            rootScene.getWindow().hide();
-            openMainWindow();
-        }
+        loginData.setLoginType(LoginType.GOOGLE);
+
+        tryLogin(loginData);
     }
 
     @FXML
     void onPTCLoginBtnClicked(ActionEvent event) {
+        LoginData loginData = new LoginData();
+        
+        loginData.setUsername(usernameField.getText());
+        loginData.setPassword(passwordField.getText());
+        loginData.setLoginType(LoginType.PTC);
+
+        tryLogin(loginData);
+    }
+    
+    private void tryLogin(LoginData loginData){
         try {
-            LoginData loginData = new LoginData();
-            loginData.setUsername(usernameField.getText());
-            loginData.setPassword(passwordField.getText());
-            loginData.setLoginType(LoginType.PTC);
-            
-            accountManager.login(loginData);
+            boolean loginResult = accountManager.login(loginData);
+
+            if (loginResult) {
+                rootScene.getWindow().hide();
+                openMainWindow();
+            }
         } catch (Exception e) {
-            accountManager.alertFailedLogin(e.getMessage());
-        }
-        if (accountManager.isLoggedIn()) {
-            rootScene.getWindow().hide();
-            openMainWindow();
+            accountManager.alertFailedLogin(e.toString());
         }
     }
 
