@@ -51,7 +51,7 @@ public class PokemonModel {
     private final StringProperty move2Rating = new SimpleStringProperty();
     private final StringProperty cpEvolved = new SimpleStringProperty();
     
-    private AccountManager accountManager;
+    private AccountManager accountManager = AccountManager.getInstance();
 
     public PokemonModel(Pokemon p) {
         super();
