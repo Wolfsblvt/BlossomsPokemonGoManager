@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
@@ -17,6 +18,7 @@ import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.DATA.enums.LoginType;
 import me.corriekay.pokegoutil.DATA.managers.AccountManager;
 import me.corriekay.pokegoutil.DATA.models.LoginData;
+import me.corriekay.pokegoutil.DATA.models.LoginResult;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 
 import java.io.IOException;
@@ -29,12 +31,12 @@ public class LoginController extends StackPane {
     private final URL icon;
     private ClassLoader classLoader = getClass().getClassLoader();
     private Scene rootScene;
-    
+
     private AccountManager accountManager = AccountManager.getInstance();
-    
+
     private LoginData configLoginData;
-    
-    //UI elements
+
+    // UI elements
     @FXML
     private TextField usernameField;
 
@@ -140,25 +142,35 @@ public class LoginController extends StackPane {
     @FXML
     void onPTCLoginBtnClicked(ActionEvent event) {
         LoginData loginData = new LoginData();
-        
+
         loginData.setUsername(usernameField.getText());
         loginData.setPassword(passwordField.getText());
         loginData.setLoginType(LoginType.PTC);
 
         tryLogin(loginData);
     }
-    
-    private void tryLogin(LoginData loginData){
-        try {
-            boolean loginResult = accountManager.login(loginData);
 
-            if (loginResult) {
+    private void tryLogin(LoginData loginData) {
+        try {
+            LoginResult loginResult = accountManager.login(loginData);
+
+            if (loginResult.isSuccess()) {
                 rootScene.getWindow().hide();
                 openMainWindow();
+            } else {
+                alertFailedLogin(loginResult.getErrorMessage());
             }
         } catch (Exception e) {
-            accountManager.alertFailedLogin(e.toString());
+            alertFailedLogin(e.toString());
         }
+    }
+
+    private void alertFailedLogin(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error Login");
+        alert.setHeaderText("Unfortunately, your login has failed");
+        alert.setContentText(message != null ? message : "" + "\nPress OK to try again.");
+        alert.showAndWait();
     }
 
     void openMainWindow() {
