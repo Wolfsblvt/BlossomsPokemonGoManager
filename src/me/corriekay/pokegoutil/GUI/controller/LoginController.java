@@ -71,7 +71,6 @@ public class LoginController extends StackPane {
         icon = classLoader.getResource("icon/PokeBall-icon.png");
         stage.getIcons().add(new Image(icon.toExternalForm()));
         stage.setTitle("Login");
-        stage.initStyle(StageStyle.UTILITY);
         stage.setResizable(false);
         stage.setScene(rootScene);
 
