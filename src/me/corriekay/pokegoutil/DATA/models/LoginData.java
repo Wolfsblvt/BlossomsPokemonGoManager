@@ -8,7 +8,7 @@ public class LoginData {
     private String username;
     private String password;
     private LoginType loginType;
-    private boolean savedToken;
+    private boolean isSavedToken;
     
     public LoginData(){
         this.loginType = LoginType.NONE;
@@ -52,6 +52,10 @@ public class LoginData {
         return password != null && password.length() > 0;
     }
 
+    public boolean hasSavedCredentials(){
+        return isValidPTCLogin() || isValidGoogleLogin();
+    }
+
     public boolean hasToken() {
         return token != null && token.length() > 0;
     }
@@ -61,7 +65,7 @@ public class LoginData {
     }
 
     public boolean isSavedToken() {
-        return savedToken;
+        return isSavedToken;
     }
 
     public boolean isValidGoogleLogin() {
@@ -71,7 +75,7 @@ public class LoginData {
     public boolean isValidPTCLogin() {
         return hasUsername() && hasPassword();
     }
-
+  
     public void setLoginType(LoginType loginType) {
         this.loginType = loginType;
     }
@@ -80,14 +84,14 @@ public class LoginData {
         this.password = password;
     }
 
-    public void setSavedToken(boolean savedToken) {
-        this.savedToken = savedToken;
+    public void setSavedToken(boolean isSavedToken) {
+        this.isSavedToken = isSavedToken;
     }
 
     public void setToken(String token) {
         this.token = token;
     }
-
+    
     public void setUsername(String username) {
         this.username = username;
     }

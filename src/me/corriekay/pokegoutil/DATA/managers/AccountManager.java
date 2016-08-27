@@ -35,32 +35,6 @@ public final class AccountManager {
 
     }
 
-    public boolean checkForSavedCredentials() {
-        LoginType savedLogin = checkSavedConfig();
-        // TODO: Implement choose if you want to login with that saved data
-        if (savedLogin == LoginType.NONE)
-            return false;
-        else
-            return true;
-    }
-
-    public LoginType checkSavedConfig() {
-        if (!config.getBool(ConfigKey.LOGIN_SAVE_AUTH)) {
-            return LoginType.NONE;
-        } else {
-            boolean google = getLoginData(LoginType.GOOGLE).isValidGoogleLogin();
-            boolean PTC = getLoginData(LoginType.PTC).isValidPTCLogin();
-            if (google && PTC) {
-                return LoginType.BOTH;
-            } else if (google) {
-                return LoginType.GOOGLE;
-            } else if (PTC) {
-                return LoginType.PTC;
-            }
-            return LoginType.NONE;
-        }
-    }
-
     private void deleteLoginData(LoginType type) {
         deleteLoginData(type, false);
     }
@@ -85,35 +59,25 @@ public final class AccountManager {
         }
     }
 
-    public LoginData getLoginData(LoginType type) {
-        LoginData loginData = new LoginData();
-
-        switch (type) {
-            case GOOGLE:
-                loginData.setToken(config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN));
-                loginData.setSavedToken(true);
-                break;
-            case PTC:
-                loginData.setUsername(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
-                loginData.setPassword(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
-                break;
-            case BOTH:
-                loginData.setToken(config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN));
-                loginData.setSavedToken(true);
-                loginData.setUsername(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
-                loginData.setPassword(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
-                break;
-            default:
+    public LoginData getLoginData() {
+        LoginData loginData = new LoginData(
+                config.getString(ConfigKey.LOGIN_PTC_USERNAME),
+                config.getString(ConfigKey.LOGIN_PTC_PASSWORD),
+                config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN));
+        
+        if(loginData.isValidGoogleLogin()){
+            loginData.setSavedToken(true);
         }
+
         return loginData;
 
     }
 
     public PlayerProfile getPlayerProfile() {
-        return S_INSTANCE.go != null ? S_INSTANCE.go.getPlayerProfile() : null;
+        return go != null ? go.getPlayerProfile() : null;
     }
 
-    private void initOtherControllers(PokemonGo go) {
+    private void initOtherControllers() {
         InventoryManager.initialize(go);
         PokemonBagManager.initialize(go);
         ProfileManager.initialize(go);
@@ -144,14 +108,14 @@ public final class AccountManager {
         String authCode = loginData.getToken();
         boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
 
-        boolean refresh = false;
+        boolean shouldRefresh = false;
         if (loginData.isSavedToken() && saveAuth) {
-            refresh = true;
+            shouldRefresh = true;
         }
 
         try {
             GoogleUserCredentialProvider provider = new GoogleUserCredentialProvider(http);
-            if (refresh) {
+            if (shouldRefresh) {
                 provider.refreshToken(authCode);
             } else {
                 provider.login(authCode);
@@ -162,7 +126,7 @@ public final class AccountManager {
             }
 
             cp = provider;
-            if (saveAuth && !refresh) {
+            if (saveAuth && !shouldRefresh) {
                 config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
             } else {
                 deleteLoginData(LoginType.GOOGLE);
@@ -202,7 +166,7 @@ public final class AccountManager {
             deleteLoginData(LoginType.PTC);
             return new LoginResult(e.getMessage());
         }
-
+        
         try {
             prepareLogin(cp, http);
             return new LoginResult();
@@ -216,8 +180,7 @@ public final class AccountManager {
     private void prepareLogin(CredentialProvider cp, OkHttpClient http)
             throws LoginFailedException, RemoteServerException {
         go = new PokemonGo(cp, http);
-        S_INSTANCE.go = go;
-        initOtherControllers(go);
+        initOtherControllers();
     }
 
     public void setSaveLogin(boolean save) {

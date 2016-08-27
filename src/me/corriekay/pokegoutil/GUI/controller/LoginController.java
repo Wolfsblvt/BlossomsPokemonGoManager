@@ -80,32 +80,28 @@ public class LoginController extends StackPane {
 
     @FXML
     private void initialize() {
-        AccountManager.getInstance();
+        configLoginData = accountManager.getLoginData();
 
         googleAuthBtn.setOnAction(this::onGoogleAuthBtnClicked);
         ptcLoginBtn.setOnAction(this::onPTCLoginBtnClicked);
         saveAuthChkbx.setOnAction(this::onAutoRelogChanged);
         getTokenBtn.setOnAction(this::onGetToken);
 
-        boolean saveCredentials = accountManager.checkForSavedCredentials();
-        saveAuthChkbx.setSelected(saveCredentials);
+        boolean hasSavedCredentials = configLoginData.hasSavedCredentials();
+        saveAuthChkbx.setSelected(hasSavedCredentials);
 
-        if (saveCredentials) {
-            LoginType loginType = accountManager.checkSavedConfig();
-            LoginData loginData = accountManager.getLoginData(loginType);
-            configLoginData = loginData;
-
-            if (loginData.hasUsername()) {
-                usernameField.setText(loginData.getUsername());
+        if (hasSavedCredentials) {
+            if (configLoginData.hasUsername()) {
+                usernameField.setText(configLoginData.getUsername());
                 usernameField.setDisable(true);
             }
 
-            if (loginData.hasPassword()) {
-                passwordField.setText(loginData.getPassword());
+            if (configLoginData.hasPassword()) {
+                passwordField.setText(configLoginData.getPassword());
                 passwordField.setDisable(true);
             }
 
-            if (loginData.hasToken()) {
+            if (configLoginData.hasToken()) {
                 tokenField.setText("Using Previous Token");
                 tokenField.setDisable(true);
                 getTokenBtn.setDisable(true);
