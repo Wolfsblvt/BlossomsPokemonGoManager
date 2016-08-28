@@ -31,7 +31,7 @@ abstract class Operation {
         Utilities.sleep(delay);
     }
 
-    public ConfigNew getConfig() {
+    protected ConfigNew getConfig() {
         return config;
     }
 
