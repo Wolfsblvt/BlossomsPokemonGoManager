@@ -28,11 +28,9 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -874,38 +872,6 @@ public class PokemonTab extends JPanel {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    /**
-     * Provide custom formatting for the moveset ranking columns while allowing sorting on original values
-     */
-    public static class MoveSetRankingRenderer extends JLabel implements TableCellRenderer {
-
-        private final long scale;
-
-        public MoveSetRankingRenderer(long scale) {
-            this.scale = scale;
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                boolean hasFocus, int rowIndex, int vColIndex) {
-            setText(Utilities.percentageWithTwoCharacters(Double.parseDouble(value.toString()), this.scale));
-            setToolTipText(NumberFormat.getInstance().format(value));
-            setOpaque(true);
-            setDefaultSelectionColors(table, isSelected, this);
-            return this;
-        }
-    }
-
-    private static void setDefaultSelectionColors(JTable table, boolean isSelected, JLabel tcr) {
-        if (isSelected) {
-            tcr.setBackground(table.getSelectionBackground());
-            tcr.setForeground(table.getSelectionForeground());
-        } else {
-            tcr.setBackground(table.getBackground());
-            tcr.setForeground(table.getForeground());
         }
     }
 }

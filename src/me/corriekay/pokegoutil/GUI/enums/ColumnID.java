@@ -76,7 +76,7 @@ public enum ColumnID {
     GYMOFFENSEIV("Gym Offense IV"),
     GYMDEFENSEIV("Gym Defense IV");
 
-    private static final Map<String,ColumnID> titleMap = new HashMap();
+    private static final Map<String,ColumnID> titleMap = new HashMap<String, ColumnID>();
 
     static {
         for(ColumnID id : ColumnID.values())

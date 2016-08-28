@@ -21,7 +21,6 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
-import me.corriekay.pokegoutil.windows.PokemonTab.MoveSetRankingRenderer;
 
 @SuppressWarnings("serial")
 public class PokemonTable extends JTable {
@@ -89,7 +88,7 @@ public class PokemonTable extends JTable {
         }
 
         TableRowSorter<TableModel> trs = new TableRowSorter<>(ptm);
-        Comparator<Integer> c = Integer::compareTo;
+        Comparator<Integer> cInt = Integer::compareTo;
         Comparator<Double> cDouble = Double::compareTo;
         Comparator<String> cDate = (date1, date2) -> DateHelper.fromString(date1)
                 .compareTo(DateHelper.fromString(date2));
@@ -106,21 +105,21 @@ public class PokemonTable extends JTable {
             int i2 = ("XX".equals(s2)) ? 100 : Integer.parseInt(s2);
             return i1 - i2;
         };
-        trs.setComparator(0, c);
+        trs.setComparator(0, cInt);
         trs.setComparator(3, cPercentageWithTwoCharacters);
         trs.setComparator(4, cDouble);
-        trs.setComparator(5, c);
-        trs.setComparator(6, c);
-        trs.setComparator(7, c);
-        trs.setComparator(12, c);
-        trs.setComparator(13, c);
-        trs.setComparator(14, c);
-        trs.setComparator(15, c);
-        trs.setComparator(16, c);
-        trs.setComparator(17, c);
-        trs.setComparator(18, c);
+        trs.setComparator(5, cInt);
+        trs.setComparator(6, cInt);
+        trs.setComparator(7, cInt);
+        trs.setComparator(12, cInt);
+        trs.setComparator(13, cInt);
+        trs.setComparator(14, cInt);
+        trs.setComparator(15, cInt);
+        trs.setComparator(16, cInt);
+        trs.setComparator(17, cInt);
+        trs.setComparator(18, cInt);
         trs.setComparator(19, cNullableInt);
-        trs.setComparator(20, c);
+        trs.setComparator(20, cInt);
         trs.setComparator(22, cDate);
         trs.setComparator(24, cLong);
         trs.setComparator(25, cDouble);
@@ -179,17 +178,6 @@ public class PokemonTable extends JTable {
         gymAttackIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_IV_MAX));
         TableColumn gymDefenseIVCol = getColumnModel().getColumn(33);
         gymDefenseIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_IV_MAX));
-
-        // Magic numbers pulled from max values of their respective columns
-        // in the moveset rankings spreadsheet calculations
-        // @see
-        // https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-        // TableColumn duelAbilityCol = this.pt.getColumnModel().getColumn(24);
-        // duelAbilityCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_MAX));
-        // TableColumn gymAttackCol = this.pt.getColumnModel().getColumn(25);
-        // gymAttackCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
-        // TableColumn gymDefenseCol = this.pt.getColumnModel().getColumn(26);
-        // gymDefenseCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
     }
 
     public void constructNewTableModel(List<Pokemon> pokes) {

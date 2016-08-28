@@ -13,12 +13,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.DATA.enums.LoginType;
 import me.corriekay.pokegoutil.DATA.managers.AccountManager;
 import me.corriekay.pokegoutil.DATA.models.LoginData;
-import me.corriekay.pokegoutil.DATA.models.LoginResult;
+import me.corriekay.pokegoutil.DATA.models.BPMResult;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 
 import java.io.IOException;
@@ -153,7 +152,7 @@ public class LoginController extends StackPane {
         tryLogin(loginData);
     }
 
-    void openMainWindow() {
+    private void openMainWindow() {
         new MainWindowController();
         BlossomsPoGoManager.getPrimaryStage().show();
     }
@@ -179,10 +178,9 @@ public class LoginController extends StackPane {
 
     private void tryLogin(LoginData loginData) {
         try {
-            LoginResult loginResult = accountManager.login(loginData);
+            BPMResult loginResult = accountManager.login(loginData);
 
             if (loginResult.isSuccess()) {
-                rootScene.getWindow().hide();
                 openMainWindow();
             } else {
                 alertFailedLogin(loginResult.getErrorMessage());

@@ -105,6 +105,7 @@ public class MainWindowController extends BorderPane {
         pokemontableController = new PokemonTableController(pokemontable);
         stage.initStyle(StageStyle.DECORATED);
         stage.setScene(rootScene);
+        stage.setMaximized(true);
 
         BlossomsPoGoManager.setNewPrimaryStage(stage);
     }
@@ -182,7 +183,6 @@ public class MainWindowController extends BorderPane {
 
     @FXML
     void onLogOffClicked(ActionEvent event) {
-        rootScene.getWindow().hide();
         new LoginController();
         BlossomsPoGoManager.getPrimaryStage().show();
     }
