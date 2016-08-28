@@ -1,11 +1,11 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
 import com.sun.javafx.collections.ObservableListWrapper;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.Property;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -23,6 +23,7 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -90,29 +91,34 @@ public class PokemonTableController extends GridPane {
     }
 
     private ArrayList<ColumnID> getColumnOrderFromConfig() {
-        ArrayList<ColumnID> list = new ArrayList<>();
+        ArrayList<ColumnID> columnOrder = new ArrayList<>();
         String config = ConfigNew.getConfig().getString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE);
-        if (config == null || config.isEmpty())
-            return list;
-        String[] split = config.split("-");
-        ColumnID[] ids = ColumnID.values();
-        for (String s : split) {
-            list.add(ids[Integer.valueOf(s)]);
+        ColumnID[] colIds = ColumnID.values();
+        
+        if (config == null || config.isEmpty()) {
+            columnOrder.addAll(Arrays.asList(colIds));
+        } else {
+            String[] split = config.split("-");
+            for (String s : split) {
+                columnOrder.add(colIds[Integer.valueOf(s)]);
+            }
         }
-        return list;
+        
+        return columnOrder;
     }
 
     private void saveOrderToConfig() {
         String columnOrder = "";
         int i = 0;
-        for (Object c : getColumns()){
-            if (i!=0)
-                columnOrder+="-";
-            columnOrder += String.valueOf(ColumnID.get(((TableColumn)c).getText()).ordinal());
+        for (Object c : getColumns()) {
+            if (i != 0) {
+                columnOrder += "-";
+            }
+            columnOrder += String.valueOf(ColumnID.get(((TableColumn) c).getText()).ordinal());
             i++;
         }
 
-        ConfigNew.getConfig().setString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE,columnOrder);
+        ConfigNew.getConfig().setString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE, columnOrder);
     }
 
     public ObservableList getColumns() {
@@ -127,13 +133,7 @@ public class PokemonTableController extends GridPane {
         columns.clear();
 
         ArrayList<ColumnID> columnOrder = getColumnOrderFromConfig();
-        // set default values
-        if (columnOrder.isEmpty()) {
-            ColumnID[] ids = ColumnID.values();
-            for (int i = 0; i < ids.length; i++) {
-                columnOrder.add(ids[i]);
-            }
-        }
+
         columnOrder.forEach(c -> {
             TableColumn<PokemonModel, Property> col = new TableColumn<>(c.getTitle());
             switch (c) {
