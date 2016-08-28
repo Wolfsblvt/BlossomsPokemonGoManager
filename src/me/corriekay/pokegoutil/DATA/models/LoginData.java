@@ -9,23 +9,23 @@ public class LoginData {
     private String password;
     private LoginType loginType;
     private boolean isSavedToken;
-    
-    public LoginData(){
+
+    public LoginData() {
         this.loginType = LoginType.NONE;
     }
-    
-    public LoginData(String token){
+
+    public LoginData(String token) {
         this.token = token;
         this.loginType = LoginType.GOOGLE;
     }
-    
-    public LoginData(String username, String password){
+
+    public LoginData(String username, String password) {
         this.username = username;
         this.password = password;
-        this.loginType = LoginType.PTC;        
+        this.loginType = LoginType.PTC;
     }
-    
-    public LoginData(String username, String password, String token){
+
+    public LoginData(String username, String password, String token) {
         this.username = username;
         this.password = password;
         this.token = token;
@@ -52,7 +52,7 @@ public class LoginData {
         return password != null && password.length() > 0;
     }
 
-    public boolean hasSavedCredentials(){
+    public boolean hasSavedCredentials() {
         return isValidPTCLogin() || isValidGoogleLogin();
     }
 
@@ -75,7 +75,7 @@ public class LoginData {
     public boolean isValidPTCLogin() {
         return hasUsername() && hasPassword();
     }
-  
+
     public void setLoginType(LoginType loginType) {
         this.loginType = loginType;
     }
@@ -94,5 +94,11 @@ public class LoginData {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Username: %s | Password: %s | Token: %s | LoginType: %s | isSavedToken %b",
+                username, password, token, loginType, isSavedToken);
     }
 }

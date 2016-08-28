@@ -16,7 +16,7 @@ import static org.hamcrest.CoreMatchers.*;
 @RunWith(value = Parameterized.class)
 public class LoginDataTest {
 
-    @Parameters(name="")
+    @Parameters(name="{index}: {0}")
     public static Collection<Object[]> data() {
         // LoginData, Expected LoginType, Expected PTC isValid,Expected Google isValid
         return Arrays.asList(new Object[][] {

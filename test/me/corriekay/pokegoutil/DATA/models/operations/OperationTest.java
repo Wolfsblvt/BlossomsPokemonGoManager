@@ -29,8 +29,8 @@ public class OperationTest {
 
     public OperationTest(OperationID operationID) {
         this.operationID = operationID;
-        
-        //Create list with 1 null value for testing
+
+        // Create list with 1 null value for testing
         List<PokemonModel> list = new ArrayList<>();
         list.add(null);
         pokemonList = new ObservableListWrapper<>(list);
