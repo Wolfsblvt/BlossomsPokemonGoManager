@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.DATA.models.Operations;
+package me.corriekay.pokegoutil.DATA.models.operations;
 
 import java.util.ArrayList;
 import java.util.List;

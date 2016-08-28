@@ -14,7 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import me.corriekay.pokegoutil.DATA.models.Operations.Operation;
+import me.corriekay.pokegoutil.DATA.models.operations.Operation;
 
 import java.io.IOException;
 import java.net.URL;

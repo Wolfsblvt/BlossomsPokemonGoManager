@@ -1,13 +1,13 @@
-package me.corriekay.pokegoutil.DATA.models.Operations;
+package me.corriekay.pokegoutil.DATA.models.operations;
 
 import me.corriekay.pokegoutil.DATA.models.BPMResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 
-public class RenameOperation extends Operation {
+public class EvolveOperation extends Operation {
 
-    public RenameOperation(PokemonModel pokemon) {
+    public EvolveOperation(PokemonModel pokemon) {
         super(pokemon);
     }
 
@@ -18,17 +18,17 @@ public class RenameOperation extends Operation {
 
     @Override
     protected int getMaxDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_RENAME_MAX);
+        return getConfig().getInt(ConfigKey.DELAY_EVOLVE_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_RENAME_MIN);
+        return getConfig().getInt(ConfigKey.DELAY_EVOLVE_MIN);
     }
 
     @Override
     public OperationID getOperationID() {
-        return OperationID.RENAME;
+        return OperationID.EVOLVE;
     }
 
 }

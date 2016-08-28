@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.DATA.models.Operations;
+package me.corriekay.pokegoutil.DATA.models.operations;
 
 import me.corriekay.pokegoutil.DATA.models.BPMResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;

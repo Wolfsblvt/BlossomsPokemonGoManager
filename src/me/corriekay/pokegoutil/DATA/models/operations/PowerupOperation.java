@@ -1,13 +1,13 @@
-package me.corriekay.pokegoutil.DATA.models.Operations;
+package me.corriekay.pokegoutil.DATA.models.operations;
 
 import me.corriekay.pokegoutil.DATA.models.BPMResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 
-public class TransferOperation extends Operation {
+public class PowerupOperation extends Operation {
 
-    public TransferOperation(PokemonModel pokemon) {
+    public PowerupOperation(PokemonModel pokemon) {
         super(pokemon);
     }
 
@@ -18,17 +18,17 @@ public class TransferOperation extends Operation {
 
     @Override
     protected int getMaxDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_TRANSFER_MAX);
+        return getConfig().getInt(ConfigKey.DELAY_POWERUP_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_TRANSFER_MIN);
+        return getConfig().getInt(ConfigKey.DELAY_POWERUP_MIN);
     }
 
     @Override
     public OperationID getOperationID() {
-        return OperationID.TRANSFER;
+        return OperationID.POWERUP;
     }
 
 }
