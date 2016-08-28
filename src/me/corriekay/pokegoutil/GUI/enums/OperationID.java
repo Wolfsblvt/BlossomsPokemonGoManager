@@ -10,7 +10,7 @@ public enum OperationID {
     EVOLVE("Evolve","Evolving","Evolved"),
     FAVORITE("Favorite","Favoriting","Favorited");
 
-    private static final Map<String,OperationID> operationMap = new HashMap();
+    private static final Map<String,OperationID> operationMap = new HashMap<String, OperationID>();
 
     static {
         for(OperationID id : OperationID.values())
