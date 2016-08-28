@@ -9,6 +9,7 @@ import me.corriekay.pokegoutil.utils.Utilities;
 
 import java.util.ArrayList;
 
+@Deprecated
 public class Operation {
     private OperationID id;
     private Integer delay;

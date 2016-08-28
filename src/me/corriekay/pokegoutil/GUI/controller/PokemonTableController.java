@@ -14,7 +14,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import me.corriekay.pokegoutil.DATA.managers.PokemonBagManager;
-import me.corriekay.pokegoutil.DATA.models.Operation;
+import me.corriekay.pokegoutil.DATA.models.Operations.Operation;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.ColumnID;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
@@ -73,10 +73,11 @@ public class PokemonTableController extends GridPane {
         final ContextMenu cm = new ContextMenu();
         OperationID[] operations = OperationID.values();
         for (int i = 0; i < operations.length; i++) {
-            final String actionName = operations[i].getActionName();
+            OperationID operation = operations[i];
+            final String actionName = operation.getActionName();
             MenuItem cmItem = new MenuItem(actionName);
             cmItem.setOnAction(e -> {
-                comfirmOperation(actionName);
+                comfirmOperation(operation);
             });
             cm.getItems().add(cmItem);
         }
@@ -88,8 +89,8 @@ public class PokemonTableController extends GridPane {
         });
     }
 
-    private void comfirmOperation(String operation) {
-        ArrayList<Operation> operations = Operation.makeOperationList(operation, getSelectedItems());
+    private void comfirmOperation(OperationID operation) {
+        List<Operation> operations = Operation.generateOperations(operation, getSelectedItems());
         new OperationConfirmationController(new ObservableListWrapper<>(operations));
     }
 
