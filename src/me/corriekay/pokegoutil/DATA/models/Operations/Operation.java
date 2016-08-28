@@ -8,24 +8,22 @@ import me.corriekay.pokegoutil.utils.Utilities;
 
 abstract class Operation {
 
-    private OperationID id;
     private Integer delay;
     private PokemonModel pokemonModel;
     private ConfigNew config = ConfigNew.getConfig();
 
-    public Operation(OperationID id, PokemonModel pokemon) {
-        this.id = id;
+    public Operation(PokemonModel pokemon) {
         this.delay = getRandomDelay();
         this.pokemonModel = pokemon;
     }
 
-    public abstract BPMResult doOperation();
+    protected abstract BPMResult doOperation();
 
     public void execute() {
         BPMResult result = doOperation();
 
         if (result.isSuccess()) {
-            System.out.println(id.getActionVerbFinished() + " " + pokemonModel.getSummary());
+            System.out.println(getOperationID().getActionVerbFinished() + " " + pokemonModel.getSummary());
         } else {
             System.out.println(result.getErrorMessage());
         }
@@ -41,35 +39,22 @@ abstract class Operation {
         return delay;
     }
 
-    public OperationID getId() {
-        return id;
-    }
+    protected abstract int getMaxDelay();
 
-    public abstract int getMaxDelay();
+    protected abstract int getMinDelay();
 
-    public abstract int getMinDelay();
+    public abstract OperationID getOperationID();
 
     public PokemonModel getPokemonModel() {
         return pokemonModel;
     }
 
-    public int getRandomDelay() {
+    private int getRandomDelay() {
         return Utilities.getRandom(getMaxDelay(), getMaxDelay());
     }
 
-    public void setDelay(Integer delay) {
-        this.delay = delay;
-    }
-
-    public void setId(OperationID id) {
-        this.id = id;
-    }
-
-    public void setPokemonModel(PokemonModel pokemonModel) {
-        this.pokemonModel = pokemonModel;
-    }
-
+    @Override
     public String toString() {
-        return id.getActionName() + " " + pokemonModel.getSummary();
+        return getOperationID().getActionName() + " " + pokemonModel.getSummary();
     }
 }
