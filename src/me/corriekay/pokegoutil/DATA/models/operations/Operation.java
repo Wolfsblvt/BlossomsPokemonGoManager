@@ -87,7 +87,7 @@ public abstract class Operation {
                     break;
                 default:
                     throw new IllegalArgumentException(
-                            String.format("'{0}' operation has not defined!", operationID.getActionName()));
+                            String.format("OperationID <%s> has not been handled!", operationID));
             }
             operationList.add(operation);
         });
