@@ -182,7 +182,6 @@ public class MainWindowController extends BorderPane {
 
     @FXML
     void onLogOffClicked(ActionEvent event) {
-        rootScene.getWindow().hide();
         new LoginController();
         BlossomsPoGoManager.getPrimaryStage().show();
     }
