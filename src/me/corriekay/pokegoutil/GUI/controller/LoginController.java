@@ -153,7 +153,7 @@ public class LoginController extends StackPane {
         tryLogin(loginData);
     }
 
-    void openMainWindow() {
+    private void openMainWindow() {
         new MainWindowController();
         BlossomsPoGoManager.getPrimaryStage().show();
     }
@@ -182,7 +182,6 @@ public class LoginController extends StackPane {
             LoginResult loginResult = accountManager.login(loginData);
 
             if (loginResult.isSuccess()) {
-                rootScene.getWindow().hide();
                 openMainWindow();
             } else {
                 alertFailedLogin(loginResult.getErrorMessage());
