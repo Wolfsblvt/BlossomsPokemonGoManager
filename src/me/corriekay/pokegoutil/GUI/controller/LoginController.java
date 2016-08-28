@@ -13,7 +13,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.DATA.enums.LoginType;
 import me.corriekay.pokegoutil.DATA.managers.AccountManager;
