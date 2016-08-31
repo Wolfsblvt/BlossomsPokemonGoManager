@@ -54,9 +54,7 @@ public class PokeHandler {
 
         if (pokeNick.equals(pokemon.getNickname())) {
             // Why renaming to the same nickname?
-            return NicknamePokemonResponse.Result.UNSET; // We need to use UNSET here. No
-            // chance to
-            // extend the enum
+            return NicknamePokemonResponse.Result.UNSET; // We need to use UNSET here. No chance to extend the enum
         }
 
         // Actually renaming the Pokémon with the calculated nickname
@@ -124,8 +122,7 @@ public class PokeHandler {
      * @return A <c>LinkedHashMap</c> with each Pokémon as key and the result as
      * value.
      */
-    public LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> bulkRenameWithPattern(String pattern,
-                                                                                        BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback) {
+    public LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> bulkRenameWithPattern(String pattern, BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback) {
         LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> results = new LinkedHashMap<>();
 
         mons.forEach(p -> {
@@ -219,8 +216,7 @@ public class PokeHandler {
                                         m2.getBaseStamina() + iv_stamina, level);
                                 return comb1 - comb2;
                             };
-                            highestFamilyId = PokemonId
-                                    .forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                            highestFamilyId = PokemonId.forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
                         }
                     } else {
                         // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
