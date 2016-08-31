@@ -15,8 +15,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -38,6 +38,8 @@ public class MainWindowController extends BorderPane {
     private final String fxmlLayout = "layout/MainWindow.fxml";
     private final URL icon;
     private ClassLoader classLoader = getClass().getClassLoader();
+    
+    private AccountManager accountManager = AccountManager.getInstance();
 
     private Scene rootScene;
     @FXML
@@ -74,7 +76,7 @@ public class MainWindowController extends BorderPane {
     private Label nbItemsBagsLbl;
 
     @FXML
-    private AnchorPane pokemontable;
+    private GridPane pokemontable;
 
     @FXML
     private PokemonTableController pokemontableController;
@@ -93,7 +95,7 @@ public class MainWindowController extends BorderPane {
         stage.getIcons().add(new Image(icon.toExternalForm()));
         try {
             NumberFormat f = NumberFormat.getInstance();
-            PlayerProfile pp = AccountManager.getPlayerProfile();
+            PlayerProfile pp = accountManager.getPlayerProfile();
             stage.setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
                     f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
         } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException | NullPointerException e) {
@@ -102,10 +104,8 @@ public class MainWindowController extends BorderPane {
 
         pokemontableController = new PokemonTableController(pokemontable);
         stage.initStyle(StageStyle.DECORATED);
-        //stage.setResizable(false);
-        //stage.setMinHeight(480);
-        //stage.setMinWidth(640);
         stage.setScene(rootScene);
+        stage.setMaximized(true);
 
         BlossomsPoGoManager.setNewPrimaryStage(stage);
     }
@@ -183,8 +183,6 @@ public class MainWindowController extends BorderPane {
 
     @FXML
     void onLogOffClicked(ActionEvent event) {
-        AccountManager.logOff();
-        rootScene.getWindow().hide();
         new LoginController();
         BlossomsPoGoManager.getPrimaryStage().show();
     }

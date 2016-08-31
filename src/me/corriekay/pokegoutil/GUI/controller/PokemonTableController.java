@@ -1,36 +1,51 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
+import com.sun.javafx.collections.ObservableListWrapper;
+
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.Property;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import me.corriekay.pokegoutil.DATA.managers.PokemonBagManager;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
+import me.corriekay.pokegoutil.DATA.models.operations.Operation;
+import me.corriekay.pokegoutil.GUI.enums.ColumnID;
+import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-public class PokemonTableController extends AnchorPane {
+public class PokemonTableController extends GridPane {
     private final String fxmlLayout = "layout/PokemonTable.fxml";
     private ClassLoader classLoader = getClass().getClassLoader();
 
     @FXML
-    private TableView pokemonTableView;
+    private ScrollPane scrollPane;
+
+    @FXML
+    private TableView<PokemonModel> pokemonTableView;
 
     private List<TableColumn<PokemonModel, ?>> columns = new ArrayList<>();
 
-    public PokemonTableController(AnchorPane pane) {
+    public PokemonTableController(GridPane pane) {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(classLoader.getResource(fxmlLayout));
         loader.setRoot(this);
         loader.setController(this);
         loader.setClassLoader(classLoader);
         try {
-            final Node root = (Node)loader.load();
+            final Node root = loader.load();
             pane.getChildren().clear();
             pane.getChildren().addAll(root);
         } catch (IOException exception) {
@@ -41,82 +56,196 @@ public class PokemonTableController extends AnchorPane {
     @FXML
     private void initialize() {
         pokemonTableView.getColumns().clear();
-        setColumns();
+        initColumns();
         pokemonTableView.getColumns().addAll(columns);
         pokemonTableView.setItems(PokemonBagManager.getAllPokemon());
         pokemonTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        /*AnchorPane.setTopAnchor(pokemonTableView, 0.0);
-        AnchorPane.setLeftAnchor(pokemonTableView, 0.0);
-        AnchorPane.setRightAnchor(pokemonTableView, 0.0);
-        AnchorPane.setBottomAnchor(pokemonTableView, 0.0);*/
+        pokemonTableView.prefHeightProperty()
+                .bind(Bindings.size(pokemonTableView.getItems()).multiply(pokemonTableView.getFixedCellSize()).add(30));
+        pokemonTableView.getColumns().addListener(
+                (ListChangeListener<? super TableColumn<PokemonModel, ?>>) c -> {
+                    saveOrderToConfig();
+                });
+        initRightClickMenu();
     }
 
-    /**
-     * data types:
-     * 0 Integer - Pokemon Number
-     * 1 String - Nickname
-     * 2 String - Type / Pokemon
-     * 3 String(Percentage) - IV Rating
-     * 4 Double - Level
-     * 5 Integer - Attack
-     * 6 Integer - Defense
-     * 7 Integer - Stamina
-     * 8 String - Type 1
-     * 9 String - Type 2
-     * 10 String - Move 1
-     * 11 String - Move 2
-     * 12 Integer - CP
-     * 13 Integer - HP
-     * 14 Integer - Max CP (Current)
-     * 15 Integer - Max CP
-     * 16 Integer - Max Evolved CP (Current)
-     * 17 Integer - Max Evolved CP
-     * 18 Integer - Candies of type
-     * 19 String(Nullable Int) - Candies to Evolve
-     * 20 Integer - Star Dust to level
-     * 21 String - Pokeball Type
-     * 22 String(Date) - Caught at
-     * 23 Boolean - Favorite
-     * 24 Long - duelAbility
-     * 25 Integer - gymOffense
-     * 26 Integer - gymDefense
-     * 27 String(Percentage) - Move 1 Rating
-     * 28 String(Percentage) - Move 2 Rating
-     * 29 String(Nullable Int) - CP Evolved
-     */
-    private void setColumns() {
+    private void initRightClickMenu() {
+        final ContextMenu cm = new ContextMenu();
+        OperationID[] operations = OperationID.values();
+        for (int i = 0; i < operations.length; i++) {
+            OperationID operation = operations[i];
+            final String actionName = operation.getActionName();
+            MenuItem cmItem = new MenuItem(actionName);
+            cmItem.setOnAction(e -> {
+                comfirmOperation(operation);
+            });
+            cm.getItems().add(cmItem);
+        }
+
+        pokemonTableView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            if (e.getButton() == MouseButton.SECONDARY) {
+                cm.show(pokemonTableView, e.getScreenX(), e.getScreenY());
+            }
+        });
+    }
+
+    private void comfirmOperation(OperationID operation) {
+        List<Operation> operations = Operation.generateOperations(operation, getSelectedItems());
+        new OperationConfirmationController(new ObservableListWrapper<>(operations));
+    }
+
+    private ArrayList<ColumnID> getColumnOrderFromConfig() {
+        ArrayList<ColumnID> columnOrder = new ArrayList<>();
+        String config = ConfigNew.getConfig().getString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE);
+        ColumnID[] colIds = ColumnID.values();
+
+        if (config == null || config.isEmpty()) {
+            columnOrder.addAll(Arrays.asList(colIds));
+        } else {
+            String[] split = config.split("-");
+            for (String s : split) {
+                columnOrder.add(colIds[Integer.valueOf(s)]);
+            }
+        }
+
+        return columnOrder;
+    }
+
+    private void saveOrderToConfig() {
+        String columnOrder = "";
+        int i = 0;
+        for (TableColumn<PokemonModel, ?> col : getColumns()) {
+            if (i != 0) {
+                columnOrder += "-";
+            }
+            columnOrder += String.valueOf(ColumnID.get(col.getText()).ordinal());
+            i++;
+        }
+
+        ConfigNew.getConfig().setString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE, columnOrder);
+    }
+
+    public ObservableList<TableColumn<PokemonModel, ?>> getColumns() {
+        return pokemonTableView.getColumns();
+    }
+
+    public ObservableList<PokemonModel> getSelectedItems() {
+        return pokemonTableView.getSelectionModel().getSelectedItems();
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void initColumns() {
         columns.clear();
 
-        TableColumn<PokemonModel, Integer> numberCol = new TableColumn<>("Id");
-        numberCol.setCellValueFactory(cellData -> cellData.getValue().numIdProperty().asObject());
-        columns.add(numberCol);
+        ArrayList<ColumnID> columnOrder = getColumnOrderFromConfig();
 
-        TableColumn<PokemonModel, String> nickCol = new TableColumn<>("Nickname");
-        nickCol.setCellValueFactory(cellData -> cellData.getValue().nicknameProperty());
-        columns.add(nickCol);
-
-        TableColumn<PokemonModel, String> speciesCol = new TableColumn<>("Species");
-        speciesCol.setCellValueFactory(cellData -> cellData.getValue().speciesProperty());
-        columns.add(speciesCol);
-
-        TableColumn<PokemonModel, String> ivCol = new TableColumn<>("IV %");
-        ivCol.setCellValueFactory(cellData -> cellData.getValue().IVProperty());
-        columns.add(ivCol);
-
-        TableColumn<PokemonModel, Double> lvlCol = new TableColumn<>("Lvl");
-        lvlCol.setCellValueFactory(cellData -> cellData.getValue().levelProperty().asObject());
-        columns.add(lvlCol);
-
-        TableColumn<PokemonModel, Integer> atkCol = new TableColumn<>("Atk");
-        atkCol.setCellValueFactory(cellData -> cellData.getValue().atkProperty().asObject());
-        columns.add(atkCol);
-
-        TableColumn<PokemonModel, Integer> defCol = new TableColumn<>("Def");
-        defCol.setCellValueFactory(cellData -> cellData.getValue().defProperty().asObject());
-        columns.add(defCol);
-
-        TableColumn<PokemonModel, Integer> stamCol = new TableColumn<>("Stam");
-        stamCol.setCellValueFactory(cellData -> cellData.getValue().stamProperty().asObject());
-        columns.add(stamCol);
+        columnOrder.forEach(c -> {
+            TableColumn<PokemonModel, Property> col = new TableColumn<>(c.getTitle());
+            switch (c) {
+                case NICKNAME:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().nicknameProperty());
+                    break;
+                case NUMBER:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().numIdProperty());
+                    break;
+                case SPECIES:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().speciesProperty());
+                    break;
+                case IV:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().IVProperty());
+                    break;
+                case LEVEL:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().levelProperty());
+                    break;
+                case ATTACK:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().atkProperty());
+                    break;
+                case DEFENSE:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().defProperty());
+                    break;
+                case STAMINA:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().stamProperty());
+                    break;
+                case TYPE1:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().type1Property());
+                    break;
+                case TYPE2:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().type2Property());
+                    break;
+                case MOVE1:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().move1Property());
+                    break;
+                case MOVE2:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().move2Property());
+                    break;
+                case CP:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().cpProperty());
+                    break;
+                case HP:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().hpProperty());
+                    break;
+                case MAXCPCURRENT:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxCpCurrentProperty());
+                    break;
+                case MAXCP:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxCpProperty());
+                    break;
+                case MAXEVOLVEDCPCURRENT:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxEvolvedCpCurrentProperty());
+                    break;
+                case MAXEVOLVEDCP:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxEvolvedCpProperty());
+                    break;
+                case CANDIES:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().candiesProperty());
+                    break;
+                case CANDIES2EVOLVE:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().candies2EvlvProperty());
+                    break;
+                case STARDUST2LVL:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().dustToLevelProperty());
+                    break;
+                case CAUGHTPOKEBALL:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().pokeballProperty());
+                    break;
+                case CAUGHTDATE:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().caughtDateProperty());
+                    break;
+                case FAVORITE:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().isFavoriteProperty());
+                    break;
+                case DUELABILITY:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().duelAbilityProperty());
+                    break;
+                case GYMOFFENSE:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymOffenseProperty());
+                    break;
+                case GYMDEFENSE:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymDefenseProperty());
+                    break;
+                case MOVE1RATING:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().move1RatingProperty());
+                    break;
+                case MOVE2RATING:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().move2RatingProperty());
+                    break;
+                case CPEVOLVED:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().cpEvolvedProperty());
+                    break;
+                case EVOLVABLE:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().evolvableProperty());
+                    break;
+                case DUELABILITYIV:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().duelAbilityIVProperty());
+                    break;
+                case GYMOFFENSEIV:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymOffenseIVProperty());
+                    break;
+                case GYMDEFENSEIV:
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymDefenseIVProperty());
+                    break;
+            }
+            columns.add(col);
+        });
     }
 }

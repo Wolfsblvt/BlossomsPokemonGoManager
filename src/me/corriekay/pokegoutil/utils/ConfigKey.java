@@ -23,6 +23,8 @@ public enum ConfigKey {
 
     RENAME_PATTERN("options.pattern.rename", "", String.class),
     
+    COLUMN_ORDER_POKEMON_TABLE("options.column.pokemontable", null, String.class),
+
     TRANSFER_AFTER_EVOLVE("settings.transferAfterEvolve", false, Boolean.class),
     SHOW_BULK_POPUP("settings.popupAfterBulk", true, Boolean.class),
     INCLUDE_FAMILY("settings.includeFamily", true, Boolean.class),

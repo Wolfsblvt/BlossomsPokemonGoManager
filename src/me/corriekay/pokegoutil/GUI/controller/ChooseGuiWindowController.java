@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.DATA.managers.AccountController;
@@ -45,7 +44,6 @@ public class ChooseGuiWindowController extends Pane {
         icon = classLoader.getResource("icon/PokeBall-icon.png");
         stage.getIcons().add(new Image(icon.toExternalForm()));
         stage.setTitle("Choose a GUI");
-        stage.initStyle(StageStyle.UTILITY);
         stage.setResizable(false);
 
         BlossomsPoGoManager.setNewPrimaryStage(stage);
