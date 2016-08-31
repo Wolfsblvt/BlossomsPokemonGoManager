@@ -1,0 +1,21 @@
+# Get us on the new container based builds, we're not using any fancyness
+sudo: false
+
+language: java
+
+jdk:
+  - oraclejdk8
+
+# We only check if it is master or develop. No feature branches
+#branches:
+#  only:
+#    - master
+#    - develop
+#    - /^develop-.*$/
+#    - /^release-.*$/
+
+notifications:
+  # Email notifications are disabled to not annoy anybody.
+  # See http://about.travis-ci.org/docs/user/build-configuration/ to learn more
+  # about configuring notification recipients and more.
+  email: false
