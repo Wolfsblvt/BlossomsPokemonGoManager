@@ -49,7 +49,7 @@ public class Config {
 
             return res.node().getJSONObject(res.name());
         } catch (JSONException jsone) {
-            System.err.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
+            System.out.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
             setJSONObject(path, defaultValue);
             return defaultValue;
         }
@@ -72,7 +72,7 @@ public class Config {
 
             return res.node().getBoolean(res.name());
         } catch (JSONException jsone) {
-            System.err.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
+            System.out.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
             setBool(path, defaultValue);
             return defaultValue;
         }
@@ -96,7 +96,7 @@ public class Config {
             String value = res.node().getString(res.name());
             return StringEscapeUtils.unescapeJson(value);
         } catch (JSONException jsone) {
-            System.err.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
+            System.out.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
             setString(path, StringEscapeUtils.escapeJson(defaultValue));
             return defaultValue;
         }
@@ -119,7 +119,7 @@ public class Config {
 
             return res.node().getInt(res.name());
         } catch (JSONException jsone) {
-            System.err.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
+            System.out.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
             setInt(path, defaultValue);
             return defaultValue;
         }
@@ -142,7 +142,7 @@ public class Config {
 
             return res.node().getInt(res.name());
         } catch (JSONException jsone) {
-            System.err.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
+            System.out.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
             setDouble(path, defaultValue);
             return defaultValue;
         }
