@@ -12,14 +12,17 @@ engines:
   # Checks for left TODO marks
   fixme:
     enabled: true
-  # Java Code Style checking
-  checkstyle:
-    enabled: true
-    channel: "beta"
   # Another Java code style checking. Testable
   pmd:
     enabled: true
     channel: "beta"
+  # Java Code Style checking
+  checkstyle:
+    enabled: true
+    channel: "beta"
+    checks:
+      com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck:
+        max: 120
 
 ratings:
   paths:

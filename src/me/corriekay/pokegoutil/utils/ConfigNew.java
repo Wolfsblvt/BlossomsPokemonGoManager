@@ -14,14 +14,14 @@ import java.util.Arrays;
 public final class ConfigNew {
     private static final File file = new File(System.getProperty("user.dir"), "config.json");
     private static final ConfigNew cfg = new ConfigNew();
-    private static JSONObject json;
+    private JSONObject json;
 
     // Save file modified time
     private long lastModified = file.lastModified();
 
     // Constants
-    private static final String COULD_NOT_FETCH_STRING_UNFORMATTED = "Could not fetch config item '%s'! Fallback to default: %s%n";
-    private static final String COULD_NOT_SAVE_STRING_UNFORMATTED = "Could not save '%s' to config (%s)!%n";
+    private static final String CANNOT_FETCH_UNF_STRING = "Could not fetch config item '%s'! Fallback to default: %s%n";
+    private static final String CANNOT_SAVE_UNF_STRING = "Could not save '%s' to config (%s)!%n";
 
     private ConfigNew() {
         if (!file.exists()) {
@@ -31,7 +31,7 @@ public final class ConfigNew {
                     throw new FileAlreadyExistsException(file.getName());
                 }
             } catch (final IOException e) {
-                e.printStackTrace();
+                System.out.println(e.toString());
             }
             json = new JSONObject();
             saveConfig();
@@ -53,7 +53,7 @@ public final class ConfigNew {
             final FindResult res = findNode(configKey.keyName, false);
             return res.node().getJSONObject(res.name());
         } catch (final JSONException ignored) {
-            System.out.printf(COULD_NOT_FETCH_STRING_UNFORMATTED, configKey.keyName, defaultValue);
+            System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setJSONObject(configKey, defaultValue);
             return defaultValue;
         }
@@ -65,7 +65,7 @@ public final class ConfigNew {
             res.node().put(res.name(), value);
             saveConfig();
         } catch (final JSONException ignored) {
-            System.out.printf(COULD_NOT_SAVE_STRING_UNFORMATTED, value, configKey.keyName);
+            System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
     }
 
@@ -78,7 +78,7 @@ public final class ConfigNew {
             final FindResult res = findNode(configKey.keyName, false);
             return res.node().getBoolean(res.name());
         } catch (final JSONException ignored) {
-            System.out.printf(COULD_NOT_FETCH_STRING_UNFORMATTED, configKey.keyName, defaultValue);
+            System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setBool(configKey, defaultValue);
             return defaultValue;
         }
@@ -90,7 +90,7 @@ public final class ConfigNew {
             res.node().put(res.name(), value);
             saveConfig();
         } catch (final JSONException ignored) {
-            System.out.printf(COULD_NOT_SAVE_STRING_UNFORMATTED, value, configKey.keyName);
+            System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
     }
 
@@ -104,7 +104,7 @@ public final class ConfigNew {
             final String value = res.node().getString(res.name());
             return StringEscapeUtils.unescapeJson(value);
         } catch (final JSONException ignored) {
-            System.out.printf(COULD_NOT_FETCH_STRING_UNFORMATTED, configKey.keyName, defaultValue);
+            System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setString(configKey, defaultValue);
             return defaultValue;
         }
@@ -116,7 +116,7 @@ public final class ConfigNew {
             res.node().put(res.name(), StringEscapeUtils.escapeJson(value));
             saveConfig();
         } catch (final JSONException ignored) {
-            System.out.printf(COULD_NOT_SAVE_STRING_UNFORMATTED, value, configKey.keyName);
+            System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
     }
 
@@ -129,7 +129,7 @@ public final class ConfigNew {
             final FindResult res = findNode(configKey.keyName, true);
             return res.node().getInt(res.name());
         } catch (final JSONException ignored) {
-            System.out.printf(COULD_NOT_FETCH_STRING_UNFORMATTED, configKey.keyName, defaultValue);
+            System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setInt(configKey, defaultValue);
             return defaultValue;
         }
@@ -141,7 +141,7 @@ public final class ConfigNew {
             res.node().put(res.name(), value);
             saveConfig();
         } catch (final JSONException ignored) {
-            System.out.printf(COULD_NOT_SAVE_STRING_UNFORMATTED, value, configKey.keyName);
+            System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
     }
 
@@ -154,7 +154,7 @@ public final class ConfigNew {
             final FindResult res = findNode(configKey.keyName, true);
             return res.node().getDouble(res.name());
         } catch (final JSONException ignored) {
-            System.out.printf(COULD_NOT_FETCH_STRING_UNFORMATTED, configKey.keyName, defaultValue);
+            System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setDouble(configKey, defaultValue);
             return defaultValue;
         }
@@ -166,7 +166,7 @@ public final class ConfigNew {
             res.node().put(res.name(), value);
             saveConfig();
         } catch (final JSONException ignored) {
-            System.out.printf(COULD_NOT_SAVE_STRING_UNFORMATTED, value, configKey.keyName);
+            System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
     }
 
@@ -174,7 +174,7 @@ public final class ConfigNew {
         checkModified();
         final ArrayList<String> parts = new ArrayList<>(Arrays.asList(path.split("\\.")));
         JSONObject current = json;
-        for (String item : parts.subList(0, parts.size() - 1)) {
+        for (final String item : parts.subList(0, parts.size() - 1)) {
             if (!current.has(item) && create) {
                 current.put(item, new JSONObject());
             }
