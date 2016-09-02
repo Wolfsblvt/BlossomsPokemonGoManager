@@ -7,6 +7,10 @@ import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class EvolveOperation extends Operation {
+    
+    protected EvolveOperation(){
+        //For mocking
+    }
 
     public EvolveOperation(PokemonModel pokemon) {
         super(pokemon);

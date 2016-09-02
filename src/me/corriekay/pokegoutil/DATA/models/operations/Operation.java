@@ -54,6 +54,10 @@ public abstract class Operation {
 
     private ConfigNew config = ConfigNew.getConfig();
 
+    protected Operation() {
+        //For mocking
+    }
+
     public Operation(PokemonModel pokemon) {
         this.delay = getRandomDelay();
         this.pokemon = pokemon;
