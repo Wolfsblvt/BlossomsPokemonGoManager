@@ -9,6 +9,7 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import me.corriekay.pokegoutil.DATA.enums.LoginType;
 import me.corriekay.pokegoutil.DATA.models.LoginData;
+import me.corriekay.pokegoutil.DATA.models.PlayerAccount;
 import me.corriekay.pokegoutil.DATA.models.BPMResult;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
@@ -31,6 +32,7 @@ public final class AccountManager {
 
     private ConfigNew config = ConfigNew.getConfig();
     private PokemonGo go = null;
+    private PlayerAccount playerAccount;
 
     private AccountManager() {
 
@@ -76,6 +78,10 @@ public final class AccountManager {
 
     public PlayerProfile getPlayerProfile() {
         return go != null ? go.getPlayerProfile() : null;
+    }
+    
+    public PlayerAccount getPlayerAccount(){
+        return playerAccount;
     }
 
     private void initOtherControllers() {
@@ -181,6 +187,7 @@ public final class AccountManager {
     private void prepareLogin(CredentialProvider cp, OkHttpClient http)
             throws LoginFailedException, RemoteServerException {
         go = new PokemonGo(cp, http);
+        playerAccount = new PlayerAccount(go.getPlayerProfile());
         initOtherControllers();
     }
 

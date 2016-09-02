@@ -31,4 +31,14 @@ public class FavoriteOperation extends Operation {
         return OperationID.FAVORITE;
     }
 
+    @Override
+    protected BPMResult validateOperation() {
+        // I think we need to check if in gym? Wasn't checked in previous code.
+        //if (pokemon.isInGym()) {
+        //    return new BPMResult("Pokemon is in gym");
+        //}
+        
+        return new BPMResult();
+    }
+
 }

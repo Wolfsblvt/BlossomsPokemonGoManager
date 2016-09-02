@@ -31,4 +31,27 @@ public class EvolveOperation extends Operation {
         return OperationID.EVOLVE;
     }
 
+    @Override
+    protected BPMResult validateOperation() {
+        if (pokemon.isInGym()) {
+            return new BPMResult("Pokemon is in gym");
+        }
+
+        int candies = pokemon.getCandies();
+        int candiesToEvolve = pokemon.getCandies2Evlv();
+        
+        if (candiesToEvolve == 0) {
+            return new BPMResult("Pokemon cannot be evolved");
+        }
+
+        if (candies < candiesToEvolve) {
+            return new BPMResult(String.format(
+                    "Insufficent candies, needed %d but had %d ",
+                    candiesToEvolve,
+                    candies));
+        }
+
+        return new BPMResult();
+    }
+
 }

@@ -15,9 +15,15 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.DATA.models.operations.Operation;
+import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 
 import java.io.IOException;
 import java.net.URL;
+
+import com.pokegoapi.exceptions.InvalidCurrencyException;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
 
 public class OperationConfirmationController extends AnchorPane{
 
@@ -81,7 +87,17 @@ public class OperationConfirmationController extends AnchorPane{
     }
 
     private void startOperations(ActionEvent actionEvent) {
-        operationListView.getItems().forEach(operation -> operation.execute());
+        operationListView.getItems().forEach(operation -> {            
+            try {
+                operation.execute();
+            } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException e) {
+                System.out.println(String.format(
+                        "Error %s %s! %s",
+                        operation.getOperationID().getActionVerbDuring(),
+                        PokeHandler.getLocalPokeName(operation.pokemon.getPokemon()),
+                        Utilities.getRealExceptionMessage(e)));
+            }   
+        });
         System.out.println("Batch Operation Done");
     }
 

@@ -39,7 +39,7 @@ public class PokemonModel {
     private final IntegerProperty maxEvolvedCpCurrent = new SimpleIntegerProperty();
     private final IntegerProperty maxEvolvedCp = new SimpleIntegerProperty();
     private final IntegerProperty candies = new SimpleIntegerProperty();
-    private final StringProperty candies2Evlv = new SimpleStringProperty();
+    private final IntegerProperty candies2Evlv = new SimpleIntegerProperty();
     private final IntegerProperty dustToLevel = new SimpleIntegerProperty();
     private final StringProperty pokeball = new SimpleStringProperty();
     private final StringProperty caughtDate = new SimpleStringProperty();
@@ -151,11 +151,11 @@ public class PokemonModel {
         }
         setCandies(candies);
         if (p.getCandiesToEvolve() != 0) {
-            setCandies2Evlv(String.valueOf(p.getCandiesToEvolve()));
+            setCandies2Evlv(p.getCandiesToEvolve());
             setEvolvable(String.valueOf((int)((double) candies / p.getCandiesToEvolve()))); // Rounded down candies / toEvolve
         }
         else {
-            setCandies2Evlv("-");
+            setCandies2Evlv(0);
             setEvolvable("-");
         }
         setDustToLevel(p.getStardustCostsForPowerup());
@@ -405,15 +405,15 @@ public class PokemonModel {
         this.candies.set(candies);
     }
 
-    public String getCandies2Evlv() {
+    public int getCandies2Evlv() {
         return candies2Evlv.get();
     }
 
-    public StringProperty candies2EvlvProperty() {
+    public IntegerProperty candies2EvlvProperty() {
         return candies2Evlv;
     }
 
-    public void setCandies2Evlv(String candies2Evlv) {
+    public void setCandies2Evlv(int candies2Evlv) {
         this.candies2Evlv.set(candies2Evlv);
     }
 
@@ -587,5 +587,17 @@ public class PokemonModel {
 
     public String getSummary() {
         return getNickname() + " (" + getSpecies() + ")" + " IV: " + getIV() + " CP: " + getCp();
+    }
+    
+    public boolean isInGym(){
+        return !pokemon.getDeployedFortId().isEmpty();
+    }
+
+    public int getCandyCostsForPowerup() {
+        return pokemon.getCandyCostsForPowerup();
+    }
+
+    public int getStardustCostsForPowerup() {
+        return pokemon.getStardustCostsForPowerup();
     }
 }

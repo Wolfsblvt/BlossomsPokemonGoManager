@@ -12,7 +12,7 @@ public class TransferOperation extends Operation {
     }
 
     @Override
-    protected BPMResult doOperation() {
+    protected BPMResult doOperation() {                
         return new BPMResult("Not implemented");
     }
 
@@ -31,4 +31,16 @@ public class TransferOperation extends Operation {
         return OperationID.TRANSFER;
     }
 
+    @Override
+    protected BPMResult validateOperation() {
+        if (pokemon.isIsFavorite()) {
+            return new  BPMResult("Pokemon is favourite.");
+        }
+        
+        if (pokemon.isInGym()) {
+            return new BPMResult("Pokemon is in gym");
+        }
+        
+        return new BPMResult();
+    }
 }
