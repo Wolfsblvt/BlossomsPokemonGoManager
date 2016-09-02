@@ -40,5 +40,4 @@ public class OperationTest {
     public void TestGenerateOperations() {
         Operation.generateOperations(operationID, pokemonList);
     }
-
 }
