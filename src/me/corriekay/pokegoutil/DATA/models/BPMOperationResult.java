@@ -11,6 +11,7 @@ public class BPMOperationResult extends BPMResult {
 
     public BPMOperationResult(String errorMessage, OperationError operationError){
         super(errorMessage);
+        this.operationError = operationError;
     }
 
     public OperationError getOperationError() {
