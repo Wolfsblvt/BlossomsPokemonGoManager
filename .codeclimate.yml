@@ -12,14 +12,19 @@ engines:
   # Checks for left TODO marks
   fixme:
     enabled: true
-  # Java Code Style checking
-  checkstyle:
-    enabled: true
-    channel: "beta"
   # Another Java code style checking. Testable
   pmd:
     enabled: true
     channel: "beta"
+  # Java Code Style checking
+  checkstyle:
+    enabled: true
+    channel: "beta"
+    checks:
+      # We can't check line length here, cause 100 is too short and we don't have
+      # a configuration xml file. Codacy checks that alone then.
+      com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck:
+        enabled: false
 
 ratings:
   paths:
