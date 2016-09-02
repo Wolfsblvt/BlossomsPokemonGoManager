@@ -763,7 +763,7 @@ public class PokemonTab extends JPanel {
     }
 
     private boolean confirmOperation(BatchOperation operation, ArrayList<Pokemon> pokes) {
-        JPanel panel = buildPanelForOperation(operation, pokes);
+        final JPanel panel = buildPanelForOperation(operation, pokes);
 
         int response = JOptionPane.showConfirmDialog(null, panel,
                 String.format(
@@ -782,10 +782,10 @@ public class PokemonTab extends JPanel {
      * @return The panel.
      */
     private JPanel buildPanelForOperation(final BatchOperation operation, final ArrayList<Pokemon> pokes) {
-        JPanel panel = new JPanel();
+        final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
-        JPanel innerPanel = new JPanel();
+        final JPanel innerPanel = new JPanel();
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         innerPanel.setAlignmentX(CENTER_ALIGNMENT);
 
@@ -851,7 +851,7 @@ public class PokemonTab extends JPanel {
                 if (useFamilyName) {
                     // Try translating family name
                     try {
-                        PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll("FAMILY_", ""));
+                        final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
                         familyName = PokeHandler.getLocalPokeName(familyPokemonId.getNumber());
                     } catch (IllegalArgumentException e) {
                         familyName = poke.getPokemonFamily().toString();
@@ -867,7 +867,7 @@ public class PokemonTab extends JPanel {
                         poke.getMove1().toString(),
                         poke.getMove2().toString(),
                         poke.getPokeball().toString());
-                searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "")
+                searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
                         .replaceAll("ITEM_", "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll(StringLiterals.SPACE, "").toLowerCase();
 
                 for (String s : terms) {

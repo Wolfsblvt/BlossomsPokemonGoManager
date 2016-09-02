@@ -29,6 +29,9 @@ engines:
       # So we just remove that check.
       com.puppycrawl.tools.checkstyle.checks.imports.CustomImportOrderCheck:
         enabled: false
+      # It should be allowed to declare multiple variables at once, if each is in a new line.
+      com.puppycrawl.tools.checkstyle.checks.coding.MultipleVariableDeclarationsCheck:
+        enabled: false
 
 ratings:
   paths:
