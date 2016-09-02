@@ -1,3 +1,18 @@
+[![Travis Build Badge](https://img.shields.io/travis/Wolfsblvt/BlossomsPokemonGoManager.svg)](https://travis-ci.org/Wolfsblvt/BlossomsPokemonGoManager)
+[![Codacy](https://img.shields.io/codacy/grade/14b05062286f448fb5b59708c4936e42.svg)](https://www.codacy.com/app/wolfsblvt/BlossomsPokemonGoManager?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Wolfsblvt/BlossomsPokemonGoManager&amp;utm_campaign=Badge_Grade)
+[![Codacy Coverage](https://img.shields.io/codacy/coverage/14b05062286f448fb5b59708c4936e42.svg)](https://www.codacy.com/app/wolfsblvt/BlossomsPokemonGoManager?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Wolfsblvt/BlossomsPokemonGoManager&amp;utm_campaign=Badge_Grade)
+[![Code Climate](https://img.shields.io/codeclimate/github/Wolfsblvt/BlossomsPokemonGoManager.svg)](https://codeclimate.com/github/Wolfsblvt/BlossomsPokemonGoManager)
+[![Code Climate Coverage](https://img.shields.io/codeclimate/coverage/github/Wolfsblvt/BlossomsPokemonGoManager.svg)](https://codeclimate.com/github/Wolfsblvt/BlossomsPokemonGoManager/coverage)
+[![Codebeat](https://codebeat.co/badges/6d02b875-b4c1-4ec5-8c59-53715dc40751)](https://codebeat.co/projects/github-com-wolfsblvt-blossomspokemongomanager)
+[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-blue.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+[![Java Version](https://img.shields.io/badge/Java-JRE%208-red.svg)](https://www.java.com/download/)
+
+[![GitHub Latest Release](https://img.shields.io/github/release/Wolfsblvt/BlossomsPokemonGoManager.svg)](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases/latest)
+[![Github Releases](https://img.shields.io/github/downloads/Wolfsblvt/BlossomsPokemonGoManager/latest/total.svg)](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases/latest)
+[![Github All Releases](https://img.shields.io/github/downloads/Wolfsblvt/BlossomsPokemonGoManager/total.svg)](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases)
+
+
+
 # BlossomsPokemonGoManager
 BlossomsPokemonGoManager is a tool created for managing your game. It allows you to sort your Pokémon by several values, to rename, transfer, evolve or to power-up one or several of them.  
 It was made for easier management of Pokémon, deciding which to keep, and which to throw away.
@@ -13,22 +28,27 @@ It was made for easier management of Pokémon, deciding which to keep, and which
 - Batch operation tools, allowing you to quickly rename, transfer, evolve, and power-up your pokemon.
 - Tons of sort options, allowing you to sort your pokemon quickly by nickname, pokedex number, species, IV%, types, moves (with DPS), CP, Max CP, HP, total candies, candies to evolve, stardust to powerup, caught date, and what the pokemon was caught with.
 
-A lot more features are planned! Check [Issue page for enhancements](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) for an overview.
+A lot more features are planned! Check [Issue page for enhancements](/../../issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement) for an overview.  
 You can even submit your own suggestions.
 
 ## Installation / Usage
-#### Latest Stable Release
+#### **Latest Stable Release**
 1. You need at least **Java 8** installed to run this tool. Verify your Java version [here](https://www.java.com/verify/) or download [the latest Java JRE release](https://www.java.com/download/) and install it.
-2. Download [the latest stable version of this tool](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases) from releases.
+2. Download [the latest stable version of this tool](/../../releases) from releases.
 3. Double-Click the extracted `.jar` file and run it.
 4. Log in with your credentials. PTC account directly, for Google follow the instructions and copy the session token.
 5. Enjoy the tool!
 
-#### Using the Dev Version
+If the tool is not working under Linux/Ubuntu, try the following steps:
+
+1. Give execution right to the shell script: `chmod +x RunOnUnixLikeSystems.sh`
+2. Use Oracle JDK instead of Open JDK. (See issue [#306](/../../issues/306) for more details)
+
+#### **Using the Dev Version**
 **WARNING!** This version might be unstable, so use at your own risk.
 
 1. Java SDK for Java 8 has to be installed.
-2. Clone the repository on the [develop branch](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/tree/develop) locally or download the ZIP of this branch.
+2. Clone the repository on the [develop branch](/../../tree/develop) locally or download the ZIP of this branch.
 3. Build the project with either maven compiler, or your IDE of choice (Eclipse, IntelliJ)  .
 To use it in an IDE, you have to import the project as a Maven project.
 4. Run it as an Application, with `me.corriekay.pokegoutil.BlossomsPoGoManager` as entry file.
@@ -75,6 +95,9 @@ We use discord to organize our development and answer questions. We also post im
 
 #### Q: Is the IV calculated somehow? Is it the correct value or maybe wrong? My IV calculator says something different.
 - **A:** The IV isn't calculated, it is directly taken from the API response. It's the exact value like the game has it.
+
+#### Q: What is this alternative IV calculation mode? What does it do?
+- **A:** Usual IV rating weighs every three values the same, so 1/3. The alterative mode takes in mind that attack is more important when calculating things like CP of the Pokémon. For a detailed information and a real-life example see the issue about it: [#165](/../../issues/165)
 
 #### Q: Can you add catching of Pokémon and using PokéStops?
 - **A:** No. We'll include lucky egg support for evolving, but that's it. We are not just another botting tool. We want to keep the use of our tool as fair as possible and just make managing Pokémon easier.
