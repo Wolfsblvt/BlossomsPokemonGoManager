@@ -12,10 +12,6 @@ engines:
   # Checks for left TODO marks
   fixme:
     enabled: true
-  # Java Code Style checking
-  checkstyle:
-    enabled: true
-    channel: "beta"
   # Another Java code style checking. Testable
   pmd:
     enabled: true
