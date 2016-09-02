@@ -79,7 +79,7 @@ public final class ConfigNew {
             return res.node().getJSONObject(res.name());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
-            setJSONObject(configKey, defaultValue);
+            setJsonObject(configKey, defaultValue);
             return defaultValue;
         }
     }
@@ -90,7 +90,7 @@ public final class ConfigNew {
      * @param configKey The config key.
      * @param value     The value to save.
      */
-    public void setJSONObject(final ConfigKey configKey, final JSONObject value) {
+    public void setJsonObject(final ConfigKey configKey, final JSONObject value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
             res.node().put(res.name(), value);
