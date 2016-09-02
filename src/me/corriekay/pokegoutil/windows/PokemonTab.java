@@ -12,6 +12,7 @@ import com.pokegoapi.api.pokemon.Pokemon;
 import me.corriekay.pokegoutil.DATA.enums.BatchOperation;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
@@ -37,13 +38,13 @@ public class PokemonTab extends JPanel {
 
     private final PokemonGo go;
     private final PokemonTable pt;
-    private final JTextField searchBar = new JTextField("");
-    private final JTextField ivTransfer = new JTextField("", 20);
-    private final ConfigNew config = ConfigNew.getConfig();
+    private static final JTextField searchBar = new JTextField("");
+    private static final JTextField ivTransfer = new JTextField("", 20);
+    private static final ConfigNew config = ConfigNew.getConfig();
 
     // Used constants
-    private final int NUMBER_ROWS_TO_SHOW_SELECTION_TITLE = 2;
-    private final String SKIPPED_MESSAGE_UNFORMATTED = "%s with %d CP is in gym, skipping.";
+    private static final int WHEN_TO_SHOW_SELECTION_TITLE = 2;
+    private static final String SKIPPED_MESSAGE_UNFORMATTED = "%s with %d CP is in gym, skipping.";
 
     public PokemonTab(final PokemonGo go) {
         super();
@@ -52,7 +53,7 @@ public class PokemonTab extends JPanel {
         this.go = go;
         pt = new PokemonTable(go);
         final JPanel topPanel = new JPanel(new GridBagLayout());
-        JButton refreshPkmn = new JButton("Refresh List"),
+        final JButton refreshPkmn = new JButton("Refresh List"),
                 renameSelected = new JButton(BatchOperation.RENAME.toString()),
                 transferSelected = new JButton(BatchOperation.TRANSFER.toString()),
                 evolveSelected = new JButton(BatchOperation.EVOLVE.toString()),
@@ -66,7 +67,7 @@ public class PokemonTab extends JPanel {
             }
             if (event.getSource() == pt.getSelectionModel() && pt.getRowSelectionAllowed()) {
                 final int selectedRows = pt.getSelectedRowCount();
-                if (selectedRows >= NUMBER_ROWS_TO_SHOW_SELECTION_TITLE) {
+                if (selectedRows >= WHEN_TO_SHOW_SELECTION_TITLE) {
                     PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
                 } else {
                     PokemonGoMainWindow.window.refreshTitle();
@@ -220,8 +221,8 @@ public class PokemonTab extends JPanel {
     }
 
     private void showFinishedText(final String message, final int size, final MutableInt success, final MutableInt skipped, final MutableInt err) {
-        final String finishText = message +
-                "\nPokémon total: " + size
+        final String finishText = message
+                + "\nPokémon total: " + size
                 + "\nSuccessful: " + success.getValue()
                 + (skipped.getValue() > 0 ? "\nSkipped: " + skipped.getValue() : "")
                 + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : "");
@@ -742,7 +743,7 @@ public class PokemonTab extends JPanel {
     }
 
     private String inputOperation(BatchOperation operation, ArrayList<Pokemon> pokes) {
-        JPanel panel = _buildPanelForOperation(operation, pokes);
+        JPanel panel = buildPanelForOperation(operation, pokes);
         String message = "";
         switch (operation) {
             case RENAME:
@@ -750,7 +751,7 @@ public class PokemonTab extends JPanel {
                         + "\nYou can rename with normal text and patterns, or both combined. "
                         + "Patterns are going to be replaced with the Pokémons values."
                         + "\nExisting patterns:\n";
-                for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
+                for (final PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
                     message += String.format("%% %s%% -> %s\n",
                             pattern.name().toLowerCase(),
                             pattern.toString());
@@ -762,7 +763,7 @@ public class PokemonTab extends JPanel {
     }
 
     private boolean confirmOperation(BatchOperation operation, ArrayList<Pokemon> pokes) {
-        JPanel panel = _buildPanelForOperation(operation, pokes);
+        JPanel panel = buildPanelForOperation(operation, pokes);
 
         int response = JOptionPane.showConfirmDialog(null, panel,
                 String.format(
@@ -774,7 +775,7 @@ public class PokemonTab extends JPanel {
         return response == JOptionPane.OK_OPTION;
     }
 
-    private JPanel _buildPanelForOperation(BatchOperation operation, ArrayList<Pokemon> pokes) {
+    private JPanel buildPanelForOperation(final BatchOperation operation, final ArrayList<Pokemon> pokes) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
@@ -834,7 +835,7 @@ public class PokemonTab extends JPanel {
 
     public void refreshList() {
         final List<Pokemon> pokes = new ArrayList<>();
-        final String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans")
+        final String search = searchBar.getText().replaceAll(StringLiterals.SPACE, "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll("snek", "ekans")
                 .toLowerCase();
         final String[] terms = search.split(";");
         try {
@@ -862,7 +863,7 @@ public class PokemonTab extends JPanel {
                         poke.getMove2().toString(),
                         poke.getPokeball().toString());
                 searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "")
-                        .replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
+                        .replaceAll("ITEM_", "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll(StringLiterals.SPACE, "").toLowerCase();
 
                 for (String s : terms) {
                     if (searchme.contains(s)) {

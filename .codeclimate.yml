@@ -25,6 +25,10 @@ engines:
       # a configuration xml file. Codacy checks that alone then.
       com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck:
         enabled: false
+      # Checking for order of customs does not work, it misses a lot of libraries.
+      # So we just remove that check.
+      com.puppycrawl.tools.checkstyle.checks.imports.CustomImportOrderCheck:
+        enabled: false
 
 ratings:
   paths:
