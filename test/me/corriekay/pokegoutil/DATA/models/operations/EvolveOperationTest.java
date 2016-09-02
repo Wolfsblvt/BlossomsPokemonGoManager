@@ -40,7 +40,6 @@ public class EvolveOperationTest {
 
     @Test
     public void PokemonIsNotEvolvable() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
-        when(pokemon.getCandies()).thenReturn(10);
         when(pokemon.getCandies2Evlv()).thenReturn(0);
 
         BPMOperationResult result = operation.execute();
