@@ -14,7 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import me.corriekay.pokegoutil.DATA.models.BPMResult;
+import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.DATA.models.operations.Operation;
 import me.corriekay.pokegoutil.utils.Utilities;
@@ -27,7 +27,7 @@ import com.pokegoapi.exceptions.InvalidCurrencyException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
-public class OperationConfirmationController extends AnchorPane{
+public class OperationConfirmationController extends AnchorPane {
 
     private final String fxmlLayout = "layout/ConfirmOperationWindow.fxml";
     private final URL icon;
@@ -82,7 +82,7 @@ public class OperationConfirmationController extends AnchorPane{
     }
 
     @FXML
-    public void initialize(){
+    public void initialize() {
         startBtn.setOnAction(this::startOperations);
         pauseBtn.setOnAction(this::pauseOperations);
         cancelBtn.setOnAction(this::cancelOperations);
@@ -92,7 +92,7 @@ public class OperationConfirmationController extends AnchorPane{
         operationListView.getItems().forEach(operation -> {
             PokemonModel pokemon = operation.pokemon;
             try {
-                BPMResult result = operation.execute();
+                BPMOperationResult result = operation.execute();
                 if (result.isSuccess()) {
                     System.out.println(String.format(
                             "%s %s",

@@ -4,7 +4,8 @@ import com.pokegoapi.exceptions.InvalidCurrencyException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
-import me.corriekay.pokegoutil.DATA.models.BPMResult;
+import me.corriekay.pokegoutil.DATA.enums.OperationError;
+import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigKey;
@@ -16,8 +17,8 @@ public class RenameOperation extends Operation {
     }
 
     @Override
-    protected BPMResult doOperation() {
-        return new BPMResult("Not implemented");
+    protected BPMOperationResult doOperation() {
+        return new BPMOperationResult("Not implemented", OperationError.NOT_IMPLEMENTED);
     }
 
     @Override
@@ -36,14 +37,14 @@ public class RenameOperation extends Operation {
     }
 
     @Override
-    public BPMResult validateOperation()
+    public BPMOperationResult validateOperation()
             throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         // I think we need to check if in gym? Wasn't checked in previous code.
-        //if (pokemon.isInGym()) {
-        //    return new BPMResult("Pokemon is in gym");
-        //}
-        
-        return new BPMResult();
+        // if (pokemon.isInGym()) {
+        // return new BPMResult("Pokemon is in gym");
+        // }
+
+        return new BPMOperationResult();
     }
 
 }

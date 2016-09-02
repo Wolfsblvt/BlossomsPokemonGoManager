@@ -8,7 +8,7 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
 import javafx.collections.ObservableList;
-import me.corriekay.pokegoutil.DATA.models.BPMResult;
+import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigNew;
@@ -48,6 +48,7 @@ public abstract class Operation {
 
         return operationList;
     }
+
     private Integer delay;
     public PokemonModel pokemon;
 
@@ -58,19 +59,19 @@ public abstract class Operation {
         this.pokemon = pokemon;
     }
 
-    protected abstract BPMResult doOperation();
+    protected abstract BPMOperationResult doOperation();
 
-    public BPMResult execute() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
-        BPMResult result = validateOperation();
+    public BPMOperationResult execute() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+        BPMOperationResult result = validateOperation();
 
         if (result.isSuccess()) {
             result = doOperation();
         }
-        
+
         return result;
     }
-    
-    public void doDelay(){
+
+    public void doDelay() {
         System.out.println("Waiting " + delay.toString() + " ms before next operation");
         Utilities.sleep(delay);
     }
@@ -98,6 +99,6 @@ public abstract class Operation {
         return getOperationID().getActionName() + " " + pokemon.getSummary();
     }
 
-    public abstract BPMResult validateOperation()
+    public abstract BPMOperationResult validateOperation()
             throws InvalidCurrencyException, LoginFailedException, RemoteServerException;
 }

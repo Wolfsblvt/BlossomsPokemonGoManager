@@ -1,6 +1,7 @@
 package me.corriekay.pokegoutil.DATA.models.operations;
 
-import me.corriekay.pokegoutil.DATA.models.BPMResult;
+import me.corriekay.pokegoutil.DATA.enums.OperationError;
+import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigKey;
@@ -12,8 +13,8 @@ public class EvolveOperation extends Operation {
     }
 
     @Override
-    protected BPMResult doOperation() {
-        return new BPMResult("Not implemented");
+    protected BPMOperationResult doOperation() {
+        return new BPMOperationResult("Not implemented", OperationError.NOT_IMPLEMENTED);
     }
 
     @Override
@@ -32,26 +33,27 @@ public class EvolveOperation extends Operation {
     }
 
     @Override
-    public BPMResult validateOperation() {
+    public BPMOperationResult validateOperation() {
         if (pokemon.isInGym()) {
-            return new BPMResult("Pokemon is in gym");
+            return new BPMOperationResult("Pokemon is in gym", OperationError.IN_GYM);
         }
 
         int candies = pokemon.getCandies();
         int candiesToEvolve = pokemon.getCandies2Evlv();
-        
+
         if (candiesToEvolve == 0) {
-            return new BPMResult("Pokemon cannot be evolved");
+            return new BPMOperationResult("Pokemon cannot be evolved", OperationError.NOT_EVOLVABLE);
         }
 
         if (candies < candiesToEvolve) {
-            return new BPMResult(String.format(
+            return new BPMOperationResult(String.format(
                     "Insufficent candies, needed %d but had %d ",
                     candiesToEvolve,
-                    candies));
+                    candies),
+                    OperationError.INSUFFICENT_CANDIES);
         }
 
-        return new BPMResult();
+        return new BPMOperationResult();
     }
 
 }
