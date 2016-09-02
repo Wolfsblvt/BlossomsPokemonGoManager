@@ -37,7 +37,7 @@ public class PowerupOperation extends Operation {
     }
 
     @Override
-    protected BPMResult validateOperation() throws InvalidCurrencyException, LoginFailedException, RemoteServerException{
+    public BPMResult validateOperation() throws InvalidCurrencyException, LoginFailedException, RemoteServerException{
         if (pokemon.isInGym()) {
             return new BPMResult("Pokemon is in gym");
         }

@@ -32,7 +32,7 @@ public class TransferOperation extends Operation {
     }
 
     @Override
-    protected BPMResult validateOperation() {
+    public BPMResult validateOperation() {
         if (pokemon.isIsFavorite()) {
             return new  BPMResult("Pokemon is favourite.");
         }

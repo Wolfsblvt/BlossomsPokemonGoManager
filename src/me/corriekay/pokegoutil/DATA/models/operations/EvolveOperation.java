@@ -32,7 +32,7 @@ public class EvolveOperation extends Operation {
     }
 
     @Override
-    protected BPMResult validateOperation() {
+    public BPMResult validateOperation() {
         if (pokemon.isInGym()) {
             return new BPMResult("Pokemon is in gym");
         }

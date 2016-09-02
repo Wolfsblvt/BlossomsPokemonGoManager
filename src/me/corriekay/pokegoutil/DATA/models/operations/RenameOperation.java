@@ -36,7 +36,7 @@ public class RenameOperation extends Operation {
     }
 
     @Override
-    protected BPMResult validateOperation()
+    public BPMResult validateOperation()
             throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         // I think we need to check if in gym? Wasn't checked in previous code.
         //if (pokemon.isInGym()) {

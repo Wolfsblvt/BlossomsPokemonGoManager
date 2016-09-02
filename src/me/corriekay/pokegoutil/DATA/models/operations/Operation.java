@@ -105,6 +105,6 @@ public abstract class Operation {
         return getOperationID().getActionName() + " " + pokemon.getSummary();
     }
 
-    protected abstract BPMResult validateOperation()
+    public abstract BPMResult validateOperation()
             throws InvalidCurrencyException, LoginFailedException, RemoteServerException;
 }
