@@ -14,6 +14,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import me.corriekay.pokegoutil.DATA.models.BPMResult;
+import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.DATA.models.operations.Operation;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
@@ -87,16 +89,29 @@ public class OperationConfirmationController extends AnchorPane{
     }
 
     private void startOperations(ActionEvent actionEvent) {
-        operationListView.getItems().forEach(operation -> {            
+        operationListView.getItems().forEach(operation -> {
+            PokemonModel pokemon = operation.pokemon;
             try {
-                operation.execute();
+                BPMResult result = operation.execute();
+                if (result.isSuccess()) {
+                    System.out.println(String.format(
+                            "%s %s",
+                            operation.getOperationID().getActionVerbFinished(),
+                            pokemon.getSummary()));
+                } else {
+                    System.out.println(String.format(
+                            "Skipping %s due to <%s>",
+                            pokemon.getSummary(),
+                            result.getErrorMessage()));
+                }
             } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException e) {
                 System.out.println(String.format(
                         "Error %s %s! %s",
                         operation.getOperationID().getActionVerbDuring(),
-                        PokeHandler.getLocalPokeName(operation.pokemon.getPokemon()),
+                        PokeHandler.getLocalPokeName(pokemon.getPokemon()),
                         Utilities.getRealExceptionMessage(e)));
-            }   
+            }
+            operation.doDelay();
         });
         System.out.println("Batch Operation Done");
     }

@@ -60,24 +60,17 @@ public abstract class Operation {
 
     protected abstract BPMResult doOperation();
 
-    public void execute() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public BPMResult execute() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         BPMResult result = validateOperation();
 
         if (result.isSuccess()) {
             result = doOperation();
         }
-
-        if (result.isSuccess()) {
-            System.out.println(String.format(
-                    "%s %s",
-                    getOperationID().getActionVerbFinished(),
-                    pokemon.getSummary()));
-        } else {
-            System.out.println(String.format(
-                    "Skipping %s due to <%s>",
-                    pokemon.getSummary(),
-                    result.getErrorMessage()));
-        }
+        
+        return result;
+    }
+    
+    public void doDelay(){
         System.out.println("Waiting " + delay.toString() + " ms before next operation");
         Utilities.sleep(delay);
     }
