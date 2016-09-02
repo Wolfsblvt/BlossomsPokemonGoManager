@@ -11,13 +11,17 @@ import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ConfigNew {
+public final class ConfigNew {
     private static final File file = new File(System.getProperty("user.dir"), "config.json");
+    private static final ConfigNew cfg = new ConfigNew();
     private static JSONObject json;
-    private static ConfigNew cfg = new ConfigNew();
 
     // Save file modified time
     private long lastModified = file.lastModified();
+
+    // Constants
+    private static final String COULD_NOT_FETCH_STRING_UNFORMATTED = "Could not fetch config item '%s'! Fallback to default: %s%n";
+    private static final String COULD_NOT_SAVE_STRING_UNFORMATTED = "Could not save '%s' to config (%s)!%n";
 
     private ConfigNew() {
         if (!file.exists()) {
@@ -26,8 +30,7 @@ public class ConfigNew {
                 if (!file.createNewFile()) {
                     throw new FileAlreadyExistsException(file.getName());
                 }
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
+            } catch (final IOException e) {
                 e.printStackTrace();
             }
             json = new JSONObject();
@@ -41,190 +44,140 @@ public class ConfigNew {
         return cfg;
     }
 
-    public JSONObject getJSONObject(String path, String defaultValue) {
-        return getJSONObject(path, new JSONObject(defaultValue));
+    public JSONObject getJSONObject(final ConfigKey configKey) {
+        return getJSONObject(configKey, configKey.getDefaultValue());
     }
 
-    public JSONObject getJSONObject(String path, JSONObject defaultValue) {
+    public JSONObject getJSONObject(final ConfigKey configKey, final JSONObject defaultValue) {
         try {
-            FindResult res = findNode(path, false);
-
+            final FindResult res = findNode(configKey.keyName, false);
             return res.node().getJSONObject(res.name());
-        } catch (JSONException jsone) {
-            System.out.println("Could not fetch config item '" + path + "'! Fallback to default: " + defaultValue);
-            setJSONObject(path, defaultValue);
+        } catch (final JSONException ignored) {
+            System.out.printf(COULD_NOT_FETCH_STRING_UNFORMATTED, configKey.keyName, defaultValue);
+            setJSONObject(configKey, defaultValue);
             return defaultValue;
         }
     }
 
-    public void setJSONObject(String path, JSONObject value) {
+    public void setJSONObject(final ConfigKey configKey, final JSONObject value) {
         try {
-            FindResult res = findNode(path, true);
-
+            final FindResult res = findNode(configKey.keyName, true);
             res.node().put(res.name(), value);
             saveConfig();
-        } catch (JSONException jsone) {
-            System.out.println("Could not save '" + value + "' to config (" + path + ")!");
+        } catch (final JSONException ignored) {
+            System.out.printf(COULD_NOT_SAVE_STRING_UNFORMATTED, value, configKey.keyName);
         }
     }
 
-    public boolean getBool(ConfigKey configKey) {
-        try {
-            FindResult res = findNode(configKey.keyName, false);
+    public boolean getBool(final ConfigKey configKey) {
+        return getBool(configKey, configKey.getDefaultValue());
+    }
 
+    public boolean getBool(final ConfigKey configKey, final boolean defaultValue) {
+        try {
+            final FindResult res = findNode(configKey.keyName, false);
             return res.node().getBoolean(res.name());
-        } catch (JSONException jsone) {
-            boolean defaultValue = configKey.getDefaultValue();
-            System.out.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
+        } catch (final JSONException ignored) {
+            System.out.printf(COULD_NOT_FETCH_STRING_UNFORMATTED, configKey.keyName, defaultValue);
             setBool(configKey, defaultValue);
             return defaultValue;
         }
     }
 
-    public boolean getBool(ConfigKey configKey, boolean defaultValue) {
+    public void setBool(final ConfigKey configKey, final boolean value) {
         try {
-            FindResult res = findNode(configKey.keyName, false);
-
-            return res.node().getBoolean(res.name());
-        } catch (JSONException jsone) {
-            System.out.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
-            setBool(configKey, defaultValue);
-            return defaultValue;
-        }
-    }
-
-
-    public void setBool(ConfigKey configKey, boolean value) {
-        try {
-            FindResult res = findNode(configKey.keyName, true);
-
+            final FindResult res = findNode(configKey.keyName, true);
             res.node().put(res.name(), value);
             saveConfig();
-        } catch (JSONException jsone) {
-            System.out.println("Could not save '" + value + "' to config (" + configKey.keyName + ")!");
+        } catch (final JSONException ignored) {
+            System.out.printf(COULD_NOT_SAVE_STRING_UNFORMATTED, value, configKey.keyName);
         }
     }
 
-    public String getString(ConfigKey configKey) {
-        try {
-            FindResult res = findNode(configKey.keyName, false);
+    public String getString(final ConfigKey configKey) {
+        return getString(configKey, configKey.getDefaultValue());
+    }
 
-            String value = res.node().getString(res.name());
+    public String getString(final ConfigKey configKey, final String defaultValue) {
+        try {
+            final FindResult res = findNode(configKey.keyName, true);
+            final String value = res.node().getString(res.name());
             return StringEscapeUtils.unescapeJson(value);
-        } catch (JSONException jsone) {
-            String defaultValue = configKey.getDefaultValue();
-            System.out.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
-            setString(configKey, StringEscapeUtils.escapeJson(defaultValue));
+        } catch (final JSONException ignored) {
+            System.out.printf(COULD_NOT_FETCH_STRING_UNFORMATTED, configKey.keyName, defaultValue);
+            setString(configKey, defaultValue);
             return defaultValue;
         }
     }
 
-    public String getString(ConfigKey configKey, String defaultValue) {
+    public void setString(final ConfigKey configKey, final String value) {
         try {
-            FindResult res = findNode(configKey.keyName, false);
-
-            String value = res.node().getString(res.name());
-            return StringEscapeUtils.unescapeJson(value);
-        } catch (JSONException jsone) {
-            System.out.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
-            setString(configKey, StringEscapeUtils.escapeJson(defaultValue));
-            return defaultValue;
-        }
-    }
-
-    public void setString(ConfigKey configKey, String value) {
-        try {
-            FindResult res = findNode(configKey.keyName, true);
-
+            final FindResult res = findNode(configKey.keyName, true);
             res.node().put(res.name(), StringEscapeUtils.escapeJson(value));
             saveConfig();
-        } catch (JSONException jsone) {
-            System.out.println("Could not save '" + value + "' to config (" + configKey.keyName + ")!");
+        } catch (final JSONException ignored) {
+            System.out.printf(COULD_NOT_SAVE_STRING_UNFORMATTED, value, configKey.keyName);
         }
     }
 
-    public int getInt(ConfigKey configKey) {
-        try {
-            FindResult res = findNode(configKey.keyName, false);
+    public int getInt(final ConfigKey configKey) {
+        return getInt(configKey, configKey.getDefaultValue());
+    }
 
+    public int getInt(final ConfigKey configKey, final int defaultValue) {
+        try {
+            final FindResult res = findNode(configKey.keyName, true);
             return res.node().getInt(res.name());
-        } catch (JSONException jsone) {
-            int defaultValue = configKey.getDefaultValue();
-            System.out.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
+        } catch (final JSONException ignored) {
+            System.out.printf(COULD_NOT_FETCH_STRING_UNFORMATTED, configKey.keyName, defaultValue);
             setInt(configKey, defaultValue);
             return defaultValue;
         }
     }
 
-    public int getInt(ConfigKey configKey, int defaultValue) {
+    public void setInt(final ConfigKey configKey, final int value) {
         try {
-            FindResult res = findNode(configKey.keyName, false);
-
-            return res.node().getInt(res.name());
-        } catch (JSONException jsone) {
-            System.out.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
-            setInt(configKey, defaultValue);
-            return defaultValue;
-        }
-    }
-
-    public void setInt(ConfigKey configKey, int value) {
-        try {
-            FindResult res = findNode(configKey.keyName, true);
-
+            final FindResult res = findNode(configKey.keyName, true);
             res.node().put(res.name(), value);
             saveConfig();
-        } catch (JSONException jsone) {
-            System.out.println("Could not save '" + value + "' to config (" + configKey.keyName + ")!");
+        } catch (final JSONException ignored) {
+            System.out.printf(COULD_NOT_SAVE_STRING_UNFORMATTED, value, configKey.keyName);
         }
     }
 
-    public double getDouble(ConfigKey configKey) {
-        try {
-            FindResult res = findNode(configKey.keyName, false);
+    public double getDouble(final ConfigKey configKey) {
+        return getDouble(configKey, configKey.getDefaultValue());
+    }
 
-            return res.node().getInt(res.name());
-        } catch (JSONException jsone) {
-            double defaultValue = configKey.getDefaultValue();
-            System.out.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
+    public double getDouble(final ConfigKey configKey, final double defaultValue) {
+        try {
+            final FindResult res = findNode(configKey.keyName, true);
+            return res.node().getDouble(res.name());
+        } catch (final JSONException ignored) {
+            System.out.printf(COULD_NOT_FETCH_STRING_UNFORMATTED, configKey.keyName, defaultValue);
             setDouble(configKey, defaultValue);
             return defaultValue;
         }
     }
 
-    public double getDouble(ConfigKey configKey, double defaultValue) {
+    public void setDouble(final ConfigKey configKey, final double value) {
         try {
-            FindResult res = findNode(configKey.keyName, false);
-
-            return res.node().getInt(res.name());
-        } catch (JSONException jsone) {
-            System.out.println("Could not fetch config item '" + configKey.keyName + "'! Fallback to default: " + defaultValue);
-            setDouble(configKey, defaultValue);
-            return defaultValue;
-        }
-    }
-
-    public void setDouble(ConfigKey configKey, double value) {
-        try {
-            FindResult res = findNode(configKey.keyName, true);
-
+            final FindResult res = findNode(configKey.keyName, true);
             res.node().put(res.name(), value);
             saveConfig();
-        } catch (JSONException jsone) {
-            System.out.println("Could not save '" + value + "' to config (" + configKey.keyName + ")!");
+        } catch (final JSONException ignored) {
+            System.out.printf(COULD_NOT_SAVE_STRING_UNFORMATTED, value, configKey.keyName);
         }
     }
 
-    private FindResult findNode(String path, boolean create) {
+    private FindResult findNode(final String path, final boolean create) {
         checkModified();
-        ArrayList<String> parts = new ArrayList<String>(Arrays.asList(path.split("\\.")));
+        final ArrayList<String> parts = new ArrayList<>(Arrays.asList(path.split("\\.")));
         JSONObject current = json;
         for (String item : parts.subList(0, parts.size() - 1)) {
             if (!current.has(item) && create) {
-                JSONObject newObj = new JSONObject();
-                current.put(item, newObj);
+                current.put(item, new JSONObject());
             }
-
             current = current.getJSONObject(item);
         }
 
@@ -232,7 +185,7 @@ public class ConfigNew {
     }
 
     private void checkModified() {
-        long currentModifiedTime = file.lastModified();
+        final long currentModifiedTime = file.lastModified();
         if (currentModifiedTime != lastModified) {
             // Re-read the file now
             json = new JSONObject(FileHelper.readFile(file));
@@ -240,8 +193,8 @@ public class ConfigNew {
         }
     }
 
-    public void delete(ConfigKey configKey) {
-        FindResult res = findNode(configKey.keyName, false);
+    public void delete(final ConfigKey configKey) {
+        final FindResult res = findNode(configKey.keyName, false);
         res.node().remove(res.name());
     }
 
@@ -250,10 +203,10 @@ public class ConfigNew {
     }
 
     private class FindResult {
-        private JSONObject node;
-        private String name;
+        private final JSONObject node;
+        private final String name;
 
-        FindResult(JSONObject node, String name) {
+        FindResult(final JSONObject node, final String name) {
             this.node = node;
             this.name = name;
         }
