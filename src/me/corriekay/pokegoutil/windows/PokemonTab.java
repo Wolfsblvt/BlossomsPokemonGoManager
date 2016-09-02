@@ -743,7 +743,7 @@ public class PokemonTab extends JPanel {
     }
 
     private String inputOperation(BatchOperation operation, ArrayList<Pokemon> pokes) {
-        JPanel panel = buildPanelForOperation(operation, pokes);
+        final JPanel panel = buildPanelForOperation(operation, pokes);
         String message = "";
         switch (operation) {
             case RENAME:
@@ -775,6 +775,12 @@ public class PokemonTab extends JPanel {
         return response == JOptionPane.OK_OPTION;
     }
 
+    /**
+     * Internal function to build the panel for a batch operation.
+     * @param operation The operation.
+     * @param pokes List of Pokémon for that operation.
+     * @return The panel.
+     */
     private JPanel buildPanelForOperation(final BatchOperation operation, final ArrayList<Pokemon> pokes) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -845,8 +851,7 @@ public class PokemonTab extends JPanel {
                 if (useFamilyName) {
                     // Try translating family name
                     try {
-                        PokemonId familyPokemonId = PokemonId
-                                .valueOf(poke.getPokemonFamily().toString().replaceAll("FAMILY_", ""));
+                        PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll("FAMILY_", ""));
                         familyName = PokeHandler.getLocalPokeName(familyPokemonId.getNumber());
                     } catch (IllegalArgumentException e) {
                         familyName = poke.getPokemonFamily().toString();

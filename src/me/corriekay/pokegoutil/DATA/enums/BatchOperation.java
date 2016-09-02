@@ -15,10 +15,10 @@ public enum BatchOperation {
     /**
      * Constructor to create a batch operation enum field.
      *
-     * @param friendlyName The friendly name of that field.
+     * @param name The friendly name of that field.
      */
-    BatchOperation(final String friendlyName) {
-        this.friendlyName = friendlyName;
+    BatchOperation(final String name) {
+        this.friendlyName = name;
     }
 
     @Override
