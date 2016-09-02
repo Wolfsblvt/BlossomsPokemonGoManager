@@ -75,7 +75,7 @@ public final class ConfigNew {
      */
     public JSONObject getJsonObject(final ConfigKey configKey, final JSONObject defaultValue) {
         try {
-            final FindResult res = findNode(configKey.keyName, false);
+            FindResult res = findNode(configKey.keyName, false);
             return res.node().getJSONObject(res.name());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
@@ -329,20 +329,20 @@ public final class ConfigNew {
     }
 
     private class FindResult {
-        private final JSONObject node;
-        private final String name;
+        private final JSONObject vNode;
+        private final String vName;
 
-        FindResult(final JSONObject node, final String name) {
-            this.node = node;
-            this.name = name;
+        FindResult(final JSONObject vNode, final String vName) {
+            this.vNode = vNode;
+            this.vName = vName;
         }
 
         public JSONObject node() {
-            return this.node;
+            return this.vNode;
         }
 
         public String name() {
-            return this.name;
+            return this.vName;
         }
     }
 }
