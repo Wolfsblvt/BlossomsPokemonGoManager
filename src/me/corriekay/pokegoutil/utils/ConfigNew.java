@@ -11,6 +11,10 @@ import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+
+/**
+ * Config class that manages saving data to the config.json.
+ */
 public final class ConfigNew {
     private static final File file = new File(System.getProperty("user.dir"), "config.json");
     private static final ConfigNew cfg = new ConfigNew();
@@ -23,6 +27,9 @@ public final class ConfigNew {
     private static final String CANNOT_FETCH_UNF_STRING = "Could not fetch config item '%s'! Fallback to default: %s%n";
     private static final String CANNOT_SAVE_UNF_STRING = "Could not save '%s' to config (%s)!%n";
 
+    /**
+     * Constructor that reads the config file.
+     */
     private ConfigNew() {
         if (!file.exists()) {
 
@@ -40,15 +47,33 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Returns the config object that can read the config.
+     *
+     * @return The Config object.
+     */
     public static ConfigNew getConfig() {
         return cfg;
     }
 
-    public JSONObject getJSONObject(final ConfigKey configKey) {
-        return getJSONObject(configKey, configKey.getDefaultValue());
+    /**
+     * Returns the JSONObject for given key. The one in the config, or if it does not exist, the default one.
+     *
+     * @param configKey The config key.
+     * @return The JSONObject under the key, or default value.
+     */
+    public JSONObject getJsonObject(final ConfigKey configKey) {
+        return getJsonObject(configKey, configKey.getDefaultValue());
     }
 
-    public JSONObject getJSONObject(final ConfigKey configKey, final JSONObject defaultValue) {
+    /**
+     * Returns the JSONObject for given key. The one in the config, or if it does not exist, the given default value.
+     *
+     * @param configKey    The config key.
+     * @param defaultValue The default value to choose if the key does not exist.
+     * @return The JSONObject under the key, or default value.
+     */
+    public JSONObject getJsonObject(final ConfigKey configKey, final JSONObject defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, false);
             return res.node().getJSONObject(res.name());
@@ -59,6 +84,12 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Saves the given JSONObject under given key.
+     *
+     * @param configKey The config key.
+     * @param value     The value to save.
+     */
     public void setJSONObject(final ConfigKey configKey, final JSONObject value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
@@ -69,10 +100,23 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Returns the Boolean for given key. The one in the config, or if it does not exist, the default one.
+     *
+     * @param configKey The config key.
+     * @return The Boolean under the key, or default value.
+     */
     public boolean getBool(final ConfigKey configKey) {
         return getBool(configKey, configKey.getDefaultValue());
     }
 
+    /**
+     * Returns the Boolean for given key. The one in the config, or if it does not exist, the given default value.
+     *
+     * @param configKey    The config key.
+     * @param defaultValue The default value to choose if the key does not exist.
+     * @return The Boolean under the key, or default value.
+     */
     public boolean getBool(final ConfigKey configKey, final boolean defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, false);
@@ -84,6 +128,12 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Saves the given Boolean under given key.
+     *
+     * @param configKey The config key.
+     * @param value     The value to save.
+     */
     public void setBool(final ConfigKey configKey, final boolean value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
@@ -94,10 +144,23 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Returns the String for given key. The one in the config, or if it does not exist, the default one.
+     *
+     * @param configKey The config key.
+     * @return The String under the key, or default value.
+     */
     public String getString(final ConfigKey configKey) {
         return getString(configKey, configKey.getDefaultValue());
     }
 
+    /**
+     * Returns the String for given key. The one in the config, or if it does not exist, the given default value.
+     *
+     * @param configKey    The config key.
+     * @param defaultValue The default value to choose if the key does not exist.
+     * @return The String under the key, or default value.
+     */
     public String getString(final ConfigKey configKey, final String defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
@@ -110,6 +173,12 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Saves the given String under given key.
+     *
+     * @param configKey The config key.
+     * @param value     The value to save.
+     */
     public void setString(final ConfigKey configKey, final String value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
@@ -120,10 +189,23 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Returns the Int for given key. The one in the config, or if it does not exist, the default one.
+     *
+     * @param configKey The config key.
+     * @return The Int under the key, or default value.
+     */
     public int getInt(final ConfigKey configKey) {
         return getInt(configKey, configKey.getDefaultValue());
     }
 
+    /**
+     * Returns the Int for given key. The one in the config, or if it does not exist, the given default value.
+     *
+     * @param configKey    The config key.
+     * @param defaultValue The default value to choose if the key does not exist.
+     * @return The Int under the key, or default value.
+     */
     public int getInt(final ConfigKey configKey, final int defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
@@ -135,6 +217,12 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Saves the given Int under given key.
+     *
+     * @param configKey The config key.
+     * @param value     The value to save.
+     */
     public void setInt(final ConfigKey configKey, final int value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
@@ -145,10 +233,23 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Returns the Double for given key. The one in the config, or if it does not exist, the default one.
+     *
+     * @param configKey The config key.
+     * @return The Double under the key, or default value.
+     */
     public double getDouble(final ConfigKey configKey) {
         return getDouble(configKey, configKey.getDefaultValue());
     }
 
+    /**
+     * Returns the Double for given key. The one in the config, or if it does not exist, the given default value.
+     *
+     * @param configKey    The config key.
+     * @param defaultValue The default value to choose if the key does not exist.
+     * @return The Double under the key, or default value.
+     */
     public double getDouble(final ConfigKey configKey, final double defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
@@ -160,6 +261,12 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Saves the given Double under given key.
+     *
+     * @param configKey The config key.
+     * @param value     The value to save.
+     */
     public void setDouble(final ConfigKey configKey, final double value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
@@ -170,6 +277,12 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Internal function to find a node with its value.
+     * @param path The path of the node.
+     * @param create Weather or not the node should be created if it doesn't exist.
+     * @return The Result for searching the node.
+     */
     private FindResult findNode(final String path, final boolean create) {
         checkModified();
         final ArrayList<String> parts = new ArrayList<>(Arrays.asList(path.split("\\.")));
@@ -184,6 +297,10 @@ public final class ConfigNew {
         return new FindResult(current, parts.get(parts.size() - 1));
     }
 
+    /**
+     * Check if the file was modified.
+     * (Different "lastModified" time)
+     */
     private void checkModified() {
         final long currentModifiedTime = file.lastModified();
         if (currentModifiedTime != lastModified) {
@@ -193,13 +310,22 @@ public final class ConfigNew {
         }
     }
 
+    /**
+     * Delete the given key and its value.
+     *
+     * @param configKey The config key.
+     */
     public void delete(final ConfigKey configKey) {
         final FindResult res = findNode(configKey.keyName, false);
         res.node().remove(res.name());
     }
 
+    /**
+     * Save the config file.
+     */
     public void saveConfig() {
-        FileHelper.saveFile(file, json.toString(4));
+        final int indentFactor = 4;
+        FileHelper.saveFile(file, json.toString(indentFactor));
     }
 
     private class FindResult {

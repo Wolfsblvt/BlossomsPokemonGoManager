@@ -22,6 +22,7 @@ engines:
     channel: "beta"
     checks:
       com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck:
+        enabled: true
         max: 120
 
 ratings:
