@@ -122,9 +122,8 @@ public class PokeHandler {
      * @return A <c>LinkedHashMap</c> with each Pokémon as key and the result as
      * value.
      */
-    public LinkedHashMap<Pokemon, NicknamePokemonResponse.Result>
-    bulkRenameWithPattern(final String pattern,
-                          final BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback) {
+    public LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> bulkRenameWithPattern(final String pattern,
+                                                                                        final BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback) {
         LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> results = new LinkedHashMap<>();
 
         mons.forEach(p -> {
