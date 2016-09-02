@@ -21,9 +21,10 @@ engines:
     enabled: true
     channel: "beta"
     checks:
+      # We can't check line length here, cause 100 is too short and we don't have
+      # a configuration xml file. Codacy checks that alone then.
       com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck:
-        enabled: true
-        max: 120
+        enabled: false
 
 ratings:
   paths:

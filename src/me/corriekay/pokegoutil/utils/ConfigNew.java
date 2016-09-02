@@ -75,7 +75,7 @@ public final class ConfigNew {
      */
     public JSONObject getJsonObject(final ConfigKey configKey, final JSONObject defaultValue) {
         try {
-            FindResult res = findNode(configKey.keyName, false);
+            final FindResult res = findNode(configKey.keyName, false);
             return res.node().getJSONObject(res.name());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
@@ -279,7 +279,8 @@ public final class ConfigNew {
 
     /**
      * Internal function to find a node with its value.
-     * @param path The path of the node.
+     *
+     * @param path   The path of the node.
      * @param create Weather or not the node should be created if it doesn't exist.
      * @return The Result for searching the node.
      */
@@ -328,21 +329,40 @@ public final class ConfigNew {
         FileHelper.saveFile(file, json.toString(indentFactor));
     }
 
+    /**
+     * The Result which combines a node with it's value.
+     */
     private class FindResult {
-        private final JSONObject vNode;
-        private final String vName;
+        private final JSONObject nodeVal;
+        private final String nameVal;
 
-        FindResult(final JSONObject vNode, final String vName) {
-            this.vNode = vNode;
-            this.vName = vName;
+        /**
+         * Creates a Result object.
+         *
+         * @param nodeVal The node.
+         * @param nameVal The value.
+         */
+        FindResult(final JSONObject nodeVal, final String nameVal) {
+            this.nodeVal = nodeVal;
+            this.nameVal = nameVal;
         }
 
+        /**
+         * Returns the node.
+         *
+         * @return The node.
+         */
         public JSONObject node() {
-            return this.vNode;
+            return this.nodeVal;
         }
 
+        /**
+         * Returns the name.
+         *
+         * @return The name.
+         */
         public String name() {
-            return this.vName;
+            return this.nameVal;
         }
     }
 }
