@@ -334,16 +334,16 @@ public class PokeHandler {
         MOVE_TYPE_1("Move 1 abbreviated (Ghost = Gh)") {
             @Override
             public String get(Pokemon p) {
-                String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
-                boolean hasStab = type.equals(p.getMeta().getType1().toString()) || type.equals(p.getMeta().getType2().toString());
+                final String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
+                final boolean hasStab = type.equals(p.getMeta().getType1().toString()) || type.equals(p.getMeta().getType2().toString());
                 return (hasStab) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
         MOVE_TYPE_2("Move 2 abbreviated (Ghost = Gh)") {
             @Override
             public String get(Pokemon p) {
-                String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
-                boolean hasStab = type.equals(p.getMeta().getType1().toString()) || type.equals(p.getMeta().getType2().toString());
+                final String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
+                final boolean hasStab = type.equals(p.getMeta().getType1().toString()) || type.equals(p.getMeta().getType2().toString());
                 return (hasStab) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
@@ -393,9 +393,9 @@ public class PokeHandler {
         };
 
         private static String abbreviateType(String type) {
-            if (type.equalsIgnoreCase("none")) {
+            if ("none".equalsIgnoreCase(type)) {
                 return "__";
-            } else if (type.equalsIgnoreCase("fighting") || type.equalsIgnoreCase("ground")) {
+            } else if ("fighting".equalsIgnoreCase(type) || "ground".equalsIgnoreCase(type)) {
                 // "Gr" is Grass, so we make Ground "Gd". "Fi" is Fire, so we make Fighting "Fg"
                 return type.substring(0, 1).toUpperCase() + type.substring(type.length() - 1).toLowerCase();
             } else {
