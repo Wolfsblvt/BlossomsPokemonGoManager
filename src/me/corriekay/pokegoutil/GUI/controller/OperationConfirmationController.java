@@ -1,5 +1,12 @@
 package me.corriekay.pokegoutil.GUI.controller;
 
+import java.io.IOException;
+import java.net.URL;
+
+import com.pokegoapi.exceptions.InvalidCurrencyException;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
+
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,20 +26,13 @@ import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.DATA.models.operations.Operation;
 import me.corriekay.pokegoutil.utils.Utilities;
 
-import java.io.IOException;
-import java.net.URL;
-
-import com.pokegoapi.exceptions.InvalidCurrencyException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
-
 public class OperationConfirmationController extends AnchorPane {
 
     private final String fxmlLayout = "layout/ConfirmOperationWindow.fxml";
     private final URL icon;
-    private ClassLoader classLoader = getClass().getClassLoader();
+    private final ClassLoader classLoader = getClass().getClassLoader();
 
-    private Scene rootScene;
+    private final Scene rootScene;
 
     @FXML
     private ListView<Operation> operationListView;
@@ -58,16 +58,16 @@ public class OperationConfirmationController extends AnchorPane {
     @FXML
     private Button cancelBtn;
 
-    public OperationConfirmationController(ObservableList<Operation> operations) {
-        FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
+    public OperationConfirmationController(final ObservableList<Operation> operations) {
+        final FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
         fxmlLoader.setController(this);
         try {
             fxmlLoader.load();
-        } catch (IOException exception) {
+        } catch (final IOException exception) {
             throw new RuntimeException(exception);
         }
         rootScene = new Scene(fxmlLoader.getRoot());
-        Stage stage = new Stage();
+        final Stage stage = new Stage();
         icon = classLoader.getResource("icon/PokeBall-icon.png");
         stage.getIcons().add(new Image(icon.toExternalForm()));
         stage.setTitle("Please Review Operations");
@@ -87,13 +87,13 @@ public class OperationConfirmationController extends AnchorPane {
         cancelBtn.setOnAction(this::cancelOperations);
     }
 
-    private void startOperations(ActionEvent actionEvent) {
+    private void startOperations(final ActionEvent actionEvent) {
         operationListView.getItems().forEach(operation -> doOperation(operation));
         System.out.println("Batch Operation Done");
     }
     
-    private void doOperation(Operation operation){
-        PokemonModel pokemon = operation.pokemon;
+    private void doOperation(final Operation operation){
+        final PokemonModel pokemon = operation.pokemon;
         BpmOperationResult result = null;
         try {
             result = operation.execute();
@@ -124,10 +124,10 @@ public class OperationConfirmationController extends AnchorPane {
         }
     }
 
-    private void pauseOperations(ActionEvent actionEvent) {
+    private void pauseOperations(final ActionEvent actionEvent) {
     }
 
-    private void cancelOperations(ActionEvent actionEvent) {
+    private void cancelOperations(final ActionEvent actionEvent) {
         rootScene.getWindow().hide();
     }
 }
