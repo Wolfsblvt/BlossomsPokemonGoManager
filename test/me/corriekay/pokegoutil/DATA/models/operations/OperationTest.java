@@ -30,8 +30,8 @@ public class OperationTest {
     }
 
     /**
-     * Instantiate a OperationTest using the parameters from data()
-     * 
+     * Instantiate a OperationTest using the parameters from data().
+     *
      * @param operationId operationId to test
      */
     public OperationTest(final OperationId operationId) {

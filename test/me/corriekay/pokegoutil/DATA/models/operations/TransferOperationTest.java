@@ -25,7 +25,7 @@ public class TransferOperationTest {
     private TransferOperation operation;
 
     /**
-     * Instantiate a TransferOperationTest
+     * Instantiate a TransferOperationTest.
      */
     public TransferOperationTest() {
     }

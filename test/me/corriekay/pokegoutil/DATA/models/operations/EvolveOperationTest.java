@@ -26,12 +26,6 @@ public class EvolveOperationTest {
     private EvolveOperation operation;
 
     /**
-     * Instantiate a EvolveOperationTest.
-     */
-    public EvolveOperationTest() {
-    }
-
-    /**
      * Before every test
      */
     @Before
