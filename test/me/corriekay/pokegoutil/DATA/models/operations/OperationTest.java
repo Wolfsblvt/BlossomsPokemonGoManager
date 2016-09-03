@@ -18,7 +18,7 @@ import me.corriekay.pokegoutil.GUI.enums.OperationId;
 @RunWith(value = Parameterized.class)
 public class OperationTest {
 
-    private OperationId operationID;
+    private OperationId operationId;
     private ObservableListWrapper<PokemonModel> pokemonList;
 
     @Parameters(name = "{index}: {0}")
@@ -26,8 +26,8 @@ public class OperationTest {
         return Arrays.asList(OperationId.values());
     }
 
-    public OperationTest(OperationId operationID) {
-        this.operationID = operationID;
+    public OperationTest(OperationId operationId) {
+        this.operationId = operationId;
 
         // Create list with 1 null value for testing
         List<PokemonModel> list = new ArrayList<>();
@@ -37,6 +37,6 @@ public class OperationTest {
 
     @Test
     public void TestGenerateOperations() {
-        Operation.generateOperations(operationID, pokemonList);
+        Operation.generateOperations(operationId, pokemonList);
     }
 }
