@@ -16,12 +16,16 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import okhttp3.OkHttpClient;
 
-/*this controller does the login/log off, and different account information (aka player data)
- *
+/*
+ * This controller does the login/log off, and different account information (aka player data)
  */
 public final class AccountManager {
 
     private static AccountManager instance;
+
+    private final ConfigNew config = ConfigNew.getConfig();
+    private PokemonGo go;
+    private PlayerAccount playerAccount;
 
     public static AccountManager getInstance() {
         if (instance == null) {
@@ -30,10 +34,6 @@ public final class AccountManager {
         }
         return instance;
     }
-
-    private final ConfigNew config = ConfigNew.getConfig();
-    private PokemonGo go;
-    private PlayerAccount playerAccount;
 
     private AccountManager() {
 
@@ -76,15 +76,14 @@ public final class AccountManager {
         }
 
         return loginData;
-
-    }
-
-    public PlayerProfile getPlayerProfile() {
-        return go != null ? go.getPlayerProfile() : null;
     }
 
     public PlayerAccount getPlayerAccount() {
         return playerAccount;
+    }
+
+    public PlayerProfile getPlayerProfile() {
+        return go != null ? go.getPlayerProfile() : null;
     }
 
     private void initOtherControllers() {
@@ -141,7 +140,7 @@ public final class AccountManager {
             } else {
                 deleteLoginData(LoginType.GOOGLE);
             }
-        } catch (final Exception e) {
+        } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.GOOGLE);
             return new BpmResult(e.getMessage());
         }
