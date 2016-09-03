@@ -43,9 +43,9 @@ public class TransferOperationTest {
     /**
      * Transfer a pokemon that is favorite.
      *
-     * @throws InvalidCurrencyException
-     * @throws LoginFailedException
-     * @throws RemoteServerException
+     * @throws InvalidCurrencyException invalid currency
+     * @throws LoginFailedException login fail
+     * @throws RemoteServerException sever error
      */
     @Test
     public void pokemonIsFavorite() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
@@ -60,9 +60,9 @@ public class TransferOperationTest {
     /**
      * Transfer a pokemon that is in gym.
      *
-     * @throws InvalidCurrencyException
-     * @throws LoginFailedException
-     * @throws RemoteServerException
+     * @throws InvalidCurrencyException invalid currency
+     * @throws LoginFailedException login fail
+     * @throws RemoteServerException sever error
      */
     @Test
     public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
@@ -77,9 +77,9 @@ public class TransferOperationTest {
     /**
      * Transfer a pokemon successfully.
      *
-     * @throws InvalidCurrencyException
-     * @throws LoginFailedException
-     * @throws RemoteServerException
+     * @throws InvalidCurrencyException invalid currency
+     * @throws LoginFailedException login failed
+     * @throws RemoteServerException server error
      */
     @Test
     public void sucessfullyTransfer() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {

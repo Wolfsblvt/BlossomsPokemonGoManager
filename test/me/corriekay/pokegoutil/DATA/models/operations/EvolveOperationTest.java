@@ -44,9 +44,9 @@ public class EvolveOperationTest {
     /**
      * Evolve a pokemon that is in gym.
      *
-     * @throws InvalidCurrencyException
-     * @throws LoginFailedException
-     * @throws RemoteServerException
+     * @throws InvalidCurrencyException invalid currency
+     * @throws LoginFailedException login fail
+     * @throws RemoteServerException sever error
      */
     @Test
     public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
@@ -61,9 +61,9 @@ public class EvolveOperationTest {
     /**
      * Evolve a pokemon that is not evolvable.
      *
-     * @throws InvalidCurrencyException
-     * @throws LoginFailedException
-     * @throws RemoteServerException
+     * @throws InvalidCurrencyException invalid currency
+     * @throws LoginFailedException login fail
+     * @throws RemoteServerException sever error
      */
     @Test
     public void pokemonIsNotEvolvable() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
@@ -78,9 +78,9 @@ public class EvolveOperationTest {
     /**
      * Evolve a pokemon when there is not enough candies.
      *
-     * @throws InvalidCurrencyException
-     * @throws LoginFailedException
-     * @throws RemoteServerException
+     * @throws InvalidCurrencyException invalid currency
+     * @throws LoginFailedException login fail
+     * @throws RemoteServerException sever error
      */
     @Test
     public void notEnoughCandies() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
@@ -97,9 +97,9 @@ public class EvolveOperationTest {
     /**
      * Evolve a pokemon successfully.
      *
-     * @throws InvalidCurrencyException
-     * @throws LoginFailedException
-     * @throws RemoteServerException
+     * @throws InvalidCurrencyException invalid currency
+     * @throws LoginFailedException login fail
+     * @throws RemoteServerException sever error
      */
     @Test
     public void sucessfullyEvolve() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
