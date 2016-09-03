@@ -17,7 +17,7 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import okhttp3.OkHttpClient;
 
 /**
- * This controller does the login/log off, and different account information (aka player data)
+ * This controller does the login/log off, and different account information (aka player data).
  */
 public final class AccountManager {
 
@@ -41,8 +41,8 @@ public final class AccountManager {
 
     /**
      * Deletes the specified LoginType from the config.json.
-     * <p>
-     * Also SaveAuth settings will be deleted
+     *
+     * <p> Also SaveAuth settings will be deleted
      *
      * @param type the LoginType to be removed
      */
@@ -207,7 +207,7 @@ public final class AccountManager {
             } else {
                 deleteLoginData(LoginType.PTC);
             }
-        } catch (final Exception e) {
+        } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.PTC);
             return new BpmResult(e.getMessage());
         }
