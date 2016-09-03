@@ -36,7 +36,7 @@ public class OperationTest {
     }
 
     @Test
-    public void TestGenerateOperations() {
+    public void testGenerateOperations() {
         Operation.generateOperations(operationId, pokemonList);
     }
 }

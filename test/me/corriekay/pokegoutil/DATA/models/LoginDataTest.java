@@ -1,16 +1,17 @@
 package me.corriekay.pokegoutil.DATA.models;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.util.Arrays;
 import java.util.Collection;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import me.corriekay.pokegoutil.DATA.enums.LoginType;
-
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 
 
 @RunWith(value = Parameterized.class)
@@ -57,15 +58,15 @@ public class LoginDataTest {
     }
     
     @Test
-    public void TestGoogleIsValid(){
+    public void testGoogleIsValid(){
         assertThat(loginData.isValidGoogleLogin(), is(expectedGoogleIsValid));
     }
     @Test
-    public void TestLoginType(){
+    public void testLoginType(){
         assertThat(loginData.getLoginType(), is(expectedLoginType));
     }
     @Test
-    public void TestPTCIsValid(){
+    public void testPTCIsValid(){
         assertThat(loginData.isValidPTCLogin(), is(expectedPTCIsValid));
     }
 }
