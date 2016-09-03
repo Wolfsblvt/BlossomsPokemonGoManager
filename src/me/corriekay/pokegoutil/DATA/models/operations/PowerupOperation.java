@@ -13,11 +13,19 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class PowerupOperation extends Operation {
 
+    /**
+     * Instantiate PowerupOperation. Only used in mocking
+     */
     protected PowerupOperation() {
         // For mocking
         super();
     }
 
+    /**
+     * Instantiate PowerupOperation with a pokemon
+     *
+     * @param pokemon pokemon to power up
+     */
     public PowerupOperation(final PokemonModel pokemon) {
         super(pokemon);
     }

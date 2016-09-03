@@ -12,11 +12,19 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class RenameOperation extends Operation {
 
+    /**
+     * Instantiate RenameOperation. Only used in mocking
+     */
     protected RenameOperation() {
         // For mocking
         super();
     }
 
+    /**
+     * Instantiate RenameOperation with a pokemon
+     *
+     * @param pokemon pokemon to rename
+     */
     public RenameOperation(final PokemonModel pokemon) {
         super(pokemon);
     }

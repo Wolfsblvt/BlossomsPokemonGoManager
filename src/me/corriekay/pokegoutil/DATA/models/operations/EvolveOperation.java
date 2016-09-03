@@ -14,11 +14,19 @@ import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 
 public class EvolveOperation extends Operation {
 
+    /**
+     * Instantiate EvolveOperation. Only used in mocking
+     */
     protected EvolveOperation() {
         // For mocking
         super();
     }
 
+    /**
+     * Instantiate EvolveOperation with a pokemon
+     *
+     * @param pokemon pokemon to evolve
+     */
     public EvolveOperation(final PokemonModel pokemon) {
         super(pokemon);
     }

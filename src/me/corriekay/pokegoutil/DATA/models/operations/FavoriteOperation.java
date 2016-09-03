@@ -8,11 +8,19 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class FavoriteOperation extends Operation {
 
+    /**
+     * Instantiate EvolveOperation. Only used in mocking
+     */
     protected FavoriteOperation() {
         // For mocking
         super();
     }
 
+    /**
+     * Instantiate FavoriteOperation with a pokemon
+     *
+     * @param pokemon pokemon to favorite
+     */
     public FavoriteOperation(final PokemonModel pokemon) {
         super(pokemon);
     }
