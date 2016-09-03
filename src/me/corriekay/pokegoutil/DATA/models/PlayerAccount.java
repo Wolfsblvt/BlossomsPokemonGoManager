@@ -11,7 +11,7 @@ public class PlayerAccount {
     private final PlayerProfile playerProfile;
 
     /**
-     * Instantiate PlayerAccount controller
+     * Instantiate PlayerAccount controller.
      *
      * @param playerProfile player profile of logged on user
      */
@@ -20,8 +20,8 @@ public class PlayerAccount {
     }
 
     /**
-     * Get number of stardust
-     * 
+     * Get number of stardust.
+     *
      * @return number of stardust
      * @throws InvalidCurrencyException invalid currency
      * @throws LoginFailedException login failed
