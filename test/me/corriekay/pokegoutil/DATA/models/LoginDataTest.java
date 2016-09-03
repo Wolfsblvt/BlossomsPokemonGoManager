@@ -13,9 +13,16 @@ import org.junit.runners.Parameterized.Parameters;
 
 import me.corriekay.pokegoutil.DATA.enums.LoginType;
 
-
+/**
+ * Test for LoginData model.
+ */
 @RunWith(value = Parameterized.class)
 public class LoginDataTest {
+
+    private final LoginData loginData;
+    private final LoginType expectedLoginType;
+    private final boolean expectedPtcIsValid;
+    private final boolean expectedGoogleIsValid;
 
     @Parameters(name="{index}: {0}")
     public static Collection<Object[]> data() {
@@ -43,12 +50,14 @@ public class LoginDataTest {
         });
     }
 
-    private final LoginData loginData;
-    private final LoginType expectedLoginType;
-    private final boolean expectedPtcIsValid;
-
-    private final boolean expectedGoogleIsValid;
-
+    /**
+     * Instantiate a LoginDataTest using the parameters from data().
+     *
+     * @param loginData login data to test
+     * @param expectedLoginType login type expected
+     * @param expectedPtcIsValid expected ptc is valid
+     * @param expectedGoogleIsValid expected google is valid
+     */
     public LoginDataTest(final LoginData loginData, final LoginType expectedLoginType,
             final boolean expectedPtcIsValid, final boolean expectedGoogleIsValid) {
         this.loginData = loginData;
@@ -59,16 +68,16 @@ public class LoginDataTest {
 
     @Test
     public void testGoogleIsValid(){
-        assertThat(loginData.isValidGoogleLogin(), is(expectedGoogleIsValid));
+        assertThat("Validate google login", loginData.isValidGoogleLogin(), is(expectedGoogleIsValid));
     }
 
     @Test
     public void testLoginType(){
-        assertThat(loginData.getLoginType(), is(expectedLoginType));
+        assertThat("Correct login type", loginData.getLoginType(), is(expectedLoginType));
     }
 
     @Test
     public void testPtcIsValid(){
-        assertThat(loginData.isValidPtcLogin(), is(expectedPtcIsValid));
+        assertThat("Valid ptc login", loginData.isValidPtcLogin(), is(expectedPtcIsValid));
     }
 }
