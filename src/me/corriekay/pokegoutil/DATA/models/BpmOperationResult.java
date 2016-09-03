@@ -70,7 +70,7 @@ public class BpmOperationResult extends BpmResult {
     }
 
     /**
-     * Check if there is a next operation
+     * Check if there is a next operation.
      *
      * @return if there is a next operation
      */
