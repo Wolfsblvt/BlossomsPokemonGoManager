@@ -13,7 +13,7 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 public class RenameOperation extends Operation {
 
     /**
-     * Instantiate RenameOperation. Only used in mocking
+     * Instantiate RenameOperation. Only used in mocking.
      */
     protected RenameOperation() {
         // For mocking
@@ -21,7 +21,7 @@ public class RenameOperation extends Operation {
     }
 
     /**
-     * Instantiate RenameOperation with a pokemon
+     * Instantiate RenameOperation with a pokemon.
      *
      * @param pokemon pokemon to rename
      */

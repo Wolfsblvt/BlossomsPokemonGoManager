@@ -9,7 +9,7 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 public class FavoriteOperation extends Operation {
 
     /**
-     * Instantiate EvolveOperation. Only used in mocking
+     * Instantiate EvolveOperation. Only used in mocking.
      */
     protected FavoriteOperation() {
         // For mocking
@@ -17,7 +17,7 @@ public class FavoriteOperation extends Operation {
     }
 
     /**
-     * Instantiate FavoriteOperation with a pokemon
+     * Instantiate FavoriteOperation with a pokemon.
      *
      * @param pokemon pokemon to favorite
      */

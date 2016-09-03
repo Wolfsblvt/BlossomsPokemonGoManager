@@ -15,7 +15,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 public class EvolveOperation extends Operation {
 
     /**
-     * Instantiate EvolveOperation. Only used in mocking
+     * Instantiate EvolveOperation. Only used in mocking.
      */
     protected EvolveOperation() {
         // For mocking
@@ -23,7 +23,7 @@ public class EvolveOperation extends Operation {
     }
 
     /**
-     * Instantiate EvolveOperation with a pokemon
+     * Instantiate EvolveOperation with a pokemon.
      *
      * @param pokemon pokemon to evolve
      */

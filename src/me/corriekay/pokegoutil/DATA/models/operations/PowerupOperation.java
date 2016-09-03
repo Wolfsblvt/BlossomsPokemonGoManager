@@ -14,7 +14,7 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 public class PowerupOperation extends Operation {
 
     /**
-     * Instantiate PowerupOperation. Only used in mocking
+     * Instantiate PowerupOperation. Only used in mocking.
      */
     protected PowerupOperation() {
         // For mocking
@@ -22,7 +22,7 @@ public class PowerupOperation extends Operation {
     }
 
     /**
-     * Instantiate PowerupOperation with a pokemon
+     * Instantiate PowerupOperation with a pokemon.
      *
      * @param pokemon pokemon to power up
      */

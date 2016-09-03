@@ -15,7 +15,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 public class TransferOperation extends Operation {
 
     /**
-     * Instantiate TransferOperation. Only used in mocking
+     * Instantiate TransferOperation. Only used in mocking.
      */
     protected TransferOperation() {
         // For mocking
@@ -23,7 +23,7 @@ public class TransferOperation extends Operation {
     }
 
     /**
-     * Instantiate TransferOperation with a pokemon
+     * Instantiate TransferOperation with a pokemon.
      *
      * @param pokemon pokemon to transfer
      */
