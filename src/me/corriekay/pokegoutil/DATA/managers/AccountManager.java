@@ -42,7 +42,7 @@ public final class AccountManager {
     /**
      * Deletes the specified LoginType from the config.json.
      *
-     * <p> Also SaveAuth settings will be deleted
+     * <p>Also SaveAuth settings will be deleted
      *
      * @param type the LoginType to be removed
      */
@@ -92,7 +92,7 @@ public final class AccountManager {
     }
 
     /**
-     * Returns the logged in playerAccount
+     * Returns the logged in playerAccount.
      *
      * @return the logged in playerAccount
      */
@@ -111,7 +111,7 @@ public final class AccountManager {
     }
 
     /**
-     * Login to Pokemon Go with the login data
+     * Login to Pokemon Go with the login data.
      *
      * @param loginData the login data used to login
      * @return results of the login
@@ -134,7 +134,7 @@ public final class AccountManager {
     }
 
     /**
-     * Login using GoogleAuth
+     * Login using GoogleAuth.
      *
      * @param loginData the login data used to login
      * @return results of the login
@@ -185,7 +185,7 @@ public final class AccountManager {
     }
 
     /**
-     * Login using PTC
+     * Login using PTC.
      *
      * @param loginData the login data used to login
      * @return results of the login
@@ -222,7 +222,7 @@ public final class AccountManager {
     }
 
     /**
-     * Do login process and initialize GUI
+     * Do login process and initialize GUI.
      *
      * @param cp contains the credential provider
      * @param http http client
@@ -237,7 +237,7 @@ public final class AccountManager {
     }
 
     /**
-     * The value will be saved for saveAuth in config.json
+     * The value will be saved for saveAuth in config.json.
      *
      * @param shouldSave settings for saveAuth
      */
