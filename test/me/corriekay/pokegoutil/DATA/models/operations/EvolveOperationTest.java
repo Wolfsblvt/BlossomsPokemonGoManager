@@ -23,7 +23,6 @@ public class EvolveOperationTest {
     @Before
     public void beforeTest() {
         pokemon = mock(PokemonModel.class);
-        // operation = new EvolveOperation(pokemon);
         operation = spy(EvolveOperation.class);
         operation.pokemon = pokemon;
     }
@@ -54,6 +53,7 @@ public class EvolveOperationTest {
         when(pokemon.getCandies2Evlv()).thenReturn(25);
 
         BPMOperationResult result = operation.execute();
+        
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Not enough candies", result.getOperationError(),
                 is(OperationError.INSUFFICENT_CANDIES));
