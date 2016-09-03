@@ -10,6 +10,8 @@ import org.apache.commons.lang3.text.WordUtils;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
 
 import POGOProtos.Enums.PokemonFamilyIdOuterClass;
 import POGOProtos.Enums.PokemonIdOuterClass;
@@ -74,8 +76,8 @@ public class PokemonModel {
         initialze();
     }
 
-    private void initialze(){
-        final PokemonMeta meta = pokemon.getMeta() != null? pokemon.getMeta():new PokemonMeta();
+    private void initialze() {
+        final PokemonMeta meta = pokemon.getMeta() != null ? pokemon.getMeta() : new PokemonMeta();
 
         setNumId(meta.getNumber());
         setNickname(pokemon.getNickname());
@@ -90,16 +92,23 @@ public class PokemonModel {
 
         final Double dps1 = PokemonUtils.dpsForMove(pokemon, true);
         final Double dps2 = PokemonUtils.dpsForMove(pokemon, false);
-        setMove1(WordUtils.capitalize(pokemon.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1) + "dps)");
-        setMove2(WordUtils.capitalize(pokemon.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " (" + String.format("%.2f", dps2) + "dps)");
+        setMove1(WordUtils.capitalize(
+                pokemon.getMove1().toString().toLowerCase()
+                .replaceAll("_fast", "").replaceAll("_", " "))
+                + " (" + String.format("%.2f", dps1) + "dps)");
+        setMove2(WordUtils.capitalize(
+                pokemon.getMove2().toString().toLowerCase()
+                .replaceAll("_", " "))
+                + " (" + String.format("%.2f", dps2) + "dps)");
 
         setCp(pokemon.getCp());
         setHp(pokemon.getMaxStamina());
 
-        int trainerLevel = 1;
+        int trainerLevel = -1;
+
         try {
             trainerLevel = accountManager.getPlayerProfile().getStats().getLevel();
-        } catch (final Exception e1) {
+        } catch (LoginFailedException | RemoteServerException e) {
             System.out.println("Error: Cannot find meta data for trainer level");
         }
 
@@ -125,11 +134,18 @@ public class PokemonModel {
                 final PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.JOLTEON);
                 if (vap != null && fla != null && jol != null) {
                     final Comparator<PokemonMeta> cMeta = (m1, m2) -> {
-                        final int comb1 = PokemonCpUtils.getMaxCp(m1.getBaseAttack(), m1.getBaseDefense(), m1.getBaseStamina());
-                        final int comb2 = PokemonCpUtils.getMaxCp(m2.getBaseAttack(), m2.getBaseDefense(), m2.getBaseStamina());
+                        final int comb1 = PokemonCpUtils.getMaxCp(
+                                m1.getBaseAttack(),
+                                m1.getBaseDefense(),
+                                m1.getBaseStamina());
+                        final int comb2 = PokemonCpUtils.getMaxCp(
+                                m2.getBaseAttack(),
+                                m2.getBaseDefense(),
+                                m2.getBaseStamina());
                         return comb1 - comb2;
                     };
-                    highestFamilyId = PokemonIdOuterClass.PokemonId.forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                    highestFamilyId = PokemonIdOuterClass.PokemonId.forNumber(
+                            Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
                 }
             } else {
                 // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
@@ -141,8 +157,7 @@ public class PokemonModel {
         final PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
         if (highestFamilyMeta == null) {
             System.out.println("Error: Cannot find meta data for " + highestFamilyId.name());
-        }
-        else {
+        } else {
             if (highestFamilyId == pokemon.getPokemonId()) {
                 setMaxEvolvedCpCurrent(maxCpCurrent);
                 setMaxEvolvedCp(maxCp);
@@ -153,27 +168,32 @@ public class PokemonModel {
                 stamina = highestFamilyMeta.getBaseStamina() + pokemon.getIndividualStamina();
                 setMaxEvolvedCpCurrent(PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
                 setMaxEvolvedCp(PokemonCpUtils.getMaxCp(attack, defense, stamina));
-                setCpEvolved(String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, pokemon.getLevel())));
+                setCpEvolved(String.valueOf(
+                        PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, pokemon.getLevel())));
             }
         }
 
-        int candies = 0;
+        int candies = -1;
         try {
             candies = pokemon.getCandy();
-        } catch (final Exception e) {
-            e.printStackTrace();
+        } catch (LoginFailedException | RemoteServerException e) {
+            System.out.println("Error: Unable to get candies");
         }
+
         setCandies(candies);
         if (pokemon.getCandiesToEvolve() != 0) {
             setCandies2Evlv(pokemon.getCandiesToEvolve());
-            setEvolvable(String.valueOf((int)((double) candies / pokemon.getCandiesToEvolve()))); // Rounded down candies / toEvolve
-        }
-        else {
+            // Rounded down candies / toEvolve
+            setEvolvable(String.valueOf((int) ((double) candies / pokemon.getCandiesToEvolve())));
+
+        } else {
             setCandies2Evlv(0);
             setEvolvable("-");
         }
         setDustToLevel(pokemon.getStardustCostsForPowerup());
-        setPokeball(WordUtils.capitalize(pokemon.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
+        setPokeball(WordUtils.capitalize(
+                pokemon.getPokeball().toString().toLowerCase()
+                .replaceAll("item_", "").replaceAll("_", " ")));
         setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(pokemon.getCreationTimeMs())));
         setIsFavorite(pokemon.isFavorite());
         setDuelAbility(PokemonUtils.duelAbility(pokemon, false));
@@ -193,7 +213,7 @@ public class PokemonModel {
         return pokemon;
     }
 
-    public void setPokemon(final Pokemon pokemon){
+    public void setPokemon(final Pokemon pokemon) {
         this.pokemon = pokemon;
         initialze();
     }
@@ -610,7 +630,7 @@ public class PokemonModel {
         return getNickname() + " (" + getSpecies() + ")" + " IV: " + getIv() + " CP: " + getCp();
     }
 
-    public boolean isInGym(){
+    public boolean isInGym() {
         return !pokemon.getDeployedFortId().isEmpty();
     }
 
