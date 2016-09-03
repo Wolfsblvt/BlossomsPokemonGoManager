@@ -29,8 +29,8 @@ public abstract class Operation {
         return operationList;
     }
 
-    public static Operation generateOperation(OperationId operationID, PokemonModel model) {
-        switch (operationID) {
+    public static Operation generateOperation(OperationId operationId, PokemonModel model) {
+        switch (operationId) {
             case EVOLVE:
                 return new EvolveOperation(model);
             case FAVORITE:
@@ -43,7 +43,7 @@ public abstract class Operation {
                 return new TransferOperation(model);
             default:
                 throw new IllegalArgumentException(
-                        String.format("OperationID <%s> has not been handled!", operationID));
+                        String.format("OperationID <%s> has not been handled!", operationId));
         }
     }
 

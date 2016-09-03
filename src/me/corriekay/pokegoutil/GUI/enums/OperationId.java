@@ -10,11 +10,12 @@ public enum OperationId {
     EVOLVE("Evolve","Evolving","Evolved"),
     FAVORITE("Favorite","Favoriting","Favorited");
 
-    private static final Map<String,OperationId> operationMap = new HashMap<String, OperationId>();
+    private static final Map<String, OperationId> operationMap = new HashMap<String, OperationId>();
 
     static {
-        for(OperationId id : OperationId.values())
+        for (OperationId id : OperationId.values()) {
             operationMap.put(id.getActionName(), id);
+        }
     }
 
     private String actionName;
@@ -27,9 +28,17 @@ public enum OperationId {
         this.actionVerbFinished = actionVerbFinished;
     }
 
-    public String getActionName() { return actionName; }
-    public String getActionVerbDuring() { return actionVerbDuring; }
-    public String getActionVerbFinished() { return actionVerbFinished; }
+    public String getActionName() {
+        return actionName;
+    }
+
+    public String getActionVerbDuring() {
+        return actionVerbDuring;
+    }
+
+    public String getActionVerbFinished() {
+        return actionVerbFinished;
+    }
 
     public static OperationId get(String actionName) {
         return operationMap.get(actionName);
