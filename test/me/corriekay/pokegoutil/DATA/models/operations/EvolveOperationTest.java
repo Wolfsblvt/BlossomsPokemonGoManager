@@ -17,11 +17,23 @@ import me.corriekay.pokegoutil.DATA.enums.OperationError;
 import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 
+/**
+ * Test for EvolveOperation
+ */
 public class EvolveOperationTest {
 
     private PokemonModel pokemon;
     private EvolveOperation operation;
 
+    /**
+     * Instantiate a EvolveOperationTest
+     */
+    public EvolveOperationTest() {
+    }
+
+    /**
+     * Before every test
+     */
     @Before
     public void beforeTest() {
         pokemon = mock(PokemonModel.class);
@@ -29,6 +41,13 @@ public class EvolveOperationTest {
         operation.pokemon = pokemon;
     }
 
+    /**
+     * Evolve a pokemon that is in gym
+     *
+     * @throws InvalidCurrencyException
+     * @throws LoginFailedException
+     * @throws RemoteServerException
+     */
     @Test
     public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isInGym();
@@ -39,6 +58,13 @@ public class EvolveOperationTest {
         Assert.assertThat("Pokemon in gym", result.getOperationError(), is(OperationError.IN_GYM));
     }
 
+    /**
+     * Evolve a pokemon that is not evolvable
+     *
+     * @throws InvalidCurrencyException
+     * @throws LoginFailedException
+     * @throws RemoteServerException
+     */
     @Test
     public void pokemonIsNotEvolvable() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(0).when(pokemon).getCandies2Evlv();
@@ -49,6 +75,13 @@ public class EvolveOperationTest {
         Assert.assertThat("Pokemon cannot evolve", result.getOperationError(), is(OperationError.NOT_EVOLVABLE));
     }
 
+    /**
+     * Evolve a pokemon when there is not enough candies
+     *
+     * @throws InvalidCurrencyException
+     * @throws LoginFailedException
+     * @throws RemoteServerException
+     */
     @Test
     public void notEnoughCandies() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(24).when(pokemon).getCandies();
@@ -61,6 +94,13 @@ public class EvolveOperationTest {
                 is(OperationError.INSUFFICENT_CANDIES));
     }
 
+    /**
+     * Evolve a pokemon successfully
+     *
+     * @throws InvalidCurrencyException
+     * @throws LoginFailedException
+     * @throws RemoteServerException
+     */
     @Test
     public void sucessfullyEvolve() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(25).when(pokemon).getCandies();

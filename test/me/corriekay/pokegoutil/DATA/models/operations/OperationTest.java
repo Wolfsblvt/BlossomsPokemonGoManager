@@ -29,6 +29,11 @@ public class OperationTest {
         return Arrays.asList(OperationId.values());
     }
 
+    /**
+     * Instantiate a OperationTest using the parameters from data()
+     * 
+     * @param operationId operationId to test
+     */
     public OperationTest(final OperationId operationId) {
         this.operationId = operationId;
 

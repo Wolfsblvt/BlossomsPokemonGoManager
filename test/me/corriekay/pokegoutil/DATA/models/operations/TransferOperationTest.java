@@ -17,10 +17,22 @@ import me.corriekay.pokegoutil.DATA.enums.OperationError;
 import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 
+/**
+ * Test for TransferOperation
+ */
 public class TransferOperationTest {
     private PokemonModel pokemon;
     private TransferOperation operation;
 
+    /**
+     * Instantiate a TransferOperationTest
+     */
+    public TransferOperationTest() {
+    }
+
+    /**
+     * Before every test
+     */
     @Before
     public void beforeTest() {
         pokemon = mock(PokemonModel.class);
@@ -28,6 +40,13 @@ public class TransferOperationTest {
         operation.pokemon = pokemon;
     }
 
+    /**
+     * Transfer a pokemon that is favorite
+     *
+     * @throws InvalidCurrencyException
+     * @throws LoginFailedException
+     * @throws RemoteServerException
+     */
     @Test
     public void pokemonIsFavorite() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isIsFavorite();
@@ -38,6 +57,13 @@ public class TransferOperationTest {
         Assert.assertThat("Pokemon is favorite", result.getOperationError(), is(OperationError.IS_FAVORITE));
     }
 
+    /**
+     * Transfer a pokemon that is in gym
+     *
+     * @throws InvalidCurrencyException
+     * @throws LoginFailedException
+     * @throws RemoteServerException
+     */
     @Test
     public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isInGym();
@@ -48,6 +74,13 @@ public class TransferOperationTest {
         Assert.assertThat("Pokemon in gym", result.getOperationError(), is(OperationError.IN_GYM));
     }
 
+    /**
+     * Transfer a pokemon successfully
+     * 
+     * @throws InvalidCurrencyException
+     * @throws LoginFailedException
+     * @throws RemoteServerException
+     */
     @Test
     public void sucessfullyTransfer() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(new BpmOperationResult()).when(operation).doOperation();
