@@ -22,6 +22,7 @@ import me.corriekay.pokegoutil.DATA.models.PokemonModel;
  */
 public class EvolveOperationTest {
 
+    private static final String RESULT_SHOULD_FAIL = "Result should fail";
     private PokemonModel pokemon;
     private EvolveOperation operation;
 
@@ -48,7 +49,7 @@ public class EvolveOperationTest {
 
         final BpmOperationResult result = operation.execute();
 
-        Assert.assertThat("Result should fail", false, is(result.isSuccess()));
+        Assert.assertThat(RESULT_SHOULD_FAIL, false, is(result.isSuccess()));
         Assert.assertThat("Pokemon in gym", result.getOperationError(), is(OperationError.IN_GYM));
     }
 
@@ -61,11 +62,12 @@ public class EvolveOperationTest {
      */
     @Test
     public void pokemonIsNotEvolvable() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
-        doReturn(0).when(pokemon).getCandies2Evlv();
+        final int noCandiesToEvolve = 0;
+        doReturn(noCandiesToEvolve).when(pokemon).getCandies2Evlv();
 
         final BpmOperationResult result = operation.execute();
 
-        Assert.assertThat("Result should fail", false, is(result.isSuccess()));
+        Assert.assertThat(RESULT_SHOULD_FAIL, false, is(result.isSuccess()));
         Assert.assertThat("Pokemon cannot evolve", result.getOperationError(), is(OperationError.NOT_EVOLVABLE));
     }
 
@@ -78,12 +80,14 @@ public class EvolveOperationTest {
      */
     @Test
     public void notEnoughCandies() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
-        doReturn(24).when(pokemon).getCandies();
-        doReturn(25).when(pokemon).getCandies2Evlv();
+        final int insufficentCandies = 24;
+        final int candiesToEvolve = 25;
+        doReturn(insufficentCandies).when(pokemon).getCandies();
+        doReturn(candiesToEvolve).when(pokemon).getCandies2Evlv();
 
         final BpmOperationResult result = operation.execute();
 
-        Assert.assertThat("Result should fail", false, is(result.isSuccess()));
+        Assert.assertThat(RESULT_SHOULD_FAIL, false, is(result.isSuccess()));
         Assert.assertThat("Not enough candies", result.getOperationError(),
                 is(OperationError.INSUFFICENT_CANDIES));
     }
@@ -97,8 +101,10 @@ public class EvolveOperationTest {
      */
     @Test
     public void sucessfullyEvolve() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
-        doReturn(25).when(pokemon).getCandies();
-        doReturn(25).when(pokemon).getCandies2Evlv();
+        final int sufficentCandies = 24;
+        final int candiesToEvolve = 25;
+        doReturn(sufficentCandies).when(pokemon).getCandies();
+        doReturn(candiesToEvolve).when(pokemon).getCandies2Evlv();
         doReturn(new BpmOperationResult()).when(operation).doOperation();
 
         final BpmOperationResult result = operation.execute();

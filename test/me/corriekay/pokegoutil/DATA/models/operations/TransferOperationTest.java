@@ -21,6 +21,7 @@ import me.corriekay.pokegoutil.DATA.models.PokemonModel;
  * Test for TransferOperation.
  */
 public class TransferOperationTest {
+    private static final String RESULT_SHOULD_FAIL = "Result should fail";
     private PokemonModel pokemon;
     private TransferOperation operation;
 
@@ -47,7 +48,7 @@ public class TransferOperationTest {
 
         final BpmOperationResult result = operation.execute();
 
-        Assert.assertThat("Result should fail", false, is(result.isSuccess()));
+        Assert.assertThat(RESULT_SHOULD_FAIL, false, is(result.isSuccess()));
         Assert.assertThat("Pokemon is favorite", result.getOperationError(), is(OperationError.IS_FAVORITE));
     }
 
@@ -64,7 +65,7 @@ public class TransferOperationTest {
 
         final BpmOperationResult result = operation.execute();
 
-        Assert.assertThat("Result should fail", false, is(result.isSuccess()));
+        Assert.assertThat(RESULT_SHOULD_FAIL, false, is(result.isSuccess()));
         Assert.assertThat("Pokemon in gym", result.getOperationError(), is(OperationError.IN_GYM));
     }
 
