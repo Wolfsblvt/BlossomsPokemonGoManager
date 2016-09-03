@@ -10,7 +10,7 @@ import com.pokegoapi.exceptions.RemoteServerException;
 import me.corriekay.pokegoutil.DATA.enums.LoginType;
 import me.corriekay.pokegoutil.DATA.models.LoginData;
 import me.corriekay.pokegoutil.DATA.models.PlayerAccount;
-import me.corriekay.pokegoutil.DATA.models.BPMResult;
+import me.corriekay.pokegoutil.DATA.models.BpmResult;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import okhttp3.OkHttpClient;
@@ -90,7 +90,7 @@ public final class AccountManager {
         ProfileManager.initialize(go);
     }
 
-    public BPMResult login(LoginData loginData) throws Exception {
+    public BpmResult login(LoginData loginData) throws Exception {
         switch (loginData.getLoginType()) {
             case GOOGLE:
                 if (loginData.isValidGoogleLogin()) {
@@ -104,10 +104,10 @@ public final class AccountManager {
                 break;
             default:
         }
-        return new BPMResult("Invalid Login Type");
+        return new BpmResult("Invalid Login Type");
     }
 
-    private BPMResult logOnGoogleAuth(LoginData loginData) {
+    private BpmResult logOnGoogleAuth(LoginData loginData) {
         OkHttpClient http;
         CredentialProvider cp;
         http = new OkHttpClient();
@@ -140,19 +140,19 @@ public final class AccountManager {
             }
         } catch (Exception e) {
             deleteLoginData(LoginType.GOOGLE);
-            return new BPMResult(e.getMessage());
+            return new BpmResult(e.getMessage());
         }
 
         try {
             prepareLogin(cp, http);
-            return new BPMResult();
+            return new BpmResult();
         } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.BOTH);
-            return new BPMResult(e.getMessage());
+            return new BpmResult(e.getMessage());
         }
     }
 
-    private BPMResult logOnPTC(LoginData loginData) throws Exception {
+    private BpmResult logOnPTC(LoginData loginData) throws Exception {
         OkHttpClient http;
         CredentialProvider cp;
         http = new OkHttpClient();
@@ -171,15 +171,15 @@ public final class AccountManager {
             }
         } catch (Exception e) {
             deleteLoginData(LoginType.PTC);
-            return new BPMResult(e.getMessage());
+            return new BpmResult(e.getMessage());
         }
 
         try {
             prepareLogin(cp, http);
-            return new BPMResult();
+            return new BpmResult();
         } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.BOTH);
-            return new BPMResult(e.getMessage());
+            return new BpmResult(e.getMessage());
         }
 
     }

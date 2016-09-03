@@ -6,7 +6,7 @@ import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
 import me.corriekay.pokegoutil.DATA.managers.AccountManager;
-import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
+import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigKey;
@@ -18,8 +18,8 @@ public class PowerupOperation extends Operation {
     }
 
     @Override
-    protected BPMOperationResult doOperation() {
-        return new BPMOperationResult("Not implemented", OperationError.NOT_IMPLEMENTED);
+    protected BpmOperationResult doOperation() {
+        return new BpmOperationResult("Not implemented", OperationError.NOT_IMPLEMENTED);
     }
 
     @Override
@@ -38,16 +38,16 @@ public class PowerupOperation extends Operation {
     }
 
     @Override
-    public BPMOperationResult validateOperation()
+    public BpmOperationResult validateOperation()
             throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         if (pokemon.isInGym()) {
-            return new BPMOperationResult("Pokemon is in gym", OperationError.IN_GYM);
+            return new BpmOperationResult("Pokemon is in gym", OperationError.IN_GYM);
         }
 
         int candies = pokemon.getCandies();
         int candiesToPowerup = pokemon.getCandyCostsForPowerup();
         if (candies < candiesToPowerup) {
-            return new BPMOperationResult(String.format(
+            return new BpmOperationResult(String.format(
                     "Insufficent candies, needed %d but had %d ",
                     candiesToPowerup,
                     candies),
@@ -58,13 +58,13 @@ public class PowerupOperation extends Operation {
         int stardustToPowerUp = pokemon.getStardustCostsForPowerup();
 
         if (stardust < stardustToPowerUp) {
-            return new BPMOperationResult(String.format(
+            return new BpmOperationResult(String.format(
                     "Insufficent stardust, needed %d but had %d ",
                     stardustToPowerUp,
                     stardust),
                     OperationError.INSUFFICENT_STARDUSTS);
         }
 
-        return new BPMOperationResult();
+        return new BpmOperationResult();
     }
 }

@@ -6,17 +6,17 @@ import java.util.List;
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
 
-public class BPMOperationResult extends BPMResult {
+public class BpmOperationResult extends BpmResult {
 
     private List<String> successMessageList = new ArrayList<String>();
     private OperationError operationError;
     private OperationID nextOperation;
 
-    public BPMOperationResult() {
+    public BpmOperationResult() {
         super();
     }
     
-    public BPMOperationResult(String errorMessage, OperationError operationError) {
+    public BpmOperationResult(String errorMessage, OperationError operationError) {
         super(errorMessage);
         this.operationError = operationError;
     }
@@ -28,6 +28,7 @@ public class BPMOperationResult extends BPMResult {
     public OperationID getNextOperation() {
         return nextOperation;
     }
+    
     public OperationError getOperationError() {
         return operationError;
     }

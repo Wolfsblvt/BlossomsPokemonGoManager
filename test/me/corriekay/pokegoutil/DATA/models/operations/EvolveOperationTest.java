@@ -14,7 +14,7 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
-import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
+import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 
 public class EvolveOperationTest {
@@ -33,7 +33,7 @@ public class EvolveOperationTest {
     public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isInGym();
 
-        BPMOperationResult result = operation.execute();
+        BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Pokemon in gym", result.getOperationError(), is(OperationError.IN_GYM));
@@ -43,7 +43,7 @@ public class EvolveOperationTest {
     public void pokemonIsNotEvolvable() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(0).when(pokemon).getCandies2Evlv();
 
-        BPMOperationResult result = operation.execute();
+        BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Pokemon cannot evolve", result.getOperationError(), is(OperationError.NOT_EVOLVABLE));
@@ -54,7 +54,7 @@ public class EvolveOperationTest {
         doReturn(24).when(pokemon).getCandies();
         doReturn(25).when(pokemon).getCandies2Evlv();
 
-        BPMOperationResult result = operation.execute();
+        BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Not enough candies", result.getOperationError(),
@@ -65,9 +65,9 @@ public class EvolveOperationTest {
     public void sucessfullyEvolve() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(25).when(pokemon).getCandies();
         doReturn(25).when(pokemon).getCandies2Evlv();
-        doReturn(new BPMOperationResult()).when(operation).doOperation();
+        doReturn(new BpmOperationResult()).when(operation).doOperation();
 
-        BPMOperationResult result = operation.execute();
+        BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Evolve should be successful", true, is(result.isSuccess()));
     }

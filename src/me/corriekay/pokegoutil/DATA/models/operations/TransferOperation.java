@@ -6,7 +6,7 @@ import com.pokegoapi.exceptions.RemoteServerException;
 
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result;
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
-import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
+import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigKey;
@@ -23,14 +23,14 @@ public class TransferOperation extends Operation {
     }
 
     @Override
-    protected BPMOperationResult doOperation() throws LoginFailedException, RemoteServerException {
+    protected BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException {
 
         Pokemon poke = pokemon.getPokemon();
         int candies = poke.getCandy();
         Result transferResult = poke.transferPokemon();
 
         if (transferResult != Result.SUCCESS) {
-            return new BPMOperationResult(String.format(
+            return new BpmOperationResult(String.format(
                     "Error transferring %s, result: %s",
                     PokeHandler.getLocalPokeName(poke),
                     transferResult.toString()),
@@ -38,7 +38,7 @@ public class TransferOperation extends Operation {
         }
 
         int newCandies = poke.getCandy();
-        BPMOperationResult result = new BPMOperationResult();
+        BpmOperationResult result = new BpmOperationResult();
 
         result.addSuccessMessage(String.format(
                 "Transferring %s, Result: Success!",
@@ -68,15 +68,15 @@ public class TransferOperation extends Operation {
     }
 
     @Override
-    public BPMOperationResult validateOperation() {
+    public BpmOperationResult validateOperation() {
         if (pokemon.isIsFavorite()) {
-            return new BPMOperationResult("Pokemon is favorite.", OperationError.IS_FAVORITE);
+            return new BpmOperationResult("Pokemon is favorite.", OperationError.IS_FAVORITE);
         }
 
         if (pokemon.isInGym()) {
-            return new BPMOperationResult("Pokemon is in gym", OperationError.IN_GYM);
+            return new BpmOperationResult("Pokemon is in gym", OperationError.IN_GYM);
         }
 
-        return new BPMOperationResult();
+        return new BpmOperationResult();
     }
 }

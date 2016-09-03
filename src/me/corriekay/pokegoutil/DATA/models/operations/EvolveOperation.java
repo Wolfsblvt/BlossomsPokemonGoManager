@@ -6,7 +6,7 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
-import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
+import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigKey;
@@ -23,11 +23,11 @@ public class EvolveOperation extends Operation {
     }
 
     @Override
-    protected BPMOperationResult doOperation() throws LoginFailedException, RemoteServerException {
+    protected BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException {
         EvolutionResult evolutionResult = pokemon.getPokemon().evolve();
 
         if (!evolutionResult.isSuccessful()) {
-            return new BPMOperationResult(String.format(
+            return new BpmOperationResult(String.format(
                     "Error evolving %s, result: %s",
                     pokemon.getSpecies(),
                     evolutionResult.getResult().toString()),
@@ -48,7 +48,7 @@ public class EvolveOperation extends Operation {
         
         pokemon.setPokemon(newPoke);
         
-        BPMOperationResult result = new BPMOperationResult();
+        BpmOperationResult result = new BpmOperationResult();
         
         result.addSuccessMessage(String.format(
                 "Evolving %s. Evolve result: %s",
@@ -87,26 +87,26 @@ public class EvolveOperation extends Operation {
     }
 
     @Override
-    public BPMOperationResult validateOperation() {
+    public BpmOperationResult validateOperation() {
         if (pokemon.isInGym()) {
-            return new BPMOperationResult("Pokemon is in gym", OperationError.IN_GYM);
+            return new BpmOperationResult("Pokemon is in gym", OperationError.IN_GYM);
         }
 
         int candies = pokemon.getCandies();
         int candiesToEvolve = pokemon.getCandies2Evlv();
 
         if (candiesToEvolve == 0) {
-            return new BPMOperationResult("Pokemon cannot be evolved", OperationError.NOT_EVOLVABLE);
+            return new BpmOperationResult("Pokemon cannot be evolved", OperationError.NOT_EVOLVABLE);
         }
 
         if (candies < candiesToEvolve) {
-            return new BPMOperationResult(String.format(
+            return new BpmOperationResult(String.format(
                     "Insufficent candies, needed %d but had %d ",
                     candiesToEvolve,
                     candies),
                     OperationError.INSUFFICENT_CANDIES);
         }
 
-        return new BPMOperationResult();
+        return new BpmOperationResult();
     }
 }

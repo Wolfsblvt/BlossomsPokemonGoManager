@@ -8,7 +8,7 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
 import javafx.collections.ObservableList;
-import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
+import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigNew;
@@ -61,10 +61,10 @@ public abstract class Operation {
         this.pokemon = pokemon;
     }
 
-    protected abstract BPMOperationResult doOperation() throws LoginFailedException, RemoteServerException;
+    protected abstract BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException;
 
-    public BPMOperationResult execute() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
-        BPMOperationResult result = validateOperation();
+    public BpmOperationResult execute() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+        BpmOperationResult result = validateOperation();
 
         if (result.isSuccess()) {
             result = doOperation();
@@ -97,6 +97,6 @@ public abstract class Operation {
         return getOperationID().getActionName() + " " + pokemon.getSummary();
     }
 
-    public abstract BPMOperationResult validateOperation()
+    public abstract BpmOperationResult validateOperation()
             throws InvalidCurrencyException, LoginFailedException, RemoteServerException;
 }

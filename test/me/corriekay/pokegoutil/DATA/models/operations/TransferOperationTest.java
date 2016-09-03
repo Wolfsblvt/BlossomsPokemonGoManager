@@ -14,7 +14,7 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
-import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
+import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 
 public class TransferOperationTest {
@@ -32,7 +32,7 @@ public class TransferOperationTest {
     public void pokemonIsFavorite() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isIsFavorite();
 
-        BPMOperationResult result = operation.execute();
+        BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Pokemon is favorite", result.getOperationError(), is(OperationError.IS_FAVORITE));
@@ -42,7 +42,7 @@ public class TransferOperationTest {
     public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isInGym();
 
-        BPMOperationResult result = operation.execute();
+        BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Pokemon in gym", result.getOperationError(), is(OperationError.IN_GYM));
@@ -50,9 +50,9 @@ public class TransferOperationTest {
 
     @Test
     public void sucessfullyTransfer() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
-        doReturn(new BPMOperationResult()).when(operation).doOperation();
+        doReturn(new BpmOperationResult()).when(operation).doOperation();
 
-        BPMOperationResult result = operation.execute();
+        BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Transfer should be successful", true, is(result.isSuccess()));
     }

@@ -14,7 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
+import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.DATA.models.operations.Operation;
 import me.corriekay.pokegoutil.utils.Utilities;
@@ -94,7 +94,7 @@ public class OperationConfirmationController extends AnchorPane {
     
     private void doOperation(Operation operation){
         PokemonModel pokemon = operation.pokemon;
-        BPMOperationResult result = null;
+        BpmOperationResult result = null;
         try {
             result = operation.execute();
             if (result.isSuccess()) {                

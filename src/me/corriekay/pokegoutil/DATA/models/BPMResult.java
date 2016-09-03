@@ -1,14 +1,14 @@
 package me.corriekay.pokegoutil.DATA.models;
 
-public class BPMResult {
+public class BpmResult {
     private boolean success;
     private String errorMessage;
 
-    public BPMResult() {
+    public BpmResult() {
         success = true;
     }
 
-    public BPMResult(String errorMessage) {
+    public BpmResult(String errorMessage) {
         success = false;
         this.errorMessage = errorMessage;
     }
