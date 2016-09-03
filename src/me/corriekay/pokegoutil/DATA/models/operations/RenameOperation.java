@@ -37,7 +37,7 @@ public class RenameOperation extends Operation {
     }
 
     @Override
-    public OperationId getOperationID() {
+    public OperationId getOperationId() {
         return OperationId.RENAME;
     }
 

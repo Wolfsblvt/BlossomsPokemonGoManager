@@ -64,7 +64,7 @@ public class TransferOperation extends Operation {
     }
 
     @Override
-    public OperationId getOperationID() {
+    public OperationId getOperationId() {
         return OperationId.TRANSFER;
     }
 

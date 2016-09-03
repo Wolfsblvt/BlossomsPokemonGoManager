@@ -102,7 +102,7 @@ public class OperationConfirmationController extends AnchorPane {
                 
                 System.out.println(String.format(
                         "%s %s",
-                        operation.getOperationID().getActionVerbFinished(),
+                        operation.getOperationId().getActionVerbFinished(),
                         pokemon.getSummary()));
             } else {
                 System.out.println(String.format(
@@ -113,7 +113,7 @@ public class OperationConfirmationController extends AnchorPane {
         } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException e) {
             System.out.println(String.format(
                     "Error %s %s! %s",
-                    operation.getOperationID().getActionVerbDuring(),
+                    operation.getOperationId().getActionVerbDuring(),
                     pokemon.getSpecies(),
                     Utilities.getRealExceptionMessage(e)));
         }

@@ -46,6 +46,6 @@ public class OperationTest {
     @Test
     public void testGenerateOperations() {
         final List<Operation> operations = Operation.generateOperations(operationId, pokemonList);
-        Assert.assertThat("Created correct operation", operations.get(0).getOperationID(), is(operationId));
+        Assert.assertThat("Created correct operation", operations.get(0).getOperationId(), is(operationId));
     }
 }

@@ -17,12 +17,12 @@ import me.corriekay.pokegoutil.utils.Utilities;
 public abstract class Operation {
 
     public static List<Operation> generateOperations(
-            final OperationId operationID,
+            final OperationId operationId,
             final ObservableList<PokemonModel> pokemonList) {
         final List<Operation> operationList = new ArrayList<Operation>();
 
         pokemonList.forEach(model -> {
-            final Operation operation = generateOperation(operationID, model);
+            final Operation operation = generateOperation(operationId, model);
             operationList.add(operation);
         });
 
@@ -86,7 +86,7 @@ public abstract class Operation {
 
     protected abstract int getMinDelay();
 
-    public abstract OperationId getOperationID();
+    public abstract OperationId getOperationId();
 
     private int getRandomDelay() {
         return Utilities.getRandom(getMaxDelay(), getMaxDelay());
@@ -94,7 +94,7 @@ public abstract class Operation {
 
     @Override
     public String toString() {
-        return getOperationID().getActionName() + " " + pokemon.getSummary();
+        return getOperationId().getActionName() + " " + pokemon.getSummary();
     }
 
     public abstract BpmOperationResult validateOperation()

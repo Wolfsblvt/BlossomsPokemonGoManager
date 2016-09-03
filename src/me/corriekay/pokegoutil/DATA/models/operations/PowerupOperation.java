@@ -38,7 +38,7 @@ public class PowerupOperation extends Operation {
     }
 
     @Override
-    public OperationId getOperationID() {
+    public OperationId getOperationId() {
         return OperationId.POWERUP;
     }
 
