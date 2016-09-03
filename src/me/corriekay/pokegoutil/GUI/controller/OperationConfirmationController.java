@@ -18,7 +18,6 @@ import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.DATA.models.operations.Operation;
 import me.corriekay.pokegoutil.utils.Utilities;
-import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 
 import java.io.IOException;
 import java.net.URL;
@@ -108,7 +107,7 @@ public class OperationConfirmationController extends AnchorPane {
                 System.out.println(String.format(
                         "Error %s %s! %s",
                         operation.getOperationID().getActionVerbDuring(),
-                        PokeHandler.getLocalPokeName(pokemon.getPokemon()),
+                        pokemon.getSpecies(),
                         Utilities.getRealExceptionMessage(e)));
             }
             operation.doDelay();
