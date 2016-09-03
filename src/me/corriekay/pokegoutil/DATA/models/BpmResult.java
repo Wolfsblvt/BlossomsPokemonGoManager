@@ -25,7 +25,7 @@ public class BpmResult {
     }
 
     /**
-     * Get the error message
+     * Get the error message.
      *
      * @return error message
      */
@@ -34,7 +34,7 @@ public class BpmResult {
     }
 
     /**
-     * Is result successful
+     * Is result successful.
      *
      * @return result state
      */
@@ -43,7 +43,7 @@ public class BpmResult {
     }
 
     /**
-     * Set the error message
+     * Set the error message.
      *
      * @param errorMessage error message
      */
@@ -52,8 +52,8 @@ public class BpmResult {
     }
 
     /**
-     * Set the success state of result
-     * 
+     * Set the success state of result.
+     *
      * @param success success state of result
      */
     public void setSuccess(final boolean success) {
