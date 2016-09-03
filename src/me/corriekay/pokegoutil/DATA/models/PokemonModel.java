@@ -58,28 +58,32 @@ public class PokemonModel {
     private Pokemon pokemon;    
     private AccountManager accountManager = AccountManager.getInstance();  
 
-    public PokemonModel(Pokemon p) {
-        this.pokemon = p;
-        PokemonMeta meta = p.getMeta() != null? p.getMeta():new PokemonMeta();
+    public PokemonModel(Pokemon pokemon) {
+        this.pokemon = pokemon;
+        initialze();
+    }
+    
+    private void initialze(){
+        PokemonMeta meta = pokemon.getMeta() != null? pokemon.getMeta():new PokemonMeta();
 
         setNumId(meta.getNumber());
-        setNickname(p.getNickname());
-        setSpecies(PokeHandler.getLocalPokeName(p));
-        setLevel((double) p.getLevel());
-        setIV(Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
-        setAtk(p.getIndividualAttack());
-        setDef(p.getIndividualDefense());
-        setStam(p.getIndividualStamina());
+        setNickname(pokemon.getNickname());
+        setSpecies(PokeHandler.getLocalPokeName(pokemon));
+        setLevel((double) pokemon.getLevel());
+        setIV(Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(pokemon)));
+        setAtk(pokemon.getIndividualAttack());
+        setDef(pokemon.getIndividualDefense());
+        setStam(pokemon.getIndividualStamina());
         setType1(StringUtils.capitalize(meta.getType1().toString().toLowerCase()));
         setType2(StringUtils.capitalize(meta.getType2().toString().toLowerCase()));
 
-        Double dps1 = PokemonUtils.dpsForMove(p, true);
-        Double dps2 = PokemonUtils.dpsForMove(p, false);
-        setMove1(WordUtils.capitalize(p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1) + "dps)");
-        setMove2(WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " (" + String.format("%.2f", dps2) + "dps)");
+        Double dps1 = PokemonUtils.dpsForMove(pokemon, true);
+        Double dps2 = PokemonUtils.dpsForMove(pokemon, false);
+        setMove1(WordUtils.capitalize(pokemon.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1) + "dps)");
+        setMove2(WordUtils.capitalize(pokemon.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " (" + String.format("%.2f", dps2) + "dps)");
 
-        setCp(p.getCp());
-        setHp(p.getMaxStamina());
+        setCp(pokemon.getCp());
+        setHp(pokemon.getMaxStamina());
 
         int trainerLevel = 1;
         try {
@@ -91,21 +95,21 @@ public class PokemonModel {
         // Max CP calculation for current PokemonModel
         int maxCpCurrent, maxCp;
 
-        int attack = p.getIndividualAttack() + meta.getBaseAttack();
-        int defense = p.getIndividualDefense() + meta.getBaseDefense();
-        int stamina = p.getIndividualStamina() + meta.getBaseStamina();
+        int attack = pokemon.getIndividualAttack() + meta.getBaseAttack();
+        int defense = pokemon.getIndividualDefense() + meta.getBaseDefense();
+        int stamina = pokemon.getIndividualStamina() + meta.getBaseStamina();
         maxCpCurrent = PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel);
         maxCp = PokemonCpUtils.getMaxCp(attack, defense, stamina);
         setMaxCp(maxCp);
         setMaxCpCurrent(maxCpCurrent);
 
         // Max CP calculation for highest evolution of current PokemonModel
-        PokemonFamilyIdOuterClass.PokemonFamilyId familyId = p.getPokemonFamily();
+        PokemonFamilyIdOuterClass.PokemonFamilyId familyId = pokemon.getPokemonFamily();
         PokemonIdOuterClass.PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
 
         // Eeveelutions exception handling
         if (familyId.getNumber() == PokemonFamilyIdOuterClass.PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
-            if (p.getPokemonId().getNumber() == PokemonIdOuterClass.PokemonId.EEVEE.getNumber()) {
+            if (pokemon.getPokemonId().getNumber() == PokemonIdOuterClass.PokemonId.EEVEE.getNumber()) {
                 PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.VAPOREON);
                 PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.FLAREON);
                 PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.JOLTEON);
@@ -120,7 +124,7 @@ public class PokemonModel {
             } else {
                 // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
                 // We correct that here
-                highestFamilyId = p.getPokemonId();
+                highestFamilyId = pokemon.getPokemonId();
             }
         }
 
@@ -129,48 +133,48 @@ public class PokemonModel {
             System.out.println("Error: Cannot find meta data for " + highestFamilyId.name());
         }
         else {
-            if (highestFamilyId == p.getPokemonId()) {
+            if (highestFamilyId == pokemon.getPokemonId()) {
                 setMaxEvolvedCpCurrent(maxCpCurrent);
                 setMaxEvolvedCp(maxCp);
                 setCpEvolved("-");
             } else {
-                attack = highestFamilyMeta.getBaseAttack() + p.getIndividualAttack();
-                defense = highestFamilyMeta.getBaseDefense() + p.getIndividualDefense();
-                stamina = highestFamilyMeta.getBaseStamina() + p.getIndividualStamina();
+                attack = highestFamilyMeta.getBaseAttack() + pokemon.getIndividualAttack();
+                defense = highestFamilyMeta.getBaseDefense() + pokemon.getIndividualDefense();
+                stamina = highestFamilyMeta.getBaseStamina() + pokemon.getIndividualStamina();
                 setMaxEvolvedCpCurrent(PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
                 setMaxEvolvedCp(PokemonCpUtils.getMaxCp(attack, defense, stamina));
-                setCpEvolved(String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
+                setCpEvolved(String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, pokemon.getLevel())));
             }
         }
 
         int candies = 0;
         try {
-            candies = p.getCandy();
+            candies = pokemon.getCandy();
         } catch (Exception e) {
             e.printStackTrace();
         }
         setCandies(candies);
-        if (p.getCandiesToEvolve() != 0) {
-            setCandies2Evlv(p.getCandiesToEvolve());
-            setEvolvable(String.valueOf((int)((double) candies / p.getCandiesToEvolve()))); // Rounded down candies / toEvolve
+        if (pokemon.getCandiesToEvolve() != 0) {
+            setCandies2Evlv(pokemon.getCandiesToEvolve());
+            setEvolvable(String.valueOf((int)((double) candies / pokemon.getCandiesToEvolve()))); // Rounded down candies / toEvolve
         }
         else {
             setCandies2Evlv(0);
             setEvolvable("-");
         }
-        setDustToLevel(p.getStardustCostsForPowerup());
-        setPokeball(WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
-        setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
-        setIsFavorite(p.isFavorite());
-        setDuelAbility(PokemonUtils.duelAbility(p, false));
-        setGymOffense(PokemonUtils.gymOffense(p, false));
-        setGymDefense(PokemonUtils.gymDefense(p, false));
+        setDustToLevel(pokemon.getStardustCostsForPowerup());
+        setPokeball(WordUtils.capitalize(pokemon.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
+        setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(pokemon.getCreationTimeMs())));
+        setIsFavorite(pokemon.isFavorite());
+        setDuelAbility(PokemonUtils.duelAbility(pokemon, false));
+        setGymOffense(PokemonUtils.gymOffense(pokemon, false));
+        setGymDefense(PokemonUtils.gymDefense(pokemon, false));
 
-        setDuelAbilityIV(PokemonUtils.duelAbility(p, true));
-        setGymOffenseIV(PokemonUtils.gymOffense(p, true));
-        setGymDefenseIV(PokemonUtils.gymDefense(p, true));
-        setMove1Rating(PokemonUtils.moveRating(p, true));
-        setMove2Rating(PokemonUtils.moveRating(p, false));
+        setDuelAbilityIV(PokemonUtils.duelAbility(pokemon, true));
+        setGymOffenseIV(PokemonUtils.gymOffense(pokemon, true));
+        setGymDefenseIV(PokemonUtils.gymDefense(pokemon, true));
+        setMove1Rating(PokemonUtils.moveRating(pokemon, true));
+        setMove2Rating(PokemonUtils.moveRating(pokemon, false));
     }
 
     // Bunch of getters and setters
@@ -181,6 +185,7 @@ public class PokemonModel {
     
     public void setPokemon(Pokemon pokemon){
         this.pokemon = pokemon;
+        initialze();
     }
 
     public int getNumId() {
