@@ -97,7 +97,9 @@ public class OperationConfirmationController extends AnchorPane {
         BPMOperationResult result = null;
         try {
             result = operation.execute();
-            if (result.isSuccess()) {
+            if (result.isSuccess()) {                
+                result.getSuccessMessageList().forEach(msg -> System.out.println(msg));
+                
                 System.out.println(String.format(
                         "%s %s",
                         operation.getOperationID().getActionVerbFinished(),
