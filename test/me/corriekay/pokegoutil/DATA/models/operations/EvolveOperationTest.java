@@ -18,7 +18,7 @@ import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 
 /**
- * Test for EvolveOperation
+ * Test for EvolveOperation.
  */
 public class EvolveOperationTest {
 
@@ -26,7 +26,7 @@ public class EvolveOperationTest {
     private EvolveOperation operation;
 
     /**
-     * Instantiate a EvolveOperationTest
+     * Instantiate a EvolveOperationTest.
      */
     public EvolveOperationTest() {
     }
@@ -42,7 +42,7 @@ public class EvolveOperationTest {
     }
 
     /**
-     * Evolve a pokemon that is in gym
+     * Evolve a pokemon that is in gym.
      *
      * @throws InvalidCurrencyException
      * @throws LoginFailedException
@@ -59,7 +59,7 @@ public class EvolveOperationTest {
     }
 
     /**
-     * Evolve a pokemon that is not evolvable
+     * Evolve a pokemon that is not evolvable.
      *
      * @throws InvalidCurrencyException
      * @throws LoginFailedException
@@ -76,7 +76,7 @@ public class EvolveOperationTest {
     }
 
     /**
-     * Evolve a pokemon when there is not enough candies
+     * Evolve a pokemon when there is not enough candies.
      *
      * @throws InvalidCurrencyException
      * @throws LoginFailedException
@@ -95,7 +95,7 @@ public class EvolveOperationTest {
     }
 
     /**
-     * Evolve a pokemon successfully
+     * Evolve a pokemon successfully.
      *
      * @throws InvalidCurrencyException
      * @throws LoginFailedException

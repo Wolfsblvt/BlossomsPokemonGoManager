@@ -18,7 +18,7 @@ import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 
 /**
- * Test for TransferOperation
+ * Test for TransferOperation.
  */
 public class TransferOperationTest {
     private PokemonModel pokemon;
@@ -41,7 +41,7 @@ public class TransferOperationTest {
     }
 
     /**
-     * Transfer a pokemon that is favorite
+     * Transfer a pokemon that is favorite.
      *
      * @throws InvalidCurrencyException
      * @throws LoginFailedException
@@ -58,7 +58,7 @@ public class TransferOperationTest {
     }
 
     /**
-     * Transfer a pokemon that is in gym
+     * Transfer a pokemon that is in gym.
      *
      * @throws InvalidCurrencyException
      * @throws LoginFailedException
@@ -75,8 +75,8 @@ public class TransferOperationTest {
     }
 
     /**
-     * Transfer a pokemon successfully
-     * 
+     * Transfer a pokemon successfully.
+     *
      * @throws InvalidCurrencyException
      * @throws LoginFailedException
      * @throws RemoteServerException
