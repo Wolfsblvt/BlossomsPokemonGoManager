@@ -26,7 +26,7 @@ public class EvolveOperationTest {
     private EvolveOperation operation;
 
     /**
-     * Before every test
+     * Before every test.
      */
     @Before
     public void beforeTest() {

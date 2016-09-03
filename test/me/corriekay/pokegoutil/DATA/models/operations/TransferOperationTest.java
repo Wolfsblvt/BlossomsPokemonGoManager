@@ -25,13 +25,7 @@ public class TransferOperationTest {
     private TransferOperation operation;
 
     /**
-     * Instantiate a TransferOperationTest.
-     */
-    public TransferOperationTest() {
-    }
-
-    /**
-     * Before every test
+     * Before every test.
      */
     @Before
     public void beforeTest() {
