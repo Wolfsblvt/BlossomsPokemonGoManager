@@ -50,10 +50,10 @@ public class LoginDataTest {
     private final boolean expectedGoogleIsValid;
 
     public LoginDataTest(final LoginData loginData, final LoginType expectedLoginType,
-            final boolean expectedPTCIsValid, final boolean expectedGoogleIsValid) {
+            final boolean expectedPtcIsValid, final boolean expectedGoogleIsValid) {
         this.loginData = loginData;
         this.expectedLoginType = expectedLoginType;
-        this.expectedPtcIsValid = expectedPTCIsValid;
+        this.expectedPtcIsValid = expectedPtcIsValid;
         this.expectedGoogleIsValid = expectedGoogleIsValid;
     }
 
