@@ -16,7 +16,7 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import okhttp3.OkHttpClient;
 
-/*
+/**
  * This controller does the login/log off, and different account information (aka player data)
  */
 public final class AccountManager {
@@ -39,12 +39,25 @@ public final class AccountManager {
 
     }
 
+    /**
+     * Deletes the specified LoginType from the config.json.
+     * <p>
+     * Also SaveAuth settings will be deleted
+     *
+     * @param type the LoginType to be removed
+     */
     private void deleteLoginData(final LoginType type) {
-        deleteLoginData(type, false);
+        deleteLoginData(type, true);
     }
 
-    private void deleteLoginData(final LoginType type, final boolean justCleanup) {
-        if (!justCleanup) {
+    /**
+     * Deletes the specific LoginType from config.json. If deleteSaveAuth is true, SaveAuth settings will be deleted
+     *
+     * @param type the LoginType to be removed
+     * @param deleteSaveAuth if true, SaveAuth will be deleted
+     */
+    private void deleteLoginData(final LoginType type, final boolean deleteSaveAuth) {
+        if (deleteSaveAuth) {
             config.delete(ConfigKey.LOGIN_SAVE_AUTH);
         }
 
@@ -78,6 +91,11 @@ public final class AccountManager {
         return loginData;
     }
 
+    /**
+     * Returns the logged in playerAccount
+     *
+     * @return the logged in playerAccount
+     */
     public PlayerAccount getPlayerAccount() {
         return playerAccount;
     }
@@ -92,6 +110,12 @@ public final class AccountManager {
         ProfileManager.initialize(go);
     }
 
+    /**
+     * Login to Pokemon Go with the login data
+     *
+     * @param loginData the login data used to login
+     * @return results of the login
+     */
     public BpmResult login(final LoginData loginData) {
         switch (loginData.getLoginType()) {
             case GOOGLE:
@@ -109,6 +133,12 @@ public final class AccountManager {
         return new BpmResult("Invalid Login Type");
     }
 
+    /**
+     * Login using GoogleAuth
+     *
+     * @param loginData the login data used to login
+     * @return results of the login
+     */
     private BpmResult logOnGoogleAuth(final LoginData loginData) {
         OkHttpClient http;
         CredentialProvider cp;
@@ -154,6 +184,12 @@ public final class AccountManager {
         }
     }
 
+    /**
+     * Login using PTC
+     *
+     * @param loginData the login data used to login
+     * @return results of the login
+     */
     private BpmResult logOnPTC(final LoginData loginData) {
         OkHttpClient http;
         CredentialProvider cp;
@@ -185,6 +221,14 @@ public final class AccountManager {
         }
     }
 
+    /**
+     * Do login process and initialize GUI
+     *
+     * @param cp contains the credential provider
+     * @param http http client
+     * @throws LoginFailedException login failed
+     * @throws RemoteServerException server error
+     */
     private void prepareLogin(final CredentialProvider cp, final OkHttpClient http)
             throws LoginFailedException, RemoteServerException {
         go = new PokemonGo(cp, http);
@@ -192,7 +236,12 @@ public final class AccountManager {
         initOtherControllers();
     }
 
-    public void setSaveLogin(final boolean save) {
-        config.setBool(ConfigKey.LOGIN_SAVE_AUTH, save);
+    /**
+     * The value will be saved for saveAuth in config.json
+     *
+     * @param shouldSave settings for saveAuth
+     */
+    public void setSaveLogin(final boolean shouldSave) {
+        config.setBool(ConfigKey.LOGIN_SAVE_AUTH, shouldSave);
     }
 }
