@@ -14,6 +14,10 @@ import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 
 public class TransferOperation extends Operation {
 
+    protected TransferOperation() {
+        // For mocking
+    }
+
     public TransferOperation(PokemonModel pokemon) {
         super(pokemon);
     }
@@ -44,7 +48,7 @@ public class TransferOperation extends Operation {
                 "Stat changes: (Candies : %d[+%d])",
                 newCandies,
                 (newCandies - candies)));
-                
+
         return result;
     }
 
