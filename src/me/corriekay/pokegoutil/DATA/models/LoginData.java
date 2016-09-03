@@ -53,7 +53,7 @@ public class LoginData {
     }
 
     public boolean hasSavedCredentials() {
-        return isValidPTCLogin() || isValidGoogleLogin();
+        return isValidPtcLogin() || isValidGoogleLogin();
     }
 
     public boolean hasToken() {
@@ -72,7 +72,7 @@ public class LoginData {
         return hasToken();
     }
 
-    public boolean isValidPTCLogin() {
+    public boolean isValidPtcLogin() {
         return hasUsername() && hasPassword();
     }
 

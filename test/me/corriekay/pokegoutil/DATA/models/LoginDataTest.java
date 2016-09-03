@@ -21,52 +21,54 @@ public class LoginDataTest {
     public static Collection<Object[]> data() {
         // LoginData, Expected LoginType, Expected PTC isValid,Expected Google isValid
         return Arrays.asList(new Object[][] {
-                { new LoginData("User", "Pass"), LoginType.PTC, true, false },
-                { new LoginData("User", ""), LoginType.PTC, false, false },
-                { new LoginData("", "Pass"), LoginType.PTC, false, false },
-                { new LoginData("", ""), LoginType.PTC, false, false },
-                { new LoginData("User", null), LoginType.PTC, false, false },
-                { new LoginData(null, "Pass"), LoginType.PTC, false, false },
-                { new LoginData(null, null), LoginType.PTC, false, false },
+            { new LoginData("User", "Pass"), LoginType.PTC, true, false },
+            { new LoginData("User", ""), LoginType.PTC, false, false },
+            { new LoginData("", "Pass"), LoginType.PTC, false, false },
+            { new LoginData("", ""), LoginType.PTC, false, false },
+            { new LoginData("User", null), LoginType.PTC, false, false },
+            { new LoginData(null, "Pass"), LoginType.PTC, false, false },
+            { new LoginData(null, null), LoginType.PTC, false, false },
 
-                { new LoginData("Token"), LoginType.GOOGLE, false, true },
-                { new LoginData(null), LoginType.GOOGLE, false, false },
-                { new LoginData(""), LoginType.GOOGLE, false, false },
+            { new LoginData("Token"), LoginType.GOOGLE, false, true },
+            { new LoginData(null), LoginType.GOOGLE, false, false },
+            { new LoginData(""), LoginType.GOOGLE, false, false },
 
-                { new LoginData("User", "Pass", "Token"), LoginType.BOTH, true, true },
-                { new LoginData("", "", ""), LoginType.BOTH, false, false },
-                { new LoginData(null, null, null), LoginType.BOTH, false, false },
-                { new LoginData("User", "Pass", ""), LoginType.BOTH, true, false },
-                { new LoginData("User", "Pass", null), LoginType.BOTH, true, false },
-                { new LoginData("", "", "token"), LoginType.BOTH, false, true },
-                { new LoginData(null, null, "token"), LoginType.BOTH, false, true },
+            { new LoginData("User", "Pass", "Token"), LoginType.BOTH, true, true },
+            { new LoginData("", "", ""), LoginType.BOTH, false, false },
+            { new LoginData(null, null, null), LoginType.BOTH, false, false },
+            { new LoginData("User", "Pass", ""), LoginType.BOTH, true, false },
+            { new LoginData("User", "Pass", null), LoginType.BOTH, true, false },
+            { new LoginData("", "", "token"), LoginType.BOTH, false, true },
+            { new LoginData(null, null, "token"), LoginType.BOTH, false, true },
         });
     }
-    
-    private LoginData loginData;
-    private LoginType expectedLoginType;
-    private boolean expectedPTCIsValid;
 
-    private boolean expectedGoogleIsValid;
+    private final LoginData loginData;
+    private final LoginType expectedLoginType;
+    private final boolean expectedPtcIsValid;
 
-    public LoginDataTest(LoginData loginData, LoginType expectedLoginType,
-            boolean expectedPTCIsValid, boolean expectedGoogleIsValid) {
+    private final boolean expectedGoogleIsValid;
+
+    public LoginDataTest(final LoginData loginData, final LoginType expectedLoginType,
+            final boolean expectedPTCIsValid, final boolean expectedGoogleIsValid) {
         this.loginData = loginData;
         this.expectedLoginType = expectedLoginType;
-        this.expectedPTCIsValid = expectedPTCIsValid;
+        this.expectedPtcIsValid = expectedPTCIsValid;
         this.expectedGoogleIsValid = expectedGoogleIsValid;
     }
-    
+
     @Test
     public void testGoogleIsValid(){
         assertThat(loginData.isValidGoogleLogin(), is(expectedGoogleIsValid));
     }
+
     @Test
     public void testLoginType(){
         assertThat(loginData.getLoginType(), is(expectedLoginType));
     }
+
     @Test
-    public void testPTCIsValid(){
-        assertThat(loginData.isValidPTCLogin(), is(expectedPTCIsValid));
+    public void testPtcIsValid(){
+        assertThat(loginData.isValidPtcLogin(), is(expectedPtcIsValid));
     }
 }

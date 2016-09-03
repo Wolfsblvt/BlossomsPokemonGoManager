@@ -124,8 +124,8 @@ public final class AccountManager {
                 }
                 break;
             case PTC:
-                if (loginData.isValidPTCLogin()) {
-                    return logOnPTC(loginData);
+                if (loginData.isValidPtcLogin()) {
+                    return logOnPtc(loginData);
                 }
                 break;
             default:
@@ -190,7 +190,7 @@ public final class AccountManager {
      * @param loginData the login data used to login
      * @return results of the login
      */
-    private BpmResult logOnPTC(final LoginData loginData) {
+    private BpmResult logOnPtc(final LoginData loginData) {
         OkHttpClient http;
         CredentialProvider cp;
         http = new OkHttpClient();
