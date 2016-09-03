@@ -23,7 +23,6 @@ public class BpmOperationResult extends BpmResult {
     }
 
     /**
-     *
      * Instantiate a BpmOperationResult with an error message and error type.
      *
      * @param errorMessage the error message
@@ -35,7 +34,7 @@ public class BpmOperationResult extends BpmResult {
     }
 
     /**
-     * Adds a success message into the list
+     * Adds a success message into the list.
      *
      * @param successMessage the success message to be added into the list
      */
