@@ -88,31 +88,34 @@ public class OperationConfirmationController extends AnchorPane {
     }
 
     private void startOperations(ActionEvent actionEvent) {
-        operationListView.getItems().forEach(operation -> {
-            PokemonModel pokemon = operation.pokemon;
-            try {
-                BPMOperationResult result = operation.execute();
-                if (result.isSuccess()) {
-                    System.out.println(String.format(
-                            "%s %s",
-                            operation.getOperationID().getActionVerbFinished(),
-                            pokemon.getSummary()));
-                } else {
-                    System.out.println(String.format(
-                            "Skipping %s due to <%s>",
-                            pokemon.getSummary(),
-                            result.getErrorMessage()));
-                }
-            } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException e) {
-                System.out.println(String.format(
-                        "Error %s %s! %s",
-                        operation.getOperationID().getActionVerbDuring(),
-                        pokemon.getSpecies(),
-                        Utilities.getRealExceptionMessage(e)));
-            }
-            operation.doDelay();
-        });
+        operationListView.getItems().forEach(operation -> doOperation(operation));
         System.out.println("Batch Operation Done");
+    }
+    
+    private void doOperation(Operation operation){
+        PokemonModel pokemon = operation.pokemon;
+        try {
+            BPMOperationResult result = operation.execute();
+            if (result.isSuccess()) {
+                System.out.println(String.format(
+                        "%s %s",
+                        operation.getOperationID().getActionVerbFinished(),
+                        pokemon.getSummary()));
+            } else {
+                System.out.println(String.format(
+                        "Skipping %s due to <%s>",
+                        pokemon.getSummary(),
+                        result.getErrorMessage()));
+            }
+        } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException e) {
+            System.out.println(String.format(
+                    "Error %s %s! %s",
+                    operation.getOperationID().getActionVerbDuring(),
+                    pokemon.getSpecies(),
+                    Utilities.getRealExceptionMessage(e)));
+        }
+        operation.doDelay();
+    
     }
 
     private void pauseOperations(ActionEvent actionEvent) {
