@@ -8,7 +8,12 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class FavoriteOperation extends Operation {
 
-    public FavoriteOperation(PokemonModel pokemon) {
+    protected FavoriteOperation() {
+        // For mocking
+        super();
+    }
+
+    public FavoriteOperation(final PokemonModel pokemon) {
         super(pokemon);
     }
 

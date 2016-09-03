@@ -16,6 +16,7 @@ public class EvolveOperation extends Operation {
 
     protected EvolveOperation() {
         // For mocking
+        super();
     }
 
     public EvolveOperation(final PokemonModel pokemon) {
@@ -39,17 +40,17 @@ public class EvolveOperation extends Operation {
         final int candiesToEvolve = poke.getCandiesToEvolve();
         final int cp = poke.getCp();
         final int hp = poke.getMaxStamina();
-        
+
         final Pokemon newPoke = evolutionResult.getEvolvedPokemon();
         final int newCandies = newPoke.getCandy();
         final int newCp = newPoke.getCp();
         final int newHp = newPoke.getStamina();
         final int candyRefund = 1;
-        
+
         pokemon.setPokemon(newPoke);
-        
+
         final BpmOperationResult result = new BpmOperationResult();
-        
+
         result.addSuccessMessage(String.format(
                 "Evolving %s. Evolve result: %s",
                 PokeHandler.getLocalPokeName(poke),
@@ -60,14 +61,14 @@ public class EvolveOperation extends Operation {
                         + "(Candies: %d[%d-%d+%d], "
                         + "CP: %d[+%d], "
                         + "HP: %d[+%d])",
-                newCandies, candies, candiesToEvolve, candyRefund,
-                newCp, (newCp - cp),
-                newHp, (newHp - hp))); 
-        
+                        newCandies, candies, candiesToEvolve, candyRefund,
+                        newCp, (newCp - cp),
+                        newHp, (newHp - hp)));
+
         if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)){
             result.setNextOperation(OperationId.TRANSFER);
         }
-                
+
         return result;
     }
 

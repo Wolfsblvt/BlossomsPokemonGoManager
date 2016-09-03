@@ -16,6 +16,7 @@ public class TransferOperation extends Operation {
 
     protected TransferOperation() {
         // For mocking
+        super();
     }
 
     public TransferOperation(final PokemonModel pokemon) {

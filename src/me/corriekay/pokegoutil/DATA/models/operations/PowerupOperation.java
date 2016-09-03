@@ -13,6 +13,11 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class PowerupOperation extends Operation {
 
+    protected PowerupOperation() {
+        // For mocking
+        super();
+    }
+
     public PowerupOperation(final PokemonModel pokemon) {
         super(pokemon);
     }
