@@ -8,6 +8,7 @@ public enum OperationError {
     IS_FAVORITE,
     
     EVOLVE_FAIL,
+    TRANSFER_FAIL,
     
     NOT_IMPLEMENTED
 }
