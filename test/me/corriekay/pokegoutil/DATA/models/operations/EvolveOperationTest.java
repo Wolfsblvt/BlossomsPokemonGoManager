@@ -67,6 +67,6 @@ public class EvolveOperationTest {
 
         BPMOperationResult result = operation.execute();
 
-        Assert.assertThat("Result should pass", true, is(result.isSuccess()));
+        Assert.assertThat("Evolve should be successful", true, is(result.isSuccess()));
     }
 }
