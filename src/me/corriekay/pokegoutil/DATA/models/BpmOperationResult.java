@@ -16,17 +16,17 @@ public class BpmOperationResult extends BpmResult {
     private OperationId nextOperation;
 
     /**
-     * Instantiate a BpmOperationResult. Usually used for success results.
+     * Instantiate a success BpmOperationResult.
      */
     public BpmOperationResult() {
         super();
     }
 
     /**
-     * Instantiate a BpmOperationResult with an error message and error type.
+     * Instantiate a non success BpmOperationResult with an error message and error type.
      *
-     * @param errorMessage the error message
-     * @param operationError the operation error type
+     * @param errorMessage error message
+     * @param operationError operation error type
      */
     public BpmOperationResult(final String errorMessage, final OperationError operationError) {
         super(errorMessage);
@@ -36,7 +36,7 @@ public class BpmOperationResult extends BpmResult {
     /**
      * Adds a success message into the list.
      *
-     * @param successMessage the success message to be added into the list
+     * @param successMessage success message to be added into the list
      */
     public void addSuccessMessage(final String successMessage) {
         successMessageList.add(successMessage);
@@ -45,7 +45,7 @@ public class BpmOperationResult extends BpmResult {
     /**
      * Gets the next operation to be called. Used in scenarios such as 'transfer after evolution'.
      *
-     * @return the next operation that should be done
+     * @return next operation that should be done
      */
     public OperationId getNextOperation() {
         return nextOperation;
@@ -54,7 +54,7 @@ public class BpmOperationResult extends BpmResult {
     /**
      * Get the type of operation error.
      *
-     * @return the type of operation error
+     * @return type of operation error
      */
     public OperationError getOperationError() {
         return operationError;
@@ -63,7 +63,7 @@ public class BpmOperationResult extends BpmResult {
     /**
      * Get all the success messages that have been added.
      *
-     * @return the list of success messages
+     * @return list of success messages
      */
     public List<String> getSuccessMessageList() {
         return successMessageList;
@@ -81,7 +81,7 @@ public class BpmOperationResult extends BpmResult {
     /**
      * Set the next operation to be called. Used in scenarios such as 'transfer after evolution'.
      *
-     * @param nextOperation the next operation that should be done
+     * @param nextOperation next operation that should be done
      */
     public void setNextOperation(final OperationId nextOperation) {
         this.nextOperation = nextOperation;
@@ -90,7 +90,7 @@ public class BpmOperationResult extends BpmResult {
     /**
      * Set the type of operation error.
      *
-     * @param operationError the type of operation error
+     * @param operationError type of operation error
      */
     public void setOperationError(final OperationError operationError) {
         this.operationError = operationError;
