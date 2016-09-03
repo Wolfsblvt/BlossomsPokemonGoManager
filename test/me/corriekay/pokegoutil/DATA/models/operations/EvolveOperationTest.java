@@ -53,7 +53,7 @@ public class EvolveOperationTest {
         doReturn(25).when(pokemon).getCandies2Evlv();
 
         BPMOperationResult result = operation.execute();
-        
+
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Not enough candies", result.getOperationError(),
                 is(OperationError.INSUFFICENT_CANDIES));
