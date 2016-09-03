@@ -13,7 +13,6 @@ import org.junit.runners.Parameterized.Parameters;
 import com.sun.javafx.collections.ObservableListWrapper;
 
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.DATA.models.operations.Operation;
 import me.corriekay.pokegoutil.GUI.enums.OperationID;
 
 @RunWith(value = Parameterized.class)

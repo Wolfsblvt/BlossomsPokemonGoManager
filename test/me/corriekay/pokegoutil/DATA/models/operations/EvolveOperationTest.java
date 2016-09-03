@@ -1,5 +1,10 @@
 package me.corriekay.pokegoutil.DATA.models.operations;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,9 +16,6 @@ import com.pokegoapi.exceptions.RemoteServerException;
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
 import me.corriekay.pokegoutil.DATA.models.BPMOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-
-import static org.mockito.Mockito.*;
-import static org.hamcrest.CoreMatchers.*;
 
 public class EvolveOperationTest {
 
