@@ -35,7 +35,7 @@ public class PokemonModel {
     private final StringProperty nickname = new SimpleStringProperty();
     private final StringProperty species = new SimpleStringProperty();
     private final DoubleProperty level = new SimpleDoubleProperty();
-    private final StringProperty IV = new SimpleStringProperty();
+    private final StringProperty iv = new SimpleStringProperty();
     private final IntegerProperty atk = new SimpleIntegerProperty();
     private final IntegerProperty def = new SimpleIntegerProperty();
     private final IntegerProperty stam = new SimpleIntegerProperty();
@@ -58,22 +58,22 @@ public class PokemonModel {
     private final LongProperty duelAbility = new SimpleLongProperty();
     private final DoubleProperty gymOffense = new SimpleDoubleProperty();
     private final LongProperty gymDefense = new SimpleLongProperty();
-    private final LongProperty duelAbilityIV = new SimpleLongProperty();
-    private final DoubleProperty gymOffenseIV = new SimpleDoubleProperty();
-    private final LongProperty gymDefenseIV = new SimpleLongProperty();
+    private final LongProperty duelAbilityIv = new SimpleLongProperty();
+    private final DoubleProperty gymOffenseIv = new SimpleDoubleProperty();
+    private final LongProperty gymDefenseIv = new SimpleLongProperty();
     private final StringProperty move1Rating = new SimpleStringProperty();
     private final StringProperty move2Rating = new SimpleStringProperty();
     private final StringProperty cpEvolved = new SimpleStringProperty();
     private final StringProperty evolvable = new SimpleStringProperty();
 
-    private Pokemon pokemon;    
-    private final AccountManager accountManager = AccountManager.getInstance();  
+    private Pokemon pokemon;
+    private final AccountManager accountManager = AccountManager.getInstance();
 
     public PokemonModel(final Pokemon pokemon) {
         this.pokemon = pokemon;
         initialze();
     }
-    
+
     private void initialze(){
         final PokemonMeta meta = pokemon.getMeta() != null? pokemon.getMeta():new PokemonMeta();
 
@@ -81,7 +81,7 @@ public class PokemonModel {
         setNickname(pokemon.getNickname());
         setSpecies(PokeHandler.getLocalPokeName(pokemon));
         setLevel(pokemon.getLevel());
-        setIV(Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(pokemon)));
+        setIv(Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(pokemon)));
         setAtk(pokemon.getIndividualAttack());
         setDef(pokemon.getIndividualDefense());
         setStam(pokemon.getIndividualStamina());
@@ -104,13 +104,12 @@ public class PokemonModel {
         }
 
         // Max CP calculation for current PokemonModel
-        int maxCpCurrent, maxCp;
 
         int attack = pokemon.getIndividualAttack() + meta.getBaseAttack();
         int defense = pokemon.getIndividualDefense() + meta.getBaseDefense();
         int stamina = pokemon.getIndividualStamina() + meta.getBaseStamina();
-        maxCpCurrent = PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel);
-        maxCp = PokemonCpUtils.getMaxCp(attack, defense, stamina);
+        final int maxCpCurrent = PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel);
+        final int maxCp = PokemonCpUtils.getMaxCp(attack, defense, stamina);
         setMaxCp(maxCp);
         setMaxCpCurrent(maxCpCurrent);
 
@@ -181,9 +180,9 @@ public class PokemonModel {
         setGymOffense(PokemonUtils.gymOffense(pokemon, false));
         setGymDefense(PokemonUtils.gymDefense(pokemon, false));
 
-        setDuelAbilityIV(PokemonUtils.duelAbility(pokemon, true));
-        setGymOffenseIV(PokemonUtils.gymOffense(pokemon, true));
-        setGymDefenseIV(PokemonUtils.gymDefense(pokemon, true));
+        setDuelAbilityIv(PokemonUtils.duelAbility(pokemon, true));
+        setGymOffenseIv(PokemonUtils.gymOffense(pokemon, true));
+        setGymDefenseIv(PokemonUtils.gymDefense(pokemon, true));
         setMove1Rating(PokemonUtils.moveRating(pokemon, true));
         setMove2Rating(PokemonUtils.moveRating(pokemon, false));
     }
@@ -193,7 +192,7 @@ public class PokemonModel {
     public Pokemon getPokemon() {
         return pokemon;
     }
-    
+
     public void setPokemon(final Pokemon pokemon){
         this.pokemon = pokemon;
         initialze();
@@ -247,16 +246,16 @@ public class PokemonModel {
         this.level.set(level);
     }
 
-    public String getIV() {
-        return IV.get();
+    public String getIv() {
+        return iv.get();
     }
 
-    public StringProperty IVProperty() {
-        return IV;
+    public StringProperty ivProperty() {
+        return iv;
     }
 
-    public void setIV(final String IV) {
-        this.IV.set(IV);
+    public void setIv(final String iv) {
+        this.iv.set(iv);
     }
 
     public int getAtk() {
@@ -523,40 +522,40 @@ public class PokemonModel {
         this.gymDefense.set(gymDefense);
     }
 
-    public long getDuelAbilityIV() {
-        return duelAbilityIV.get();
+    public long getDuelAbilityIv() {
+        return duelAbilityIv.get();
     }
 
-    public LongProperty duelAbilityIVProperty() {
-        return duelAbilityIV;
+    public LongProperty duelAbilityIvProperty() {
+        return duelAbilityIv;
     }
 
-    public void setDuelAbilityIV(final long duelAbilityIV) {
-        this.duelAbilityIV.set(duelAbilityIV);
+    public void setDuelAbilityIv(final long duelAbilityIv) {
+        this.duelAbilityIv.set(duelAbilityIv);
     }
 
-    public double getGymOffenseIV() {
-        return gymOffenseIV.get();
+    public double getGymOffenseIv() {
+        return gymOffenseIv.get();
     }
 
-    public DoubleProperty gymOffenseIVProperty() {
-        return gymOffenseIV;
+    public DoubleProperty gymOffenseIvProperty() {
+        return gymOffenseIv;
     }
 
-    public void setGymOffenseIV(final double gymOffenseIV) {
-        this.gymOffenseIV.set(gymOffenseIV);
+    public void setGymOffenseIv(final double gymOffenseIv) {
+        this.gymOffenseIv.set(gymOffenseIv);
     }
 
-    public long getGymDefenseIV() {
-        return gymDefenseIV.get();
+    public long getGymDefenseIv() {
+        return gymDefenseIv.get();
     }
 
-    public LongProperty gymDefenseIVProperty() {
-        return gymDefenseIV;
+    public LongProperty gymDefenseIvProperty() {
+        return gymDefenseIv;
     }
 
-    public void setGymDefenseIV(final long gymDefenseIV) {
-        this.gymDefenseIV.set(gymDefenseIV);
+    public void setGymDefenseIv(final long gymDefenseIv) {
+        this.gymDefenseIv.set(gymDefenseIv);
     }
 
     public String getMove1Rating() {
@@ -608,9 +607,9 @@ public class PokemonModel {
     }
 
     public String getSummary() {
-        return getNickname() + " (" + getSpecies() + ")" + " IV: " + getIV() + " CP: " + getCp();
+        return getNickname() + " (" + getSpecies() + ")" + " IV: " + getIv() + " CP: " + getCp();
     }
-    
+
     public boolean isInGym(){
         return !pokemon.getDeployedFortId().isEmpty();
     }

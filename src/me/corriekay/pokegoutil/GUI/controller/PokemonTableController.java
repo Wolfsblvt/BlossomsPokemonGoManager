@@ -152,7 +152,7 @@ public class PokemonTableController extends GridPane {
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().speciesProperty());
                     break;
                 case IV:
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().IVProperty());
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().ivProperty());
                     break;
                 case LEVEL:
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().levelProperty());
@@ -236,13 +236,13 @@ public class PokemonTableController extends GridPane {
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().evolvableProperty());
                     break;
                 case DUELABILITYIV:
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().duelAbilityIVProperty());
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().duelAbilityIvProperty());
                     break;
                 case GYMOFFENSEIV:
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymOffenseIVProperty());
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymOffenseIvProperty());
                     break;
                 case GYMDEFENSEIV:
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymDefenseIVProperty());
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymDefenseIvProperty());
                     break;
             }
             columns.add(col);
