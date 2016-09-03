@@ -63,7 +63,7 @@ public class EvolveOperationTest {
     public void SucessfullyEvolve() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         when(pokemon.getCandies()).thenReturn(25);
         when(pokemon.getCandies2Evlv()).thenReturn(25);
-        when(operation.doOperation()).thenReturn(new BPMOperationResult());
+        doReturn(new BPMOperationResult()).when(operation).doOperation();
 
         BPMOperationResult result = operation.execute();
 
