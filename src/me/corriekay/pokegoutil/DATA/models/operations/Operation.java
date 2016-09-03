@@ -17,19 +17,19 @@ import me.corriekay.pokegoutil.utils.Utilities;
 public abstract class Operation {
 
     public static List<Operation> generateOperations(
-            OperationId operationID,
-            ObservableList<PokemonModel> pokemonList) {
-        List<Operation> operationList = new ArrayList<Operation>();
+            final OperationId operationID,
+            final ObservableList<PokemonModel> pokemonList) {
+        final List<Operation> operationList = new ArrayList<Operation>();
 
         pokemonList.forEach(model -> {
-            Operation operation = generateOperation(operationID, model);
+            final Operation operation = generateOperation(operationID, model);
             operationList.add(operation);
         });
 
         return operationList;
     }
 
-    public static Operation generateOperation(OperationId operationId, PokemonModel model) {
+    public static Operation generateOperation(final OperationId operationId, final PokemonModel model) {
         switch (operationId) {
             case EVOLVE:
                 return new EvolveOperation(model);
@@ -56,7 +56,7 @@ public abstract class Operation {
         // For mocking
     }
 
-    public Operation(PokemonModel pokemon) {
+    public Operation(final PokemonModel pokemon) {
         this.delay = getRandomDelay();
         this.pokemon = pokemon;
     }

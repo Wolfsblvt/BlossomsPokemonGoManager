@@ -18,16 +18,16 @@ public class TransferOperation extends Operation {
         // For mocking
     }
 
-    public TransferOperation(PokemonModel pokemon) {
+    public TransferOperation(final PokemonModel pokemon) {
         super(pokemon);
     }
 
     @Override
     protected BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException {
 
-        Pokemon poke = pokemon.getPokemon();
-        int candies = poke.getCandy();
-        Result transferResult = poke.transferPokemon();
+        final Pokemon poke = pokemon.getPokemon();
+        final int candies = poke.getCandy();
+        final Result transferResult = poke.transferPokemon();
 
         if (transferResult != Result.SUCCESS) {
             return new BpmOperationResult(String.format(
@@ -37,8 +37,8 @@ public class TransferOperation extends Operation {
                     OperationError.TRANSFER_FAIL);
         }
 
-        int newCandies = poke.getCandy();
-        BpmOperationResult result = new BpmOperationResult();
+        final int newCandies = poke.getCandy();
+        final BpmOperationResult result = new BpmOperationResult();
 
         result.addSuccessMessage(String.format(
                 "Transferring %s, Result: Success!",

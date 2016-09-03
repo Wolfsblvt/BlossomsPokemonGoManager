@@ -13,7 +13,7 @@ public enum OperationId {
     private static final Map<String, OperationId> operationMap = new HashMap<String, OperationId>();
 
     static {
-        for (OperationId id : OperationId.values()) {
+        for (final OperationId id : OperationId.values()) {
             operationMap.put(id.getActionName(), id);
         }
     }
@@ -22,7 +22,7 @@ public enum OperationId {
     private String actionVerbDuring;
     private String actionVerbFinished;
 
-    private OperationId(String actionName, String actionVerbDuring, String actionVerbFinished) {
+    private OperationId(final String actionName, final String actionVerbDuring, final String actionVerbFinished) {
         this.actionName = actionName;
         this.actionVerbDuring = actionVerbDuring;
         this.actionVerbFinished = actionVerbFinished;
@@ -40,7 +40,7 @@ public enum OperationId {
         return actionVerbFinished;
     }
 
-    public static OperationId get(String actionName) {
+    public static OperationId get(final String actionName) {
         return operationMap.get(actionName);
     }
 }

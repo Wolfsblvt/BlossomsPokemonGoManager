@@ -1,23 +1,34 @@
 package me.corriekay.pokegoutil.DATA.models;
 
-import POGOProtos.Enums.PokemonFamilyIdOuterClass;
-import POGOProtos.Enums.PokemonIdOuterClass;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
-import javafx.beans.property.*;
+
+import POGOProtos.Enums.PokemonFamilyIdOuterClass;
+import POGOProtos.Enums.PokemonIdOuterClass;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import me.corriekay.pokegoutil.DATA.managers.AccountManager;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class PokemonModel {
     private final IntegerProperty numId = new SimpleIntegerProperty();
@@ -56,20 +67,20 @@ public class PokemonModel {
     private final StringProperty evolvable = new SimpleStringProperty();
 
     private Pokemon pokemon;    
-    private AccountManager accountManager = AccountManager.getInstance();  
+    private final AccountManager accountManager = AccountManager.getInstance();  
 
-    public PokemonModel(Pokemon pokemon) {
+    public PokemonModel(final Pokemon pokemon) {
         this.pokemon = pokemon;
         initialze();
     }
     
     private void initialze(){
-        PokemonMeta meta = pokemon.getMeta() != null? pokemon.getMeta():new PokemonMeta();
+        final PokemonMeta meta = pokemon.getMeta() != null? pokemon.getMeta():new PokemonMeta();
 
         setNumId(meta.getNumber());
         setNickname(pokemon.getNickname());
         setSpecies(PokeHandler.getLocalPokeName(pokemon));
-        setLevel((double) pokemon.getLevel());
+        setLevel(pokemon.getLevel());
         setIV(Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(pokemon)));
         setAtk(pokemon.getIndividualAttack());
         setDef(pokemon.getIndividualDefense());
@@ -77,8 +88,8 @@ public class PokemonModel {
         setType1(StringUtils.capitalize(meta.getType1().toString().toLowerCase()));
         setType2(StringUtils.capitalize(meta.getType2().toString().toLowerCase()));
 
-        Double dps1 = PokemonUtils.dpsForMove(pokemon, true);
-        Double dps2 = PokemonUtils.dpsForMove(pokemon, false);
+        final Double dps1 = PokemonUtils.dpsForMove(pokemon, true);
+        final Double dps2 = PokemonUtils.dpsForMove(pokemon, false);
         setMove1(WordUtils.capitalize(pokemon.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " ")) + " (" + String.format("%.2f", dps1) + "dps)");
         setMove2(WordUtils.capitalize(pokemon.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " (" + String.format("%.2f", dps2) + "dps)");
 
@@ -88,7 +99,7 @@ public class PokemonModel {
         int trainerLevel = 1;
         try {
             trainerLevel = accountManager.getPlayerProfile().getStats().getLevel();
-        } catch (Exception e1) {
+        } catch (final Exception e1) {
             System.out.println("Error: Cannot find meta data for trainer level");
         }
 
@@ -104,19 +115,19 @@ public class PokemonModel {
         setMaxCpCurrent(maxCpCurrent);
 
         // Max CP calculation for highest evolution of current PokemonModel
-        PokemonFamilyIdOuterClass.PokemonFamilyId familyId = pokemon.getPokemonFamily();
+        final PokemonFamilyIdOuterClass.PokemonFamilyId familyId = pokemon.getPokemonFamily();
         PokemonIdOuterClass.PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
 
         // Eeveelutions exception handling
         if (familyId.getNumber() == PokemonFamilyIdOuterClass.PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
             if (pokemon.getPokemonId().getNumber() == PokemonIdOuterClass.PokemonId.EEVEE.getNumber()) {
-                PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.VAPOREON);
-                PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.FLAREON);
-                PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.JOLTEON);
+                final PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.VAPOREON);
+                final PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.FLAREON);
+                final PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.JOLTEON);
                 if (vap != null && fla != null && jol != null) {
-                    Comparator<PokemonMeta> cMeta = (m1, m2) -> {
-                        int comb1 = PokemonCpUtils.getMaxCp(m1.getBaseAttack(), m1.getBaseDefense(), m1.getBaseStamina());
-                        int comb2 = PokemonCpUtils.getMaxCp(m2.getBaseAttack(), m2.getBaseDefense(), m2.getBaseStamina());
+                    final Comparator<PokemonMeta> cMeta = (m1, m2) -> {
+                        final int comb1 = PokemonCpUtils.getMaxCp(m1.getBaseAttack(), m1.getBaseDefense(), m1.getBaseStamina());
+                        final int comb2 = PokemonCpUtils.getMaxCp(m2.getBaseAttack(), m2.getBaseDefense(), m2.getBaseStamina());
                         return comb1 - comb2;
                     };
                     highestFamilyId = PokemonIdOuterClass.PokemonId.forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
@@ -128,7 +139,7 @@ public class PokemonModel {
             }
         }
 
-        PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
+        final PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
         if (highestFamilyMeta == null) {
             System.out.println("Error: Cannot find meta data for " + highestFamilyId.name());
         }
@@ -150,7 +161,7 @@ public class PokemonModel {
         int candies = 0;
         try {
             candies = pokemon.getCandy();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         setCandies(candies);
@@ -183,7 +194,7 @@ public class PokemonModel {
         return pokemon;
     }
     
-    public void setPokemon(Pokemon pokemon){
+    public void setPokemon(final Pokemon pokemon){
         this.pokemon = pokemon;
         initialze();
     }
@@ -196,7 +207,7 @@ public class PokemonModel {
         return numId;
     }
 
-    public void setNumId(int numId) {
+    public void setNumId(final int numId) {
         this.numId.set(numId);
     }
 
@@ -208,7 +219,7 @@ public class PokemonModel {
         return nickname;
     }
 
-    public void setNickname(String nickname) {
+    public void setNickname(final String nickname) {
         this.nickname.set(nickname);
     }
 
@@ -220,7 +231,7 @@ public class PokemonModel {
         return species;
     }
 
-    public void setSpecies(String species) {
+    public void setSpecies(final String species) {
         this.species.set(species);
     }
 
@@ -232,7 +243,7 @@ public class PokemonModel {
         return level;
     }
 
-    public void setLevel(double level) {
+    public void setLevel(final double level) {
         this.level.set(level);
     }
 
@@ -244,7 +255,7 @@ public class PokemonModel {
         return IV;
     }
 
-    public void setIV(String IV) {
+    public void setIV(final String IV) {
         this.IV.set(IV);
     }
 
@@ -256,7 +267,7 @@ public class PokemonModel {
         return atk;
     }
 
-    public void setAtk(int atk) {
+    public void setAtk(final int atk) {
         this.atk.set(atk);
     }
 
@@ -268,7 +279,7 @@ public class PokemonModel {
         return def;
     }
 
-    public void setDef(int def) {
+    public void setDef(final int def) {
         this.def.set(def);
     }
 
@@ -280,7 +291,7 @@ public class PokemonModel {
         return stam;
     }
 
-    public void setStam(int stam) {
+    public void setStam(final int stam) {
         this.stam.set(stam);
     }
 
@@ -292,7 +303,7 @@ public class PokemonModel {
         return type1;
     }
 
-    public void setType1(String type1) {
+    public void setType1(final String type1) {
         this.type1.set(type1);
     }
 
@@ -304,7 +315,7 @@ public class PokemonModel {
         return type2;
     }
 
-    public void setType2(String type2) {
+    public void setType2(final String type2) {
         this.type2.set(type2);
     }
 
@@ -316,7 +327,7 @@ public class PokemonModel {
         return move1;
     }
 
-    public void setMove1(String move1) {
+    public void setMove1(final String move1) {
         this.move1.set(move1);
     }
 
@@ -328,7 +339,7 @@ public class PokemonModel {
         return move2;
     }
 
-    public void setMove2(String move2) {
+    public void setMove2(final String move2) {
         this.move2.set(move2);
     }
 
@@ -340,7 +351,7 @@ public class PokemonModel {
         return cp;
     }
 
-    public void setCp(int cp) {
+    public void setCp(final int cp) {
         this.cp.set(cp);
     }
 
@@ -352,7 +363,7 @@ public class PokemonModel {
         return hp;
     }
 
-    public void setHp(int hp) {
+    public void setHp(final int hp) {
         this.hp.set(hp);
     }
 
@@ -364,7 +375,7 @@ public class PokemonModel {
         return maxCp;
     }
 
-    public void setMaxCp(int maxCp) {
+    public void setMaxCp(final int maxCp) {
         this.maxCp.set(maxCp);
     }
 
@@ -376,7 +387,7 @@ public class PokemonModel {
         return maxCpCurrent;
     }
 
-    public void setMaxCpCurrent(int maxCpCurrent) {
+    public void setMaxCpCurrent(final int maxCpCurrent) {
         this.maxCpCurrent.set(maxCpCurrent);
     }
 
@@ -388,7 +399,7 @@ public class PokemonModel {
         return maxEvolvedCpCurrent;
     }
 
-    public void setMaxEvolvedCpCurrent(int maxEvolvedCpCurrent) {
+    public void setMaxEvolvedCpCurrent(final int maxEvolvedCpCurrent) {
         this.maxEvolvedCpCurrent.set(maxEvolvedCpCurrent);
     }
 
@@ -400,7 +411,7 @@ public class PokemonModel {
         return maxEvolvedCp;
     }
 
-    public void setMaxEvolvedCp(int maxEvolvedCp) {
+    public void setMaxEvolvedCp(final int maxEvolvedCp) {
         this.maxEvolvedCp.set(maxEvolvedCp);
     }
 
@@ -412,7 +423,7 @@ public class PokemonModel {
         return candies;
     }
 
-    public void setCandies(int candies) {
+    public void setCandies(final int candies) {
         this.candies.set(candies);
     }
 
@@ -424,7 +435,7 @@ public class PokemonModel {
         return candies2Evlv;
     }
 
-    public void setCandies2Evlv(int candies2Evlv) {
+    public void setCandies2Evlv(final int candies2Evlv) {
         this.candies2Evlv.set(candies2Evlv);
     }
 
@@ -436,7 +447,7 @@ public class PokemonModel {
         return dustToLevel;
     }
 
-    public void setDustToLevel(int dustToLevel) {
+    public void setDustToLevel(final int dustToLevel) {
         this.dustToLevel.set(dustToLevel);
     }
 
@@ -448,7 +459,7 @@ public class PokemonModel {
         return pokeball;
     }
 
-    public void setPokeball(String pokeball) {
+    public void setPokeball(final String pokeball) {
         this.pokeball.set(pokeball);
     }
 
@@ -460,7 +471,7 @@ public class PokemonModel {
         return caughtDate;
     }
 
-    public void setCaughtDate(String caughtDate) {
+    public void setCaughtDate(final String caughtDate) {
         this.caughtDate.set(caughtDate);
     }
 
@@ -472,7 +483,7 @@ public class PokemonModel {
         return isFavorite;
     }
 
-    public void setIsFavorite(boolean isFavorite) {
+    public void setIsFavorite(final boolean isFavorite) {
         this.isFavorite.set(isFavorite);
     }
 
@@ -484,7 +495,7 @@ public class PokemonModel {
         return duelAbility;
     }
 
-    public void setDuelAbility(long duelAbility) {
+    public void setDuelAbility(final long duelAbility) {
         this.duelAbility.set(duelAbility);
     }
 
@@ -496,7 +507,7 @@ public class PokemonModel {
         return gymOffense;
     }
 
-    public void setGymOffense(double gymOffense) {
+    public void setGymOffense(final double gymOffense) {
         this.gymOffense.set(gymOffense);
     }
 
@@ -508,7 +519,7 @@ public class PokemonModel {
         return gymDefense;
     }
 
-    public void setGymDefense(long gymDefense) {
+    public void setGymDefense(final long gymDefense) {
         this.gymDefense.set(gymDefense);
     }
 
@@ -520,7 +531,7 @@ public class PokemonModel {
         return duelAbilityIV;
     }
 
-    public void setDuelAbilityIV(long duelAbilityIV) {
+    public void setDuelAbilityIV(final long duelAbilityIV) {
         this.duelAbilityIV.set(duelAbilityIV);
     }
 
@@ -532,7 +543,7 @@ public class PokemonModel {
         return gymOffenseIV;
     }
 
-    public void setGymOffenseIV(double gymOffenseIV) {
+    public void setGymOffenseIV(final double gymOffenseIV) {
         this.gymOffenseIV.set(gymOffenseIV);
     }
 
@@ -544,7 +555,7 @@ public class PokemonModel {
         return gymDefenseIV;
     }
 
-    public void setGymDefenseIV(long gymDefenseIV) {
+    public void setGymDefenseIV(final long gymDefenseIV) {
         this.gymDefenseIV.set(gymDefenseIV);
     }
 
@@ -556,7 +567,7 @@ public class PokemonModel {
         return move1Rating;
     }
 
-    public void setMove1Rating(String move1Rating) {
+    public void setMove1Rating(final String move1Rating) {
         this.move1Rating.set(move1Rating);
     }
 
@@ -568,7 +579,7 @@ public class PokemonModel {
         return move2Rating;
     }
 
-    public void setMove2Rating(String move2Rating) {
+    public void setMove2Rating(final String move2Rating) {
         this.move2Rating.set(move2Rating);
     }
 
@@ -580,7 +591,7 @@ public class PokemonModel {
         return cpEvolved;
     }
 
-    public void setCpEvolved(String cpEvolved) {
+    public void setCpEvolved(final String cpEvolved) {
         this.cpEvolved.set(cpEvolved);
     }
 
@@ -592,7 +603,7 @@ public class PokemonModel {
         return evolvable;
     }
 
-    public void setEvolvable(String evolvable) {
+    public void setEvolvable(final String evolvable) {
         this.evolvable.set(evolvable);
     }
 

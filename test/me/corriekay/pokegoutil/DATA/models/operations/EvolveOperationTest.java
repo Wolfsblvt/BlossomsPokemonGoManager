@@ -33,7 +33,7 @@ public class EvolveOperationTest {
     public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isInGym();
 
-        BpmOperationResult result = operation.execute();
+        final BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Pokemon in gym", result.getOperationError(), is(OperationError.IN_GYM));
@@ -43,7 +43,7 @@ public class EvolveOperationTest {
     public void pokemonIsNotEvolvable() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(0).when(pokemon).getCandies2Evlv();
 
-        BpmOperationResult result = operation.execute();
+        final BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Pokemon cannot evolve", result.getOperationError(), is(OperationError.NOT_EVOLVABLE));
@@ -54,7 +54,7 @@ public class EvolveOperationTest {
         doReturn(24).when(pokemon).getCandies();
         doReturn(25).when(pokemon).getCandies2Evlv();
 
-        BpmOperationResult result = operation.execute();
+        final BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Not enough candies", result.getOperationError(),
@@ -67,7 +67,7 @@ public class EvolveOperationTest {
         doReturn(25).when(pokemon).getCandies2Evlv();
         doReturn(new BpmOperationResult()).when(operation).doOperation();
 
-        BpmOperationResult result = operation.execute();
+        final BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Evolve should be successful", true, is(result.isSuccess()));
     }

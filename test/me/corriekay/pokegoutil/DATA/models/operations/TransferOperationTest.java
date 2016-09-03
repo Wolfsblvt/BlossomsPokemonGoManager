@@ -32,7 +32,7 @@ public class TransferOperationTest {
     public void pokemonIsFavorite() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isIsFavorite();
 
-        BpmOperationResult result = operation.execute();
+        final BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Pokemon is favorite", result.getOperationError(), is(OperationError.IS_FAVORITE));
@@ -42,7 +42,7 @@ public class TransferOperationTest {
     public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isInGym();
 
-        BpmOperationResult result = operation.execute();
+        final BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Result should fail", false, is(result.isSuccess()));
         Assert.assertThat("Pokemon in gym", result.getOperationError(), is(OperationError.IN_GYM));
@@ -52,7 +52,7 @@ public class TransferOperationTest {
     public void sucessfullyTransfer() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(new BpmOperationResult()).when(operation).doOperation();
 
-        BpmOperationResult result = operation.execute();
+        final BpmOperationResult result = operation.execute();
 
         Assert.assertThat("Transfer should be successful", true, is(result.isSuccess()));
     }

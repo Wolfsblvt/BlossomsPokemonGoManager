@@ -18,13 +18,13 @@ public class EvolveOperation extends Operation {
         // For mocking
     }
 
-    public EvolveOperation(PokemonModel pokemon) {
+    public EvolveOperation(final PokemonModel pokemon) {
         super(pokemon);
     }
 
     @Override
     protected BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException {
-        EvolutionResult evolutionResult = pokemon.getPokemon().evolve();
+        final EvolutionResult evolutionResult = pokemon.getPokemon().evolve();
 
         if (!evolutionResult.isSuccessful()) {
             return new BpmOperationResult(String.format(
@@ -34,21 +34,21 @@ public class EvolveOperation extends Operation {
                     OperationError.EVOLVE_FAIL);
         }
 
-        Pokemon poke = pokemon.getPokemon();
-        int candies = poke.getCandy();
-        int candiesToEvolve = poke.getCandiesToEvolve();
-        int cp = poke.getCp();
-        int hp = poke.getMaxStamina();
+        final Pokemon poke = pokemon.getPokemon();
+        final int candies = poke.getCandy();
+        final int candiesToEvolve = poke.getCandiesToEvolve();
+        final int cp = poke.getCp();
+        final int hp = poke.getMaxStamina();
         
-        Pokemon newPoke = evolutionResult.getEvolvedPokemon();
-        int newCandies = newPoke.getCandy();
-        int newCp = newPoke.getCp();
-        int newHp = newPoke.getStamina();
-        int candyRefund = 1;
+        final Pokemon newPoke = evolutionResult.getEvolvedPokemon();
+        final int newCandies = newPoke.getCandy();
+        final int newCp = newPoke.getCp();
+        final int newHp = newPoke.getStamina();
+        final int candyRefund = 1;
         
         pokemon.setPokemon(newPoke);
         
-        BpmOperationResult result = new BpmOperationResult();
+        final BpmOperationResult result = new BpmOperationResult();
         
         result.addSuccessMessage(String.format(
                 "Evolving %s. Evolve result: %s",
@@ -92,8 +92,8 @@ public class EvolveOperation extends Operation {
             return new BpmOperationResult("Pokemon is in gym", OperationError.IN_GYM);
         }
 
-        int candies = pokemon.getCandies();
-        int candiesToEvolve = pokemon.getCandies2Evlv();
+        final int candies = pokemon.getCandies();
+        final int candiesToEvolve = pokemon.getCandies2Evlv();
 
         if (candiesToEvolve == 0) {
             return new BpmOperationResult("Pokemon cannot be evolved", OperationError.NOT_EVOLVABLE);

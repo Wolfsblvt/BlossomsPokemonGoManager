@@ -21,26 +21,26 @@ import me.corriekay.pokegoutil.GUI.enums.OperationId;
 @RunWith(value = Parameterized.class)
 public class OperationTest {
 
-    private OperationId operationId;
-    private ObservableListWrapper<PokemonModel> pokemonList;
+    private final OperationId operationId;
+    private final ObservableListWrapper<PokemonModel> pokemonList;
 
     @Parameters(name = "{index}: {0}")
     public static Collection<OperationId> data() {
         return Arrays.asList(OperationId.values());
     }
 
-    public OperationTest(OperationId operationId) {
+    public OperationTest(final OperationId operationId) {
         this.operationId = operationId;
 
         // Create list with 1 null value for testing
-        List<PokemonModel> list = new ArrayList<>();
+        final List<PokemonModel> list = new ArrayList<>();
         list.add(null);
         pokemonList = new ObservableListWrapper<>(list);
     }
 
     @Test
     public void testGenerateOperations() {
-        List<Operation> operations = Operation.generateOperations(operationId, pokemonList);
+        final List<Operation> operations = Operation.generateOperations(operationId, pokemonList);
         Assert.assertThat("Created correct operation", operations.get(0).getOperationID(), is(operationId));
     }
 }

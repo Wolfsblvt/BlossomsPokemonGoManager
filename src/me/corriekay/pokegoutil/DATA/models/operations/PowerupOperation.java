@@ -13,7 +13,7 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class PowerupOperation extends Operation {
 
-    public PowerupOperation(PokemonModel pokemon) {
+    public PowerupOperation(final PokemonModel pokemon) {
         super(pokemon);
     }
 
@@ -44,8 +44,8 @@ public class PowerupOperation extends Operation {
             return new BpmOperationResult("Pokemon is in gym", OperationError.IN_GYM);
         }
 
-        int candies = pokemon.getCandies();
-        int candiesToPowerup = pokemon.getCandyCostsForPowerup();
+        final int candies = pokemon.getCandies();
+        final int candiesToPowerup = pokemon.getCandyCostsForPowerup();
         if (candies < candiesToPowerup) {
             return new BpmOperationResult(String.format(
                     "Insufficent candies, needed %d but had %d ",
@@ -54,8 +54,8 @@ public class PowerupOperation extends Operation {
                     OperationError.INSUFFICENT_CANDIES);
         }
 
-        int stardust = AccountManager.getInstance().getPlayerAccount().getStardust();
-        int stardustToPowerUp = pokemon.getStardustCostsForPowerup();
+        final int stardust = AccountManager.getInstance().getPlayerAccount().getStardust();
+        final int stardustToPowerUp = pokemon.getStardustCostsForPowerup();
 
         if (stardust < stardustToPowerUp) {
             return new BpmOperationResult(String.format(

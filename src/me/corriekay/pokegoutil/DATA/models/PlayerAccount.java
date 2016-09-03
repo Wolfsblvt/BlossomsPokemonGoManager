@@ -8,13 +8,13 @@ import com.pokegoapi.exceptions.RemoteServerException;
 
 public class PlayerAccount {
 
-    private PlayerProfile playerProfile;
+    private final PlayerProfile playerProfile;
 
-    public PlayerAccount(PlayerProfile playerProfile) {
+    public PlayerAccount(final PlayerProfile playerProfile) {
         this.playerProfile = playerProfile;
     }
-    
-    public int getStardust() throws InvalidCurrencyException, LoginFailedException, RemoteServerException{
+
+    public int getStardust() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         return playerProfile.getCurrency(Currency.STARDUST);
     }
 }
