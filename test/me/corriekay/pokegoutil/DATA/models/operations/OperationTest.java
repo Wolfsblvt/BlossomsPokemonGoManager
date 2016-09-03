@@ -1,10 +1,13 @@
 package me.corriekay.pokegoutil.DATA.models.operations;
 
+import static org.hamcrest.CoreMatchers.is;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -37,6 +40,7 @@ public class OperationTest {
 
     @Test
     public void testGenerateOperations() {
-        Operation.generateOperations(operationId, pokemonList);
+        List<Operation> operations = Operation.generateOperations(operationId, pokemonList);
+        Assert.assertThat("Created correct operation", operations.get(0).getOperationID(), is(operationId));
     }
 }
