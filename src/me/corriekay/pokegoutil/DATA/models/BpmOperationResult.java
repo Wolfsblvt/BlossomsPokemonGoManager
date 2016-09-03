@@ -8,27 +8,27 @@ import me.corriekay.pokegoutil.GUI.enums.OperationId;
 
 public class BpmOperationResult extends BpmResult {
 
-    private List<String> successMessageList = new ArrayList<String>();
+    private final List<String> successMessageList = new ArrayList<String>();
     private OperationError operationError;
     private OperationId nextOperation;
 
     public BpmOperationResult() {
         super();
     }
-    
-    public BpmOperationResult(String errorMessage, OperationError operationError) {
+
+    public BpmOperationResult(final String errorMessage, final OperationError operationError) {
         super(errorMessage);
         this.operationError = operationError;
     }
-    
-    public void addSuccessMessage(String successMessage) {
+
+    public void addSuccessMessage(final String successMessage) {
         successMessageList.add(successMessage);
     }
-    
+
     public OperationId getNextOperation() {
         return nextOperation;
     }
-    
+
     public OperationError getOperationError() {
         return operationError;
     }
@@ -37,15 +37,15 @@ public class BpmOperationResult extends BpmResult {
         return successMessageList;
     }
 
-    public boolean hasNextOperation(){
+    public boolean hasNextOperation() {
         return nextOperation != null;
     }
 
-    public void setNextOperation(OperationId nextOperation) {
+    public void setNextOperation(final OperationId nextOperation) {
         this.nextOperation = nextOperation;
     }
 
-    public void setOperationError(OperationError operationError) {
+    public void setOperationError(final OperationError operationError) {
         this.operationError = operationError;
     }
 }
