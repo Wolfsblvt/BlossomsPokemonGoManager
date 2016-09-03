@@ -22,31 +22,29 @@ public abstract class Operation {
         List<Operation> operationList = new ArrayList<Operation>();
 
         pokemonList.forEach(model -> {
-            Operation operation;
-            switch (operationID) {
-                case EVOLVE:
-                    operation = new EvolveOperation(model);
-                    break;
-                case FAVORITE:
-                    operation = new FavoriteOperation(model);
-                    break;
-                case POWERUP:
-                    operation = new PowerupOperation(model);
-                    break;
-                case RENAME:
-                    operation = new RenameOperation(model);
-                    break;
-                case TRANSFER:
-                    operation = new TransferOperation(model);
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            String.format("OperationID <%s> has not been handled!", operationID));
-            }
+            Operation operation = generateOperation(operationID, model);
             operationList.add(operation);
         });
 
         return operationList;
+    }
+
+    public static Operation generateOperation(OperationID operationID, PokemonModel model) {
+        switch (operationID) {
+            case EVOLVE:
+                return new EvolveOperation(model);
+            case FAVORITE:
+                return new FavoriteOperation(model);
+            case POWERUP:
+                return new PowerupOperation(model);
+            case RENAME:
+                return new RenameOperation(model);
+            case TRANSFER:
+                return new TransferOperation(model);
+            default:
+                throw new IllegalArgumentException(
+                        String.format("OperationID <%s> has not been handled!", operationID));
+        }
     }
 
     private Integer delay;
@@ -55,7 +53,7 @@ public abstract class Operation {
     protected ConfigNew config = ConfigNew.getConfig();
 
     protected Operation() {
-        //For mocking
+        // For mocking
     }
 
     public Operation(PokemonModel pokemon) {
@@ -63,7 +61,7 @@ public abstract class Operation {
         this.pokemon = pokemon;
     }
 
-    protected abstract BPMOperationResult doOperation();
+    protected abstract BPMOperationResult doOperation() throws LoginFailedException, RemoteServerException;
 
     public BPMOperationResult execute() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         BPMOperationResult result = validateOperation();

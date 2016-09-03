@@ -6,5 +6,8 @@ public enum OperationError {
     INSUFFICENT_CANDIES,
     INSUFFICENT_STARDUSTS,
     IS_FAVORITE,
+    
+    EVOLVE_FAIL,
+    
     NOT_IMPLEMENTED
 }

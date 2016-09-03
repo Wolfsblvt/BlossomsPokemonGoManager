@@ -94,8 +94,9 @@ public class OperationConfirmationController extends AnchorPane {
     
     private void doOperation(Operation operation){
         PokemonModel pokemon = operation.pokemon;
+        BPMOperationResult result = null;
         try {
-            BPMOperationResult result = operation.execute();
+            result = operation.execute();
             if (result.isSuccess()) {
                 System.out.println(String.format(
                         "%s %s",
@@ -116,6 +117,9 @@ public class OperationConfirmationController extends AnchorPane {
         }
         operation.doDelay();
     
+        if(result != null && result.hasNextOperation()){
+            doOperation(Operation.generateOperation(result.getNextOperation(), pokemon));
+        }
     }
 
     private void pauseOperations(ActionEvent actionEvent) {
