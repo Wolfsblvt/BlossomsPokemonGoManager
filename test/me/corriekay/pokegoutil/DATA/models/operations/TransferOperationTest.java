@@ -29,7 +29,7 @@ public class TransferOperationTest {
     }
 
     @Test
-    public void PokemonIsFavorite() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void pokemonIsFavorite() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isIsFavorite();
 
         BPMOperationResult result = operation.execute();
@@ -39,7 +39,7 @@ public class TransferOperationTest {
     }
 
     @Test
-    public void PokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isInGym();
 
         BPMOperationResult result = operation.execute();
@@ -49,7 +49,7 @@ public class TransferOperationTest {
     }
 
     @Test
-    public void SucessfullyTransfer() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void sucessfullyTransfer() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(new BPMOperationResult()).when(operation).doOperation();
 
         BPMOperationResult result = operation.execute();

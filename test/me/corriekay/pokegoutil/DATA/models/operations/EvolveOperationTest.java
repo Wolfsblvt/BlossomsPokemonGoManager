@@ -28,7 +28,7 @@ public class EvolveOperationTest {
     }
 
     @Test
-    public void PokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(true).when(pokemon).isInGym();
 
         BPMOperationResult result = operation.execute();
@@ -38,7 +38,7 @@ public class EvolveOperationTest {
     }
 
     @Test
-    public void PokemonIsNotEvolvable() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void pokemonIsNotEvolvable() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(0).when(pokemon).getCandies2Evlv();
 
         BPMOperationResult result = operation.execute();
@@ -48,7 +48,7 @@ public class EvolveOperationTest {
     }
 
     @Test
-    public void NotEnoughCandies() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void notEnoughCandies() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(24).when(pokemon).getCandies();
         doReturn(25).when(pokemon).getCandies2Evlv();
 
@@ -60,7 +60,7 @@ public class EvolveOperationTest {
     }
 
     @Test
-    public void SucessfullyEvolve() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void sucessfullyEvolve() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
         doReturn(25).when(pokemon).getCandies();
         doReturn(25).when(pokemon).getCandies2Evlv();
         doReturn(new BPMOperationResult()).when(operation).doOperation();
