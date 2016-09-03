@@ -23,12 +23,12 @@ public class RenameOperation extends Operation {
 
     @Override
     protected int getMaxDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_RENAME_MAX);
+        return config.getInt(ConfigKey.DELAY_RENAME_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_RENAME_MIN);
+        return config.getInt(ConfigKey.DELAY_RENAME_MIN);
     }
 
     @Override

@@ -7,9 +7,9 @@ import me.corriekay.pokegoutil.GUI.enums.OperationID;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class EvolveOperation extends Operation {
-    
-    protected EvolveOperation(){
-        //For mocking
+
+    protected EvolveOperation() {
+        // For mocking
     }
 
     public EvolveOperation(PokemonModel pokemon) {
@@ -23,12 +23,12 @@ public class EvolveOperation extends Operation {
 
     @Override
     protected int getMaxDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_EVOLVE_MAX);
+        return config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_EVOLVE_MIN);
+        return config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
     }
 
     @Override

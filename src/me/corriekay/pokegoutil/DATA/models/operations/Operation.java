@@ -52,7 +52,7 @@ public abstract class Operation {
     private Integer delay;
     public PokemonModel pokemon;
 
-    private ConfigNew config = ConfigNew.getConfig();
+    protected ConfigNew config = ConfigNew.getConfig();
 
     protected Operation() {
         //For mocking
@@ -78,10 +78,6 @@ public abstract class Operation {
     public void doDelay() {
         System.out.println("Waiting " + delay.toString() + " ms before next operation");
         Utilities.sleep(delay);
-    }
-
-    protected ConfigNew getConfig() {
-        return config;
     }
 
     public Integer getDelay() {
