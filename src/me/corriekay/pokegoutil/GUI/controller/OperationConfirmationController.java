@@ -59,6 +59,8 @@ public class OperationConfirmationController extends AnchorPane {
     private Button cancelBtn;
 
     public OperationConfirmationController(final ObservableList<Operation> operations) {
+        super();
+
         final FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
         fxmlLoader.setController(this);
         try {
@@ -91,15 +93,15 @@ public class OperationConfirmationController extends AnchorPane {
         operationListView.getItems().forEach(operation -> doOperation(operation));
         System.out.println("Batch Operation Done");
     }
-    
+
     private void doOperation(final Operation operation){
         final PokemonModel pokemon = operation.pokemon;
         BpmOperationResult result = null;
         try {
             result = operation.execute();
-            if (result.isSuccess()) {                
+            if (result.isSuccess()) {
                 result.getSuccessMessageList().forEach(msg -> System.out.println(msg));
-                
+
                 System.out.println(String.format(
                         "%s %s",
                         operation.getOperationId().getActionVerbFinished(),
@@ -118,7 +120,7 @@ public class OperationConfirmationController extends AnchorPane {
                     Utilities.getRealExceptionMessage(e)));
         }
         operation.doDelay();
-    
+
         if(result != null && result.hasNextOperation()){
             doOperation(Operation.generateOperation(result.getNextOperation(), pokemon));
         }
