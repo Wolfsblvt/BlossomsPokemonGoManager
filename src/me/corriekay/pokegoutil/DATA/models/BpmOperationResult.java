@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 
 public class BpmOperationResult extends BpmResult {
 
     private List<String> successMessageList = new ArrayList<String>();
     private OperationError operationError;
-    private OperationID nextOperation;
+    private OperationId nextOperation;
 
     public BpmOperationResult() {
         super();
@@ -25,7 +25,7 @@ public class BpmOperationResult extends BpmResult {
         successMessageList.add(successMessage);
     }
     
-    public OperationID getNextOperation() {
+    public OperationId getNextOperation() {
         return nextOperation;
     }
     
@@ -41,7 +41,7 @@ public class BpmOperationResult extends BpmResult {
         return nextOperation != null;
     }
 
-    public void setNextOperation(OperationID nextOperation) {
+    public void setNextOperation(OperationId nextOperation) {
         this.nextOperation = nextOperation;
     }
 

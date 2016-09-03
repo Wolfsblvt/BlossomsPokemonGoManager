@@ -2,7 +2,7 @@ package me.corriekay.pokegoutil.DATA.models;
 
 import com.pokegoapi.api.pokemon.Pokemon;
 import javafx.collections.ObservableList;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
@@ -11,11 +11,11 @@ import java.util.ArrayList;
 
 @Deprecated
 public class Operation {
-    private OperationID id;
+    private OperationId id;
     private Integer delay;
     private PokemonModel pokemonModel;
 
-    public Operation(OperationID id,PokemonModel pokemon) {
+    public Operation(OperationId id,PokemonModel pokemon) {
         this.id = id;
         this.delay = setDelayForOperation(id);
         this.pokemonModel = pokemon;
@@ -24,12 +24,12 @@ public class Operation {
     public static ArrayList<Operation> makeOperationList(String operation, ObservableList<PokemonModel> list) {
         ArrayList<Operation> returnList = new ArrayList<>();
         list.forEach(model -> {
-            returnList.add(new Operation(OperationID.get(operation), model));
+            returnList.add(new Operation(OperationId.get(operation), model));
         });
         return returnList;
     }
 
-    private static Integer setDelayForOperation(OperationID id) {
+    private static Integer setDelayForOperation(OperationId id) {
         ConfigKey minDelayKey;
         ConfigKey maxDelayKey;
         switch (id) {

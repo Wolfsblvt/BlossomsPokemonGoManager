@@ -8,7 +8,7 @@ import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleaseP
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
 import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 
@@ -63,8 +63,8 @@ public class TransferOperation extends Operation {
     }
 
     @Override
-    public OperationID getOperationID() {
-        return OperationID.TRANSFER;
+    public OperationId getOperationID() {
+        return OperationId.TRANSFER;
     }
 
     @Override

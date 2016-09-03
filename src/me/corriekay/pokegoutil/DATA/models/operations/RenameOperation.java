@@ -7,7 +7,7 @@ import com.pokegoapi.exceptions.RemoteServerException;
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
 import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class RenameOperation extends Operation {
@@ -32,8 +32,8 @@ public class RenameOperation extends Operation {
     }
 
     @Override
-    public OperationID getOperationID() {
-        return OperationID.RENAME;
+    public OperationId getOperationID() {
+        return OperationId.RENAME;
     }
 
     @Override

@@ -3,7 +3,7 @@ package me.corriekay.pokegoutil.DATA.models.operations;
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
 import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class FavoriteOperation extends Operation {
@@ -28,8 +28,8 @@ public class FavoriteOperation extends Operation {
     }
 
     @Override
-    public OperationID getOperationID() {
-        return OperationID.FAVORITE;
+    public OperationId getOperationID() {
+        return OperationId.FAVORITE;
     }
 
     @Override

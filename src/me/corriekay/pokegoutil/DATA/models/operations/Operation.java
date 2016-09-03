@@ -10,14 +10,14 @@ import com.pokegoapi.exceptions.RemoteServerException;
 import javafx.collections.ObservableList;
 import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 
 public abstract class Operation {
 
     public static List<Operation> generateOperations(
-            OperationID operationID,
+            OperationId operationID,
             ObservableList<PokemonModel> pokemonList) {
         List<Operation> operationList = new ArrayList<Operation>();
 
@@ -29,7 +29,7 @@ public abstract class Operation {
         return operationList;
     }
 
-    public static Operation generateOperation(OperationID operationID, PokemonModel model) {
+    public static Operation generateOperation(OperationId operationID, PokemonModel model) {
         switch (operationID) {
             case EVOLVE:
                 return new EvolveOperation(model);
@@ -86,7 +86,7 @@ public abstract class Operation {
 
     protected abstract int getMinDelay();
 
-    public abstract OperationID getOperationID();
+    public abstract OperationId getOperationID();
 
     private int getRandomDelay() {
         return Utilities.getRandom(getMaxDelay(), getMaxDelay());

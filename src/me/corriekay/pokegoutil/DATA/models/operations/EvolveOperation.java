@@ -8,7 +8,7 @@ import com.pokegoapi.exceptions.RemoteServerException;
 import me.corriekay.pokegoutil.DATA.enums.OperationError;
 import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 
@@ -65,7 +65,7 @@ public class EvolveOperation extends Operation {
                 newHp, (newHp - hp))); 
         
         if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)){
-            result.setNextOperation(OperationID.TRANSFER);
+            result.setNextOperation(OperationId.TRANSFER);
         }
                 
         return result;
@@ -82,8 +82,8 @@ public class EvolveOperation extends Operation {
     }
 
     @Override
-    public OperationID getOperationID() {
-        return OperationID.EVOLVE;
+    public OperationId getOperationID() {
+        return OperationId.EVOLVE;
     }
 
     @Override

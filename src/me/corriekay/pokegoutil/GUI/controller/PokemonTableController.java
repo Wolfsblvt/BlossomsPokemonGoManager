@@ -17,7 +17,7 @@ import me.corriekay.pokegoutil.DATA.managers.PokemonBagManager;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.DATA.models.operations.Operation;
 import me.corriekay.pokegoutil.GUI.enums.ColumnID;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 
@@ -71,9 +71,9 @@ public class PokemonTableController extends GridPane {
 
     private void initRightClickMenu() {
         final ContextMenu cm = new ContextMenu();
-        OperationID[] operations = OperationID.values();
+        OperationId[] operations = OperationId.values();
         for (int i = 0; i < operations.length; i++) {
-            OperationID operation = operations[i];
+            OperationId operation = operations[i];
             final String actionName = operation.getActionName();
             MenuItem cmItem = new MenuItem(actionName);
             cmItem.setOnAction(e -> {
@@ -89,7 +89,7 @@ public class PokemonTableController extends GridPane {
         });
     }
 
-    private void comfirmOperation(OperationID operation) {
+    private void comfirmOperation(OperationId operation) {
         List<Operation> operations = Operation.generateOperations(operation, getSelectedItems());
         new OperationConfirmationController(new ObservableListWrapper<>(operations));
     }

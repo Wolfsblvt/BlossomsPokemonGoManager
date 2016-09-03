@@ -8,7 +8,7 @@ import me.corriekay.pokegoutil.DATA.enums.OperationError;
 import me.corriekay.pokegoutil.DATA.managers.AccountManager;
 import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class PowerupOperation extends Operation {
@@ -33,8 +33,8 @@ public class PowerupOperation extends Operation {
     }
 
     @Override
-    public OperationID getOperationID() {
-        return OperationID.POWERUP;
+    public OperationId getOperationID() {
+        return OperationId.POWERUP;
     }
 
     @Override
