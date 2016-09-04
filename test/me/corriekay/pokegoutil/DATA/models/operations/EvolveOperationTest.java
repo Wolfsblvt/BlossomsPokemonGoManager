@@ -101,7 +101,7 @@ public class EvolveOperationTest {
      */
     @Test
     public void sucessfullyEvolve() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
-        final int sufficentCandies = 24;
+        final int sufficentCandies = 25;
         final int candiesToEvolve = 25;
         doReturn(sufficentCandies).when(pokemon).getCandies();
         doReturn(candiesToEvolve).when(pokemon).getCandies2Evlv();
