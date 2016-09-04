@@ -17,7 +17,7 @@ import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.DATA.enums.LoginType;
 import me.corriekay.pokegoutil.DATA.managers.AccountManager;
 import me.corriekay.pokegoutil.DATA.models.LoginData;
-import me.corriekay.pokegoutil.DATA.models.BPMResult;
+import me.corriekay.pokegoutil.DATA.models.BpmResult;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 
 import java.io.IOException;
@@ -178,7 +178,7 @@ public class LoginController extends StackPane {
 
     private void tryLogin(LoginData loginData) {
         try {
-            BPMResult loginResult = accountManager.login(loginData);
+            BpmResult loginResult = accountManager.login(loginData);
 
             if (loginResult.isSuccess()) {
                 openMainWindow();

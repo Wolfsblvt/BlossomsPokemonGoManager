@@ -1,10 +1,13 @@
 package me.corriekay.pokegoutil.DATA.models.operations;
 
+import static org.hamcrest.CoreMatchers.is;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -13,32 +16,36 @@ import org.junit.runners.Parameterized.Parameters;
 import com.sun.javafx.collections.ObservableListWrapper;
 
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.DATA.models.operations.Operation;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 
 @RunWith(value = Parameterized.class)
 public class OperationTest {
 
-    private OperationID operationID;
-    private ObservableListWrapper<PokemonModel> pokemonList;
+    private final OperationId operationId;
+    private final ObservableListWrapper<PokemonModel> pokemonList;
 
     @Parameters(name = "{index}: {0}")
-    public static Collection<OperationID> data() {
-        return Arrays.asList(OperationID.values());
+    public static Collection<OperationId> data() {
+        return Arrays.asList(OperationId.values());
     }
 
-    public OperationTest(OperationID operationID) {
-        this.operationID = operationID;
+    /**
+     * Instantiate a OperationTest using the parameters from data().
+     *
+     * @param operationId operationId to test
+     */
+    public OperationTest(final OperationId operationId) {
+        this.operationId = operationId;
 
         // Create list with 1 null value for testing
-        List<PokemonModel> list = new ArrayList<>();
+        final List<PokemonModel> list = new ArrayList<>();
         list.add(null);
         pokemonList = new ObservableListWrapper<>(list);
     }
 
     @Test
-    public void TestGenerateOperations() {
-        Operation.generateOperations(operationID, pokemonList);
+    public void testGenerateOperations() {
+        final List<Operation> operations = Operation.generateOperations(operationId, pokemonList);
+        Assert.assertThat("Created correct operation", operations.get(0).getOperationId(), is(operationId));
     }
-
 }
