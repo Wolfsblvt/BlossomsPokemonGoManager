@@ -5,16 +5,50 @@ import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.Nicknam
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
+
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.Pokemon;
+
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
+import me.corriekay.pokegoutil.utils.pokemon.PokeHandler.ReplacePattern;
 import me.corriekay.pokegoutil.utils.pokemon.PokeNick;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
@@ -24,16 +58,6 @@ import me.corriekay.pokegoutil.utils.windows.PokemonTableModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.*;
-import java.util.List;
-import java.util.function.BiConsumer;
 
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
@@ -735,28 +759,31 @@ public class PokemonTab extends JPanel {
     }
 
     private String inputOperation(String operation, ArrayList<Pokemon> pokes) {
-        JPanel panel = _buildPanelForOperation(operation, pokes);
-        String message = "";
-        switch (operation) {
-        case "Rename":
-            message = String.format("You want to rename %d Pokémon.", pokes.size())
-                    + "\nYou can rename with normal text and patterns, or both combined. "
-                    + "Patterns are going to be replaced with the Pokémons values."
-                    + "\nExisting patterns:\n";
-            for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
-                message += String.format("%% %s%% -> %s\n",
-                        pattern.name().toLowerCase(),
-                        pattern.toString());
-            }
-            message += "\n";
+    	JPanel panel = null;
+    	String message = "";
+        String savedPattern = "";
+
+        if("Rename".equals(operation)) {
+        	panel = buildPanelForRename();
+        	savedPattern = config.getString(ConfigKey.RENAME_PATTERN);
+        	message = "Renaming " + pokes.size() + " Pokémon.";
+        }
+        else {
+        	panel = buildPanelForOperation(operation, pokes);
         }
 
-        String input = JOptionPane.showInputDialog(panel, message, operation, JOptionPane.PLAIN_MESSAGE);
+        String input = (String) JOptionPane.showInputDialog(null, panel, message, JOptionPane.PLAIN_MESSAGE, null, null, savedPattern);
+        if(input!=null)  {
+        	switch (operation) {
+        	case "Rename":
+        		config.setString(ConfigKey.RENAME_PATTERN, input);
+        	}
+        }
         return input;
     }
 
     private boolean confirmOperation(String operation, ArrayList<Pokemon> pokes) {
-        JPanel panel = _buildPanelForOperation(operation, pokes);
+        JPanel panel = buildPanelForOperation(operation, pokes);
 
         int response = JOptionPane.showConfirmDialog(null, panel,
                 String.format(
@@ -768,7 +795,7 @@ public class PokemonTab extends JPanel {
         return response == JOptionPane.OK_OPTION;
     }
 
-    private JPanel _buildPanelForOperation(String operation, ArrayList<Pokemon> pokes) {
+    private JPanel buildPanelForOperation(String operation, ArrayList<Pokemon> pokes) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
@@ -794,24 +821,68 @@ public class PokemonTab extends JPanel {
                     Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
 
             switch (operation) {
-            case "Evolve":
-                str += " Cost: " + p.getCandiesToEvolve();
-                str += p.getCandiesToEvolve() > 1 ? " Candies" : " Candy";
-                break;
-            case "PowerUp":
-                str += " Cost: " + p.getCandyCostsForPowerup();
-                str += p.getCandyCostsForPowerup() > 1 ? " Candies" : " Candy";
-                str += " " + p.getStardustCostsForPowerup() + " Stardust";
-                break;
-            case "Rename":
-                break;
-            case "Transfer":
-                break;
+                case "Evolve":
+                    str += " Cost: " + p.getCandiesToEvolve();
+                    str += p.getCandiesToEvolve() > 1 ? " Candies" : " Candy";
+                    break;
+                case "PowerUp":
+                    str += " Cost: " + p.getCandyCostsForPowerup();
+                    str += p.getCandyCostsForPowerup() > 1 ? " Candies" : " Candy";
+                    str += " " + p.getStardustCostsForPowerup() + " Stardust";
+                    break;
+                case "Rename":
+                	for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
+    	        		str += "%" + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
+    	        	}
+                    break;
+                case "Transfer":
+                    break;
             }
             innerPanel.add(new JLabel(str));
         });
         panel.add(scroll);
         return panel;
+    }
+    
+    private JPanel buildPanelForRename() {
+    	JPanel panel = new JPanel();
+    	panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    	panel.setAlignmentX(LEFT_ALIGNMENT);
+    	
+    	JPanel innerPanel = new JPanel();
+    	innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
+    	innerPanel.setAlignmentX(LEFT_ALIGNMENT);
+    	
+    	JScrollPane scroll = new JScrollPane(innerPanel);
+    	scroll.setAlignmentX(LEFT_ALIGNMENT);
+    	
+    	panel.setPreferredSize(new Dimension(500, 400));
+    	
+    	panel.add(new JLabel("You can rename with normal text and patterns, or both combined."));
+    	panel.add(new JLabel("Patterns are going to be replaced with the Pokémons values."));
+    	panel.add(new JLabel("Existing patterns: (double click on item to copy)"));
+
+    	JList<ReplacePattern> listPattern = new JList<>(ReplacePattern.values());
+    	listPattern.setCellRenderer(new ReplacePatternRenderer());
+    	
+    	listPattern.addMouseListener(new MouseAdapter() {
+    		public void mouseClicked(MouseEvent mouseEvent) {
+                @SuppressWarnings("unchecked")
+				JList<ReplacePattern> theList = ((JList<ReplacePattern>) mouseEvent.getSource());
+                if (mouseEvent.getClickCount() == 2) {
+                  int index = theList.locationToIndex(mouseEvent.getPoint());
+                  if (index >= 0) {
+                	  ReplacePattern replacePattern = (ReplacePattern) theList.getModel().getElementAt(index);
+                	  Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+                	  cb.setContents(new StringSelection("%" + replacePattern.name().toLowerCase() + "%"), null);
+                  }
+                }
+              }
+		});
+    	
+    	innerPanel.add(listPattern);
+    	panel.add(scroll);
+    	return panel;
     }
 
     public ArrayList<Pokemon> getSelectedPokemon() {
@@ -874,4 +945,32 @@ public class PokemonTab extends JPanel {
             e.printStackTrace();
         }
     }
+
+    /** Provide custom formatting for the list of patterns.
+     */
+    private class ReplacePatternRenderer extends JLabel implements ListCellRenderer<ReplacePattern>
+	{
+    	public ReplacePatternRenderer() {
+    	    setOpaque(true);
+    	}
+    	
+		@Override
+		public Component getListCellRendererComponent(JList<? extends ReplacePattern> list, ReplacePattern value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+			 //Get the selected index. (The index param isn't always valid, so just use the value.)
+	        if (isSelected) {
+	            setBackground(list.getSelectionBackground());
+	            setForeground(list.getSelectionForeground());
+	        } else {
+	            setBackground(list.getBackground());
+	            setForeground(list.getForeground());
+	        }
+
+	        String str = "%" + value.name().toLowerCase() + "% -> " + value.toString() + "\n";
+	        setText(str);
+	        setFont(list.getFont());
+
+	        return this;
+		}
+	}
 }
