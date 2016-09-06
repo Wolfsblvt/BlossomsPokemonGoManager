@@ -1,15 +1,15 @@
 package me.corriekay.pokegoutil.windows;
 
-import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.api.map.pokemon.EvolutionResult;
-import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.Pokemon;
-
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
+
+import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.map.pokemon.EvolutionResult;
+import com.pokegoapi.api.player.PlayerProfile.Currency;
+import com.pokegoapi.api.pokemon.Pokemon;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
