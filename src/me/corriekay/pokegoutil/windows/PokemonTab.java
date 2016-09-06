@@ -1,5 +1,16 @@
 package me.corriekay.pokegoutil.windows;
 
+import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.map.pokemon.EvolutionResult;
+import com.pokegoapi.api.player.PlayerProfile.Currency;
+import com.pokegoapi.api.pokemon.Pokemon;
+
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
+import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
+import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
+import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
+import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
+
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -32,16 +43,6 @@ import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.api.map.pokemon.EvolutionResult;
-import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.Pokemon;
-
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
-import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
-import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
-import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
-import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
@@ -762,14 +763,12 @@ public class PokemonTab extends JPanel {
     	String message = "";
         String savedPattern = "";
 
-        if("Rename".equals(operation))
-        {
+        if("Rename".equals(operation)) {
         	panel = buildPanelForRename();
         	savedPattern = config.getString(ConfigKey.RENAME_PATTERN);
         	message = "Renaming " + pokes.size() + " Pokémon.";
         }
-        else
-        {
+        else {
         	panel = buildPanelForOperation(operation, pokes);
         }
 
@@ -947,7 +946,7 @@ public class PokemonTab extends JPanel {
         }
     }
 
-    /** Provide custom formatting for the list of patterns
+    /** Provide custom formatting for the list of patterns.
      */
     private class ReplacePatternRenderer extends JLabel implements ListCellRenderer<ReplacePattern>
 	{
