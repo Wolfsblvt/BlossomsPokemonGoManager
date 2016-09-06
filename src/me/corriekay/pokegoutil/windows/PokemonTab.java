@@ -764,7 +764,7 @@ public class PokemonTab extends JPanel {
 
         switch (operation) {
         	case "Rename":
-        		panel = _buildPanelForRename();
+        		panel = buildPanelForRename();
 	        	savedPattern = config.getString(ConfigKey.RENAME_PATTERN);
 	        	message = "Renaming " + pokes.size() + " Pokémon.";
 	        default:
@@ -782,7 +782,7 @@ public class PokemonTab extends JPanel {
     }
 
     private boolean confirmOperation(String operation, ArrayList<Pokemon> pokes) {
-        JPanel panel = _buildPanelForOperation(operation, pokes);
+        JPanel panel = buildPanelForOperation(operation, pokes);
 
         int response = JOptionPane.showConfirmDialog(null, panel,
                 String.format(
@@ -794,7 +794,7 @@ public class PokemonTab extends JPanel {
         return response == JOptionPane.OK_OPTION;
     }
 
-    private JPanel _buildPanelForOperation(String operation, ArrayList<Pokemon> pokes) {
+    private JPanel buildPanelForOperation(String operation, ArrayList<Pokemon> pokes) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
@@ -843,7 +843,7 @@ public class PokemonTab extends JPanel {
         return panel;
     }
     
-    private JPanel _buildPanelForRename() {
+    private JPanel buildPanelForRename() {
     	JPanel panel = new JPanel();
     	panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
     	panel.setAlignmentX(LEFT_ALIGNMENT);
