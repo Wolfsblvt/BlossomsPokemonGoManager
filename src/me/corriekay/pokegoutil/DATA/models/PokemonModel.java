@@ -313,24 +313,18 @@ public class PokemonModel {
         setMove1(String.format("%s (%.2fdps)",
                 WordUtils.capitalize(
                         pokemon.getMove1().toString().toLowerCase()
-                        .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+                                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
                 dps1));
         setMove2(String.format("%s (%.2fdps)",
                 WordUtils.capitalize(
                         pokemon.getMove2().toString().toLowerCase()
-                        .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+                                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
                 dps2));
 
         setCp(pokemon.getCp());
         setHp(pokemon.getMaxStamina());
 
-        int trainerLevel = -1;
-
-        try {
-            trainerLevel = accountManager.getPlayerProfile().getStats().getLevel();
-        } catch (LoginFailedException | RemoteServerException e) {
-            System.out.println("Error: Cannot find meta data for trainer level");
-        }
+        int trainerLevel = accountManager.getPlayerProfile().getStats().getLevel();
 
         // Max CP calculation for current PokemonModel
 
@@ -393,12 +387,7 @@ public class PokemonModel {
             }
         }
 
-        int pokemonCandies = -1;
-        try {
-            pokemonCandies = pokemon.getCandy();
-        } catch (LoginFailedException | RemoteServerException e) {
-            System.out.println("Error: Unable to get candies");
-        }
+        int pokemonCandies = pokemon.getCandy();
 
         setCandies(pokemonCandies);
         if (pokemon.getCandiesToEvolve() != 0) {
