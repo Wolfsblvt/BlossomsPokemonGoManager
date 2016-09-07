@@ -55,12 +55,7 @@ public enum ConfigKey {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getDefaultValue() {
-        try {
-            return (T) cls.cast(defaultValue);
-        } catch (ClassCastException e) {
-            System.err.println("Error casting: " + e.getMessage());
-            return null;
-        }
+    public <T> T getDefaultValue() throws ClassCastException {
+        return (T) cls.cast(defaultValue);
     }
 }
