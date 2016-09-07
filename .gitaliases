@@ -34,7 +34,7 @@
     # Recreates current branch based on develop
     recreate = !"f() { git create-with-delete $(git branch-name); }; f"
     # Remove all branches that got already merged
-    tidy = !"git return && git refresh && git fetch --all -p && git branch -vv | grep ': gone]' | awk '{ print $1 }' | xargs -n 1 git branch -d"
+    tidy = !"git return && git refresh && git fetch --all -p && git branch -vv | grep ': gone]' | awk '{ print $1 }' | xargs -n 1 git branch -D"
 
     ###########
     # Helpers #
