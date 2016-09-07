@@ -1,6 +1,12 @@
 package me.corriekay.pokegoutil.windows;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
@@ -11,7 +17,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
@@ -40,6 +57,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 
+/**
+ * The main PokemonTab.
+ */
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
 
@@ -129,8 +149,8 @@ public class PokemonTab extends JPanel {
         ivTransfer.addKeyListener(
                 new KeyListener() {
                     @Override
-                    public void keyPressed(final KeyEvent e) {
-                        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    public void keyPressed(final KeyEvent event) {
+                        if (event.getKeyCode() == KeyEvent.VK_ENTER) {
                             new SwingWorker<Void, Void>() {
                                 protected Void doInBackground() {
                                     selectLessThanIv();
@@ -141,12 +161,12 @@ public class PokemonTab extends JPanel {
                     }
 
                     @Override
-                    public void keyTyped(final KeyEvent e) {
+                    public void keyTyped(final KeyEvent event) {
                         // nothing here
                     }
 
                     @Override
-                    public void keyReleased(final KeyEvent e) {
+                    public void keyReleased(final KeyEvent event) {
                         // nothing here
                     }
                 });
