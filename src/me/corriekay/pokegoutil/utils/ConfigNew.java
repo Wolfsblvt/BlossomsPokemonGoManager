@@ -11,6 +11,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -388,7 +389,7 @@ public final class ConfigNew {
      */
     private void cleanUpAndFill() {
         ConfigKey[] keys = ConfigKey.values();
-        HashMap<ConfigKey, Object> allConfigs = new HashMap<>(keys.length);
+        Map<ConfigKey, Object> allConfigs = new HashMap<>(keys.length);
 
         for (ConfigKey configKey : keys) {
             Object value = getAsObject(configKey);
