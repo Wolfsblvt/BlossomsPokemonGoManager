@@ -72,7 +72,14 @@ public class PokemonTab extends JPanel {
     // Used constants
     private static final int WHEN_TO_SHOW_SELECTION_TITLE = 2;
     private static final String SKIPPED_MESSAGE_UNFORMATTED = "%s with %d CP is in gym, skipping.";
+    private static final int POPUP_WIDTH = 500;
+    private static final int POPUP_HEIGHT = 400;
 
+    /**
+     * Creates an instance of the PokemonTab.
+     *
+     * @param go The go api class.
+     */
     public PokemonTab(final PokemonGo go) {
         super();
 
@@ -853,7 +860,7 @@ public class PokemonTab extends JPanel {
                     break;
                 case RENAME:
                     for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
-                        str += "%" + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
+                        str += StringLiterals.PERCENTAGE + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
                     }
                     break;
                 case TRANSFER:
@@ -867,6 +874,11 @@ public class PokemonTab extends JPanel {
         return panel;
     }
 
+    /**
+     * Build the Popup panel for Renaming.
+     *
+     * @return The panel.
+     */
     private JPanel buildPanelForRename() {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -879,7 +891,7 @@ public class PokemonTab extends JPanel {
         JScrollPane scroll = new JScrollPane(innerPanel);
         scroll.setAlignmentX(LEFT_ALIGNMENT);
 
-        panel.setPreferredSize(new Dimension(500, 400));
+        panel.setPreferredSize(new Dimension(POPUP_WIDTH, POPUP_HEIGHT));
 
         panel.add(new JLabel("You can rename with normal text and patterns, or both combined."));
         panel.add(new JLabel("Patterns are going to be replaced with the Pokémons values."));
@@ -892,12 +904,13 @@ public class PokemonTab extends JPanel {
             public void mouseClicked(MouseEvent mouseEvent) {
                 @SuppressWarnings("unchecked")
                 JList<ReplacePattern> theList = ((JList<ReplacePattern>) mouseEvent.getSource());
-                if (mouseEvent.getClickCount() == 2) {
+                boolean isDoubleClick = mouseEvent.getClickCount() == 2;
+                if (isDoubleClick) {
                     int index = theList.locationToIndex(mouseEvent.getPoint());
                     if (index >= 0) {
-                        ReplacePattern replacePattern = (ReplacePattern) theList.getModel().getElementAt(index);
+                        ReplacePattern replacePattern = theList.getModel().getElementAt(index);
                         Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
-                        cb.setContents(new StringSelection("%" + replacePattern.name().toLowerCase() + "%"), null);
+                        cb.setContents(new StringSelection(StringLiterals.PERCENTAGE + replacePattern.name().toLowerCase() + StringLiterals.PERCENTAGE), null);
                     }
                 }
             }
@@ -972,7 +985,11 @@ public class PokemonTab extends JPanel {
      * Provide custom formatting for the list of patterns.
      */
     private class ReplacePatternRenderer extends JLabel implements ListCellRenderer<ReplacePattern> {
-        public ReplacePatternRenderer() {
+        /**
+         * Constructor to create a ReplacePatternRenderer.
+         */
+        ReplacePatternRenderer() {
+            super();
             setOpaque(true);
         }
 
@@ -988,7 +1005,7 @@ public class PokemonTab extends JPanel {
                 setForeground(list.getForeground());
             }
 
-            String str = "%" + value.name().toLowerCase() + "% -> " + value.toString() + "\n";
+            String str = StringLiterals.PERCENTAGE + value.name().toLowerCase() + "% -> " + value.toString() + "\n";
             setText(str);
             setFont(list.getFont());
 
