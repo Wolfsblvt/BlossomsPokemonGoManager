@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.DATA.models.operations;
+package me.corriekay.pokegoutil.data.models.operations;
 
 import static org.hamcrest.CoreMatchers.is;
 
@@ -15,8 +15,8 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.sun.javafx.collections.ObservableListWrapper;
 
-import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.GUI.enums.OperationId;
+import me.corriekay.pokegoutil.data.models.PokemonModel;
+import me.corriekay.pokegoutil.gui.enums.OperationId;
 
 @RunWith(value = Parameterized.class)
 public class OperationTest {

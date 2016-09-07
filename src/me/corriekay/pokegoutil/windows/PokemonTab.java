@@ -40,7 +40,7 @@ import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.Nicknam
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse;
 import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse;
 import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass.UpgradePokemonResponse;
-import me.corriekay.pokegoutil.DATA.enums.BatchOperation;
+import me.corriekay.pokegoutil.data.enums.BatchOperation;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;

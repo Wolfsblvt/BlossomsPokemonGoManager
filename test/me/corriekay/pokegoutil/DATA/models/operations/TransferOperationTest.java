@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.DATA.models.operations;
+package me.corriekay.pokegoutil.data.models.operations;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Mockito.doReturn;
@@ -13,9 +13,9 @@ import com.pokegoapi.exceptions.InvalidCurrencyException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
-import me.corriekay.pokegoutil.DATA.enums.OperationError;
-import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
-import me.corriekay.pokegoutil.DATA.models.PokemonModel;
+import me.corriekay.pokegoutil.data.enums.OperationError;
+import me.corriekay.pokegoutil.data.models.BpmOperationResult;
+import me.corriekay.pokegoutil.data.models.PokemonModel;
 
 /**
  * Test for TransferOperation.
