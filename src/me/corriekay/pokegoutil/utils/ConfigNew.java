@@ -58,6 +58,62 @@ public final class ConfigNew {
     }
 
     /**
+     * Returns the default value as Object, so that it may can added again. Just for internal use, NO TYP CHECKING!
+     *
+     * @param configKey The config key.
+     * @return The Object
+     */
+    private Object getAsObject(final ConfigKey configKey) {
+        Object obj;
+        switch (configKey.type) {
+            case BOOLEAN:
+                obj = getBool(configKey);
+                break;
+            case STRING:
+                obj = getString(configKey);
+                break;
+            case INTEGER:
+                obj = getInt(configKey);
+                break;
+            case DOUBLE:
+                obj = getDouble(configKey);
+                break;
+            default:
+                obj = getJSONObject(configKey);
+                break;
+        }
+        return obj;
+    }
+
+    /**
+     * Saves given object under the key. Just for internal use, NO TYP CHECKING!
+     *
+     * @param configKey The config key.
+     * @param obj       The object to set.
+     * @return The Object
+     */
+    private Object setFromObject(final ConfigKey configKey, Object obj) {
+        switch (configKey.type) {
+            case BOOLEAN:
+                setBool(configKey, (Boolean) obj);
+                break;
+            case STRING:
+                setString(configKey, (String) obj);
+                break;
+            case INTEGER:
+                setInt(configKey, (Integer) obj);
+                break;
+            case DOUBLE:
+                setDouble(configKey, (Double) obj);
+                break;
+            default:
+                obj = getJSONObject(configKey);
+                break;
+        }
+        return obj;
+    }
+
+    /**
      * Returns the JSONObject for given key. The one in the config, or if it does not exist, the default one.
      *
      * @param configKey The config key.
@@ -94,8 +150,10 @@ public final class ConfigNew {
     public void setJSONObject(final ConfigKey configKey, final JSONObject value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            res.node().put(res.name(), value);
-            saveConfig();
+            if (res.node().optJSONObject(res.name()) != value || value.equals(configKey.getDefaultValue())) {
+                res.node().put(res.name(), value);
+                saveConfig();
+            }
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
@@ -138,8 +196,12 @@ public final class ConfigNew {
     public void setBool(final ConfigKey configKey, final boolean value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            res.node().put(res.name(), value);
-            saveConfig();
+            // Set if value is different or if default value should be added
+            boolean defaultValue = configKey.getDefaultValue();
+            if (res.node().optBoolean(res.name(), defaultValue) != value || value == defaultValue) {
+                res.node().put(res.name(), value);
+                saveConfig();
+            }
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
@@ -183,8 +245,11 @@ public final class ConfigNew {
     public void setString(final ConfigKey configKey, final String value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            res.node().put(res.name(), StringEscapeUtils.escapeJson(value));
-            saveConfig();
+            // Set if value is different or if default value should be added
+            if (!res.node().optString(res.name(), "." + configKey.getDefaultValue()).equals(value)) {
+                res.node().put(res.name(), StringEscapeUtils.escapeJson(value));
+                saveConfig();
+            }
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
@@ -227,8 +292,11 @@ public final class ConfigNew {
     public void setInt(final ConfigKey configKey, final int value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            res.node().put(res.name(), value);
-            saveConfig();
+            // Set if value is different or if default value should be added
+            if (res.node().optInt(res.name(), 1 + (int) configKey.getDefaultValue()) != value) {
+                res.node().put(res.name(), value);
+                saveConfig();
+            }
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
@@ -271,8 +339,10 @@ public final class ConfigNew {
     public void setDouble(final ConfigKey configKey, final double value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            res.node().put(res.name(), value);
-            saveConfig();
+            if (res.node().optDouble(res.name(), 1 + (double) configKey.getDefaultValue()) != value) {
+                res.node().put(res.name(), value);
+                saveConfig();
+            }
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
@@ -306,6 +376,7 @@ public final class ConfigNew {
     private void checkModified() {
         final long currentModifiedTime = file.lastModified();
         if (currentModifiedTime != lastModified) {
+            System.out.print("Modified config.json externally. Will be reloaded now.");
             // Re-read the file now
             json = new JSONObject(FileHelper.readFile(file));
             lastModified = currentModifiedTime;
@@ -317,17 +388,19 @@ public final class ConfigNew {
      */
     private void cleanUpAndFill() {
         ConfigKey[] keys = ConfigKey.values();
-        HashMap<ConfigKey, JSONObject> allConfigs = new HashMap<>(keys.length);
+        HashMap<ConfigKey, Object> allConfigs = new HashMap<>(keys.length);
 
-        for (ConfigKey key : keys) {
-            JSONObject value = getJSONObject(key);
-            allConfigs.put(key, value);
+        for (ConfigKey configKey : keys) {
+            Object value = getAsObject(configKey);
+            System.out.println("Read '" + configKey.keyName + "' of type " + configKey.type + ". Obj: " + value);
+            allConfigs.put(configKey, value);
+
         }
 
         // Reset the json file and fill it again
         json = new JSONObject();
-        for (HashMap.Entry<ConfigKey, JSONObject> entry : allConfigs.entrySet()) {
-            setJSONObject(entry.getKey(), entry.getValue());
+        for (HashMap.Entry<ConfigKey, Object> entry : allConfigs.entrySet()) {
+            setFromObject(entry.getKey(), entry.getValue());
         }
     }
 
@@ -347,24 +420,25 @@ public final class ConfigNew {
     public void saveConfig() {
         final int indentFactor = 4;
         FileHelper.saveFile(file, json.toString(indentFactor));
+        lastModified = file.lastModified();
     }
 
     /**
      * The Result which combines a node with it's value.
      */
     private class FindResult {
-        private final JSONObject nodeVal;
-        private final String nameVal;
+        private final JSONObject node;
+        private final String name;
 
         /**
          * Creates a Result object.
          *
-         * @param nodeVal The node.
-         * @param nameVal The value.
+         * @param node The node.
+         * @param name The value.
          */
-        FindResult(final JSONObject nodeVal, final String nameVal) {
-            this.nodeVal = nodeVal;
-            this.nameVal = nameVal;
+        FindResult(final JSONObject node, final String name) {
+            this.node = node;
+            this.name = name;
         }
 
         /**
@@ -373,7 +447,7 @@ public final class ConfigNew {
          * @return The node.
          */
         public JSONObject node() {
-            return this.nodeVal;
+            return this.node;
         }
 
         /**
@@ -382,7 +456,7 @@ public final class ConfigNew {
          * @return The name.
          */
         public String name() {
-            return this.nameVal;
+            return this.name;
         }
     }
 }
