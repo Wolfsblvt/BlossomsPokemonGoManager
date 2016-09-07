@@ -385,7 +385,7 @@ public final class ConfigNew {
     }
 
     /**
-     * Removes json nodes that do not belong in the file and fills it with missing values' defaults then
+     * Removes json nodes that do not belong in the file and fills it with missing values' defaults then.
      */
     private void cleanUpAndFill() {
         ConfigKey[] keys = ConfigKey.values();

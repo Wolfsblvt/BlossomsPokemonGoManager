@@ -2,23 +2,6 @@ package me.corriekay.pokegoutil.utils;
 
 import javax.swing.*;
 
-enum Type {
-    BOOLEAN(Boolean.class),
-    STRING(String.class),
-    INTEGER(Integer.class),
-    DOUBLE(Double.class);
-
-    private Class<?> clazz;
-
-    <T> Type(Class<T> clazz) {
-        this.clazz = clazz;
-    }
-    
-    public Class<?> getClazz() {
-        return this.clazz;
-    }
-}
-
 public enum ConfigKey {
 
     DEVELOPFLAG("develop", false, Type.BOOLEAN),
@@ -75,5 +58,25 @@ public enum ConfigKey {
     public <T> T getDefaultValue() throws ClassCastException {
         Class<?> clazz = type.getClazz();
         return (T) clazz.cast(defaultValue);
+    }
+
+    /**
+     * Enum which provides the default classes for the ConfigKeys.
+     */
+    enum Type {
+        BOOLEAN(Boolean.class),
+        STRING(String.class),
+        INTEGER(Integer.class),
+        DOUBLE(Double.class);
+
+        private Class<?> clazz;
+
+        <T> Type(Class<T> clazz) {
+            this.clazz = clazz;
+        }
+
+        public Class<?> getClazz() {
+            return this.clazz;
+        }
     }
 }
