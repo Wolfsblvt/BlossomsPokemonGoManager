@@ -154,9 +154,14 @@ public final class AccountController {
                     refresh = true;
                 }
                 try {
-                    GoogleUserCredentialProvider provider = new GoogleUserCredentialProvider(http);
-                    if (refresh) provider.refreshToken(authCode);
-                    else provider.login(authCode);
+                    GoogleUserCredentialProvider provider;
+                    if (refresh) {
+                        // Based on usage in https://github.com/Grover-c13/PokeGOAPI-Java
+                        provider = new GoogleUserCredentialProvider(http, authCode);
+                    } else {
+                        provider = new GoogleUserCredentialProvider(http);
+                        provider.login(authCode);
+                    }
                     cp = provider;
                     if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
                         if (!refresh)
