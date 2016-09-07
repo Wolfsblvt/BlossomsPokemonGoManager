@@ -98,7 +98,7 @@ public class MainWindowController extends BorderPane {
             PlayerProfile pp = accountManager.getPlayerProfile();
             stage.setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
                     f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
-        } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException | NullPointerException e) {
+        } catch (NumberFormatException | NullPointerException e) {
             stage.setTitle("Blossom's Pokémon Go Manager");
         }
 
