@@ -14,19 +14,15 @@ import me.corriekay.pokegoutil.utils.Utilities;
  */
 
 @SuppressWarnings("serial")
-public class MoveSetRankingRenderer extends JLabel implements TableCellRenderer {
+public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
 
-    private final long scale;
-
-    public MoveSetRankingRenderer(long scale) {
-        this.scale = scale;
+    public DefaultCellRenderer() {
     }
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-            boolean hasFocus, int rowIndex, int vColIndex) {
-        setText(Utilities.percentageWithTwoCharacters(Double.parseDouble(value.toString()), this.scale));
-        setToolTipText(NumberFormat.getInstance().format(value));
+                                                   boolean hasFocus, int rowIndex, int vColIndex) {
+        setText(value.toString());
         setOpaque(true);
         setDefaultSelectionColors(table, isSelected, this);
         return this;
