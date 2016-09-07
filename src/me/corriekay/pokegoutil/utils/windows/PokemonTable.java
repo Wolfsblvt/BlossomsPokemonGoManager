@@ -2,13 +2,14 @@ package me.corriekay.pokegoutil.utils.windows;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
-import javax.swing.SortOrder;
 import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -161,23 +162,41 @@ public class PokemonTable extends JTable {
                     }
                 });
 
-        // Custom cell renderers
-        // Magic numbers pulled from max values of their respective columns
-        // in the moveset rankings spreadsheet calculations
-        // @see
-        // https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-        TableColumn duelAbilityCol = getColumnModel().getColumn(24);
-        duelAbilityCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_MAX));
-        TableColumn gymAttackCol = getColumnModel().getColumn(25);
-        gymAttackCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
-        TableColumn gymDefenseCol = getColumnModel().getColumn(26);
-        gymDefenseCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
-        TableColumn duelAbilityIVCol = getColumnModel().getColumn(31);
-        duelAbilityIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_IV_MAX));
-        TableColumn gymAttackIVCol = getColumnModel().getColumn(32);
-        gymAttackIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_IV_MAX));
-        TableColumn gymDefenseIVCol = getColumnModel().getColumn(33);
-        gymDefenseIVCol.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_IV_MAX));
+        // Add cell Renderers
+        DefaultCellRenderer defaultCellRenderer = new DefaultCellRenderer();
+        Enumeration<TableColumn> enumerator = getColumnModel().getColumns();
+        while (enumerator.hasMoreElements()) {
+            TableColumn column = enumerator.nextElement();
+            switch (column.getModelIndex()) {
+                // Custom cell renderers
+                // Magic numbers pulled from max values of their respective columns
+                // in the moveset rankings spreadsheet calculations
+                // @see
+                // https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+                case 24:
+                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_MAX));
+                    break;
+                case 25:
+                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
+                    break;
+                case 26:
+                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
+                    break;
+                case 31:
+                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_IV_MAX));
+                    break;
+                case 32:
+                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_IV_MAX));
+                    break;
+                case 33:
+                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_IV_MAX));
+                    break;
+
+                default:
+                    column.setCellRenderer(defaultCellRenderer);
+                    break;
+            }
+        }
     }
 
     public void constructNewTableModel(List<Pokemon> pokes) {

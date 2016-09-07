@@ -180,7 +180,8 @@ public final class AccountManager {
 
     private void prepareLogin(CredentialProvider cp, OkHttpClient http)
             throws LoginFailedException, RemoteServerException {
-        go = new PokemonGo(cp, http);
+        go = new PokemonGo(http);
+        go.login(cp);
         initOtherControllers();
     }
 

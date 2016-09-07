@@ -101,7 +101,7 @@ public class PokemonModel {
 
         // Max CP calculation for highest evolution of current PokemonModel
         PokemonFamilyIdOuterClass.PokemonFamilyId familyId = p.getPokemonFamily();
-        PokemonIdOuterClass.PokemonId highestFamilyId = PokemonMetaRegistry.getHightestForFamily(familyId);
+        PokemonIdOuterClass.PokemonId highestFamilyId = PokemonMetaRegistry.getHighestForFamily(familyId);
 
         // Eeveelutions exception handling
         if (familyId.getNumber() == PokemonFamilyIdOuterClass.PokemonFamilyId.FAMILY_EEVEE.getNumber()) {

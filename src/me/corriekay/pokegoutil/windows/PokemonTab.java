@@ -1,16 +1,5 @@
 package me.corriekay.pokegoutil.windows;
 
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
-import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
-import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
-import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
-import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
-
-import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.api.map.pokemon.EvolutionResult;
-import com.pokegoapi.api.player.PlayerProfile.Currency;
-import com.pokegoapi.api.pokemon.Pokemon;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -40,11 +29,21 @@ import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
+import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.map.pokemon.EvolutionResult;
+import com.pokegoapi.api.player.PlayerProfile.Currency;
+import com.pokegoapi.api.pokemon.Pokemon;
+
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
+import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
+import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
+import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
+import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
+import me.corriekay.pokegoutil.DATA.enums.BatchOperation;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
@@ -54,90 +53,101 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import me.corriekay.pokegoutil.utils.windows.PokemonTable;
 import me.corriekay.pokegoutil.utils.windows.PokemonTableModel;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 
+/**
+ * The main PokemonTab.
+ */
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
 
     private final PokemonGo go;
     private final PokemonTable pt;
-    private final JTextField searchBar = new JTextField("");
-    private final JTextField ivTransfer = new JTextField("", 20);
+    private static final JTextField searchBar = new JTextField("");
+    private static final JTextField ivTransfer = new JTextField("", 20);
+    private static final ConfigNew config = ConfigNew.getConfig();
 
-    private ConfigNew config = ConfigNew.getConfig();
+    // Used constants
+    private static final int WHEN_TO_SHOW_SELECTION_TITLE = 2;
+    private static final String SKIPPED_MESSAGE_UNFORMATTED = "%s with %d CP is in gym, skipping.";
+    private static final int POPUP_WIDTH = 500;
+    private static final int POPUP_HEIGHT = 400;
 
-    public PokemonTab(PokemonGo go) {
+    /**
+     * Creates an instance of the PokemonTab.
+     *
+     * @param go The go api class.
+     */
+    public PokemonTab(final PokemonGo go) {
+        super();
+
         setLayout(new BorderLayout());
         this.go = go;
         pt = new PokemonTable(go);
-        JPanel topPanel = new JPanel(new GridBagLayout());
-        JButton refreshPkmn, renameSelected, transferSelected, evolveSelected, powerUpSelected, toggleFavorite;
-        refreshPkmn = new JButton("Refresh List");
-        renameSelected = new JButton("Rename");
-        transferSelected = new JButton("Transfer");
-        evolveSelected = new JButton("Evolve");
-        powerUpSelected = new JButton("Power Up");
-        toggleFavorite = new JButton("Toggle Favorite");
+        final JPanel topPanel = new JPanel(new GridBagLayout());
+        final JButton refreshPkmn = new JButton("Refresh List"),
+                renameSelected = new JButton(BatchOperation.RENAME.toString()),
+                transferSelected = new JButton(BatchOperation.TRANSFER.toString()),
+                evolveSelected = new JButton(BatchOperation.EVOLVE.toString()),
+                powerUpSelected = new JButton(BatchOperation.POWER_UP.toString()),
+                toggleFavorite = new JButton(BatchOperation.FAVORITE.toString());
 
-        pt.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent event) {
-                if (event.getValueIsAdjusting()) {
-                    // We need a break here. Cause otherwise mouse selection would trigger twice. (Yeah, that's swing)
-                    return;
-                }
-                if (event.getSource() == pt.getSelectionModel() && pt.getRowSelectionAllowed()) {
-                    int selectedRows = pt.getSelectedRowCount();
-                    if (selectedRows > 1) {
-                        PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
-                    } else {
-                        PokemonGoMainWindow.window.refreshTitle();
-                    }
+        pt.getSelectionModel().addListSelectionListener(event -> {
+            if (event.getValueIsAdjusting()) {
+                // We need a break here. Cause otherwise mouse selection would trigger twice. (Yeah, that's swing)
+                return;
+            }
+            if (event.getSource() == pt.getSelectionModel() && pt.getRowSelectionAllowed()) {
+                final int selectedRows = pt.getSelectedRowCount();
+                if (selectedRows >= WHEN_TO_SHOW_SELECTION_TITLE) {
+                    PokemonGoMainWindow.window.setTitle(selectedRows + " Pokémon selected");
+                } else {
+                    PokemonGoMainWindow.window.refreshTitle();
                 }
             }
         });
 
-        GridBagConstraints gbc = new GridBagConstraints();
+        final GridBagConstraints gbc = new GridBagConstraints();
         topPanel.add(refreshPkmn, gbc);
         refreshPkmn.addActionListener(l -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception {
+            protected Void doInBackground() {
                 refreshPkmn();
                 return null;
             }
         }.execute());
         topPanel.add(renameSelected, gbc);
         renameSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception {
+            protected Void doInBackground() {
                 renameSelected();
                 return null;
             }
         }.execute());
         topPanel.add(transferSelected, gbc);
         transferSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception {
+            protected Void doInBackground() {
                 transferSelected();
                 return null;
             }
         }.execute());
         topPanel.add(evolveSelected, gbc);
         evolveSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception {
+            protected Void doInBackground() {
                 evolveSelected();
                 return null;
             }
         }.execute());
         topPanel.add(powerUpSelected, gbc);
         powerUpSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception {
+            protected Void doInBackground() {
                 powerUpSelected();
                 return null;
             }
         }.execute());
         topPanel.add(toggleFavorite, gbc);
         toggleFavorite.addActionListener(l -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception {
+            protected Void doInBackground() {
                 toggleFavorite();
                 return null;
             }
@@ -146,10 +156,10 @@ public class PokemonTab extends JPanel {
         ivTransfer.addKeyListener(
                 new KeyListener() {
                     @Override
-                    public void keyPressed(KeyEvent e) {
-                        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    public void keyPressed(final KeyEvent event) {
+                        if (event.getKeyCode() == KeyEvent.VK_ENTER) {
                             new SwingWorker<Void, Void>() {
-                                protected Void doInBackground() throws Exception {
+                                protected Void doInBackground() {
                                     selectLessThanIv();
                                     return null;
                                 }
@@ -158,12 +168,12 @@ public class PokemonTab extends JPanel {
                     }
 
                     @Override
-                    public void keyTyped(KeyEvent e) {
+                    public void keyTyped(final KeyEvent event) {
                         // nothing here
                     }
 
                     @Override
-                    public void keyReleased(KeyEvent e) {
+                    public void keyReleased(final KeyEvent event) {
                         // nothing here
                     }
                 });
@@ -171,9 +181,9 @@ public class PokemonTab extends JPanel {
         topPanel.add(ivTransfer, gbc);
 
         new GhostText(ivTransfer, "Pokemon IV");
-        JButton transferIv = new JButton("Select Pokemon < IV");
+        final JButton transferIv = new JButton("Select Pokemon < IV");
         transferIv.addActionListener(l -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception {
+            protected Void doInBackground() {
                 selectLessThanIv();
                 return null;
             }
@@ -187,13 +197,12 @@ public class PokemonTab extends JPanel {
         topPanel.add(searchBar, gbc);
 
         // Pokemon name language drop down
-        String[] locales = { "en", "de", "fr", "ru", "zh_CN", "zh_HK", "ja" };
-        JComboBox<String> pokelang = new JComboBox<>(locales);
-        String locale = config.getString(ConfigKey.LANGUAGE);
-        pokelang.setSelectedItem(locale);
+        final String[] locales = {"en", "de", "fr", "ru", "zh_CN", "zh_HK", "ja"};
+        final JComboBox<String> pokelang = new JComboBox<>(locales);
+        pokelang.setSelectedItem(config.getString(ConfigKey.LANGUAGE));
         pokelang.addActionListener(e -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception {
-                String lang = (String) pokelang.getSelectedItem();
+            protected Void doInBackground() {
+                final String lang = (String) pokelang.getSelectedItem();
                 changeLanguage(lang);
                 return null;
             }
@@ -201,19 +210,19 @@ public class PokemonTab extends JPanel {
         topPanel.add(pokelang);
 
         // Set font size if specified in config
-        Font font = pt.getFont();
-        int size = config.getInt(ConfigKey.FONT_SIZE, font.getSize());
+        final Font font = pt.getFont();
+        final int size = config.getInt(ConfigKey.FONT_SIZE, font.getSize());
         if (size != font.getSize()) {
             pt.setFont(font.deriveFont((float) size));
         }
 
         // Font size dropdown
-        String[] sizes = { "11", "12", "13", "14", "15", "16", "17", "18" };
-        JComboBox<String> fontSize = new JComboBox<>(sizes);
+        final String[] sizes = {"11", "12", "13", "14", "15", "16", "17", "18"};
+        final JComboBox<String> fontSize = new JComboBox<>(sizes);
         fontSize.setSelectedItem(String.valueOf(size));
         fontSize.addActionListener(e -> new SwingWorker<Void, Void>() {
-            protected Void doInBackground() throws Exception {
-                String size = fontSize.getSelectedItem().toString();
+            protected Void doInBackground() {
+                final String size = fontSize.getSelectedItem().toString();
                 pt.setFont(pt.getFont().deriveFont(Float.parseFloat(size)));
                 config.setInt(ConfigKey.FONT_SIZE, Integer.parseInt(size));
                 return null;
@@ -225,12 +234,12 @@ public class PokemonTab extends JPanel {
         new GhostText(searchBar, "Search Pokémon...");
 
         add(topPanel, BorderLayout.NORTH);
-        JScrollPane sp = new JScrollPane(pt);
+        final JScrollPane sp = new JScrollPane(pt);
         sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(sp, BorderLayout.CENTER);
     }
 
-    private void changeLanguage(String langCode) {
+    private void changeLanguage(final String langCode) {
         config.setString(ConfigKey.LANGUAGE, langCode);
         refreshPkmn();
     }
@@ -245,12 +254,12 @@ public class PokemonTab extends JPanel {
         System.out.println("Done refreshing Pokémon list");
     }
 
-    private void showFinishedText(String message, int size, MutableInt success, MutableInt skipped, MutableInt err) {
-        String finishText = message +
-                "\nPokémon total: " + size +
-                "\nSuccessful: " + success.getValue() +
-                (skipped.getValue() > 0 ? "\nSkipped: " + skipped.getValue() : "") +
-                (err.getValue() > 0 ? "\nErrors: " + err.getValue() : "");
+    private void showFinishedText(final String message, final int size, final MutableInt success, final MutableInt skipped, final MutableInt err) {
+        final String finishText = message
+                + "\nPokémon total: " + size
+                + "\nSuccessful: " + success.getValue()
+                + (skipped.getValue() > 0 ? "\nSkipped: " + skipped.getValue() : "")
+                + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : "");
 
         if (config.getBool(ConfigKey.SHOW_BULK_POPUP)) {
             JOptionPane.showMessageDialog(null, finishText);
@@ -261,15 +270,17 @@ public class PokemonTab extends JPanel {
 
     private void renameSelected() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
-        if (selection.size() == 0)
+        if (selection.isEmpty()) {
             return;
-        String renamePattern = inputOperation("Rename", selection);
+        }
+
+        final PokeHandler handler = new PokeHandler(selection);
+        final String renamePattern = inputOperation(BatchOperation.RENAME, selection);
 
         MutableInt err = new MutableInt(),
                 skipped = new MutableInt(),
                 success = new MutableInt(),
                 total = new MutableInt(1);
-        PokeHandler handler = new PokeHandler(selection);
 
         BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback = (renameResult, pokemon) -> {
             System.out.println(String.format(
@@ -335,13 +346,15 @@ public class PokemonTab extends JPanel {
 
     private void transferSelected() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
-        if (selection.size() == 0)
+        if (selection.isEmpty()) {
             return;
+        }
 
-        if (!confirmOperation("Transfer", selection))
+        if (!confirmOperation(BatchOperation.TRANSFER, selection)) {
             return;
+        }
 
-        MutableInt err = new MutableInt(),
+        final MutableInt err = new MutableInt(),
                 skipped = new MutableInt(),
                 success = new MutableInt(),
                 total = new MutableInt(1);
@@ -360,7 +373,7 @@ public class PokemonTab extends JPanel {
 
             if (!poke.getDeployedFortId().isEmpty()) {
                 System.out.println(String.format(
-                        "%s with %d CP is in gym, skipping.",
+                        SKIPPED_MESSAGE_UNFORMATTED,
                         PokeHandler.getLocalPokeName(poke),
                         poke.getCp()));
                 skipped.increment();
@@ -368,8 +381,8 @@ public class PokemonTab extends JPanel {
             }
 
             try {
-                int candies = poke.getCandy();
-                ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result transferResult = poke.transferPokemon();
+                final int candies = poke.getCandy();
+                final ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result transferResult = poke.transferPokemon();
 
                 if (transferResult == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
                     int newCandies = poke.getCandy();
@@ -379,7 +392,7 @@ public class PokemonTab extends JPanel {
                     System.out.println(String.format(
                             "Stat changes: (Candies : %d[+%d])",
                             newCandies,
-                            (newCandies - candies)));
+                            newCandies - candies));
                     success.increment();
                 } else {
                     System.out.println(String.format(
@@ -391,8 +404,8 @@ public class PokemonTab extends JPanel {
 
                 // If not last element, sleep until the next one
                 if (!selection.get(selection.size() - 1).equals(poke)) {
-                    int sleepMin = config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
-                    int sleepMax = config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
+                    final int sleepMin = config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
+                    final int sleepMax = config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
                     Utilities.sleepRandom(sleepMin, sleepMax);
                 }
             } catch (Exception e) {
@@ -415,11 +428,13 @@ public class PokemonTab extends JPanel {
 
     private void evolveSelected() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
-        if (selection.size() == 0)
+        if (selection.isEmpty()) {
             return;
+        }
 
-        if (!confirmOperation("Evolve", selection))
+        if (!confirmOperation(BatchOperation.EVOLVE, selection)) {
             return;
+        }
 
         MutableInt err = new MutableInt(),
                 skipped = new MutableInt(),
@@ -435,7 +450,7 @@ public class PokemonTab extends JPanel {
 
             if (!poke.getDeployedFortId().isEmpty()) {
                 System.out.println(String.format(
-                        "%s with %d CP is in gym, skipping.",
+                        SKIPPED_MESSAGE_UNFORMATTED,
                         PokeHandler.getLocalPokeName(poke),
                         +poke.getCp()));
                 skipped.increment();
@@ -537,8 +552,7 @@ public class PokemonTab extends JPanel {
                     if (afterTransfer) {
                         sleepMin = config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
                         sleepMax = config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
-                    }
-                    else {
+                    } else {
                         sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
                         sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
                     }
@@ -559,18 +573,20 @@ public class PokemonTab extends JPanel {
         }
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText(String.format(
-                "Pokémon batch evolve%s complete!",
-                (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : "")),
+                        "Pokémon batch evolve%s complete!",
+                        (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : "")),
                 selection.size(), success, skipped, err);
     }
 
     private void powerUpSelected() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
-        if (selection.size() == 0)
+        if (selection.isEmpty()) {
             return;
+        }
 
-        if (!confirmOperation("PowerUp", selection))
+        if (!confirmOperation(BatchOperation.POWER_UP, selection)) {
             return;
+        }
 
         MutableInt err = new MutableInt(),
                 skipped = new MutableInt(),
@@ -585,7 +601,7 @@ public class PokemonTab extends JPanel {
                 total.increment();
                 if (!poke.getDeployedFortId().isEmpty()) {
                     System.out.println(String.format(
-                            "%s with %d CP is in gym, skipping.",
+                            SKIPPED_MESSAGE_UNFORMATTED,
                             PokeHandler.getLocalPokeName(poke),
                             +poke.getCp()));
                     skipped.increment();
@@ -672,11 +688,13 @@ public class PokemonTab extends JPanel {
     // feature added by Ben Kauffman
     private void toggleFavorite() {
         ArrayList<Pokemon> selection = getSelectedPokemon();
-        if (selection.size() == 0)
+        if (selection.isEmpty()) {
             return;
+        }
 
-        if (!confirmOperation("Toggle Favorite", selection))
+        if (!confirmOperation(BatchOperation.FAVORITE, selection)) {
             return;
+        }
 
         MutableInt err = new MutableInt(),
                 skipped = new MutableInt(),
@@ -758,31 +776,34 @@ public class PokemonTab extends JPanel {
         }
     }
 
-    private String inputOperation(String operation, ArrayList<Pokemon> pokes) {
-    	JPanel panel = null;
-    	String message = "";
+    private String inputOperation(BatchOperation operation, ArrayList<Pokemon> pokes) {
+        JPanel panel;
+        String message = "";
         String savedPattern = "";
 
-        if("Rename".equals(operation)) {
-        	panel = buildPanelForRename();
-        	savedPattern = config.getString(ConfigKey.RENAME_PATTERN);
-        	message = "Renaming " + pokes.size() + " Pokémon.";
-        }
-        else {
-        	panel = buildPanelForOperation(operation, pokes);
+        switch (operation) {
+            case RENAME:
+                panel = buildPanelForRename();
+                savedPattern = config.getString(ConfigKey.RENAME_PATTERN);
+                message = "Renaming " + pokes.size() + " Pokémon.";
+                break;
+
+            default:
+                panel = buildPanelForOperation(operation, pokes);
+                break;
         }
 
         String input = (String) JOptionPane.showInputDialog(null, panel, message, JOptionPane.PLAIN_MESSAGE, null, null, savedPattern);
-        if(input!=null)  {
-        	switch (operation) {
-        	case "Rename":
-        		config.setString(ConfigKey.RENAME_PATTERN, input);
-        	}
+        if (input != null) {
+            switch (operation) {
+                case RENAME:
+                    config.setString(ConfigKey.RENAME_PATTERN, input);
+            }
         }
         return input;
     }
 
-    private boolean confirmOperation(String operation, ArrayList<Pokemon> pokes) {
+    private boolean confirmOperation(BatchOperation operation, ArrayList<Pokemon> pokes) {
         JPanel panel = buildPanelForOperation(operation, pokes);
 
         int response = JOptionPane.showConfirmDialog(null, panel,
@@ -795,11 +816,18 @@ public class PokemonTab extends JPanel {
         return response == JOptionPane.OK_OPTION;
     }
 
-    private JPanel buildPanelForOperation(String operation, ArrayList<Pokemon> pokes) {
-        JPanel panel = new JPanel();
+    /**
+     * Internal function to build the panel for a batch operation.
+     *
+     * @param operation The operation.
+     * @param pokes     List of Pokémon for that operation.
+     * @return The panel.
+     */
+    private JPanel buildPanelForOperation(final BatchOperation operation, final ArrayList<Pokemon> pokes) {
+        final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
-        JPanel innerPanel = new JPanel();
+        final JPanel innerPanel = new JPanel();
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         innerPanel.setAlignmentX(CENTER_ALIGNMENT);
 
@@ -821,21 +849,23 @@ public class PokemonTab extends JPanel {
                     Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
 
             switch (operation) {
-                case "Evolve":
+                case EVOLVE:
                     str += " Cost: " + p.getCandiesToEvolve();
                     str += p.getCandiesToEvolve() > 1 ? " Candies" : " Candy";
                     break;
-                case "PowerUp":
+                case POWER_UP:
                     str += " Cost: " + p.getCandyCostsForPowerup();
                     str += p.getCandyCostsForPowerup() > 1 ? " Candies" : " Candy";
                     str += " " + p.getStardustCostsForPowerup() + " Stardust";
                     break;
-                case "Rename":
-                	for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
-    	        		str += "%" + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
-    	        	}
+                case RENAME:
+                    for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
+                        str += StringLiterals.PERCENTAGE + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
+                    }
                     break;
-                case "Transfer":
+                case TRANSFER:
+                    break;
+                default:
                     break;
             }
             innerPanel.add(new JLabel(str));
@@ -843,51 +873,57 @@ public class PokemonTab extends JPanel {
         panel.add(scroll);
         return panel;
     }
-    
-    private JPanel buildPanelForRename() {
-    	JPanel panel = new JPanel();
-    	panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-    	panel.setAlignmentX(LEFT_ALIGNMENT);
-    	
-    	JPanel innerPanel = new JPanel();
-    	innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
-    	innerPanel.setAlignmentX(LEFT_ALIGNMENT);
-    	
-    	JScrollPane scroll = new JScrollPane(innerPanel);
-    	scroll.setAlignmentX(LEFT_ALIGNMENT);
-    	
-    	panel.setPreferredSize(new Dimension(500, 400));
-    	
-    	panel.add(new JLabel("You can rename with normal text and patterns, or both combined."));
-    	panel.add(new JLabel("Patterns are going to be replaced with the Pokémons values."));
-    	panel.add(new JLabel("Existing patterns: (double click on item to copy)"));
 
-    	JList<ReplacePattern> listPattern = new JList<>(ReplacePattern.values());
-    	listPattern.setCellRenderer(new ReplacePatternRenderer());
-    	
-    	listPattern.addMouseListener(new MouseAdapter() {
-    		public void mouseClicked(MouseEvent mouseEvent) {
+    /**
+     * Build the Popup panel for Renaming.
+     *
+     * @return The panel.
+     */
+    private JPanel buildPanelForRename() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setAlignmentX(LEFT_ALIGNMENT);
+
+        JPanel innerPanel = new JPanel();
+        innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
+        innerPanel.setAlignmentX(LEFT_ALIGNMENT);
+
+        JScrollPane scroll = new JScrollPane(innerPanel);
+        scroll.setAlignmentX(LEFT_ALIGNMENT);
+
+        panel.setPreferredSize(new Dimension(POPUP_WIDTH, POPUP_HEIGHT));
+
+        panel.add(new JLabel("You can rename with normal text and patterns, or both combined."));
+        panel.add(new JLabel("Patterns are going to be replaced with the Pokémons values."));
+        panel.add(new JLabel("Existing patterns: (double click on item to copy)"));
+
+        JList<ReplacePattern> listPattern = new JList<>(ReplacePattern.values());
+        listPattern.setCellRenderer(new ReplacePatternRenderer());
+
+        listPattern.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent mouseEvent) {
                 @SuppressWarnings("unchecked")
-				JList<ReplacePattern> theList = ((JList<ReplacePattern>) mouseEvent.getSource());
-                if (mouseEvent.getClickCount() == 2) {
-                  int index = theList.locationToIndex(mouseEvent.getPoint());
-                  if (index >= 0) {
-                	  ReplacePattern replacePattern = (ReplacePattern) theList.getModel().getElementAt(index);
-                	  Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
-                	  cb.setContents(new StringSelection("%" + replacePattern.name().toLowerCase() + "%"), null);
-                  }
+                JList<ReplacePattern> theList = ((JList<ReplacePattern>) mouseEvent.getSource());
+                boolean isDoubleClick = mouseEvent.getClickCount() == 2;
+                if (isDoubleClick) {
+                    int index = theList.locationToIndex(mouseEvent.getPoint());
+                    if (index >= 0) {
+                        ReplacePattern replacePattern = theList.getModel().getElementAt(index);
+                        Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        cb.setContents(new StringSelection(StringLiterals.PERCENTAGE + replacePattern.name().toLowerCase() + StringLiterals.PERCENTAGE), null);
+                    }
                 }
-              }
-		});
-    	
-    	innerPanel.add(listPattern);
-    	panel.add(scroll);
-    	return panel;
+            }
+        });
+
+        innerPanel.add(listPattern);
+        panel.add(scroll);
+        return panel;
     }
 
     public ArrayList<Pokemon> getSelectedPokemon() {
-        ArrayList<Pokemon> pokes = new ArrayList<>();
-        PokemonTableModel model = (PokemonTableModel) pt.getModel();
+        final ArrayList<Pokemon> pokes = new ArrayList<>();
+        final PokemonTableModel model = (PokemonTableModel) pt.getModel();
         for (int i : pt.getSelectedRows()) {
             Pokemon poke = model.getPokemonByIndex(i);
             if (poke != null) {
@@ -898,19 +934,18 @@ public class PokemonTab extends JPanel {
     }
 
     public void refreshList() {
-        List<Pokemon> pokes = new ArrayList<>();
-        String search = searchBar.getText().replaceAll(" ", "").replaceAll("_", "").replaceAll("snek", "ekans")
+        final List<Pokemon> pokes = new ArrayList<>();
+        final String search = searchBar.getText().replaceAll(StringLiterals.SPACE, "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll("snek", "ekans")
                 .toLowerCase();
-        String[] terms = search.split(";");
+        final String[] terms = search.split(";");
         try {
             go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-                boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
+                final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
                 String familyName = "";
                 if (useFamilyName) {
                     // Try translating family name
                     try {
-                        PokemonId familyPokemonId = PokemonId
-                                .valueOf(poke.getPokemonFamily().toString().replaceAll("FAMILY_", ""));
+                        final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
                         familyName = PokeHandler.getLocalPokeName(familyPokemonId.getNumber());
                     } catch (IllegalArgumentException e) {
                         familyName = poke.getPokemonFamily().toString();
@@ -918,16 +953,16 @@ public class PokemonTab extends JPanel {
                 }
 
                 String searchme = Utilities.concatString(',',
-                        PokeHandler.getLocalPokeName(poke).toString(),
+                        PokeHandler.getLocalPokeName(poke),
                         ((useFamilyName) ? familyName : ""),
-                        poke.getNickname().toString(),
+                        poke.getNickname(),
                         poke.getMeta().getType1().toString(),
                         poke.getMeta().getType2().toString(),
                         poke.getMove1().toString(),
                         poke.getMove2().toString(),
                         poke.getPokeball().toString());
-                searchme = searchme.replaceAll("_FAST", "").replaceAll("FAMILY_", "").replaceAll("NONE", "")
-                        .replaceAll("ITEM_", "").replaceAll("_", "").replaceAll(" ", "").toLowerCase();
+                searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
+                        .replaceAll("ITEM_", "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll(StringLiterals.SPACE, "").toLowerCase();
 
                 for (String s : terms) {
                     if (searchme.contains(s)) {
@@ -938,7 +973,7 @@ public class PokemonTab extends JPanel {
                     }
                 }
             });
-            pt.constructNewTableModel((search.equals("") || search.equals("searchpokémon...")
+            pt.constructNewTableModel(("".equals(search) || "searchpokémon...".equals(search)
                     ? go.getInventories().getPokebank().getPokemons() : pokes));
 
         } catch (Exception e) {
@@ -946,31 +981,35 @@ public class PokemonTab extends JPanel {
         }
     }
 
-    /** Provide custom formatting for the list of patterns.
+    /**
+     * Provide custom formatting for the list of patterns.
      */
-    private class ReplacePatternRenderer extends JLabel implements ListCellRenderer<ReplacePattern>
-	{
-    	public ReplacePatternRenderer() {
-    	    setOpaque(true);
-    	}
-    	
-		@Override
-		public Component getListCellRendererComponent(JList<? extends ReplacePattern> list, ReplacePattern value,
-				int index, boolean isSelected, boolean cellHasFocus) {
-			 //Get the selected index. (The index param isn't always valid, so just use the value.)
-	        if (isSelected) {
-	            setBackground(list.getSelectionBackground());
-	            setForeground(list.getSelectionForeground());
-	        } else {
-	            setBackground(list.getBackground());
-	            setForeground(list.getForeground());
-	        }
+    private class ReplacePatternRenderer extends JLabel implements ListCellRenderer<ReplacePattern> {
+        /**
+         * Constructor to create a ReplacePatternRenderer.
+         */
+        ReplacePatternRenderer() {
+            super();
+            setOpaque(true);
+        }
 
-	        String str = "%" + value.name().toLowerCase() + "% -> " + value.toString() + "\n";
-	        setText(str);
-	        setFont(list.getFont());
+        @Override
+        public Component getListCellRendererComponent(JList<? extends ReplacePattern> list, ReplacePattern value,
+                                                      int index, boolean isSelected, boolean cellHasFocus) {
+            //Get the selected index. (The index param isn't always valid, so just use the value.)
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+            } else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
 
-	        return this;
-		}
-	}
+            String str = StringLiterals.PERCENTAGE + value.name().toLowerCase() + "% -> " + value.toString() + "\n";
+            setText(str);
+            setFont(list.getFont());
+
+            return this;
+        }
+    }
 }
