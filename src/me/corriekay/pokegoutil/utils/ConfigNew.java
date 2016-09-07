@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -18,21 +20,20 @@ import java.util.Arrays;
 public final class ConfigNew {
     private static final File file = new File(System.getProperty("user.dir"), "config.json");
     private static final ConfigNew cfg = new ConfigNew();
-    private JSONObject json;
-
-    // Save file modified time
-    private long lastModified = file.lastModified();
 
     // Constants
     private static final String CANNOT_FETCH_UNF_STRING = "Could not fetch config item '%s'! Fallback to default: %s%n";
     private static final String CANNOT_SAVE_UNF_STRING = "Could not save '%s' to config (%s)!%n";
+
+    // Class properties
+    private JSONObject json;
+    private long lastModified = file.lastModified();
 
     /**
      * Constructor that reads the config file.
      */
     private ConfigNew() {
         if (!file.exists()) {
-
             try {
                 if (!file.createNewFile()) {
                     throw new FileAlreadyExistsException(file.getName());
@@ -45,6 +46,7 @@ public final class ConfigNew {
         } else {
             json = new JSONObject(FileHelper.readFile(file));
         }
+        cleanUpAndFill();
     }
 
     /**
@@ -57,13 +59,67 @@ public final class ConfigNew {
     }
 
     /**
+     * Returns the default value as Object, so that it may can added again. Just for internal use, NO TYP CHECKING!
+     *
+     * @param configKey The config key.
+     * @return The Object
+     */
+    private Object getAsObject(final ConfigKey configKey) {
+        Object obj;
+        switch (configKey.type) {
+            case BOOLEAN:
+                obj = getBool(configKey);
+                break;
+            case STRING:
+                obj = getString(configKey);
+                break;
+            case INTEGER:
+                obj = getInt(configKey);
+                break;
+            case DOUBLE:
+                obj = getDouble(configKey);
+                break;
+            default:
+                obj = getJSONObject(configKey);
+                break;
+        }
+        return obj;
+    }
+
+    /**
+     * Saves given object under the key. Just for internal use, NO TYP CHECKING!
+     *
+     * @param configKey The config key.
+     * @param obj       The object to set.
+     */
+    private void setFromObject(final ConfigKey configKey, Object obj) {
+        switch (configKey.type) {
+            case BOOLEAN:
+                setBool(configKey, (Boolean) obj);
+                break;
+            case STRING:
+                setString(configKey, (String) obj);
+                break;
+            case INTEGER:
+                setInt(configKey, (Integer) obj);
+                break;
+            case DOUBLE:
+                setDouble(configKey, (Double) obj);
+                break;
+            default:
+                setJSONObject(configKey, new JSONObject(obj));
+                break;
+        }
+    }
+
+    /**
      * Returns the JSONObject for given key. The one in the config, or if it does not exist, the default one.
      *
      * @param configKey The config key.
      * @return The JSONObject under the key, or default value.
      */
-    public JSONObject getJsonObject(final ConfigKey configKey) {
-        return getJsonObject(configKey, configKey.getDefaultValue());
+    public JSONObject getJSONObject(final ConfigKey configKey) {
+        return getJSONObject(configKey, configKey.getDefaultValue());
     }
 
     /**
@@ -73,13 +129,13 @@ public final class ConfigNew {
      * @param defaultValue The default value to choose if the key does not exist.
      * @return The JSONObject under the key, or default value.
      */
-    public JSONObject getJsonObject(final ConfigKey configKey, final JSONObject defaultValue) {
+    public JSONObject getJSONObject(final ConfigKey configKey, final JSONObject defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, false);
-            return res.node().getJSONObject(res.name());
+            return res.getNode().getJSONObject(res.getName());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
-            setJsonObject(configKey, defaultValue);
+            setJSONObject(configKey, defaultValue);
             return defaultValue;
         }
     }
@@ -90,11 +146,13 @@ public final class ConfigNew {
      * @param configKey The config key.
      * @param value     The value to save.
      */
-    public void setJsonObject(final ConfigKey configKey, final JSONObject value) {
+    public void setJSONObject(final ConfigKey configKey, final JSONObject value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            res.node().put(res.name(), value);
-            saveConfig();
+            if (res.getNode().optJSONObject(res.getName()) != value || value.equals(configKey.getDefaultValue())) {
+                res.getNode().put(res.getName(), value);
+                saveConfig();
+            }
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
@@ -120,7 +178,7 @@ public final class ConfigNew {
     public boolean getBool(final ConfigKey configKey, final boolean defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, false);
-            return res.node().getBoolean(res.name());
+            return res.getNode().getBoolean(res.getName());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setBool(configKey, defaultValue);
@@ -137,8 +195,12 @@ public final class ConfigNew {
     public void setBool(final ConfigKey configKey, final boolean value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            res.node().put(res.name(), value);
-            saveConfig();
+            // Set if value is different or if default value should be added
+            boolean defaultValue = configKey.getDefaultValue();
+            if (res.getNode().optBoolean(res.getName(), defaultValue) != value || value == defaultValue) {
+                res.getNode().put(res.getName(), value);
+                saveConfig();
+            }
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
@@ -164,7 +226,7 @@ public final class ConfigNew {
     public String getString(final ConfigKey configKey, final String defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            final String value = res.node().getString(res.name());
+            final String value = res.getNode().getString(res.getName());
             return StringEscapeUtils.unescapeJson(value);
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
@@ -182,8 +244,11 @@ public final class ConfigNew {
     public void setString(final ConfigKey configKey, final String value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            res.node().put(res.name(), StringEscapeUtils.escapeJson(value));
-            saveConfig();
+            // Set if value is different or if default value should be added
+            if (!res.getNode().optString(res.getName(), "." + configKey.getDefaultValue()).equals(value)) {
+                res.getNode().put(res.getName(), StringEscapeUtils.escapeJson(value));
+                saveConfig();
+            }
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
@@ -209,7 +274,7 @@ public final class ConfigNew {
     public int getInt(final ConfigKey configKey, final int defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            return res.node().getInt(res.name());
+            return res.getNode().getInt(res.getName());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setInt(configKey, defaultValue);
@@ -226,8 +291,11 @@ public final class ConfigNew {
     public void setInt(final ConfigKey configKey, final int value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            res.node().put(res.name(), value);
-            saveConfig();
+            // Set if value is different or if default value should be added
+            if (res.getNode().optInt(res.getName(), 1 + (int) configKey.getDefaultValue()) != value) {
+                res.getNode().put(res.getName(), value);
+                saveConfig();
+            }
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
@@ -253,7 +321,7 @@ public final class ConfigNew {
     public double getDouble(final ConfigKey configKey, final double defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            return res.node().getDouble(res.name());
+            return res.getNode().getDouble(res.getName());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setDouble(configKey, defaultValue);
@@ -270,8 +338,10 @@ public final class ConfigNew {
     public void setDouble(final ConfigKey configKey, final double value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            res.node().put(res.name(), value);
-            saveConfig();
+            if (res.getNode().optDouble(res.getName(), 1 + (double) configKey.getDefaultValue()) != value) {
+                res.getNode().put(res.getName(), value);
+                saveConfig();
+            }
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
         }
@@ -305,9 +375,31 @@ public final class ConfigNew {
     private void checkModified() {
         final long currentModifiedTime = file.lastModified();
         if (currentModifiedTime != lastModified) {
+            System.out.print("Modified config.json externally. Will be reloaded now.");
             // Re-read the file now
             json = new JSONObject(FileHelper.readFile(file));
             lastModified = currentModifiedTime;
+        }
+    }
+
+    /**
+     * Removes json nodes that do not belong in the file and fills it with missing values' defaults then.
+     */
+    private void cleanUpAndFill() {
+        ConfigKey[] keys = ConfigKey.values();
+        Map<ConfigKey, Object> allConfigs = new HashMap<>(keys.length);
+
+        for (ConfigKey configKey : keys) {
+            Object value = getAsObject(configKey);
+            System.out.println("Read '" + configKey.keyName + "' of type " + configKey.type + ". Obj: " + value);
+            allConfigs.put(configKey, value);
+
+        }
+
+        // Reset the json file and fill it again
+        json = new JSONObject();
+        for (HashMap.Entry<ConfigKey, Object> entry : allConfigs.entrySet()) {
+            setFromObject(entry.getKey(), entry.getValue());
         }
     }
 
@@ -318,7 +410,7 @@ public final class ConfigNew {
      */
     public void delete(final ConfigKey configKey) {
         final FindResult res = findNode(configKey.keyName, false);
-        res.node().remove(res.name());
+        res.getNode().remove(res.getName());
     }
 
     /**
@@ -327,24 +419,25 @@ public final class ConfigNew {
     public void saveConfig() {
         final int indentFactor = 4;
         FileHelper.saveFile(file, json.toString(indentFactor));
+        lastModified = file.lastModified();
     }
 
     /**
      * The Result which combines a node with it's value.
      */
     private class FindResult {
-        private final JSONObject nodeVal;
-        private final String nameVal;
+        private final JSONObject node;
+        private final String name;
 
         /**
          * Creates a Result object.
          *
-         * @param nodeVal The node.
-         * @param nameVal The value.
+         * @param node The node.
+         * @param name The value.
          */
-        FindResult(final JSONObject nodeVal, final String nameVal) {
-            this.nodeVal = nodeVal;
-            this.nameVal = nameVal;
+        FindResult(final JSONObject node, final String name) {
+            this.node = node;
+            this.name = name;
         }
 
         /**
@@ -352,8 +445,8 @@ public final class ConfigNew {
          *
          * @return The node.
          */
-        public JSONObject node() {
-            return this.nodeVal;
+        public JSONObject getNode() {
+            return this.node;
         }
 
         /**
@@ -361,8 +454,8 @@ public final class ConfigNew {
          *
          * @return The name.
          */
-        public String name() {
-            return this.nameVal;
+        public String getName() {
+            return this.name;
         }
     }
 }
