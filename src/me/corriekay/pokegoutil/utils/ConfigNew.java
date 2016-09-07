@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 
 /**
@@ -18,21 +19,20 @@ import java.util.Arrays;
 public final class ConfigNew {
     private static final File file = new File(System.getProperty("user.dir"), "config.json");
     private static final ConfigNew cfg = new ConfigNew();
-    private JSONObject json;
-
-    // Save file modified time
-    private long lastModified = file.lastModified();
 
     // Constants
     private static final String CANNOT_FETCH_UNF_STRING = "Could not fetch config item '%s'! Fallback to default: %s%n";
     private static final String CANNOT_SAVE_UNF_STRING = "Could not save '%s' to config (%s)!%n";
+
+    // Class properties
+    private JSONObject json;
+    private long lastModified = file.lastModified();
 
     /**
      * Constructor that reads the config file.
      */
     private ConfigNew() {
         if (!file.exists()) {
-
             try {
                 if (!file.createNewFile()) {
                     throw new FileAlreadyExistsException(file.getName());
@@ -45,6 +45,7 @@ public final class ConfigNew {
         } else {
             json = new JSONObject(FileHelper.readFile(file));
         }
+        cleanUpAndFill();
     }
 
     /**
@@ -62,8 +63,8 @@ public final class ConfigNew {
      * @param configKey The config key.
      * @return The JSONObject under the key, or default value.
      */
-    public JSONObject getJsonObject(final ConfigKey configKey) {
-        return getJsonObject(configKey, configKey.getDefaultValue());
+    public JSONObject getJSONObject(final ConfigKey configKey) {
+        return getJSONObject(configKey, configKey.getDefaultValue());
     }
 
     /**
@@ -73,13 +74,13 @@ public final class ConfigNew {
      * @param defaultValue The default value to choose if the key does not exist.
      * @return The JSONObject under the key, or default value.
      */
-    public JSONObject getJsonObject(final ConfigKey configKey, final JSONObject defaultValue) {
+    public JSONObject getJSONObject(final ConfigKey configKey, final JSONObject defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, false);
             return res.node().getJSONObject(res.name());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
-            setJsonObject(configKey, defaultValue);
+            setJSONObject(configKey, defaultValue);
             return defaultValue;
         }
     }
@@ -90,7 +91,7 @@ public final class ConfigNew {
      * @param configKey The config key.
      * @param value     The value to save.
      */
-    public void setJsonObject(final ConfigKey configKey, final JSONObject value) {
+    public void setJSONObject(final ConfigKey configKey, final JSONObject value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
             res.node().put(res.name(), value);
@@ -308,6 +309,25 @@ public final class ConfigNew {
             // Re-read the file now
             json = new JSONObject(FileHelper.readFile(file));
             lastModified = currentModifiedTime;
+        }
+    }
+
+    /**
+     * Removes json nodes that do not belong in the file and fills it with missing values' defaults then
+     */
+    private void cleanUpAndFill() {
+        ConfigKey[] keys = ConfigKey.values();
+        HashMap<ConfigKey, JSONObject> allConfigs = new HashMap<>(keys.length);
+
+        for (ConfigKey key : keys) {
+            JSONObject value = getJSONObject(key);
+            allConfigs.put(key, value);
+        }
+
+        // Reset the json file and fill it again
+        json = new JSONObject();
+        for (HashMap.Entry<ConfigKey, JSONObject> entry : allConfigs.entrySet()) {
+            setJSONObject(entry.getKey(), entry.getValue());
         }
     }
 
