@@ -45,7 +45,7 @@ public class PokemonGoMainWindow extends JFrame {
                     go.getInventories().getHatchery().getEggs().size());
             System.out.println(msg);
 
-        } catch (NumberFormatException | NullPointerException e) {
+        } catch (NumberFormatException e) {
             // System.out.println("Unable to login!");
             // e.printStackTrace();
         }
@@ -101,7 +101,7 @@ public class PokemonGoMainWindow extends JFrame {
             setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager",
                     pp.getPlayerData().getUsername(),
                     f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
-        } catch (NumberFormatException | NullPointerException e) {
+        } catch (NumberFormatException e) {
             setTitle("Blossom's Pokémon Go Manager");
         }
     }

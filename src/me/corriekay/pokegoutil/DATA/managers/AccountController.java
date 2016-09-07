@@ -179,7 +179,7 @@ public final class AccountController {
 
             if (cp != null)
                 try {
-                	go = new PokemonGo(http);
+                    go = new PokemonGo(http);
                     go.login(cp);
                 } catch (LoginFailedException | RemoteServerException e) {
                     alertFailedLogin(e.getMessage());
