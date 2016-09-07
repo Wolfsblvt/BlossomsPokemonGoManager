@@ -2,8 +2,11 @@ package me.corriekay.pokegoutil.utils.helpers;
 
 import com.pokegoapi.api.pokemon.PokemonType;
 
+/**
+ * Class to Help get the Unicode character.
+ * @author Fernando
+ */
 public enum UnicodeHelper {
-
 	NUMBER_0(0x24FF,"0"),
 	NUMBER_1(0x278A,"1"),
 	NUMBER_2(0x278B,"2"),
@@ -39,18 +42,24 @@ public enum UnicodeHelper {
 	TYPE_STEEL(0x26D3,PokemonType.STEEL.toString()),
 	TYPE_WATER(0x26C6,PokemonType.WATER.toString());
 
-    private int hexaCode;
+	private int hexaCode;
 	private String identifier;
 
 	UnicodeHelper(int hexaCode, String identifier) {
-        this.hexaCode = hexaCode;
-        this.identifier = identifier;
-    }
-	public static String get(String identifier)
-	{
-		for (UnicodeHelper uni : values())
-		{
-			if(uni.identifier.equals(identifier)) return Character.toString((char) uni.hexaCode);
+		this.hexaCode = hexaCode;
+		this.identifier = identifier;
+	}
+
+	/** 
+	 * Method to get Unicode character based on String
+	 * @param identifier String to identify the Unicode Character that should be returned
+	 * @return unicode character in String
+	 */
+	public static String get(String identifier) {
+		for (UnicodeHelper uni : values()) {
+			if(uni.identifier.equals(identifier)) {
+				return Character.toString((char) uni.hexaCode);
+			}
 		}
 		return "";
 	}
