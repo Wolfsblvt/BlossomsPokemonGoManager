@@ -269,7 +269,6 @@
     <module name="FileLength"/>
     <module name="LineLength">
         <property name="max" value="170"/>
-        <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
     </module>
     <module name="MethodCount">
         <property name="maxTotal" value="35"/>

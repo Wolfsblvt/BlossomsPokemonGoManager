@@ -21,6 +21,7 @@ engines:
   checkstyle:
     enabled: true
     channel: "beta"
+    config: 'checkstyle.xml'
 
 ratings:
   paths:

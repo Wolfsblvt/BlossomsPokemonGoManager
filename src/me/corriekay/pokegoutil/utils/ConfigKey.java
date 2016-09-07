@@ -48,7 +48,7 @@ public enum ConfigKey {
     public final Object defaultValue;
     public final Type type;
 
-    <T> ConfigKey(String keyName, Object defaultValue, Type type) {
+    ConfigKey(String keyName, Object defaultValue, Type type) {
         this.keyName = keyName;
         this.defaultValue = defaultValue;
         this.type = type;
@@ -71,10 +71,21 @@ public enum ConfigKey {
 
         private Class<?> clazz;
 
+        /**
+         * Constructor to create one element of this enum.
+         *
+         * @param clazz The class to parse.
+         * @param <T>   Type of the class, also return type.
+         */
         <T> Type(Class<T> clazz) {
             this.clazz = clazz;
         }
 
+        /**
+         * Gets the class.
+         *
+         * @return The class type which can be used for casting.
+         */
         public Class<?> getClazz() {
             return this.clazz;
         }
