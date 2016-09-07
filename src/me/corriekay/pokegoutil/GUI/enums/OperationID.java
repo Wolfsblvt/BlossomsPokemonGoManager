@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum OperationId {
-    RENAME("Rename","Renaming","Renamed"),
-    TRANSFER("Transfer","Transfering","Transfered"),
-    POWERUP("Power Up","Powering Up","Powered Up"),
-    EVOLVE("Evolve","Evolving","Evolved"),
-    FAVORITE("Favorite","Favoriting","Favorited");
+    RENAME("Rename", "Renaming", "Renamed"),
+    TRANSFER("Transfer", "Transfering", "Transfered"),
+    POWERUP("Power Up", "Powering Up", "Powered Up"),
+    EVOLVE("Evolve", "Evolving", "Evolved"),
+    FAVORITE("Favorite", "Favoriting", "Favorited");
 
-    private static final Map<String, OperationId> operationMap = new HashMap<String, OperationId>();
+    private static final Map<String, OperationId> operationMap = new HashMap<>();
 
     static {
         for (final OperationId id : OperationId.values()) {
@@ -22,7 +22,7 @@ public enum OperationId {
     private String actionVerbDuring;
     private String actionVerbFinished;
 
-    private OperationId(final String actionName, final String actionVerbDuring, final String actionVerbFinished) {
+    OperationId(final String actionName, final String actionVerbDuring, final String actionVerbFinished) {
         this.actionName = actionName;
         this.actionVerbDuring = actionVerbDuring;
         this.actionVerbFinished = actionVerbFinished;

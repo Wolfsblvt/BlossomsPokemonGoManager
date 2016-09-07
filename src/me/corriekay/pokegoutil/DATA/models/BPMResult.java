@@ -1,7 +1,7 @@
 package me.corriekay.pokegoutil.DATA.models;
 
 /**
- * Used for returning the result of operations in Bpm.
+ * Used for returning the result of operations in BPM.
  */
 public class BpmResult {
     private boolean success;
