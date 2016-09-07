@@ -220,7 +220,7 @@ public class PokemonTableModel extends AbstractTableModel {
             getColumnList(28).add(i.getValue(), PokemonUtils.moveRating(p, false));
             getColumnList(31).add(i.getValue(), PokemonUtils.duelAbility(p, true));
             getColumnList(32).add(i.getValue(), PokemonUtils.gymOffense(p, true));
-            getColumnList(33).add(i.getValue(), PokemonUtils.gymDefense(p, false));
+            getColumnList(33).add(i.getValue(), PokemonUtils.gymDefense(p, true));
 
             i.increment();
         });
