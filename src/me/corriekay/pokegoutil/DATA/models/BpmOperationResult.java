@@ -11,7 +11,7 @@ import me.corriekay.pokegoutil.GUI.enums.OperationId;
  */
 public class BpmOperationResult extends BpmResult {
 
-    private final List<String> successMessageList = new ArrayList<String>();
+    private final List<String> successMessageList = new ArrayList<>();
     private OperationError operationError;
     private OperationId nextOperation;
 
