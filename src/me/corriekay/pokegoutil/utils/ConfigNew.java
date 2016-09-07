@@ -91,9 +91,8 @@ public final class ConfigNew {
      *
      * @param configKey The config key.
      * @param obj       The object to set.
-     * @return The Object
      */
-    private Object setFromObject(final ConfigKey configKey, Object obj) {
+    private void setFromObject(final ConfigKey configKey, Object obj) {
         switch (configKey.type) {
             case BOOLEAN:
                 setBool(configKey, (Boolean) obj);
@@ -108,10 +107,9 @@ public final class ConfigNew {
                 setDouble(configKey, (Double) obj);
                 break;
             default:
-                obj = getJSONObject(configKey);
+                setJSONObject(configKey, new JSONObject(obj));
                 break;
         }
-        return obj;
     }
 
     /**
@@ -134,7 +132,7 @@ public final class ConfigNew {
     public JSONObject getJSONObject(final ConfigKey configKey, final JSONObject defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, false);
-            return res.node().getJSONObject(res.name());
+            return res.getNode().getJSONObject(res.getName());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setJSONObject(configKey, defaultValue);
@@ -151,8 +149,8 @@ public final class ConfigNew {
     public void setJSONObject(final ConfigKey configKey, final JSONObject value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            if (res.node().optJSONObject(res.name()) != value || value.equals(configKey.getDefaultValue())) {
-                res.node().put(res.name(), value);
+            if (res.getNode().optJSONObject(res.getName()) != value || value.equals(configKey.getDefaultValue())) {
+                res.getNode().put(res.getName(), value);
                 saveConfig();
             }
         } catch (final JSONException ignored) {
@@ -180,7 +178,7 @@ public final class ConfigNew {
     public boolean getBool(final ConfigKey configKey, final boolean defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, false);
-            return res.node().getBoolean(res.name());
+            return res.getNode().getBoolean(res.getName());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setBool(configKey, defaultValue);
@@ -199,8 +197,8 @@ public final class ConfigNew {
             final FindResult res = findNode(configKey.keyName, true);
             // Set if value is different or if default value should be added
             boolean defaultValue = configKey.getDefaultValue();
-            if (res.node().optBoolean(res.name(), defaultValue) != value || value == defaultValue) {
-                res.node().put(res.name(), value);
+            if (res.getNode().optBoolean(res.getName(), defaultValue) != value || value == defaultValue) {
+                res.getNode().put(res.getName(), value);
                 saveConfig();
             }
         } catch (final JSONException ignored) {
@@ -228,7 +226,7 @@ public final class ConfigNew {
     public String getString(final ConfigKey configKey, final String defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            final String value = res.node().getString(res.name());
+            final String value = res.getNode().getString(res.getName());
             return StringEscapeUtils.unescapeJson(value);
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
@@ -247,8 +245,8 @@ public final class ConfigNew {
         try {
             final FindResult res = findNode(configKey.keyName, true);
             // Set if value is different or if default value should be added
-            if (!res.node().optString(res.name(), "." + configKey.getDefaultValue()).equals(value)) {
-                res.node().put(res.name(), StringEscapeUtils.escapeJson(value));
+            if (!res.getNode().optString(res.getName(), "." + configKey.getDefaultValue()).equals(value)) {
+                res.getNode().put(res.getName(), StringEscapeUtils.escapeJson(value));
                 saveConfig();
             }
         } catch (final JSONException ignored) {
@@ -276,7 +274,7 @@ public final class ConfigNew {
     public int getInt(final ConfigKey configKey, final int defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            return res.node().getInt(res.name());
+            return res.getNode().getInt(res.getName());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setInt(configKey, defaultValue);
@@ -294,8 +292,8 @@ public final class ConfigNew {
         try {
             final FindResult res = findNode(configKey.keyName, true);
             // Set if value is different or if default value should be added
-            if (res.node().optInt(res.name(), 1 + (int) configKey.getDefaultValue()) != value) {
-                res.node().put(res.name(), value);
+            if (res.getNode().optInt(res.getName(), 1 + (int) configKey.getDefaultValue()) != value) {
+                res.getNode().put(res.getName(), value);
                 saveConfig();
             }
         } catch (final JSONException ignored) {
@@ -323,7 +321,7 @@ public final class ConfigNew {
     public double getDouble(final ConfigKey configKey, final double defaultValue) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            return res.node().getDouble(res.name());
+            return res.getNode().getDouble(res.getName());
         } catch (final JSONException ignored) {
             System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setDouble(configKey, defaultValue);
@@ -340,8 +338,8 @@ public final class ConfigNew {
     public void setDouble(final ConfigKey configKey, final double value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            if (res.node().optDouble(res.name(), 1 + (double) configKey.getDefaultValue()) != value) {
-                res.node().put(res.name(), value);
+            if (res.getNode().optDouble(res.getName(), 1 + (double) configKey.getDefaultValue()) != value) {
+                res.getNode().put(res.getName(), value);
                 saveConfig();
             }
         } catch (final JSONException ignored) {
@@ -412,7 +410,7 @@ public final class ConfigNew {
      */
     public void delete(final ConfigKey configKey) {
         final FindResult res = findNode(configKey.keyName, false);
-        res.node().remove(res.name());
+        res.getNode().remove(res.getName());
     }
 
     /**
@@ -447,7 +445,7 @@ public final class ConfigNew {
          *
          * @return The node.
          */
-        public JSONObject node() {
+        public JSONObject getNode() {
             return this.node;
         }
 
@@ -456,7 +454,7 @@ public final class ConfigNew {
          *
          * @return The name.
          */
-        public String name() {
+        public String getName() {
             return this.name;
         }
     }
