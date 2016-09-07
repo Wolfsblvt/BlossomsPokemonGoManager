@@ -2,8 +2,8 @@ package me.corriekay.pokegoutil;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import me.corriekay.pokegoutil.DATA.managers.AccountController;
-import me.corriekay.pokegoutil.GUI.controller.ChooseGuiWindowController;
+import me.corriekay.pokegoutil.data.managers.AccountController;
+import me.corriekay.pokegoutil.gui.controller.ChooseGuiWindowController;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;

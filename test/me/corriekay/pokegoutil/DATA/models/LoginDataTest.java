@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.DATA.models;
+package me.corriekay.pokegoutil.data.models;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import me.corriekay.pokegoutil.DATA.enums.LoginType;
+import me.corriekay.pokegoutil.data.enums.LoginType;
 
 /**
  * Test for LoginData model.
