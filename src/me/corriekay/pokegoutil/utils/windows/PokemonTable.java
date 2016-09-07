@@ -62,18 +62,18 @@ public class PokemonTable extends JTable {
     // 32 Double - gymOffense IV
     // 33 Long - gymDefense IV
 
-    private ConfigNew config = ConfigNew.getConfig();
+    private final ConfigNew config = ConfigNew.getConfig();
 
     private int sortColIndex1, sortColIndex2;
     private SortOrder sortOrder1, sortOrder2;
 
     private PokemonTableModel ptm;
 
-    public PokemonTable(PokemonGo go) {
+    public PokemonTable(final PokemonGo go) {
         setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         setAutoResizeMode(AUTO_RESIZE_OFF);
 
-        ptm = new PokemonTableModel(go, new ArrayList<Pokemon>(), this);
+        ptm = new PokemonTableModel(go, new ArrayList<>(), this);
         setModel(ptm);
 
         // Load sort configs
@@ -82,28 +82,30 @@ public class PokemonTable extends JTable {
         try {
             sortOrder1 = SortOrder.valueOf(config.getString(ConfigKey.SORT_ORDER_1));
             sortOrder2 = SortOrder.valueOf(config.getString(ConfigKey.SORT_ORDER_2));
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             e.printStackTrace();
             sortOrder1 = SortOrder.ASCENDING;
             sortOrder2 = SortOrder.ASCENDING;
         }
 
-        TableRowSorter<TableModel> trs = new TableRowSorter<>(ptm);
-        Comparator<Integer> cInt = Integer::compareTo;
-        Comparator<Double> cDouble = Double::compareTo;
-        Comparator<String> cDate = (date1, date2) -> DateHelper.fromString(date1)
+        final TableRowSorter<TableModel> trs = new TableRowSorter<>(ptm);
+        final Comparator<Integer> cInt = Integer::compareTo;
+        final Comparator<Double> cDouble = Double::compareTo;
+        final Comparator<String> cDate = (date1, date2) -> DateHelper.fromString(date1)
                 .compareTo(DateHelper.fromString(date2));
-        Comparator<String> cNullableInt = (s1, s2) -> {
-            if ("-".equals(s1))
+        final Comparator<String> cNullableInt = (s1, s2) -> {
+            if ("-".equals(s1)) {
                 s1 = "0";
-            if ("-".equals(s2))
+            }
+            if ("-".equals(s2)) {
                 s2 = "0";
+            }
             return Integer.parseInt(s1) - Integer.parseInt(s2);
         };
-        Comparator<Long> cLong = Long::compareTo;
-        Comparator<String> cPercentageWithTwoCharacters = (s1, s2) -> {
-            int i1 = ("XX".equals(s1)) ? 100 : Integer.parseInt(s1);
-            int i2 = ("XX".equals(s2)) ? 100 : Integer.parseInt(s2);
+        final Comparator<Long> cLong = Long::compareTo;
+        final Comparator<String> cPercentageWithTwoCharacters = (s1, s2) -> {
+            final int i1 = ("XX".equals(s1)) ? 100 : Integer.parseInt(s1);
+            final int i2 = ("XX".equals(s2)) ? 100 : Integer.parseInt(s2);
             return i1 - i2;
         };
         trs.setComparator(0, cInt);
@@ -133,7 +135,7 @@ public class PokemonTable extends JTable {
         trs.setComparator(32, cDouble);
         trs.setComparator(33, cLong);
         setRowSorter(trs);
-        List<SortKey> sortKeys = new ArrayList<>();
+        final List<SortKey> sortKeys = new ArrayList<>();
         sortKeys.add(new SortKey(sortColIndex1, sortOrder1));
         sortKeys.add(new SortKey(sortColIndex2, sortOrder2));
         trs.setSortKeys(sortKeys);
@@ -141,19 +143,20 @@ public class PokemonTable extends JTable {
         // Add listener to save those sorting values
         trs.addRowSorterListener(
                 e -> {
-                    RowSorter<TableModel> sorter = trs;
+                    final RowSorter<TableModel> sorter = trs;
                     if (sorter != null) {
                         @SuppressWarnings("unchecked")
+                        final
                         List<SortKey> keys = (List<SortKey>) sorter.getSortKeys();
                         if (keys.size() > 0) {
-                            SortKey prim = keys.get(0);
+                            final SortKey prim = keys.get(0);
                             sortOrder1 = prim.getSortOrder();
                             config.setString(ConfigKey.SORT_ORDER_1, sortOrder1.toString());
                             sortColIndex1 = prim.getColumn();
                             config.setInt(ConfigKey.SORT_COLINDEX_1, sortColIndex1);
                         }
                         if (keys.size() > 1) {
-                            SortKey sec = keys.get(1);
+                            final SortKey sec = keys.get(1);
                             sortOrder2 = sec.getSortOrder();
                             config.setString(ConfigKey.SORT_ORDER_2, sortOrder2.toString());
                             sortColIndex2 = sec.getColumn();
@@ -199,7 +202,7 @@ public class PokemonTable extends JTable {
         }
     }
 
-    public void constructNewTableModel(List<Pokemon> pokes) {
+    public void constructNewTableModel(final List<Pokemon> pokes) {
         ptm.ChangeTableData(pokes);
         pack();
     }

@@ -389,11 +389,10 @@ public final class ConfigNew {
         ConfigKey[] keys = ConfigKey.values();
         Map<ConfigKey, Object> allConfigs = new HashMap<>(keys.length);
 
+        // Read all config values or take defaults
         for (ConfigKey configKey : keys) {
             Object value = getAsObject(configKey);
-            System.out.println("Read '" + configKey.keyName + "' of type " + configKey.type + ". Obj: " + value);
             allConfigs.put(configKey, value);
-
         }
 
         // Reset the json file and fill it again

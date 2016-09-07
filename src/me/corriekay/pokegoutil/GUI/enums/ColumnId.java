@@ -40,7 +40,7 @@ import java.util.Map;
  * 32 Double - gymOffense IV
  * 33 Long - gymDefense IV
  */
-public enum ColumnID {
+public enum ColumnId {
     NUMBER("Number"),
     NICKNAME("Nickname"),
     SPECIES("Species"),
@@ -76,22 +76,22 @@ public enum ColumnID {
     GYMOFFENSEIV("Gym Offense IV"),
     GYMDEFENSEIV("Gym Defense IV");
 
-    private static final Map<String,ColumnID> titleMap = new HashMap<String, ColumnID>();
+    private static final Map<String,ColumnId> titleMap = new HashMap<String, ColumnId>();
 
     static {
-        for(ColumnID id : ColumnID.values())
+        for(ColumnId id : ColumnId.values())
             titleMap.put(id.getTitle(),id);
     }
 
     private String title;
 
-    private ColumnID(String title) {
+    ColumnId(String title) {
         this.title = title;
     }
 
     public String getTitle() { return title; }
 
-    public static ColumnID get(String title) {
+    public static ColumnId get(String title) {
         return titleMap.get(title);
     }
 }

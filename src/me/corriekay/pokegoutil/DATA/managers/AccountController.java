@@ -1,5 +1,19 @@
 package me.corriekay.pokegoutil.DATA.managers;
 
+import java.awt.BorderLayout;
+import java.awt.Toolkit;
+import java.awt.datatransfer.StringSelection;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
@@ -16,20 +30,13 @@ import me.corriekay.pokegoutil.utils.ui.Console;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.datatransfer.StringSelection;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 /*this controller does the login/log off, and different account information (aka player data)
  *
  */
 @Deprecated
 public final class AccountController {
 
-    private static final AccountController S_INSTANCE = new AccountController();
+    private static final AccountController instance = new AccountController();
     private static boolean sIsInit = false;
     private static ConfigNew config = ConfigNew.getConfig();
     protected PokemonGoMainWindow mainWindow = null;
@@ -44,14 +51,15 @@ public final class AccountController {
     }
 
     public static AccountController getInstance() {
-        return S_INSTANCE;
+        return instance;
     }
 
-    public static void initialize(Console console) {
-        if (sIsInit)
+    public static void initialize(final Console console) {
+        if (sIsInit) {
             return;
+        }
 
-        S_INSTANCE.console = console;
+        instance.console = console;
 
         sIsInit = true;
     }
@@ -63,16 +71,16 @@ public final class AccountController {
         OkHttpClient http;
         CredentialProvider cp;
         PokemonGo go = null;
-        while (!S_INSTANCE.logged) {
+        while (!instance.logged) {
             //BEGIN LOGIN WINDOW
             go = null;
             cp = null;
             http = new OkHttpClient();
 
-            JTextField username = new JTextField(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
-            JTextField password = new JPasswordField(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
+            final JTextField username = new JTextField(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
+            final JTextField password = new JPasswordField(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
 
-            boolean directLoginWithSavedCredentials = checkForSavedCredentials();
+            final boolean directLoginWithSavedCredentials = checkForSavedCredentials();
 
             int response;
 
@@ -95,13 +103,13 @@ public final class AccountController {
                 UIManager.put("OptionPane.cancelButtonText", "Exit");
                 UIManager.put("OptionPane.okButtonText", "Ok");
 
-                JPanel panel1 = new JPanel(new BorderLayout());
+                final JPanel panel1 = new JPanel(new BorderLayout());
                 panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
                 panel1.add(username, BorderLayout.CENTER);
-                JPanel panel2 = new JPanel(new BorderLayout());
+                final JPanel panel2 = new JPanel(new BorderLayout());
                 panel2.add(new JLabel("PTC Password: "), BorderLayout.LINE_START);
                 panel2.add(password, BorderLayout.CENTER);
-                Object[] panel = {panel1, panel2,};
+                final Object[] panel = {panel1, panel2,};
 
                 response = JOptionPane.showConfirmDialog(null, panel, "Login", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             }
@@ -120,7 +128,7 @@ public final class AccountController {
                     } else {
                         deleteLoginData(LoginType.PTC);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     alertFailedLogin(e.getMessage());
                     deleteLoginData(LoginType.PTC);
                     continue;
@@ -137,13 +145,13 @@ public final class AccountController {
 
                     //We're gonna try to load the page using the users browser
                     JOptionPane.showMessageDialog(null, "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue", "Google Auth", JOptionPane.PLAIN_MESSAGE);
-                    boolean success = Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
+                    final boolean success = Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
 
                     if (!success) {
                         // Okay, couldn't open it. We use the manual copy window
                         UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
                         if (JOptionPane.showConfirmDialog(null, "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.", "Google Auth", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION) {
-                            StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
+                            final StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
                             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
                         }
                         UIManager.put("OptionPane.cancelButtonText", "Cancel");
@@ -158,19 +166,21 @@ public final class AccountController {
                     if (refresh) {
                         // Based on usage in https://github.com/Grover-c13/PokeGOAPI-Java
                         provider = new GoogleUserCredentialProvider(http, authCode);
+                        provider.refreshToken(authCode);
                     } else {
                         provider = new GoogleUserCredentialProvider(http);
                         provider.login(authCode);
                     }
                     cp = provider;
                     if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
-                        if (!refresh)
+                        if (!refresh) {
                             config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
+                        }
                         config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
                     } else {
                         deleteLoginData(LoginType.GOOGLE);
                     }
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     alertFailedLogin(e.getMessage());
                     deleteLoginData(LoginType.GOOGLE);
                     continue;
@@ -182,7 +192,7 @@ public final class AccountController {
             UIManager.put("OptionPane.okButtonText", "Ok");
             UIManager.put("OptionPane.cancelButtonText", "Cancel");
 
-            if (cp != null)
+            if (cp != null) {
                 try {
                     go = new PokemonGo(http);
                     go.login(cp);
@@ -191,22 +201,23 @@ public final class AccountController {
                     deleteLoginData(LoginType.BOTH);
                     continue;
                 }
-            else
+            } else {
                 throw new IllegalStateException();
-            S_INSTANCE.logged = true;
+            }
+            instance.logged = true;
         }
-        S_INSTANCE.go = go;
+        instance.go = go;
         initOtherControllers(go);
-        S_INSTANCE.mainWindow = new PokemonGoMainWindow(go, S_INSTANCE.console);
-        S_INSTANCE.mainWindow.start();
+        instance.mainWindow = new PokemonGoMainWindow(go, instance.console);
+        instance.mainWindow.start();
     }
 
-    private static void initOtherControllers(PokemonGo go) {
+    private static void initOtherControllers(final PokemonGo go) {
         InventoryManager.initialize(go);
         PokemonBagManager.initialize(go);
     }
 
-    private static void alertFailedLogin(String message) {
+    private static void alertFailedLogin(final String message) {
         JOptionPane.showMessageDialog(null, "Unfortunately, your login has failed. Reason: " + message + "\nPress OK to try again.", "Login Failed", JOptionPane.PLAIN_MESSAGE);
     }
 
@@ -222,20 +233,24 @@ public final class AccountController {
         if (!config.getBool(ConfigKey.LOGIN_SAVE_AUTH)) {
             return LoginType.NONE;
         } else {
-            if (getLoginData(LoginType.GOOGLE) != null) return LoginType.GOOGLE;
-            if (getLoginData(LoginType.PTC) != null) return LoginType.PTC;
+            if (getLoginData(LoginType.GOOGLE) != null) {
+                return LoginType.GOOGLE;
+            }
+            if (getLoginData(LoginType.PTC) != null) {
+                return LoginType.PTC;
+            }
             return LoginType.NONE;
         }
     }
 
-    private static List<String> getLoginData(LoginType type) {
+    private static List<String> getLoginData(final LoginType type) {
         switch (type) {
             case GOOGLE:
-                String token = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                final String token = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
                 return (token != null) ? Collections.singletonList(token) : null;
             case PTC:
-                String username = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
-                String password = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
+                final String username = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
+                final String password = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
                 return (username != null && password != null) ? Arrays.asList(username, password) : null;
             default:
                 return null;
@@ -243,22 +258,27 @@ public final class AccountController {
     }
 
 
-    private static void deleteLoginData(LoginType type) {
+    private static void deleteLoginData(final LoginType type) {
         deleteLoginData(type, false);
     }
 
-    private static void deleteLoginData(LoginType type, boolean justCleanup) {
-        if (!justCleanup) config.delete(ConfigKey.LOGIN_SAVE_AUTH);
+    private static void deleteLoginData(final LoginType type, final boolean justCleanup) {
+        if (!justCleanup) {
+            config.delete(ConfigKey.LOGIN_SAVE_AUTH);
+        }
         switch (type) {
             case BOTH:
                 config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
                 config.delete(ConfigKey.LOGIN_PTC_USERNAME);
                 config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+                break;
             case GOOGLE:
                 config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                break;
             case PTC:
                 config.delete(ConfigKey.LOGIN_PTC_USERNAME);
                 config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+                break;
             default:
 
 
@@ -266,7 +286,7 @@ public final class AccountController {
     }
 
     private static boolean checkForSavedCredentials() {
-        LoginType savedLogin = checkSavedConfig();
+        final LoginType savedLogin = checkSavedConfig();
         if (savedLogin == LoginType.NONE) {
             return false;
         } else {
@@ -282,17 +302,18 @@ public final class AccountController {
         if (!sIsInit) {
             throw new ExceptionInInitializerError("AccountController needs to be initialized before logging on");
         }
-        if (!S_INSTANCE.logged)
+        if (!instance.logged) {
             return;
+        }
 
-        S_INSTANCE.logged = false;
-        S_INSTANCE.mainWindow.setVisible(false);
-        S_INSTANCE.mainWindow.dispose();
-        S_INSTANCE.mainWindow = null;
+        instance.logged = false;
+        instance.mainWindow.setVisible(false);
+        instance.mainWindow.dispose();
+        instance.mainWindow = null;
         logOn();
     }
 
     public static PlayerProfile getPlayerProfile() {
-        return S_INSTANCE.go != null ? S_INSTANCE.go.getPlayerProfile() : null;
+        return instance.go != null ? instance.go.getPlayerProfile() : null;
     }
 }

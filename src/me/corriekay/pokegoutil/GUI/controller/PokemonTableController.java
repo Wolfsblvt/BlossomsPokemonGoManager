@@ -16,8 +16,8 @@ import javafx.scene.layout.GridPane;
 import me.corriekay.pokegoutil.DATA.managers.PokemonBagManager;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
 import me.corriekay.pokegoutil.DATA.models.operations.Operation;
-import me.corriekay.pokegoutil.GUI.enums.ColumnID;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.ColumnId;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 
@@ -71,9 +71,9 @@ public class PokemonTableController extends GridPane {
 
     private void initRightClickMenu() {
         final ContextMenu cm = new ContextMenu();
-        OperationID[] operations = OperationID.values();
+        OperationId[] operations = OperationId.values();
         for (int i = 0; i < operations.length; i++) {
-            OperationID operation = operations[i];
+            OperationId operation = operations[i];
             final String actionName = operation.getActionName();
             MenuItem cmItem = new MenuItem(actionName);
             cmItem.setOnAction(e -> {
@@ -89,15 +89,15 @@ public class PokemonTableController extends GridPane {
         });
     }
 
-    private void comfirmOperation(OperationID operation) {
+    private void comfirmOperation(OperationId operation) {
         List<Operation> operations = Operation.generateOperations(operation, getSelectedItems());
         new OperationConfirmationController(new ObservableListWrapper<>(operations));
     }
 
-    private ArrayList<ColumnID> getColumnOrderFromConfig() {
-        ArrayList<ColumnID> columnOrder = new ArrayList<>();
+    private ArrayList<ColumnId> getColumnOrderFromConfig() {
+        ArrayList<ColumnId> columnOrder = new ArrayList<>();
         String config = ConfigNew.getConfig().getString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE);
-        ColumnID[] colIds = ColumnID.values();
+        ColumnId[] colIds = ColumnId.values();
 
         if (config == null || config.isEmpty()) {
             columnOrder.addAll(Arrays.asList(colIds));
@@ -118,7 +118,7 @@ public class PokemonTableController extends GridPane {
             if (i != 0) {
                 columnOrder += "-";
             }
-            columnOrder += String.valueOf(ColumnID.get(col.getText()).ordinal());
+            columnOrder += String.valueOf(ColumnId.get(col.getText()).ordinal());
             i++;
         }
 
@@ -137,7 +137,7 @@ public class PokemonTableController extends GridPane {
     private void initColumns() {
         columns.clear();
 
-        ArrayList<ColumnID> columnOrder = getColumnOrderFromConfig();
+        ArrayList<ColumnId> columnOrder = getColumnOrderFromConfig();
 
         columnOrder.forEach(c -> {
             TableColumn<PokemonModel, Property> col = new TableColumn<>(c.getTitle());
@@ -152,7 +152,7 @@ public class PokemonTableController extends GridPane {
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().speciesProperty());
                     break;
                 case IV:
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().IVProperty());
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().ivProperty());
                     break;
                 case LEVEL:
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().levelProperty());
@@ -236,13 +236,13 @@ public class PokemonTableController extends GridPane {
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().evolvableProperty());
                     break;
                 case DUELABILITYIV:
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().duelAbilityIVProperty());
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().duelAbilityIvProperty());
                     break;
                 case GYMOFFENSEIV:
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymOffenseIVProperty());
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymOffenseIvProperty());
                     break;
                 case GYMDEFENSEIV:
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymDefenseIVProperty());
+                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymDefenseIvProperty());
                     break;
             }
             columns.add(col);
