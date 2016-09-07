@@ -1,34 +1,91 @@
 package me.corriekay.pokegoutil.DATA.models.operations;
 
-import me.corriekay.pokegoutil.DATA.models.BPMResult;
+import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
+
+import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result;
+import me.corriekay.pokegoutil.DATA.enums.OperationError;
+import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 
 public class TransferOperation extends Operation {
 
-    public TransferOperation(PokemonModel pokemon) {
+    /**
+     * Instantiate TransferOperation. Only used in mocking.
+     */
+    protected TransferOperation() {
+        // For mocking
+        super();
+    }
+
+    /**
+     * Instantiate TransferOperation with a pokemon.
+     *
+     * @param pokemon pokemon to transfer
+     */
+    public TransferOperation(final PokemonModel pokemon) {
         super(pokemon);
     }
 
     @Override
-    protected BPMResult doOperation() {
-        return new BPMResult("Not implemented");
+    protected BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException {
+
+        final Pokemon poke = pokemon.getPokemon();
+        final int candies = poke.getCandy();
+        final Result transferResult = poke.transferPokemon();
+
+        if (transferResult != Result.SUCCESS) {
+            return new BpmOperationResult(String.format(
+                    "Error transferring %s, result: %s",
+                    PokeHandler.getLocalPokeName(poke),
+                    transferResult.toString()),
+                    OperationError.TRANSFER_FAIL);
+        }
+
+        final int newCandies = poke.getCandy();
+        final BpmOperationResult result = new BpmOperationResult();
+
+        result.addSuccessMessage(String.format(
+                "Transferring %s, Result: Success!",
+                PokeHandler.getLocalPokeName(poke)));
+
+        result.addSuccessMessage(String.format(
+                "Stat changes: (Candies : %d[+%d])",
+                newCandies,
+                (newCandies - candies)));
+
+        return result;
     }
 
     @Override
     protected int getMaxDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_TRANSFER_MAX);
+        return config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_TRANSFER_MIN);
+        return config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
     }
 
     @Override
-    public OperationID getOperationID() {
-        return OperationID.TRANSFER;
+    public OperationId getOperationId() {
+        return OperationId.TRANSFER;
     }
 
+    @Override
+    public BpmOperationResult validateOperation() {
+        if (pokemon.isIsFavorite()) {
+            return new BpmOperationResult("Pokemon is favorite.", OperationError.IS_FAVORITE);
+        }
+
+        if (pokemon.isInGym()) {
+            return new BpmOperationResult("Pokemon is in gym", OperationError.IN_GYM);
+        }
+
+        return new BpmOperationResult();
+    }
 }

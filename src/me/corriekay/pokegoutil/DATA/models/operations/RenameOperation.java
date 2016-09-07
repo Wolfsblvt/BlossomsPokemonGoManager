@@ -1,34 +1,63 @@
 package me.corriekay.pokegoutil.DATA.models.operations;
 
-import me.corriekay.pokegoutil.DATA.models.BPMResult;
+import com.pokegoapi.exceptions.InvalidCurrencyException;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
+
+import me.corriekay.pokegoutil.DATA.enums.OperationError;
+import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 
 public class RenameOperation extends Operation {
 
-    public RenameOperation(PokemonModel pokemon) {
+    /**
+     * Instantiate RenameOperation. Only used in mocking.
+     */
+    protected RenameOperation() {
+        // For mocking
+        super();
+    }
+
+    /**
+     * Instantiate RenameOperation with a pokemon.
+     *
+     * @param pokemon pokemon to rename
+     */
+    public RenameOperation(final PokemonModel pokemon) {
         super(pokemon);
     }
 
     @Override
-    protected BPMResult doOperation() {
-        return new BPMResult("Not implemented");
+    protected BpmOperationResult doOperation() {
+        return new BpmOperationResult("Not implemented", OperationError.NOT_IMPLEMENTED);
     }
 
     @Override
     protected int getMaxDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_RENAME_MAX);
+        return config.getInt(ConfigKey.DELAY_RENAME_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return getConfig().getInt(ConfigKey.DELAY_RENAME_MIN);
+        return config.getInt(ConfigKey.DELAY_RENAME_MIN);
     }
 
     @Override
-    public OperationID getOperationID() {
-        return OperationID.RENAME;
+    public OperationId getOperationId() {
+        return OperationId.RENAME;
+    }
+
+    @Override
+    public BpmOperationResult validateOperation()
+            throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+        // I think we need to check if in gym? Wasn't checked in previous code.
+        // if (pokemon.isInGym()) {
+        // return new BPMResult("Pokemon is in gym");
+        // }
+
+        return new BpmOperationResult();
     }
 
 }

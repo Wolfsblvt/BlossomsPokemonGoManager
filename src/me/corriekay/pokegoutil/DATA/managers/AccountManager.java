@@ -7,42 +7,60 @@ import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+
 import me.corriekay.pokegoutil.DATA.enums.LoginType;
+import me.corriekay.pokegoutil.DATA.models.BpmResult;
 import me.corriekay.pokegoutil.DATA.models.LoginData;
-import me.corriekay.pokegoutil.DATA.models.BPMResult;
+import me.corriekay.pokegoutil.DATA.models.PlayerAccount;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import okhttp3.OkHttpClient;
 
-/*this controller does the login/log off, and different account information (aka player data)
- *
+/**
+ * This controller does the login/log off, and different account information (aka player data).
  */
 public final class AccountManager {
 
-    private static AccountManager S_INSTANCE;
+    private static AccountManager instance;
+
+    private final ConfigNew config = ConfigNew.getConfig();
+    private PokemonGo go;
+    private PlayerAccount playerAccount;
 
     public static AccountManager getInstance() {
-        if (S_INSTANCE == null) {
-            S_INSTANCE = new AccountManager();
+        if (instance == null) {
+            instance = new AccountManager();
             // DO any required initialization stuff here
         }
-        return S_INSTANCE;
+        return instance;
     }
-
-    private ConfigNew config = ConfigNew.getConfig();
-    private PokemonGo go = null;
 
     private AccountManager() {
 
     }
 
-    private void deleteLoginData(LoginType type) {
-        deleteLoginData(type, false);
+    /**
+     * Deletes the specified LoginType from the config.json.
+     * <p>
+     * <p>Also SaveAuth settings will be deleted
+     *
+     * @param type the LoginType to be removed
+     */
+    private void deleteLoginData(final LoginType type) {
+        deleteLoginData(type, true);
     }
 
-    private void deleteLoginData(LoginType type, boolean justCleanup) {
-        if (!justCleanup)
+    /**
+     * Deletes the specific LoginType from config.json. If deleteSaveAuth is true, SaveAuth settings will be deleted
+     *
+     * @param type           the LoginType to be removed
+     * @param deleteSaveAuth if true, SaveAuth will be deleted
+     */
+    private void deleteLoginData(final LoginType type, final boolean deleteSaveAuth) {
+        if (deleteSaveAuth) {
             config.delete(ConfigKey.LOGIN_SAVE_AUTH);
+        }
+
         switch (type) {
             case BOTH:
                 config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
@@ -61,7 +79,7 @@ public final class AccountManager {
     }
 
     public LoginData getLoginData() {
-        LoginData loginData = new LoginData(
+        final LoginData loginData = new LoginData(
                 config.getString(ConfigKey.LOGIN_PTC_USERNAME),
                 config.getString(ConfigKey.LOGIN_PTC_PASSWORD),
                 config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN));
@@ -71,7 +89,15 @@ public final class AccountManager {
         }
 
         return loginData;
+    }
 
+    /**
+     * Returns the logged in playerAccount.
+     *
+     * @return the logged in playerAccount
+     */
+    public PlayerAccount getPlayerAccount() {
+        return playerAccount;
     }
 
     public PlayerProfile getPlayerProfile() {
@@ -84,7 +110,13 @@ public final class AccountManager {
         ProfileManager.initialize(go);
     }
 
-    public BPMResult login(LoginData loginData) throws Exception {
+    /**
+     * Login to Pokemon Go with the login data.
+     *
+     * @param loginData the login data used to login
+     * @return results of the login
+     */
+    public BpmResult login(final LoginData loginData) {
         switch (loginData.getLoginType()) {
             case GOOGLE:
                 if (loginData.isValidGoogleLogin()) {
@@ -92,22 +124,28 @@ public final class AccountManager {
                 }
                 break;
             case PTC:
-                if (loginData.isValidPTCLogin()) {
-                    return logOnPTC(loginData);
+                if (loginData.isValidPtcLogin()) {
+                    return logOnPtc(loginData);
                 }
                 break;
             default:
         }
-        return new BPMResult("Invalid Login Type");
+        return new BpmResult("Invalid Login Type");
     }
 
-    private BPMResult logOnGoogleAuth(LoginData loginData) {
+    /**
+     * Login using GoogleAuth.
+     *
+     * @param loginData the login data used to login
+     * @return results of the login
+     */
+    private BpmResult logOnGoogleAuth(final LoginData loginData) {
         OkHttpClient http;
         CredentialProvider cp;
         http = new OkHttpClient();
 
-        String authCode = loginData.getToken();
-        boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
+        final String authCode = loginData.getToken();
+        final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
 
         boolean shouldRefresh = false;
         if (loginData.isSavedToken() && saveAuth) {
@@ -115,7 +153,7 @@ public final class AccountManager {
         }
 
         try {
-            GoogleUserCredentialProvider provider = new GoogleUserCredentialProvider(http);
+            final GoogleUserCredentialProvider provider = new GoogleUserCredentialProvider(http);
             if (shouldRefresh) {
                 provider.refreshToken(authCode);
             } else {
@@ -132,28 +170,34 @@ public final class AccountManager {
             } else {
                 deleteLoginData(LoginType.GOOGLE);
             }
-        } catch (Exception e) {
+        } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.GOOGLE);
-            return new BPMResult(e.getMessage());
+            return new BpmResult(e.getMessage());
         }
 
         try {
             prepareLogin(cp, http);
-            return new BPMResult();
+            return new BpmResult();
         } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.BOTH);
-            return new BPMResult(e.getMessage());
+            return new BpmResult(e.getMessage());
         }
     }
 
-    private BPMResult logOnPTC(LoginData loginData) throws Exception {
+    /**
+     * Login using PTC.
+     *
+     * @param loginData the login data used to login
+     * @return results of the login
+     */
+    private BpmResult logOnPtc(final LoginData loginData) {
         OkHttpClient http;
         CredentialProvider cp;
         http = new OkHttpClient();
 
-        String username = loginData.getUsername();
-        String password = loginData.getPassword();
-        boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
+        final String username = loginData.getUsername();
+        final String password = loginData.getPassword();
+        final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
 
         try {
             cp = new PtcCredentialProvider(http, username, password);
@@ -163,29 +207,42 @@ public final class AccountManager {
             } else {
                 deleteLoginData(LoginType.PTC);
             }
-        } catch (Exception e) {
+        } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.PTC);
-            return new BPMResult(e.getMessage());
+            return new BpmResult(e.getMessage());
         }
 
         try {
             prepareLogin(cp, http);
-            return new BPMResult();
+            return new BpmResult();
         } catch (LoginFailedException | RemoteServerException e) {
             deleteLoginData(LoginType.BOTH);
-            return new BPMResult(e.getMessage());
+            return new BpmResult(e.getMessage());
         }
-
     }
 
-    private void prepareLogin(CredentialProvider cp, OkHttpClient http)
+    /**
+     * Do login process and initialize GUI.
+     *
+     * @param cp   contains the credential provider
+     * @param http http client
+     * @throws LoginFailedException  login failed
+     * @throws RemoteServerException server error
+     */
+    private void prepareLogin(final CredentialProvider cp, final OkHttpClient http)
             throws LoginFailedException, RemoteServerException {
         go = new PokemonGo(http);
         go.login(cp);
+        playerAccount = new PlayerAccount(go.getPlayerProfile());
         initOtherControllers();
     }
 
-    public void setSaveLogin(boolean save) {
-        config.setBool(ConfigKey.LOGIN_SAVE_AUTH, save);
+    /**
+     * The value will be saved for saveAuth in config.json.
+     *
+     * @param shouldSave settings for saveAuth
+     */
+    public void setSaveLogin(final boolean shouldSave) {
+        config.setBool(ConfigKey.LOGIN_SAVE_AUTH, shouldSave);
     }
 }

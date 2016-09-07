@@ -3,40 +3,79 @@ package me.corriekay.pokegoutil.DATA.models.operations;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.pokegoapi.exceptions.InvalidCurrencyException;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
+
 import javafx.collections.ObservableList;
-import me.corriekay.pokegoutil.DATA.models.BPMResult;
+import me.corriekay.pokegoutil.DATA.models.BpmOperationResult;
 import me.corriekay.pokegoutil.DATA.models.PokemonModel;
-import me.corriekay.pokegoutil.GUI.enums.OperationID;
+import me.corriekay.pokegoutil.GUI.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 
 public abstract class Operation {
 
-    private Integer delay;
-    private PokemonModel pokemonModel;
-    private ConfigNew config = ConfigNew.getConfig();
+    public static List<Operation> generateOperations(
+            final OperationId operationId,
+            final ObservableList<PokemonModel> pokemonList) {
+        final List<Operation> operationList = new ArrayList<Operation>();
 
-    public Operation(PokemonModel pokemon) {
-        this.delay = getRandomDelay();
-        this.pokemonModel = pokemon;
+        pokemonList.forEach(model -> {
+            final Operation operation = generateOperation(operationId, model);
+            operationList.add(operation);
+        });
+
+        return operationList;
     }
 
-    protected abstract BPMResult doOperation();
+    public static Operation generateOperation(final OperationId operationId, final PokemonModel model) {
+        switch (operationId) {
+            case EVOLVE:
+                return new EvolveOperation(model);
+            case FAVORITE:
+                return new FavoriteOperation(model);
+            case POWERUP:
+                return new PowerupOperation(model);
+            case RENAME:
+                return new RenameOperation(model);
+            case TRANSFER:
+                return new TransferOperation(model);
+            default:
+                throw new IllegalArgumentException(
+                        String.format("OperationID <%s> has not been handled!", operationId));
+        }
+    }
 
-    public void execute() {
-        BPMResult result = doOperation();
+    private Integer delay;
+    public PokemonModel pokemon;
+
+    protected ConfigNew config = ConfigNew.getConfig();
+
+    protected Operation() {
+        // For mocking
+    }
+
+    public Operation(final PokemonModel pokemon) {
+        this.delay = getRandomDelay();
+        this.pokemon = pokemon;
+    }
+
+    protected abstract BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException;
+
+    public BpmOperationResult execute() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+        BpmOperationResult result = validateOperation();
 
         if (result.isSuccess()) {
-            System.out.println(getOperationID().getActionVerbFinished() + " " + pokemonModel.getSummary());
-        } else {
-            System.out.println(result.getErrorMessage());
+            result = doOperation();
         }
-        System.out.println("Waiting " + delay.toString() + " ms before next operation");
-        Utilities.sleep(delay);
+
+        return result;
     }
 
-    protected ConfigNew getConfig() {
-        return config;
+    public void doDelay() {
+        System.out.println("Waiting " + delay.toString() + " ms before next operation");
+        Utilities.sleep(delay);
     }
 
     public Integer getDelay() {
@@ -47,11 +86,7 @@ public abstract class Operation {
 
     protected abstract int getMinDelay();
 
-    public abstract OperationID getOperationID();
-
-    public PokemonModel getPokemonModel() {
-        return pokemonModel;
-    }
+    public abstract OperationId getOperationId();
 
     private int getRandomDelay() {
         return Utilities.getRandom(getMaxDelay(), getMaxDelay());
@@ -59,39 +94,9 @@ public abstract class Operation {
 
     @Override
     public String toString() {
-        return getOperationID().getActionName() + " " + pokemonModel.getSummary();
+        return getOperationId().getActionName() + " " + pokemon.getSummary();
     }
 
-    public static List<Operation> generateOperations(
-            OperationID operationID,
-            ObservableList<PokemonModel> pokemonList) {
-        List<Operation> operationList = new ArrayList<Operation>();
-
-        pokemonList.forEach(model -> {
-            Operation operation;
-            switch (operationID) {
-                case EVOLVE:
-                    operation = new EvolveOperation(model);
-                    break;
-                case FAVORITE:
-                    operation = new FavoriteOperation(model);
-                    break;
-                case POWERUP:
-                    operation = new PowerupOperation(model);
-                    break;
-                case RENAME:
-                    operation = new RenameOperation(model);
-                    break;
-                case TRANSFER:
-                    operation = new TransferOperation(model);
-                    break;
-                default:
-                    throw new IllegalArgumentException(
-                            String.format("OperationID <%s> has not been handled!", operationID));
-            }
-            operationList.add(operation);
-        });
-
-        return operationList;
-    }
+    public abstract BpmOperationResult validateOperation()
+            throws InvalidCurrencyException, LoginFailedException, RemoteServerException;
 }

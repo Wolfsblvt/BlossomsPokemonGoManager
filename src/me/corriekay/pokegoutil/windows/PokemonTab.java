@@ -37,9 +37,9 @@ import com.pokegoapi.api.pokemon.Pokemon;
 
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
-import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass;
-import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass;
-import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass;
+import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse;
+import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse;
+import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass.UpgradePokemonResponse;
 import me.corriekay.pokegoutil.DATA.enums.BatchOperation;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
@@ -112,6 +112,7 @@ public class PokemonTab extends JPanel {
         final GridBagConstraints gbc = new GridBagConstraints();
         topPanel.add(refreshPkmn, gbc);
         refreshPkmn.addActionListener(l -> new SwingWorker<Void, Void>() {
+            @Override
             protected Void doInBackground() {
                 refreshPkmn();
                 return null;
@@ -119,6 +120,7 @@ public class PokemonTab extends JPanel {
         }.execute());
         topPanel.add(renameSelected, gbc);
         renameSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
+            @Override
             protected Void doInBackground() {
                 renameSelected();
                 return null;
@@ -126,6 +128,7 @@ public class PokemonTab extends JPanel {
         }.execute());
         topPanel.add(transferSelected, gbc);
         transferSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
+            @Override
             protected Void doInBackground() {
                 transferSelected();
                 return null;
@@ -133,6 +136,7 @@ public class PokemonTab extends JPanel {
         }.execute());
         topPanel.add(evolveSelected, gbc);
         evolveSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
+            @Override
             protected Void doInBackground() {
                 evolveSelected();
                 return null;
@@ -140,6 +144,7 @@ public class PokemonTab extends JPanel {
         }.execute());
         topPanel.add(powerUpSelected, gbc);
         powerUpSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
+            @Override
             protected Void doInBackground() {
                 powerUpSelected();
                 return null;
@@ -147,6 +152,7 @@ public class PokemonTab extends JPanel {
         }.execute());
         topPanel.add(toggleFavorite, gbc);
         toggleFavorite.addActionListener(l -> new SwingWorker<Void, Void>() {
+            @Override
             protected Void doInBackground() {
                 toggleFavorite();
                 return null;
@@ -159,6 +165,7 @@ public class PokemonTab extends JPanel {
                     public void keyPressed(final KeyEvent event) {
                         if (event.getKeyCode() == KeyEvent.VK_ENTER) {
                             new SwingWorker<Void, Void>() {
+                                @Override
                                 protected Void doInBackground() {
                                     selectLessThanIv();
                                     return null;
@@ -183,6 +190,7 @@ public class PokemonTab extends JPanel {
         new GhostText(ivTransfer, "Pokemon IV");
         final JButton transferIv = new JButton("Select Pokemon < IV");
         transferIv.addActionListener(l -> new SwingWorker<Void, Void>() {
+            @Override
             protected Void doInBackground() {
                 selectLessThanIv();
                 return null;
@@ -201,6 +209,7 @@ public class PokemonTab extends JPanel {
         final JComboBox<String> pokelang = new JComboBox<>(locales);
         pokelang.setSelectedItem(config.getString(ConfigKey.LANGUAGE));
         pokelang.addActionListener(e -> new SwingWorker<Void, Void>() {
+            @Override
             protected Void doInBackground() {
                 final String lang = (String) pokelang.getSelectedItem();
                 changeLanguage(lang);
@@ -221,6 +230,7 @@ public class PokemonTab extends JPanel {
         final JComboBox<String> fontSize = new JComboBox<>(sizes);
         fontSize.setSelectedItem(String.valueOf(size));
         fontSize.addActionListener(e -> new SwingWorker<Void, Void>() {
+            @Override
             protected Void doInBackground() {
                 final String size = fontSize.getSelectedItem().toString();
                 pt.setFont(pt.getFont().deriveFont(Float.parseFloat(size)));
@@ -247,7 +257,7 @@ public class PokemonTab extends JPanel {
     private void refreshPkmn() {
         try {
             go.getInventories().updateInventories(true);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);
@@ -282,17 +292,17 @@ public class PokemonTab extends JPanel {
                 success = new MutableInt(),
                 total = new MutableInt(1);
 
-        BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback = (renameResult, pokemon) -> {
+        final BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback = (renameResult, pokemon) -> {
             System.out.println(String.format(
                     "Doing Rename %d of %d",
                     total.getValue(),
                     selection.size()));
             total.increment();
 
-            PokeNick pokeNick = PokeHandler.generatePokemonNickname(renamePattern, pokemon);
+            final PokeNick pokeNick = PokeHandler.generatePokemonNickname(renamePattern, pokemon);
 
             // We check if the Pokemon was skipped
-            boolean isSkipped = (pokeNick.equals(pokemon.getNickname())
+            final boolean isSkipped = (pokeNick.equals(pokemon.getNickname())
                     && renameResult.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE);
             if (isSkipped) {
                 System.out.println(String.format(
@@ -327,8 +337,8 @@ public class PokemonTab extends JPanel {
 
             // If not last element and API was queried, sleep until the next one
             if (!selection.get(selection.size() - 1).equals(pokemon)) {
-                int sleepMin = config.getInt(ConfigKey.DELAY_RENAME_MIN);
-                int sleepMax = config.getInt(ConfigKey.DELAY_RENAME_MAX);
+                final int sleepMin = config.getInt(ConfigKey.DELAY_RENAME_MIN);
+                final int sleepMax = config.getInt(ConfigKey.DELAY_RENAME_MAX);
                 Utilities.sleepRandom(sleepMin, sleepMax);
             }
         };
@@ -337,7 +347,7 @@ public class PokemonTab extends JPanel {
 
         try {
             go.getInventories().updateInventories(true);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);
@@ -382,10 +392,10 @@ public class PokemonTab extends JPanel {
 
             try {
                 final int candies = poke.getCandy();
-                final ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result transferResult = poke.transferPokemon();
+                final ReleasePokemonResponse.Result transferResult = poke.transferPokemon();
 
-                if (transferResult == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
-                    int newCandies = poke.getCandy();
+                if (transferResult == ReleasePokemonResponse.Result.SUCCESS) {
+                    final int newCandies = poke.getCandy();
                     System.out.println(String.format(
                             "Transferring %s, Result: Success!",
                             PokeHandler.getLocalPokeName(poke)));
@@ -408,7 +418,7 @@ public class PokemonTab extends JPanel {
                     final int sleepMax = config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
                     Utilities.sleepRandom(sleepMin, sleepMax);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 err.increment();
                 System.out.println(String.format(
                         "Error transferring %s! %s",
@@ -418,7 +428,7 @@ public class PokemonTab extends JPanel {
         });
         try {
             go.getInventories().updateInventories(true);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);
@@ -436,7 +446,7 @@ public class PokemonTab extends JPanel {
             return;
         }
 
-        MutableInt err = new MutableInt(),
+        final MutableInt err = new MutableInt(),
                 skipped = new MutableInt(),
                 success = new MutableInt(),
                 total = new MutableInt(1);
@@ -458,10 +468,10 @@ public class PokemonTab extends JPanel {
             }
 
             try {
-                int candies = poke.getCandy();
-                int candiesToEvolve = poke.getCandiesToEvolve();
-                int cp = poke.getCp();
-                int hp = poke.getMaxStamina();
+                final int candies = poke.getCandy();
+                final int candiesToEvolve = poke.getCandiesToEvolve();
+                final int cp = poke.getCp();
+                final int hp = poke.getMaxStamina();
                 boolean afterTransfer = false;
 
                 // Check if user has enough candy, otherwise we don't
@@ -476,12 +486,12 @@ public class PokemonTab extends JPanel {
                     return;
                 }
 
-                EvolutionResult evolutionResultWrapper = poke.evolve();
+                final EvolutionResult evolutionResultWrapper = poke.evolve();
                 if (evolutionResultWrapper.isSuccessful()) {
-                    Pokemon newPoke = evolutionResultWrapper.getEvolvedPokemon();
+                    final Pokemon newPoke = evolutionResultWrapper.getEvolvedPokemon();
                     int newCandies = newPoke.getCandy();
-                    int newCp = newPoke.getCp();
-                    int newHp = newPoke.getStamina();
+                    final int newCp = newPoke.getCp();
+                    final int newHp = newPoke.getStamina();
                     int candyRefund = 1;
                     System.out.println(String.format(
                             "Evolving %s. Evolve result: %s",
@@ -503,14 +513,14 @@ public class PokemonTab extends JPanel {
                                     newHp, (newHp - hp)));
                         } else {
                             // Sleep before transferring
-                            int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
-                            int sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
+                            final int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
+                            final int sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
                             Utilities.sleepRandom(sleepMin, sleepMax);
 
-                            ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result result = newPoke
+                            final ReleasePokemonResponse.Result result = newPoke
                                     .transferPokemon();
                             afterTransfer = true;
-                            if (result == ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result.SUCCESS) {
+                            if (result == ReleasePokemonResponse.Result.SUCCESS) {
                                 newCandies = newPoke.getCandy();
                                 candyRefund++;
                             }
@@ -558,7 +568,7 @@ public class PokemonTab extends JPanel {
                     }
                     Utilities.sleepRandom(sleepMin, sleepMax);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 err.increment();
                 System.out.println(String.format(
                         "Error evolving %s! %s",
@@ -568,7 +578,7 @@ public class PokemonTab extends JPanel {
         });
         try {
             go.getInventories().updateInventories(true);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);
@@ -588,7 +598,7 @@ public class PokemonTab extends JPanel {
             return;
         }
 
-        MutableInt err = new MutableInt(),
+        final MutableInt err = new MutableInt(),
                 skipped = new MutableInt(),
                 success = new MutableInt(),
                 total = new MutableInt(1);
@@ -608,12 +618,12 @@ public class PokemonTab extends JPanel {
                     return;
                 }
 
-                int stardust = go.getPlayerProfile().getCurrency(Currency.STARDUST);
-                int candies = poke.getCandy();
-                int cp = poke.getCp();
-                int hp = poke.getMaxStamina();
-                int stardustToPowerUp = poke.getStardustCostsForPowerup();
-                int candiesToPowerUp = poke.getCandyCostsForPowerup();
+                final int stardust = go.getPlayerProfile().getCurrency(Currency.STARDUST);
+                final int candies = poke.getCandy();
+                final int cp = poke.getCp();
+                final int hp = poke.getMaxStamina();
+                final int stardustToPowerUp = poke.getStardustCostsForPowerup();
+                final int candiesToPowerUp = poke.getCandyCostsForPowerup();
 
                 // Check if user has enough candy and stardust,
                 // otherwise we don't need to call server
@@ -629,12 +639,12 @@ public class PokemonTab extends JPanel {
                     return;
                 }
 
-                UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result upgradeResult = poke.powerUp();
+                final UpgradePokemonResponse.Result upgradeResult = poke.powerUp();
                 go.getPlayerProfile().updateProfile();
-                if (upgradeResult == UpgradePokemonResponseOuterClass.UpgradePokemonResponse.Result.SUCCESS) {
-                    int newCandies = poke.getCandy();
-                    int newCp = poke.getCp();
-                    int newHp = poke.getMaxStamina();
+                if (upgradeResult == UpgradePokemonResponse.Result.SUCCESS) {
+                    final int newCandies = poke.getCandy();
+                    final int newCp = poke.getCp();
+                    final int newHp = poke.getMaxStamina();
                     System.out.println(String.format(
                             "Powering Up %s, Result: Success!",
                             PokeHandler.getLocalPokeName(poke)));
@@ -662,11 +672,11 @@ public class PokemonTab extends JPanel {
 
                 // If not last element, sleep until the next one
                 if (!selection.get(selection.size() - 1).equals(poke)) {
-                    int sleepMin = config.getInt(ConfigKey.DELAY_POWERUP_MIN);
-                    int sleepMax = config.getInt(ConfigKey.DELAY_POWERUP_MAX);
+                    final int sleepMin = config.getInt(ConfigKey.DELAY_POWERUP_MIN);
+                    final int sleepMax = config.getInt(ConfigKey.DELAY_POWERUP_MAX);
                     Utilities.sleepRandom(sleepMin, sleepMax);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 err.increment();
                 System.out.println(String.format(
                         "Error powering up %s! %s",
@@ -677,7 +687,7 @@ public class PokemonTab extends JPanel {
         try {
             go.getInventories().updateInventories(true);
             PokemonGoMainWindow.window.refreshTitle();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);
@@ -696,7 +706,7 @@ public class PokemonTab extends JPanel {
             return;
         }
 
-        MutableInt err = new MutableInt(),
+        final MutableInt err = new MutableInt(),
                 skipped = new MutableInt(),
                 success = new MutableInt(),
                 total = new MutableInt(1);
@@ -708,7 +718,7 @@ public class PokemonTab extends JPanel {
                         total.getValue(),
                         selection.size()));
                 total.increment();
-                SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result favoriteResult = poke
+                final SetFavoritePokemonResponse.Result favoriteResult = poke
                         .setFavoritePokemon(!poke.isFavorite());
                 System.out.println(String.format(
                         "Attempting to set favorite for %s to %b...",
@@ -716,7 +726,7 @@ public class PokemonTab extends JPanel {
                         !poke.isFavorite()));
                 go.getPlayerProfile().updateProfile();
 
-                if (favoriteResult == SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse.Result.SUCCESS) {
+                if (favoriteResult == SetFavoritePokemonResponse.Result.SUCCESS) {
                     System.out.println(String.format(
                             "Favorite for %s set to %b, Result: Seccess!",
                             PokeHandler.getLocalPokeName(poke),
@@ -732,11 +742,11 @@ public class PokemonTab extends JPanel {
 
                 // If not last element, sleep until the next one
                 if (!selection.get(selection.size() - 1).equals(poke)) {
-                    int sleepMin = config.getInt(ConfigKey.DELAY_FAVORITE_MIN);
-                    int sleepMax = config.getInt(ConfigKey.DELAY_FAVORITE_MAX);
+                    final int sleepMin = config.getInt(ConfigKey.DELAY_FAVORITE_MIN);
+                    final int sleepMax = config.getInt(ConfigKey.DELAY_FAVORITE_MAX);
                     Utilities.sleepRandom(sleepMin, sleepMax);
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 err.increment();
                 System.out.println(String.format(
                         "Error toggling favorite for %s! %s",
@@ -746,7 +756,7 @@ public class PokemonTab extends JPanel {
         });
         try {
             PokemonGoMainWindow.window.refreshTitle();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshPkmn);
@@ -760,7 +770,7 @@ public class PokemonTab extends JPanel {
             return;
         }
 
-        double ivLessThan = Double.parseDouble(ivTransfer.getText());
+        final double ivLessThan = Double.parseDouble(ivTransfer.getText());
         if (ivLessThan > 100 || ivLessThan < 0) {
             System.out.println("Please select a valid IV value (0-100)");
             return;
@@ -769,7 +779,7 @@ public class PokemonTab extends JPanel {
         System.out.println("Selecting Pokemon with IV less than: " + ivTransfer.getText());
 
         for (int i = 0; i < pt.getRowCount(); i++) {
-            double pIv = Double.parseDouble((String) pt.getValueAt(i, 3));
+            final double pIv = Double.parseDouble((String) pt.getValueAt(i, 3));
             if (pIv < ivLessThan) {
                 pt.getSelectionModel().addSelectionInterval(i, i);
             }
@@ -806,7 +816,7 @@ public class PokemonTab extends JPanel {
     private boolean confirmOperation(BatchOperation operation, ArrayList<Pokemon> pokes) {
         JPanel panel = buildPanelForOperation(operation, pokes);
 
-        int response = JOptionPane.showConfirmDialog(null, panel,
+        final int response = JOptionPane.showConfirmDialog(null, panel,
                 String.format(
                         "Please confirm %s of %d Pokémon",
                         operation,
@@ -831,7 +841,7 @@ public class PokemonTab extends JPanel {
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         innerPanel.setAlignmentX(CENTER_ALIGNMENT);
 
-        JScrollPane scroll = new JScrollPane(innerPanel);
+        final JScrollPane scroll = new JScrollPane(innerPanel);
         scroll.setAlignmentX(CENTER_ALIGNMENT);
 
         // Auto-height? Resizable? Haha. Funny joke.
@@ -839,7 +849,7 @@ public class PokemonTab extends JPanel {
         // So lets get dirty.
         // We take 20 px for each row, 5 px buffer, and cap that at may 400
         // pixel.
-        int height = Math.min(400, pokes.size() * 20 + 5);
+        final int height = Math.min(400, pokes.size() * 20 + 5);
         panel.setPreferredSize(new Dimension(500, height));
 
         pokes.forEach(p -> {
@@ -947,7 +957,7 @@ public class PokemonTab extends JPanel {
                     try {
                         final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
                         familyName = PokeHandler.getLocalPokeName(familyPokemonId.getNumber());
-                    } catch (IllegalArgumentException e) {
+                    } catch (final IllegalArgumentException e) {
                         familyName = poke.getPokemonFamily().toString();
                     }
                 }
@@ -964,7 +974,7 @@ public class PokemonTab extends JPanel {
                 searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
                         .replaceAll("ITEM_", "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll(StringLiterals.SPACE, "").toLowerCase();
 
-                for (String s : terms) {
+                for (final String s : terms) {
                     if (searchme.contains(s)) {
                         pokes.add(poke);
                         // Break, so that a Pokémon isn't added twice even if it
@@ -976,7 +986,7 @@ public class PokemonTab extends JPanel {
             pt.constructNewTableModel(("".equals(search) || "searchpokémon...".equals(search)
                     ? go.getInventories().getPokebank().getPokemons() : pokes));
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
