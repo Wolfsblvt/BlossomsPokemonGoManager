@@ -90,6 +90,7 @@ public class PokemonTable extends JTable {
 
         final TableRowSorter<TableModel> trs = new TableRowSorter<>(ptm);
         final Comparator<Integer> cInt = Integer::compareTo;
+        final Comparator<Float> cFloat = Float::compareTo;
         final Comparator<Double> cDouble = Double::compareTo;
         final Comparator<String> cDate = (date1, date2) -> DateHelper.fromString(date1)
                 .compareTo(DateHelper.fromString(date2));
@@ -110,7 +111,7 @@ public class PokemonTable extends JTable {
         };
         trs.setComparator(0, cInt);
         trs.setComparator(3, cPercentageWithTwoCharacters);
-        trs.setComparator(4, cDouble);
+        trs.setComparator(4, cFloat);
         trs.setComparator(5, cInt);
         trs.setComparator(6, cInt);
         trs.setComparator(7, cInt);
