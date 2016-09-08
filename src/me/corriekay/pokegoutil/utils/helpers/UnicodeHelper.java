@@ -45,13 +45,16 @@ public enum UnicodeHelper {
 	private int hexaCode;
 	private String identifier;
 
-	UnicodeHelper(int hexaCode, String identifier) {
-		this.hexaCode = hexaCode;
-		this.identifier = identifier;
+	/** Default constructor.
+	 * @param paramHexaCode
+	 * @param paramIdentifier
+	 */
+	UnicodeHelper(int paramHexaCode, String paramIdentifier) {
+		this.hexaCode = paramHexaCode;
+		this.identifier = paramIdentifier;
 	}
 
-	/** 
-	 * Method to get Unicode character based on String
+	/** Method to get Unicode character based on String.
 	 * @param identifier String to identify the Unicode Character that should be returned
 	 * @return unicode character in String
 	 */
