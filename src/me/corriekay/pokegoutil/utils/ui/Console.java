@@ -3,9 +3,12 @@ package me.corriekay.pokegoutil.utils.ui;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.*;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
 import java.util.ArrayDeque;
 import java.util.Iterator;
 
@@ -44,10 +47,22 @@ public class Console extends JFrame {
             tf.setText("");
         });
 
+        setDefaultCharset("UTF8");
+
         ConsolePrintStream cps = new ConsolePrintStream();
         System.setOut(cps);
         System.setErr(cps);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
+
+    public static void setDefaultCharset(final String p_charset) {
+        try {
+            final Field charset = Charset.class.getDeclaredField("defaultCharset");
+            charset.setAccessible(true);
+            charset.set(null, Charset.forName(p_charset));
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+            System.out.println(ex.toString());
+        }
     }
 
     public void clearAllLines() {
