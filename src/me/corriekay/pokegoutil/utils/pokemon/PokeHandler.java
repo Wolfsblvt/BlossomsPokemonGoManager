@@ -13,6 +13,8 @@ import com.pokegoapi.util.PokeNames;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.helpers.UnicodeHelper;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -280,6 +282,24 @@ public class PokeHandler {
                 return String.valueOf(p.getIndividualStamina());
             }
         },
+        IV_ATT_UNI("IV Attack Unicode (⓯  for 15)") {
+            @Override
+            public String get(Pokemon p) {
+                return UnicodeHelper.get(String.valueOf(p.getIndividualAttack()));
+            }
+        },
+        IV_DEF_UNI("IV Defense Unicode (⓯  for 15)") {
+            @Override
+            public String get(Pokemon p) {
+                return UnicodeHelper.get(String.valueOf(p.getIndividualDefense()));
+            }
+        },
+        IV_STAM_UNI("IV Stamina Unicode (⓯  for 15)") {
+            @Override
+            public String get(Pokemon p) {
+                return UnicodeHelper.get(String.valueOf(p.getIndividualStamina()));
+            }
+        },
         DUEL_ABILITY_RATING("Duel Ability in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
@@ -348,6 +368,20 @@ public class PokeHandler {
                 return hasStab ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
+        MOVE_TYPE_1_UNI("Move 1 abbreviated (Eletric = ⚡)") {
+            @Override
+            public String get(Pokemon p) {
+                String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
+                return UnicodeHelper.get(type);
+            }
+        },
+        MOVE_TYPE_2_UNI("Move 2 abbreviated (Eletric = ⚡)") {
+            @Override
+            public String get(Pokemon p) {
+                String type = PokemonMoveMetaRegistry.getMeta(p.getMove2()).getType().toString();
+                return UnicodeHelper.get(type);
+            }
+        },
         DPS_1("Damage per second for Move 1") {
             @Override
             public String get(Pokemon p) {
@@ -384,6 +418,20 @@ public class PokeHandler {
             public String get(Pokemon p) {
                 String type = p.getMeta().getType2().toString();
                 return abbreviateType(type);
+            }
+        },
+        TYPE_1_UNI("Pokémon Type 1 Unicode (Eletric = ⚡)") {
+            @Override
+            public String get(Pokemon p) {
+                String type = p.getMeta().getType1().toString();
+                return UnicodeHelper.get(type);
+            }
+        },
+        TYPE_2_UNI("Pokémon Type 2 Unicode (Eletric = ⚡)") {
+            @Override
+            public String get(Pokemon p) {
+                String type = p.getMeta().getType2().toString();
+                return UnicodeHelper.get(type);
             }
         },
         ID("Pokédex Id") {
