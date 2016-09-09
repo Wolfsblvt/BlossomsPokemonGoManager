@@ -85,14 +85,12 @@ public class ComparableVersion
      */
     private static class IntegerItem
             implements Item {
-        private static final BigInteger BIG_INTEGER_ZERO = new BigInteger("0");
-
         private final BigInteger value;
 
         public static final IntegerItem ZERO = new IntegerItem();
 
         private IntegerItem() {
-            this.value = BIG_INTEGER_ZERO;
+            this.value = BigInteger.ZERO;
         }
 
         public IntegerItem(String str) {
@@ -104,12 +102,12 @@ public class ComparableVersion
         }
 
         public boolean isNull() {
-            return BIG_INTEGER_ZERO.equals(value);
+            return BigInteger.ZERO.equals(value);
         }
 
         public int compareTo(Item item) {
             if (item == null) {
-                return BIG_INTEGER_ZERO.equals(value) ? 0 : 1; // 1.0 == 1, 1.1 > 1
+                return BigInteger.ZERO.equals(value) ? 0 : 1; // 1.0 == 1, 1.1 > 1
             }
 
             switch (item.getType()) {
