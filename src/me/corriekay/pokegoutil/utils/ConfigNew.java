@@ -134,7 +134,7 @@ public final class ConfigNew {
             final FindResult res = findNode(configKey.keyName, false);
             return res.getNode().getJSONObject(res.getName());
         } catch (final JSONException ignored) {
-            System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
+            //System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setJSONObject(configKey, defaultValue);
             return defaultValue;
         }
@@ -180,7 +180,7 @@ public final class ConfigNew {
             final FindResult res = findNode(configKey.keyName, false);
             return res.getNode().getBoolean(res.getName());
         } catch (final JSONException ignored) {
-            System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
+            //System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setBool(configKey, defaultValue);
             return defaultValue;
         }
@@ -229,7 +229,7 @@ public final class ConfigNew {
             final String value = res.getNode().getString(res.getName());
             return StringEscapeUtils.unescapeJson(value);
         } catch (final JSONException ignored) {
-            System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
+            //System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setString(configKey, defaultValue);
             return defaultValue;
         }
@@ -276,7 +276,7 @@ public final class ConfigNew {
             final FindResult res = findNode(configKey.keyName, true);
             return res.getNode().getInt(res.getName());
         } catch (final JSONException ignored) {
-            System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
+            //System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setInt(configKey, defaultValue);
             return defaultValue;
         }
@@ -323,7 +323,7 @@ public final class ConfigNew {
             final FindResult res = findNode(configKey.keyName, true);
             return res.getNode().getDouble(res.getName());
         } catch (final JSONException ignored) {
-            System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
+            //System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
             setDouble(configKey, defaultValue);
             return defaultValue;
         }
