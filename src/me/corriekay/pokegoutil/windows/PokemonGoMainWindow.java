@@ -11,6 +11,7 @@ import me.corriekay.pokegoutil.utils.helpers.FileHelper;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.Console;
+import me.corriekay.pokegoutil.utils.version.Updater;
 
 import javax.swing.*;
 import java.awt.*;
@@ -76,7 +77,7 @@ public class PokemonGoMainWindow extends JFrame {
         int posx = config.getInt(ConfigKey.WINDOW_POS_X, pt.x);
         int posy = config.getInt(ConfigKey.WINDOW_POS_Y, pt.y);
         setLocation(posx, posy);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         PokemonTab pokemonTab = new PokemonTab(go);
         setJMenuBar(new MenuBar(go, pokemonTab));
@@ -89,6 +90,10 @@ public class PokemonGoMainWindow extends JFrame {
         add(console.jsp, BorderLayout.SOUTH);
 
         window = this;
+
+        // Check for new version
+        Updater updater = Updater.getUpdater();
+        updater.checkForNewVersion();
     }
 
     public PokemonGo getPoGo() {
