@@ -14,7 +14,9 @@ import org.junit.runners.Parameterized.Parameters;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 
-/** Test for LoginData model. */
+/**
+ * Test for LoginData model.
+ */
 @RunWith(value = Parameterized.class)
 public class LoginDataTest {
 
@@ -51,11 +53,14 @@ public class LoginDataTest {
         return list;
     }
 
-    /** Instantiate a LoginDataTest using the parameters from data().
+    /**
+     * Instantiate a LoginDataTest using the parameters from data().
+     *
      * @param loginData login data to test
      * @param expectedLoginType login type expected
      * @param expectedPtcIsValid expected ptc is valid
-     * @param expectedGoogleIsValid expected google is valid */
+     * @param expectedGoogleIsValid expected google is valid
+     */
     public LoginDataTest(final LoginData loginData, final LoginType expectedLoginType, final boolean expectedPtcIsValid, final boolean expectedGoogleIsValid) {
         this.loginData = loginData;
         this.expectedLoginType = expectedLoginType;
