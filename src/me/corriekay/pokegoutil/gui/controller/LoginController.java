@@ -50,7 +50,7 @@ public class LoginController extends BaseController<StackPane> {
 
     public LoginController() {
         super();
-        initializeBaseController();
+        initializeController();
     }
 
     /**

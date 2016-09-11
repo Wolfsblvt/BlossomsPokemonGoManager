@@ -31,7 +31,7 @@ public abstract class BaseController<T extends Pane> {
     private String title;
 
     /**
-     * BaseController constructor. Call initialize() to initialize controller.
+     * BaseController constructor. Call initializeController() to initialize controller.
      */
     public BaseController() {
     }
@@ -63,7 +63,7 @@ public abstract class BaseController<T extends Pane> {
      * Instantiate the controller and set all the settings. Sets the primary stage to this controller.<br>
      * Not done in constructor due to variables in parent class being initialize only after super() call.
      */
-    public void initializeBaseController() {
+    public void initializeController() {
         final FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(getFxmlLayout()));
         fxmlLoader.setController(this);
         try {
