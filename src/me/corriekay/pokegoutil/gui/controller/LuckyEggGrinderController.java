@@ -2,24 +2,24 @@ package me.corriekay.pokegoutil.gui.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.io.IOException;
-import java.net.URL;
+/**
+ * The LuckyEggGrinderController is use to handle all lucky egg related actions.
+ */
+public class LuckyEggGrinderController extends BaseController<AnchorPane> {
 
-public class LuckyEggGrinderController extends AnchorPane {
-
-    private final String fxmlLayout = "layout/LuckyEggGrinder.fxml";
-    private final URL icon;
-    private ClassLoader classLoader = getClass().getClassLoader();
-    private Scene rootScene;
     @FXML
     private BorderPane luckyEggGrinderPane;
 
@@ -114,41 +114,40 @@ public class LuckyEggGrinderController extends AnchorPane {
     private CheckBox enableOptionsChkBox;
 
     public LuckyEggGrinderController() {
-        FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
-        fxmlLoader.setController(this);
-        try {
-            fxmlLoader.load();
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
-        rootScene = new Scene(fxmlLoader.getRoot());
-        Stage stage = new Stage();
-        icon = classLoader.getResource("icon/PokeBall-icon.png");
-        stage.getIcons().add(new Image(icon.toExternalForm()));
-        stage.setTitle("LuckyEggGrinder");
-        stage.initStyle(StageStyle.UTILITY);
-        stage.setResizable(false);
-        stage.setScene(rootScene);
-        stage.show();
+        super();
+        initializeController();
     }
 
-    @FXML
-    void onEnableOptions(ActionEvent event) {
-
-    }
-
-    @FXML
-    void onNoTransferThanIV(ActionEvent event) {
-
-    }
-
-    @FXML
-    void onTransferFav(ActionEvent event) {
-
+    @Override
+    public String getFxmlLayout() {
+        return "layout/LuckyEggGrinder.fxml";
     }
 
     @FXML
     void initialize() {
 
+    }
+
+    @FXML
+    void onEnableOptions(final ActionEvent event) {
+
+    }
+
+    @FXML
+    void onNoTransferThanIV(final ActionEvent event) {
+
+    }
+
+    @FXML
+    void onTransferFav(final ActionEvent event) {
+
+    }
+
+    @Override
+    public void setGuiControllerSettings() {
+        guiControllerSettings.setTitle("LuckyEggGrinder");
+        guiControllerSettings.setStageStyle(StageStyle.UTILITY);
+        guiControllerSettings.setResizeable(false);
+        guiControllerSettings.setChangeToPrimaryStage(false);
     }
 }

@@ -82,7 +82,12 @@ public abstract class BaseController<T extends Pane> {
         stage.setMaximized(guiControllerSettings.isMaximized());
         stage.initStyle(guiControllerSettings.getStageStyle());
         stage.setScene(rootScene);
-        BlossomsPoGoManager.setNewPrimaryStage(stage);
+        if (guiControllerSettings.isChangeToPrimaryStage()) {
+            BlossomsPoGoManager.setNewPrimaryStage(stage);
+        } else {
+            stage.show();
+        }
+
     }
 
     /**

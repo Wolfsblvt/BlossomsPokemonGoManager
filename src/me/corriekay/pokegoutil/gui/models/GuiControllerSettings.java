@@ -10,6 +10,7 @@ public class GuiControllerSettings {
     private boolean resizeable;
     private boolean maximized;
     private StageStyle stageStyle;
+    private boolean changeToPrimaryStage;
 
     /**
      * Instantiate a GuiControllerSettings with the default value.
@@ -19,6 +20,7 @@ public class GuiControllerSettings {
         resizeable = true;
         maximized = false;
         stageStyle = StageStyle.DECORATED;
+        setChangeToPrimaryStage(true);
     }
 
     /**
@@ -77,7 +79,7 @@ public class GuiControllerSettings {
 
     /**
      * Set the stage style of the controller
-     * 
+     *
      * @param stageStyle stage style of the controller
      */
     public void setStageStyle(final StageStyle stageStyle) {
@@ -91,5 +93,23 @@ public class GuiControllerSettings {
      */
     public void setTitle(final String title) {
         this.title = title;
+    }
+
+    /**
+     * Get if controller is to change to primary stage
+     *
+     * @return change to primary stage
+     */
+    public boolean isChangeToPrimaryStage() {
+        return changeToPrimaryStage;
+    }
+
+    /**
+     * Set if controller is to change to primary stage
+     * 
+     * @param changeToPrimaryStage change to primary stage
+     */
+    public void setChangeToPrimaryStage(final boolean changeToPrimaryStage) {
+        this.changeToPrimaryStage = changeToPrimaryStage;
     }
 }
