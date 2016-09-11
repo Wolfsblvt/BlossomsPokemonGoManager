@@ -26,10 +26,20 @@ public class BlossomsPoGoManager extends Application {
         launch(args);
     }
 
+    /**
+     * Get the current primary stage.
+     *
+     * @return current primary stage
+     */
     public static Stage getPrimaryStage() {
         return sPrimaryStage;
     }
 
+    /**
+     * Set the new primary stage and hide the previous.
+     *
+     * @param stage new primary stage
+     */
     public static void setNewPrimaryStage(final Stage stage) {
         if (sPrimaryStage != null && sPrimaryStage.isShowing()) {
             sPrimaryStage.hide();

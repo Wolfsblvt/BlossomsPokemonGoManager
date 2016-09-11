@@ -35,9 +35,8 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
  * The PokemonTableController is use to display the pokemons in a grid.
  */
 public class PokemonTableController extends BaseController<GridPane> {
+    private static final int TABLE_HEIGHT_PADDING = 30;
     private static final String DASH = "-";
-    private final String fxmlLayout = "layout/PokemonTable.fxml";
-    private final ClassLoader classLoader = getClass().getClassLoader();
 
     @FXML
     private ScrollPane scrollPane;
@@ -241,7 +240,7 @@ public class PokemonTableController extends BaseController<GridPane> {
         pokemonTableView.setItems(PokemonBagManager.getAllPokemon());
         pokemonTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         pokemonTableView.prefHeightProperty().bind(Bindings.size(pokemonTableView.getItems())
-                .multiply(pokemonTableView.getFixedCellSize()).add(30));
+                .multiply(pokemonTableView.getFixedCellSize()).add(TABLE_HEIGHT_PADDING));
         pokemonTableView.getColumns().addListener(
                 (ListChangeListener<? super TableColumn<PokemonModel, ?>>) c -> {
                     saveOrderToConfig();
@@ -252,7 +251,7 @@ public class PokemonTableController extends BaseController<GridPane> {
     @Override
     public void initializeController() {
         final FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(classLoader.getResource(fxmlLayout));
+        loader.setLocation(classLoader.getResource(getFxmlLayout()));
         loader.setRoot(this);
         loader.setController(this);
         loader.setClassLoader(classLoader);

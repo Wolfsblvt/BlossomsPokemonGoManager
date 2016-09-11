@@ -17,7 +17,7 @@ import me.corriekay.pokegoutil.gui.models.GuiControllerSettings;
  * @param <T> layout class to be used in the controller
  */
 public abstract class BaseController<T extends Pane> {
-    private static final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    public static final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
     private static final String iconPath = "icon/PokeBall-icon.png";
 
     private static Image iconImage;

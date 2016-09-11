@@ -204,17 +204,17 @@ public class PokeHandler {
             public String get(final Pokemon p) {
                 final PokemonFamilyId familyId = p.getPokemonFamily();
                 PokemonId highestFamilyId = PokemonMetaRegistry.getHighestForFamily(familyId);
-                final int iv_attack = p.getIndividualAttack();
-                final int iv_defense = p.getIndividualDefense();
-                final int iv_stamina = p.getIndividualStamina();
+                final int ivAttack = p.getIndividualAttack();
+                final int ivDefense = p.getIndividualDefense();
+                final int ivStamina = p.getIndividualStamina();
                 final float level = p.getLevel();
                 if (familyId.getNumber() == PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
                     if (p.getPokemonId().getNumber() == PokemonId.EEVEE.getNumber()) {
                         final List<PokemonMeta> eeveeEvolutions = PokemonUtils.getEeveeEvolutions();
                         if (eeveeEvolutions != null) {
                             highestFamilyId = PokemonId.forNumber(
-                                    Collections.max(eeveeEvolutions, PokemonUtils.getCpComperator(p))
-                                            .getNumber());
+                                    Collections.max(eeveeEvolutions, PokemonUtils.getEeveeCpComperator(p))
+                                    .getNumber());
                         }
                     } else {
                         // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
@@ -227,9 +227,9 @@ public class PokeHandler {
                  * won't hurt performance.
                  */
                 final PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
-                final int attack = highestFamilyMeta.getBaseAttack() + iv_attack;
-                final int defense = highestFamilyMeta.getBaseDefense() + iv_defense;
-                final int stamina = highestFamilyMeta.getBaseStamina() + iv_stamina;
+                final int attack = highestFamilyMeta.getBaseAttack() + ivAttack;
+                final int defense = highestFamilyMeta.getBaseDefense() + ivDefense;
+                final int stamina = highestFamilyMeta.getBaseStamina() + ivStamina;
                 return String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, level));
             }
         },
