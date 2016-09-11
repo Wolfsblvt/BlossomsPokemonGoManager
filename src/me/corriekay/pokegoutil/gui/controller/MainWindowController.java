@@ -31,6 +31,8 @@ import me.corriekay.pokegoutil.data.managers.ProfileManager;
  */
 public class MainWindowController extends BaseController<BorderPane> {
 
+    private static final String SLASH = "/";
+
     private final AccountManager accountManager = AccountManager.getInstance();
 
     @FXML
@@ -163,12 +165,12 @@ public class MainWindowController extends BaseController<BorderPane> {
                             pp.getCurrency(PlayerProfile.Currency.STARDUST))
                             + " Stardust");
                     nbPkmInBagsLbl.setText(Integer.toString(PokemonBagManager.getNbPokemon())
-                            + "/"
+                            + SLASH
                             + Integer.toString(pp.getPlayerData().getMaxPokemonStorage())
                             + " Pokémon");
                     nbItemsBagsLbl.setText(
                             Integer.toString(InventoryManager.getInventories().getItemBag().getItemsCount())
-                            + "/"
+                            + SLASH
                             + Integer.toString(pp.getPlayerData().getMaxItemStorage())
                             + " Items");
                 } catch (LoginFailedException | RemoteServerException e) {

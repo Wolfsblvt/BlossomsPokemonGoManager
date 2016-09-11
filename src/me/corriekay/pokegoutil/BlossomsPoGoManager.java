@@ -16,6 +16,11 @@ public class BlossomsPoGoManager extends Application {
     public static final String VERSION = "v0.1.2-alpha.2";
     private static Stage sPrimaryStage;
 
+    /**
+     * Entry point of the application.
+     *
+     * @param args arguments
+     */
     public static void main(final String[] args) {
         GlobalSettingsController.setup();
         launch(args);

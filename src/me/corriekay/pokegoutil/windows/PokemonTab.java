@@ -787,6 +787,13 @@ public class PokemonTab extends JPanel {
         }
     }
 
+    /**
+     * Handles.. idk why we have this. @author Cryptic
+     *
+     * @param operation opeartion to be done
+     * @param pokes list of pokemons
+     * @return rename pattern
+     */
     private String inputOperation(final BatchOperation operation, final ArrayList<Pokemon> pokes) {
         JPanel panel;
         String message = "";

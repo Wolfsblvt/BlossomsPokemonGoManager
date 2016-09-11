@@ -36,8 +36,16 @@ public class PokemonGoMainWindow extends JFrame {
     private final JTabbedPane tab = new JTabbedPane();
     private final ConfigNew config = ConfigNew.getConfig();
 
+    private final int textAreaHeight = 150;
+
     private final GlobalSettingsController globalSettings = GlobalSettingsController.getGlobalSettingsController();
 
+    /**
+     * Instantiate a PokemonGoMainWindow instance.
+     *
+     * @param pkmngo PokemonGo instance
+     * @param smartscroll use smart scroll
+     */
     public PokemonGoMainWindow(final PokemonGo pkmngo, final boolean smartscroll) {
         super();
 
@@ -110,7 +118,7 @@ public class PokemonGoMainWindow extends JFrame {
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         jsp = new JScrollPane(textArea);
-        jsp.setPreferredSize(new Dimension(Integer.MAX_VALUE, 150));
+        jsp.setPreferredSize(new Dimension(Integer.MAX_VALUE, textAreaHeight));
         if (smartscroll) {
             new SmartScroller(jsp);
         }

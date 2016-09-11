@@ -17,10 +17,13 @@ import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
  */
 public class LogControllerTest {
 
+    private static final int numOfLines = 5;
     private JTextArea textArea;
     private final String[] testLines;
-    private static final int numOfLines = 5;
 
+    /**
+     * Instantiate a LogControllerTest and generate the testLines.
+     */
     public LogControllerTest() {
         testLines = new String[numOfLines];
         for (int i = 0; i < numOfLines; i++) {
@@ -49,6 +52,15 @@ public class LogControllerTest {
     }
 
     /**
+     * Get the array of lines in text area.
+     *
+     * @return array of lines in text area
+     */
+    private String[] getLines() {
+        return textArea.getText().split("\\r?\\n");
+    }
+
+    /**
      * Test for number of lines being trimmed when it is more than the max limit.
      */
     @Test
@@ -57,8 +69,8 @@ public class LogControllerTest {
         printLines();
 
         final int expectedLength = numOfLines;
-        final String textareaLines[] = getLines();
-        assertThat("textArea has " + expectedLength + " lines", textareaLines.length, is(expectedLength));
+        final String[] textareaLines = getLines();
+        assertThat(textAreaHas(expectedLength), textareaLines.length, is(expectedLength));
 
         for (int i = 0; i < numOfLines; i++) {
             assertThat("line contains printed text", textareaLines[i], containsString(testLines[i]));
@@ -66,7 +78,21 @@ public class LogControllerTest {
     }
 
     /**
-     * Test for test lines are captured in the text area.
+     * Test for test lines are captured in the text area in the right order.
+     */
+    @Test
+    public void linesArePrintedCorrectly() {
+        printLines();
+
+        final String textareaLines[] = getLines();
+
+        for (int i = 0; i < numOfLines; i++) {
+            assertThat("line contains printed text", textareaLines[i], containsString(testLines[i]));
+        }
+    }
+
+    /**
+     * Test for number of test lines matches number of lines in text area.
      */
     @Test
     public void linesIsAddedToTextArea() {
@@ -74,10 +100,7 @@ public class LogControllerTest {
 
         final int expectedLength = numOfLines;
         final String textareaLines[] = getLines();
-        assertThat("textArea has " + expectedLength + " lines", textareaLines.length, is(expectedLength));
-        for (int i = 0; i < numOfLines; i++) {
-            assertThat("line contains printed text", textareaLines[i], containsString(testLines[i]));
-        }
+        assertThat(textAreaHas(expectedLength), textareaLines.length, is(expectedLength));
     }
 
     /**
@@ -90,11 +113,12 @@ public class LogControllerTest {
     }
 
     /**
-     * Get the array of lines in text area.
+     * Helper method for assert reason.
      *
-     * @return array of lines in text area
+     * @param numOfLines number of lines
+     * @return text area has ... lines
      */
-    private String[] getLines() {
-        return textArea.getText().split("\\r?\\n");
+    private String textAreaHas(final int numOfLines) {
+        return "textArea has " + numOfLines + " lines";
     }
 }

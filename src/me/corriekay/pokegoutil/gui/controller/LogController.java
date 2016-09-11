@@ -55,7 +55,7 @@ public class LogController {
 
     /**
      * Get the text area used to append logs.
-     * 
+     *
      * @return text area used to append logs to
      */
     public JTextArea getTextArea() {
@@ -71,6 +71,11 @@ public class LogController {
         this.maxLines = maxLines + 1;
     }
 
+    /**
+     * Get the text area used to append logs to.
+     *
+     * @param textArea text area used to append logs to
+     */
     public void setTextArea(final JTextArea textArea) {
         this.textArea = textArea;
     }
