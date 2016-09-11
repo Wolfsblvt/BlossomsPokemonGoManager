@@ -52,6 +52,9 @@ public final class AccountController {
         return instance;
     }
 
+    /**
+     * Does pre-initializiton before using of the class
+     */
     public static void initialize() {
         if (sIsInit) {
             return;

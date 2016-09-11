@@ -71,10 +71,6 @@ public class LogControllerTest {
         final int expectedLength = numOfLines;
         final String[] textareaLines = getLines();
         assertThat(textAreaHas(expectedLength), textareaLines.length, is(expectedLength));
-
-        for (int i = 0; i < numOfLines; i++) {
-            assertThat("line contains printed text", textareaLines[i], containsString(testLines[i]));
-        }
     }
 
     /**
@@ -84,7 +80,7 @@ public class LogControllerTest {
     public void linesArePrintedCorrectly() {
         printLines();
 
-        final String textareaLines[] = getLines();
+        final String[] textareaLines = getLines();
 
         for (int i = 0; i < numOfLines; i++) {
             assertThat("line contains printed text", textareaLines[i], containsString(testLines[i]));

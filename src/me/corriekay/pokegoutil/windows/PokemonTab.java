@@ -790,7 +790,7 @@ public class PokemonTab extends JPanel {
     /**
      * Handles.. idk why we have this. @author Cryptic
      *
-     * @param operation opeartion to be done
+     * @param operation operation to be done
      * @param pokes list of pokemons
      * @return rename pattern
      */
@@ -822,6 +822,13 @@ public class PokemonTab extends JPanel {
         return input;
     }
 
+    /**
+     * Prompt for confirmation before doing the operation.
+     *
+     * @param operation operation to be done
+     * @param pokes list of pokemons
+     * @return ok was selected
+     */
     private boolean confirmOperation(final BatchOperation operation, final ArrayList<Pokemon> pokes) {
         final JPanel panel = buildPanelForOperation(operation, pokes);
 

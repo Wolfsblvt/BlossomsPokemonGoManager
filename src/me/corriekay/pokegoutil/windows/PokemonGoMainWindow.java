@@ -36,7 +36,7 @@ public class PokemonGoMainWindow extends JFrame {
     private final JTabbedPane tab = new JTabbedPane();
     private final ConfigNew config = ConfigNew.getConfig();
 
-    private final int textAreaHeight = 150;
+    private static final int textAreaHeight = 150;
 
     private final GlobalSettingsController globalSettings = GlobalSettingsController.getGlobalSettingsController();
 
