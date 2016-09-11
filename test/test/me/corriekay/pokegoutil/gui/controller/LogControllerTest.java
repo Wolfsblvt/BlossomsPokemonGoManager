@@ -95,7 +95,7 @@ public class LogControllerTest {
         printLines();
 
         final int expectedLength = numOfLines;
-        final String textareaLines[] = getLines();
+        final String[] textareaLines = getLines();
         assertThat(textAreaHas(expectedLength), textareaLines.length, is(expectedLength));
     }
 

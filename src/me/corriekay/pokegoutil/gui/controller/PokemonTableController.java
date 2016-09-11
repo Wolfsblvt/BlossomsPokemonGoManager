@@ -35,6 +35,7 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
  * The PokemonTableController is use to display the pokemons in a grid.
  */
 public class PokemonTableController extends BaseController<GridPane> {
+    private static final String DASH = "-";
     private final String fxmlLayout = "layout/PokemonTable.fxml";
     private final ClassLoader classLoader = getClass().getClassLoader();
 
@@ -81,7 +82,7 @@ public class PokemonTableController extends BaseController<GridPane> {
         if (config == null || config.isEmpty()) {
             columnOrder.addAll(Arrays.asList(colIds));
         } else {
-            final String[] split = config.split("-");
+            final String[] split = config.split(DASH);
             for (final String s : split) {
                 columnOrder.add(colIds[Integer.valueOf(s)]);
             }
@@ -116,7 +117,7 @@ public class PokemonTableController extends BaseController<GridPane> {
     /**
      * Initialize the columns in the grid view.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void initColumns() {
         columns.clear();
 
@@ -125,106 +126,106 @@ public class PokemonTableController extends BaseController<GridPane> {
         columnOrder.forEach(c -> {
             final TableColumn<PokemonModel, Property> col = new TableColumn<>(c.getTitle());
             switch (c) {
-                case NICKNAME:
+                case NICKNAME :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().nicknameProperty());
                     break;
-                case NUMBER:
+                case NUMBER :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().numIdProperty());
                     break;
-                case SPECIES:
+                case SPECIES :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().speciesProperty());
                     break;
-                case IV:
+                case IV :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().ivProperty());
                     break;
-                case LEVEL:
+                case LEVEL :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().levelProperty());
                     break;
-                case ATTACK:
+                case ATTACK :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().atkProperty());
                     break;
-                case DEFENSE:
+                case DEFENSE :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().defProperty());
                     break;
-                case STAMINA:
+                case STAMINA :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().stamProperty());
                     break;
-                case TYPE1:
+                case TYPE1 :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().type1Property());
                     break;
-                case TYPE2:
+                case TYPE2 :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().type2Property());
                     break;
-                case MOVE1:
+                case MOVE1 :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().move1Property());
                     break;
-                case MOVE2:
+                case MOVE2 :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().move2Property());
                     break;
-                case CP:
+                case CP :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().cpProperty());
                     break;
-                case HP:
+                case HP :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().hpProperty());
                     break;
-                case MAXCPCURRENT:
+                case MAXCPCURRENT :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxCpCurrentProperty());
                     break;
-                case MAXCP:
+                case MAXCP :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxCpProperty());
                     break;
-                case MAXEVOLVEDCPCURRENT:
+                case MAXEVOLVEDCPCURRENT :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxEvolvedCpCurrentProperty());
                     break;
-                case MAXEVOLVEDCP:
+                case MAXEVOLVEDCP :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxEvolvedCpProperty());
                     break;
-                case CANDIES:
+                case CANDIES :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().candiesProperty());
                     break;
-                case CANDIES2EVOLVE:
+                case CANDIES2EVOLVE :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().candies2EvlvProperty());
                     break;
-                case STARDUST2LVL:
+                case STARDUST2LVL :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().dustToLevelProperty());
                     break;
-                case CAUGHTPOKEBALL:
+                case CAUGHTPOKEBALL :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().pokeballProperty());
                     break;
-                case CAUGHTDATE:
+                case CAUGHTDATE :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().caughtDateProperty());
                     break;
-                case FAVORITE:
+                case FAVORITE :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().isFavoriteProperty());
                     break;
-                case DUELABILITY:
+                case DUELABILITY :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().duelAbilityProperty());
                     break;
-                case GYMOFFENSE:
+                case GYMOFFENSE :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymOffenseProperty());
                     break;
-                case GYMDEFENSE:
+                case GYMDEFENSE :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymDefenseProperty());
                     break;
-                case MOVE1RATING:
+                case MOVE1RATING :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().move1RatingProperty());
                     break;
-                case MOVE2RATING:
+                case MOVE2RATING :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().move2RatingProperty());
                     break;
-                case CPEVOLVED:
+                case CPEVOLVED :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().cpEvolvedProperty());
                     break;
-                case EVOLVABLE:
+                case EVOLVABLE :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().evolvableProperty());
                     break;
-                case DUELABILITYIV:
+                case DUELABILITYIV :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().duelAbilityIvProperty());
                     break;
-                case GYMOFFENSEIV:
+                case GYMOFFENSEIV :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymOffenseIvProperty());
                     break;
-                case GYMDEFENSEIV:
+                case GYMDEFENSEIV :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymDefenseIvProperty());
                     break;
             }
@@ -239,8 +240,8 @@ public class PokemonTableController extends BaseController<GridPane> {
         pokemonTableView.getColumns().addAll(columns);
         pokemonTableView.setItems(PokemonBagManager.getAllPokemon());
         pokemonTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        pokemonTableView.prefHeightProperty()
-        .bind(Bindings.size(pokemonTableView.getItems()).multiply(pokemonTableView.getFixedCellSize()).add(30));
+        pokemonTableView.prefHeightProperty().bind(Bindings.size(pokemonTableView.getItems())
+                .multiply(pokemonTableView.getFixedCellSize()).add(30));
         pokemonTableView.getColumns().addListener(
                 (ListChangeListener<? super TableColumn<PokemonModel, ?>>) c -> {
                     saveOrderToConfig();
@@ -295,7 +296,7 @@ public class PokemonTableController extends BaseController<GridPane> {
         int i = 0;
         for (final TableColumn<PokemonModel, ?> col : getColumns()) {
             if (i != 0) {
-                columnOrder += "-";
+                columnOrder += DASH;
             }
             columnOrder += String.valueOf(ColumnId.get(col.getText()).ordinal());
             i++;

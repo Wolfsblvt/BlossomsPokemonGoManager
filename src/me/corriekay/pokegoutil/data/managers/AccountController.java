@@ -53,7 +53,7 @@ public final class AccountController {
     }
 
     /**
-     * Does pre-initializiton before using of the class
+     * Does pre-initializiton before using of the class.
      */
     public static void initialize() {
         if (sIsInit) {
