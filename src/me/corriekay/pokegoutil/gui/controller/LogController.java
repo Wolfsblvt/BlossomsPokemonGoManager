@@ -11,7 +11,7 @@ import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
 public class LogController {
 
     private final JTextArea textArea;
-    private final int defaultMaxLines = 2500;
+    private static final int defaultMaxLines = 2500;
     private int maxLines;
 
     /**
@@ -43,7 +43,7 @@ public class LogController {
     }
 
     /**
-     * Get the max number of lines text area will have
+     * Get the max number of lines text area will have.
      *
      * @return max number of lines text area will have
      */
@@ -52,7 +52,7 @@ public class LogController {
     }
 
     /**
-     * Set the max number of lines text area will have
+     * Set the max number of lines text area will have.
      *
      * @param maxLines max number of lines text area will have
      */

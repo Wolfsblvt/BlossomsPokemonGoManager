@@ -31,7 +31,7 @@ import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
 
 /**
- * This controller does the login/log off, and different account information (aka player data)
+ * This controller does the login/log off, and different account information (aka player data).
  */
 @Deprecated
 public final class AccountController {

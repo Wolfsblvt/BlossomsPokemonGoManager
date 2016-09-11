@@ -9,18 +9,28 @@ import java.io.PrintStream;
 import me.corriekay.pokegoutil.gui.controller.LogController;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 
+/**
+ * Handles writing event of the console out and err. Write and appends to the log file.
+ */
 public class ConsoleOutStream extends OutputStream {
 
-    private String logname = "console.log";
+    private String logName = "console.log";
     private final String newLine = System.getProperty("line.separator");
 
     private PrintStream filestream;
-    LogController logController;
+    private final LogController logController;
 
+    /**
+     * Instantiate a ConsoleOutStream to handle writing of logs.
+     *
+     * @param logController log controller that handles output to the gui
+     */
     public ConsoleOutStream(final LogController logController) {
+        super();
+
         this.logController = logController;
         try {
-            final File f = new File(System.getProperty("user.dir"), logname);
+            final File f = new File(System.getProperty("user.dir"), logName);
             if (!f.exists()) {
                 f.createNewFile();
             }
@@ -30,17 +40,31 @@ public class ConsoleOutStream extends OutputStream {
         }
     }
 
+    /**
+     * Formats the given message with the timestamp appended to the front.
+     *
+     * @param s the message
+     * @return format message with timestamp
+     */
     private String formatString(final String s) {
         if (s.equals(newLine)) {
             return s;
         }
-        return "[" + timestamp() + "]: " + s;
+        return String.format("[%s]: %s", timestamp(), s);
     }
 
-    public void setLogName(final String log) {
-        logname = log;
+    /**
+     * @param log sets the log file name
+     */
+    public void setLogName(final String logName) {
+        this.logName = logName;
     }
 
+    /**
+     * Helper method to return timestamp string.
+     *
+     * @return the timestamp string
+     */
     private String timestamp() {
         return DateHelper.currentTime();
     }
