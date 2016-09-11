@@ -27,9 +27,11 @@ public abstract class BaseController<T extends Pane> {
         iconImage = new Image(icon.toExternalForm());
     }
 
+    public Scene rootScene;
     private Stage stage;
     private String title;
     final public GuiControllerSettings guiControllerSettings = new GuiControllerSettings();
+
 
     /**
      * BaseController constructor. Call initializeController() to initialize controller.
@@ -71,7 +73,7 @@ public abstract class BaseController<T extends Pane> {
         } catch (final IOException exception) {
             throw new RuntimeException(exception);
         }
-        final Scene rootScene = new Scene(fxmlLoader.getRoot());
+        rootScene = new Scene(fxmlLoader.getRoot());
 
         stage = new Stage();
         stage.getIcons().add(iconImage);

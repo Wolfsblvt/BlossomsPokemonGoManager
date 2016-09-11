@@ -1,29 +1,18 @@
 package me.corriekay.pokegoutil.gui.controller;
 
+import javax.swing.SwingUtilities;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.data.managers.AccountController;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.ui.Console;
 
-import javax.swing.*;
-import java.io.IOException;
-import java.net.URL;
+public class ChooseGuiWindowController extends BaseController<Pane> {
 
-public class ChooseGuiWindowController extends Pane {
-
-    private final String fxmlLayout = "layout/ChooseGUIWindow.fxml";
-    private final URL icon;
-    private ClassLoader classLoader = getClass().getClassLoader();
-    private Scene rootScene;
     @FXML
     private Button oldGuiBtn;
 
@@ -31,22 +20,13 @@ public class ChooseGuiWindowController extends Pane {
     private Button newGuiBtn;
 
     public ChooseGuiWindowController() {
-        FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
-        fxmlLoader.setController(this);
-        try {
-            fxmlLoader.load();
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
-        rootScene = new Scene(fxmlLoader.getRoot());
-        Stage stage = new Stage();
-        stage.setScene(rootScene);
-        icon = classLoader.getResource("icon/PokeBall-icon.png");
-        stage.getIcons().add(new Image(icon.toExternalForm()));
-        stage.setTitle("Choose a GUI");
-        stage.setResizable(false);
+        super();
+        initializeController();
+    }
 
-        BlossomsPoGoManager.setNewPrimaryStage(stage);
+    @Override
+    public String getFxmlLayout() {
+        return "layout/ChooseGUIWindow.fxml";
     }
 
     @FXML
@@ -55,19 +35,19 @@ public class ChooseGuiWindowController extends Pane {
         newGuiBtn.setOnAction(this::onNewGuiBtnClicked);
     }
 
-    private void onClose(WindowEvent windowEvent) {
-        System.exit(0);
-    }
+    // private void onClose(final WindowEvent windowEvent) {
+    // System.exit(0);
+    // }
 
     @FXML
-    void onNewGuiBtnClicked(ActionEvent event) {
+    void onNewGuiBtnClicked(final ActionEvent event) {
         new LoginController();
 
         BlossomsPoGoManager.getPrimaryStage().show();
     }
 
     @FXML
-    void onOldGuiBtnClicked(ActionEvent event) {
+    void onOldGuiBtnClicked(final ActionEvent event) {
         rootScene.getWindow().hide();
         SwingUtilities.invokeLater(new Runnable() {
             private Console console;
@@ -81,5 +61,11 @@ public class ChooseGuiWindowController extends Pane {
                 AccountController.logOn();
             }
         });
+    }
+
+    @Override
+    public void setGuiControllerSettings() {
+        guiControllerSettings.setTitle("Choose a GUI");
+        guiControllerSettings.setResizeable(false);
     }
 }
