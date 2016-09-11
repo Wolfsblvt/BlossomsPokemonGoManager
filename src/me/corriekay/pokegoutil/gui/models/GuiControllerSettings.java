@@ -34,7 +34,7 @@ public class GuiControllerSettings {
     }
 
     /**
-     * Set if the controller is resizeable
+     * Set if the controller is resizeable.
      *
      * @param resizeable is controller resizeable
      */

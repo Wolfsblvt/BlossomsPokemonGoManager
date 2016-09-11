@@ -18,6 +18,9 @@ import me.corriekay.pokegoutil.data.models.LoginData;
 import me.corriekay.pokegoutil.gui.models.GuiControllerSettings;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 
+/**
+ * The LoginController is use to handle all login related actions.
+ */
 public class LoginController extends BaseController<StackPane> {
 
     private final AccountManager accountManager = AccountManager.getInstance();
@@ -49,6 +52,11 @@ public class LoginController extends BaseController<StackPane> {
         super();
     }
 
+    /**
+     * Displays an error dialog with a message.
+     *
+     * @param message the error message
+     */
     private void alertFailedLogin(final String message) {
         final Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error Login");
@@ -76,9 +84,9 @@ public class LoginController extends BaseController<StackPane> {
         configLoginData = accountManager.getLoginData();
 
         googleAuthBtn.setOnAction(this::onGoogleAuthBtnClicked);
-        ptcLoginBtn.setOnAction(this::onPTCLoginBtnClicked);
-        saveAuthChkbx.setOnAction(this::onAutoRelogChanged);
-        getTokenBtn.setOnAction(this::onGetToken);
+        ptcLoginBtn.setOnAction(this::onPtcLoginBtnClicked);
+        saveAuthChkbx.setOnAction(this::onSaveAuthChkbxChanged);
+        getTokenBtn.setOnAction(this::ongetTokenBtnClicked);
 
         final boolean hasSavedCredentials = configLoginData.hasSavedCredentials();
         saveAuthChkbx.setSelected(hasSavedCredentials);
@@ -102,19 +110,33 @@ public class LoginController extends BaseController<StackPane> {
         }
     }
 
-    private void onAutoRelogChanged(final ActionEvent actionEvent) {
+    /**
+     * Event handler for saveAuthChkbx.
+     *
+     * @param actionEvent event
+     */
+    private void onSaveAuthChkbxChanged(final ActionEvent actionEvent) {
         final boolean saveCredentials = ((CheckBox) actionEvent.getSource()).isSelected();
         accountManager.setSaveLogin(saveCredentials);
         toggleFields(saveCredentials);
     }
 
-    private void onGetToken(final ActionEvent actionEvent) {
+    /**
+     * Event handler for getTokenBtn.
+     *
+     * @param actionEvent event
+     */
+    private void ongetTokenBtnClicked(final ActionEvent actionEvent) {
         tokenField.setDisable(false);
         Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
     }
 
-    @FXML
-    void onGoogleAuthBtnClicked(final ActionEvent event) {
+    /**
+     * Event handler for googleAuthBtn.
+     *
+     * @param event event
+     */
+    private void onGoogleAuthBtnClicked(final ActionEvent event) {
         final LoginData loginData = new LoginData();
 
         if (configLoginData.hasToken()) {
@@ -128,8 +150,12 @@ public class LoginController extends BaseController<StackPane> {
         tryLogin(loginData);
     }
 
-    @FXML
-    void onPTCLoginBtnClicked(final ActionEvent event) {
+    /**
+     * Event handler for ptcLoginBtn.
+     *
+     * @param event event
+     */
+    private void onPtcLoginBtnClicked(final ActionEvent event) {
         final LoginData loginData = new LoginData();
 
         loginData.setUsername(usernameField.getText());
@@ -144,6 +170,11 @@ public class LoginController extends BaseController<StackPane> {
         BlossomsPoGoManager.getPrimaryStage().show();
     }
 
+    /**
+     * Handle enabling and disabling of gui if credentials are saved.
+     *
+     * @param save save credentials
+     */
     private void toggleFields(final boolean save) {
         if (usernameField.getText().isEmpty() || !save) {
             usernameField.setDisable(false);
@@ -166,17 +197,18 @@ public class LoginController extends BaseController<StackPane> {
         getTokenBtn.setDisable(false);
     }
 
+    /**
+     * Try to login into pokemon go using the provided login credentials.
+     *
+     * @param loginData login credentials
+     */
     private void tryLogin(final LoginData loginData) {
-        try {
-            final BpmResult loginResult = accountManager.login(loginData);
+        final BpmResult loginResult = accountManager.login(loginData);
 
-            if (loginResult.isSuccess()) {
-                openMainWindow();
-            } else {
-                alertFailedLogin(loginResult.getErrorMessage());
-            }
-        } catch (final Exception e) {
-            alertFailedLogin(e.toString());
+        if (loginResult.isSuccess()) {
+            openMainWindow();
+        } else {
+            alertFailedLogin(loginResult.getErrorMessage());
         }
     }
 }
