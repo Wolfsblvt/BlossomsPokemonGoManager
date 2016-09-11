@@ -1,22 +1,24 @@
 package me.corriekay.pokegoutil.windows;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.text.NumberFormat;
+
+import javax.swing.JFrame;
+import javax.swing.JTabbedPane;
+
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
-import com.pokegoapi.exceptions.InvalidCurrencyException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
+
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.FileHelper;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.Console;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.text.NumberFormat;
 
 @SuppressWarnings("serial")
 public class PokemonGoMainWindow extends JFrame {
@@ -25,9 +27,9 @@ public class PokemonGoMainWindow extends JFrame {
     private final PokemonGo go;
     private final PlayerProfile pp;
     private final JTabbedPane tab = new JTabbedPane();
-    private ConfigNew config = ConfigNew.getConfig();
+    private final ConfigNew config = ConfigNew.getConfig();
 
-    public PokemonGoMainWindow(PokemonGo pkmngo, Console console) {
+    public PokemonGoMainWindow(final PokemonGo pkmngo, final Console console) {
         go = pkmngo;
         pp = go.getPlayerProfile();
 
@@ -45,7 +47,7 @@ public class PokemonGoMainWindow extends JFrame {
                     go.getInventories().getHatchery().getEggs().size());
             System.out.println(msg);
 
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             // System.out.println("Unable to login!");
             // e.printStackTrace();
         }
@@ -58,27 +60,27 @@ public class PokemonGoMainWindow extends JFrame {
         // config for the app to remember over restarts
         this.addComponentListener(new ComponentAdapter() {
             @Override
-            public void componentResized(ComponentEvent e) {
-                JFrame w = (JFrame) e.getComponent();
+            public void componentResized(final ComponentEvent e) {
+                final JFrame w = (JFrame) e.getComponent();
                 config.setInt(ConfigKey.WINDOW_WIDTH, w.getWidth());
                 config.setInt(ConfigKey.WINDOW_HEIGHT, w.getHeight());
             }
 
             @Override
-            public void componentMoved(ComponentEvent e) {
-                JFrame w = (JFrame) e.getComponent();
+            public void componentMoved(final ComponentEvent e) {
+                final JFrame w = (JFrame) e.getComponent();
                 config.setInt(ConfigKey.WINDOW_POS_X, w.getX());
                 config.setInt(ConfigKey.WINDOW_POS_Y, w.getY());
             }
         });
 
-        Point pt = UIHelper.getLocationMidScreen(this);
-        int posx = config.getInt(ConfigKey.WINDOW_POS_X, pt.x);
-        int posy = config.getInt(ConfigKey.WINDOW_POS_Y, pt.y);
+        final Point pt = UIHelper.getLocationMidScreen(this);
+        final int posx = config.getInt(ConfigKey.WINDOW_POS_X, pt.x);
+        final int posy = config.getInt(ConfigKey.WINDOW_POS_Y, pt.y);
         setLocation(posx, posy);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        PokemonTab pokemonTab = new PokemonTab(go);
+        final PokemonTab pokemonTab = new PokemonTab(go);
         setJMenuBar(new MenuBar(go, pokemonTab));
         tab.add("Pokémon", pokemonTab);
 
@@ -97,11 +99,11 @@ public class PokemonGoMainWindow extends JFrame {
 
     public void refreshTitle() {
         try {
-            NumberFormat f = NumberFormat.getInstance();
+            final NumberFormat f = NumberFormat.getInstance();
             setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager",
                     pp.getPlayerData().getUsername(),
                     f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             setTitle("Blossom's Pokémon Go Manager");
         }
     }
