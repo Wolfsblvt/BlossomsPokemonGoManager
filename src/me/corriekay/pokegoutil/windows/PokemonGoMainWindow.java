@@ -34,7 +34,7 @@ public class PokemonGoMainWindow extends JFrame {
         go = pkmngo;
         pp = go.getPlayerProfile();
 
-        console.clearAllLines();
+        console.logController.clearAllLines();
         try {
             System.out.println(String.format("Successfully logged in. Welcome, %s.", pp.getPlayerData().getUsername()));
             System.out.println(String.format("Stats: Lvl %d %s player.",
