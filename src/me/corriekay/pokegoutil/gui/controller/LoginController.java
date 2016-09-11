@@ -1,6 +1,10 @@
 package me.corriekay.pokegoutil.gui.controller;
 
+import java.io.IOException;
+import java.net.URL;
+
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,22 +20,19 @@ import javafx.stage.Stage;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.data.managers.AccountManager;
-import me.corriekay.pokegoutil.data.models.LoginData;
 import me.corriekay.pokegoutil.data.models.BpmResult;
+import me.corriekay.pokegoutil.data.models.LoginData;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
-
-import java.io.IOException;
-import java.net.URL;
 
 public class LoginController extends StackPane {
 
     @FXML
     private final String fxmlLayout = "layout/Login.fxml";
     private final URL icon;
-    private ClassLoader classLoader = getClass().getClassLoader();
-    private Scene rootScene;
+    private final ClassLoader classLoader = getClass().getClassLoader();
+    private final Scene rootScene;
 
-    private AccountManager accountManager = AccountManager.getInstance();
+    private final AccountManager accountManager = AccountManager.getInstance();
 
     private LoginData configLoginData = new LoginData();
 
@@ -58,15 +59,16 @@ public class LoginController extends StackPane {
     private CheckBox saveAuthChkbx;
 
     public LoginController() {
-        FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
+        super();
+        final FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
         fxmlLoader.setController(this);
         try {
             fxmlLoader.load();
-        } catch (IOException exception) {
+        } catch (final IOException exception) {
             throw new RuntimeException(exception);
         }
         rootScene = new Scene(fxmlLoader.getRoot());
-        Stage stage = new Stage();
+        final Stage stage = new Stage();
         icon = classLoader.getResource("icon/PokeBall-icon.png");
         stage.getIcons().add(new Image(icon.toExternalForm()));
         stage.setTitle("Login");
@@ -76,8 +78,8 @@ public class LoginController extends StackPane {
         BlossomsPoGoManager.setNewPrimaryStage(stage);
     }
 
-    private void alertFailedLogin(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+    private void alertFailedLogin(final String message) {
+        final Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error Login");
         alert.setHeaderText("Unfortunately, your login has failed");
         alert.setContentText(message != null ? message : "" + "\nPress OK to try again.");
@@ -93,7 +95,7 @@ public class LoginController extends StackPane {
         saveAuthChkbx.setOnAction(this::onAutoRelogChanged);
         getTokenBtn.setOnAction(this::onGetToken);
 
-        boolean hasSavedCredentials = configLoginData.hasSavedCredentials();
+        final boolean hasSavedCredentials = configLoginData.hasSavedCredentials();
         saveAuthChkbx.setSelected(hasSavedCredentials);
 
         if (hasSavedCredentials) {
@@ -115,20 +117,20 @@ public class LoginController extends StackPane {
         }
     }
 
-    private void onAutoRelogChanged(ActionEvent actionEvent) {
-        boolean saveCredentials = ((CheckBox) actionEvent.getSource()).isSelected();
+    private void onAutoRelogChanged(final ActionEvent actionEvent) {
+        final boolean saveCredentials = ((CheckBox) actionEvent.getSource()).isSelected();
         accountManager.setSaveLogin(saveCredentials);
         toggleFields(saveCredentials);
     }
 
-    private void onGetToken(ActionEvent actionEvent) {
+    private void onGetToken(final ActionEvent actionEvent) {
         tokenField.setDisable(false);
         Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
     }
 
     @FXML
-    void onGoogleAuthBtnClicked(ActionEvent event) {
-        LoginData loginData = new LoginData();
+    void onGoogleAuthBtnClicked(final ActionEvent event) {
+        final LoginData loginData = new LoginData();
 
         if (configLoginData.hasToken()) {
             loginData.setToken(configLoginData.getToken());
@@ -142,8 +144,8 @@ public class LoginController extends StackPane {
     }
 
     @FXML
-    void onPTCLoginBtnClicked(ActionEvent event) {
-        LoginData loginData = new LoginData();
+    void onPTCLoginBtnClicked(final ActionEvent event) {
+        final LoginData loginData = new LoginData();
 
         loginData.setUsername(usernameField.getText());
         loginData.setPassword(passwordField.getText());
@@ -157,35 +159,38 @@ public class LoginController extends StackPane {
         BlossomsPoGoManager.getPrimaryStage().show();
     }
 
-    private void toggleFields(boolean save) {
-        if (usernameField.getText().isEmpty() || !save)
+    private void toggleFields(final boolean save) {
+        if (usernameField.getText().isEmpty() || !save) {
             usernameField.setDisable(false);
-        else
+        } else {
             usernameField.setDisable(true);
+        }
 
-        if (passwordField.getText().isEmpty() || !save)
+        if (passwordField.getText().isEmpty() || !save) {
             passwordField.setDisable(false);
-        else
+        } else {
             passwordField.setDisable(true);
+        }
 
-        if (tokenField.getText().isEmpty() || !save)
+        if (tokenField.getText().isEmpty() || !save) {
             tokenField.setDisable(false);
-        else
+        } else {
             tokenField.setDisable(true);
+        }
 
         getTokenBtn.setDisable(false);
     }
 
-    private void tryLogin(LoginData loginData) {
+    private void tryLogin(final LoginData loginData) {
         try {
-            BpmResult loginResult = accountManager.login(loginData);
+            final BpmResult loginResult = accountManager.login(loginData);
 
             if (loginResult.isSuccess()) {
                 openMainWindow();
             } else {
                 alertFailedLogin(loginResult.getErrorMessage());
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             alertFailedLogin(e.toString());
         }
     }
