@@ -31,9 +31,9 @@ public class LoginDataTest {
     private final boolean expectedGoogleIsValid;
 
     /**
-     * Parameterized test case data
+     * Parameterized test case data.
      *
-     * @return test data
+     * @return list of test data
      */
     @Parameters(name = "{index}: {0}")
     public static Collection<Object[]> data() {
@@ -79,7 +79,7 @@ public class LoginDataTest {
     }
 
     /**
-     * Test google token validation
+     * Test google token validation.
      */
     @Test
     public void testGoogleIsValid() {
@@ -87,7 +87,7 @@ public class LoginDataTest {
     }
 
     /**
-     * Test correct loginType detected
+     * Test correct loginType detected.
      */
     @Test
     public void testLoginType() {
@@ -95,7 +95,7 @@ public class LoginDataTest {
     }
 
     /**
-     * Test ptc validation
+     * Test ptc validation.
      */
     @Test
     public void testPtcIsValid() {
