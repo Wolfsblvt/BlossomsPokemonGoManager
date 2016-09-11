@@ -10,17 +10,15 @@ import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
  */
 public class LogController {
 
-    private final JTextArea textArea;
     private static final int defaultMaxLines = 2500;
+    private JTextArea textArea;
+
     private int maxLines;
 
     /**
      * Instantiate a LogController to handle console output.
-     *
-     * @param textArea console output will be appended to this text area
      */
-    public LogController(final JTextArea textArea) {
-        this.textArea = textArea;
+    public LogController() {
         this.maxLines = defaultMaxLines;
     }
 
@@ -30,16 +28,20 @@ public class LogController {
      * @param line line to add
      */
     public void addLine(final String line) {
-        textArea.append(line);
-        trimExcessLines();
-        textArea.setCaretPosition(textArea.getDocument().getLength());
+        if (textArea != null) {
+            textArea.append(line);
+            trimExcessLines();
+            textArea.setCaretPosition(textArea.getDocument().getLength());
+        }
     }
 
     /**
      * Set the text area to empty.
      */
     public void clearAllLines() {
-        textArea.setText("");
+        if (textArea != null) {
+            textArea.setText("");
+        }
     }
 
     /**
@@ -51,6 +53,10 @@ public class LogController {
         return maxLines;
     }
 
+    public JTextArea getTextArea() {
+        return textArea;
+    }
+
     /**
      * Set the max number of lines text area will have.
      *
@@ -58,6 +64,10 @@ public class LogController {
      */
     public void setMaxLines(final int maxLines) {
         this.maxLines = maxLines + 1;
+    }
+
+    public void setTextArea(final JTextArea textArea) {
+        this.textArea = textArea;
     }
 
     /**

@@ -35,7 +35,8 @@ public class LogControllerTest {
     @Before
     public void beforeTest() {
         textArea = new JTextArea();
-        logController = new LogController(textArea);
+        logController = new LogController();
+        logController.setTextArea(textArea);
         logController.setMaxLines(numOfLines);
         ConsolePrintStream.setup(logController);
     }

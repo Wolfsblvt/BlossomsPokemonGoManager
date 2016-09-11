@@ -8,20 +8,26 @@ import java.awt.event.ComponentEvent;
 import java.text.NumberFormat;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
 
+import me.corriekay.pokegoutil.data.managers.GlobalSettingsController;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.FileHelper;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
-import me.corriekay.pokegoutil.utils.ui.Console;
+import me.corriekay.pokegoutil.utils.ui.SmartScroller;
 
 @SuppressWarnings("serial")
 public class PokemonGoMainWindow extends JFrame {
+
+    public JTextArea textArea = new JTextArea();
+    public JScrollPane jsp;
 
     public static PokemonGoMainWindow window = null;
     private final PokemonGo go;
@@ -29,30 +35,15 @@ public class PokemonGoMainWindow extends JFrame {
     private final JTabbedPane tab = new JTabbedPane();
     private final ConfigNew config = ConfigNew.getConfig();
 
-    public PokemonGoMainWindow(final PokemonGo pkmngo, final Console console) {
+    private final GlobalSettingsController globalSettings = GlobalSettingsController.getGlobalSettingsController();
+
+    public PokemonGoMainWindow(final PokemonGo pkmngo, final boolean smartscroll) {
         super();
+
+        window = this;
         go = pkmngo;
         pp = go.getPlayerProfile();
 
-        console.logController.clearAllLines();
-        try {
-            System.out.println(String.format("Successfully logged in. Welcome, %s.", pp.getPlayerData().getUsername()));
-            System.out.println(String.format("Stats: Lvl %d %s player.",
-                    pp.getStats().getLevel(),
-                    PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue())));
-
-            String msg = String.format("Pokédex - Types Caught: %d, ", pp.getStats().getUniquePokedexEntries());
-            msg += String.format("Total Pokémon Caught: %d, ", pp.getStats().getPokemonsCaptured());
-            msg += String.format("Total Current Pokémon: %d (+%d Eggs)",
-                    go.getInventories().getPokebank().getPokemons().size(),
-                    go.getInventories().getHatchery().getEggs().size());
-            System.out.println(msg);
-
-        } catch (final NumberFormatException e) {
-            System.out.println("Error retrieving trainer data.");
-            e.printStackTrace();
-        }
-        refreshTitle();
         setLayout(new BorderLayout());
         setIconImage(FileHelper.loadImage("icon/PokeBall-icon.png"));
         setBounds(0, 0, config.getInt(ConfigKey.WINDOW_WIDTH), config.getInt(ConfigKey.WINDOW_HEIGHT));
@@ -86,12 +77,40 @@ public class PokemonGoMainWindow extends JFrame {
         tab.add("Pokémon", pokemonTab);
 
         add(tab, BorderLayout.CENTER);
+        initializeConsole(smartscroll);
 
-        console.setVisible(false);
-        console.jsp.setPreferredSize(new Dimension(Integer.MAX_VALUE, 150));
-        add(console.jsp, BorderLayout.SOUTH);
+        try {
+            System.out.println(String.format("Successfully logged in. Welcome, %s.", pp.getPlayerData().getUsername()));
+            System.out.println(String.format("Stats: Lvl %d %s player.",
+                    pp.getStats().getLevel(),
+                    PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue())));
 
-        window = this;
+            String msg = String.format("Pokédex - Types Caught: %d, ", pp.getStats().getUniquePokedexEntries());
+            msg += String.format("Total Pokémon Caught: %d, ", pp.getStats().getPokemonsCaptured());
+            msg += String.format("Total Current Pokémon: %d (+%d Eggs)",
+                    go.getInventories().getPokebank().getPokemons().size(),
+                    go.getInventories().getHatchery().getEggs().size());
+            System.out.println(msg);
+
+        } catch (final NumberFormatException e) {
+            System.out.println("Error retrieving trainer data.");
+            e.printStackTrace();
+        }
+        refreshTitle();
+    }
+
+    private void initializeConsole(final boolean smartscroll) {
+        textArea.setEditable(false);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        jsp = new JScrollPane(textArea);
+        jsp.setPreferredSize(new Dimension(Integer.MAX_VALUE, 150));
+        if (smartscroll) {
+            new SmartScroller(jsp);
+        }
+        add(jsp, BorderLayout.SOUTH);
+
+        globalSettings.getLogController().setTextArea(textArea);
     }
 
     public PokemonGo getPoGo() {

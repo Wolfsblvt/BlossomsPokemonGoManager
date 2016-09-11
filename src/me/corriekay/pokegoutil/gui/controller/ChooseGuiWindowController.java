@@ -9,7 +9,6 @@ import javafx.scene.layout.Pane;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.data.managers.AccountController;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
-import me.corriekay.pokegoutil.utils.ui.Console;
 
 /**
  * The ChooseGuiWindowController is use to handle loading of new or old gui.
@@ -53,14 +52,12 @@ public class ChooseGuiWindowController extends BaseController<Pane> {
     void onOldGuiBtnClicked(final ActionEvent event) {
         rootScene.getWindow().hide();
         SwingUtilities.invokeLater(new Runnable() {
-            private Console console;
+
 
             @Override
             public void run() {
                 UIHelper.setNativeLookAndFeel();
-                console = new Console("Console", 0, 0, true);
-                console.setVisible(false);
-                AccountController.initialize(console);
+                AccountController.initialize();
                 AccountController.logOn();
             }
         });

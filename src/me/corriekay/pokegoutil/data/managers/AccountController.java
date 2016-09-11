@@ -26,7 +26,6 @@ import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
-import me.corriekay.pokegoutil.utils.ui.Console;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
 
@@ -43,7 +42,6 @@ public final class AccountController {
     protected PokemonGo go = null;
     protected OkHttpClient http;
     protected CredentialProvider cp;
-    private Console console;
     private boolean logged = false;
 
     private AccountController() {
@@ -54,12 +52,11 @@ public final class AccountController {
         return instance;
     }
 
-    public static void initialize(final Console console) {
+    public static void initialize() {
         if (sIsInit) {
             return;
         }
 
-        instance.console = console;
 
         sIsInit = true;
     }
@@ -208,7 +205,7 @@ public final class AccountController {
         }
         instance.go = go;
         initOtherControllers(go);
-        instance.mainWindow = new PokemonGoMainWindow(go, instance.console);
+        instance.mainWindow = new PokemonGoMainWindow(go, true);
         instance.mainWindow.start();
     }
 
