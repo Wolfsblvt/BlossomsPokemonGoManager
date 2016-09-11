@@ -125,22 +125,22 @@ public class LuckyEggGrinderController extends BaseController<AnchorPane> {
 
     @FXML
     void initialize() {
-        // TODO
+        // Not done
     }
 
     @FXML
     void onEnableOptions(final ActionEvent event) {
-        // TODO
+        // Not done
     }
 
     @FXML
     void onNoTransferThanIV(final ActionEvent event) {
-        // TODO
+        // Not done
     }
 
     @FXML
     void onTransferFav(final ActionEvent event) {
-        // TODO
+        // Not done
     }
 
     @Override

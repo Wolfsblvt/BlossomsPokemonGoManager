@@ -95,7 +95,7 @@ public class MainWindowController extends BaseController<BorderPane> {
 
     @FXML
     void onAboutClicked(final ActionEvent event) {
-        // TODO
+        // Not done
     }
 
     @FXML
@@ -112,12 +112,12 @@ public class MainWindowController extends BaseController<BorderPane> {
 
     @FXML
     void onSettingsClicked(final ActionEvent event) {
-
+        // Not done
     }
 
     /**
      * The player profile will be used to refresh the interface.
-     * 
+     *
      * @param pp the player profile
      */
     private void refreshGUI(final PlayerProfile pp) {
