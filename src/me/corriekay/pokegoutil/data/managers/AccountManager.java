@@ -153,10 +153,11 @@ public final class AccountManager {
         }
 
         try {
-            final GoogleUserCredentialProvider provider = new GoogleUserCredentialProvider(http);
+            final GoogleUserCredentialProvider provider;
             if (shouldRefresh) {
-                provider.refreshToken(authCode);
+                provider = new GoogleUserCredentialProvider(http, authCode);
             } else {
+                provider = new GoogleUserCredentialProvider(http);
                 provider.login(authCode);
             }
 
@@ -167,7 +168,7 @@ public final class AccountManager {
             cp = provider;
             if (saveAuth && !shouldRefresh) {
                 config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
-            } else {
+            } else if (!saveAuth) {
                 deleteLoginData(LoginType.GOOGLE);
             }
         } catch (LoginFailedException | RemoteServerException e) {
