@@ -20,7 +20,12 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 
 public final class PokemonUtils {
-    private PokemonUtils() { /* Prevent initializing this class */ }
+    private static final int NORMAL_MULTIPLIER = 1;
+    private static final double STAB_MULTIPLIER = 1.25;
+
+    private PokemonUtils() {
+        /* Prevent initializing this class */
+    }
 
     /**
      * Maximum duel ability - moveset only
@@ -71,21 +76,27 @@ public final class PokemonUtils {
     public static double ivRating(final Pokemon p) {
         if (ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION)) {
             final PokemonMeta meta = p.getMeta();
-            final double cpMax = (meta.getBaseAttack() + 15) *
-                    Math.pow(meta.getBaseDefense() + 15, 0.5) *
-                    Math.pow(meta.getBaseStamina() + 15, 0.5);
-            final double cpMin = meta.getBaseAttack() *
-                    Math.pow(meta.getBaseDefense(), 0.5) *
-                    Math.pow(meta.getBaseStamina(), 0.5);
-            final double cpIv = (meta.getBaseAttack() + p.getIndividualAttack()) *
-                    Math.pow(meta.getBaseDefense() + p.getIndividualDefense(), 0.5) *
-                    Math.pow(meta.getBaseStamina() + p.getIndividualStamina(), 0.5);
+            final double cpMax = (meta.getBaseAttack() + 15)
+                    * Math.pow(meta.getBaseDefense() + 15, 0.5)
+                    * Math.pow(meta.getBaseStamina() + 15, 0.5);
+            final double cpMin = meta.getBaseAttack()
+                    * Math.pow(meta.getBaseDefense(), 0.5)
+                    * Math.pow(meta.getBaseStamina(), 0.5);
+            final double cpIv = (meta.getBaseAttack() + p.getIndividualAttack())
+                    * Math.pow(meta.getBaseDefense() + p.getIndividualDefense(), 0.5)
+                    * Math.pow(meta.getBaseStamina() + p.getIndividualStamina(), 0.5);
             return (cpIv - cpMin) / (cpMax - cpMin);
         } else {
             return (p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina()) / 45.0;
         }
     }
 
+    /**
+     * Convert team int value to string.
+     *
+     * @param teamValue team int value
+     * @return team string value
+     */
     public static String convertTeamColorToName(final int teamValue) {
         final Team[] teams = Team.values();
 
@@ -222,8 +233,8 @@ public final class PokemonUtils {
 
         final PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
         final PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
-        final double moveOneStab = p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType()) ? 1.25 : 1;
-        final double moveTwoStab = p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType()) ? 1.25 : 1;
+        final double moveOneStab = p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType()) ? STAB_MULTIPLIER : NORMAL_MULTIPLIER;
+        final double moveTwoStab = p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType()) ? STAB_MULTIPLIER : NORMAL_MULTIPLIER;
 
         //Translation reference
         //R = Move 1 Power
@@ -252,9 +263,9 @@ public final class PokemonUtils {
 
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*T2+(AA2+$AL$1)
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*(T2+2000)+(AA2+$AL$1)
-        final double weaveCycleLength = weaveEnergyUsageRatio *
-                (pm1.getTime() + additionalDelay) +
-                (pm2.getTime() + PokemonUtils.MOVE2_CHARGE_DELAY_MS);
+        final double weaveCycleLength = weaveEnergyUsageRatio
+                * (pm1.getTime() + additionalDelay)
+                + pm2.getTime() + PokemonUtils.MOVE2_CHARGE_DELAY_MS;
 
         //=FLOOR(100000/AD2)
         //*(X2*(1+Y2*0.25) * (1+($AJ$1*Z2/100)))
