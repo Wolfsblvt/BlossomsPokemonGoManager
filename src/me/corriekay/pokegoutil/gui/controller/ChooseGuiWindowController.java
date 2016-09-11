@@ -11,6 +11,9 @@ import me.corriekay.pokegoutil.data.managers.AccountController;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.ui.Console;
 
+/**
+ * The ChooseGuiWindowController is use to handle loading of new or old gui.
+ */
 public class ChooseGuiWindowController extends BaseController<Pane> {
 
     @FXML

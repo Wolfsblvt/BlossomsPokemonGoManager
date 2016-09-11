@@ -24,7 +24,7 @@ public class GuiControllerSettings {
     }
 
     /**
-     * Get the stage style of the controller
+     * Get the stage style of the controller.
      *
      * @return stage style of the controller
      */
@@ -42,7 +42,7 @@ public class GuiControllerSettings {
     }
 
     /**
-     * Get if the controller is maximized
+     * Get if the controller is maximized.
      *
      * @return is the controller maximized
      */
@@ -60,7 +60,7 @@ public class GuiControllerSettings {
     }
 
     /**
-     * Set if the controller is maximized
+     * Set if the controller is maximized.
      *
      * @param maximized is the controller maximized
      */
@@ -78,7 +78,7 @@ public class GuiControllerSettings {
     }
 
     /**
-     * Set the stage style of the controller
+     * Set the stage style of the controller.
      *
      * @param stageStyle stage style of the controller
      */
@@ -96,7 +96,7 @@ public class GuiControllerSettings {
     }
 
     /**
-     * Get if controller is to change to primary stage
+     * Get if controller is to change to primary stage.
      *
      * @return change to primary stage
      */
@@ -105,8 +105,8 @@ public class GuiControllerSettings {
     }
 
     /**
-     * Set if controller is to change to primary stage
-     * 
+     * Set if controller is to change to primary stage.
+     *
      * @param changeToPrimaryStage change to primary stage
      */
     public void setChangeToPrimaryStage(final boolean changeToPrimaryStage) {

@@ -26,6 +26,9 @@ import me.corriekay.pokegoutil.data.managers.InventoryManager;
 import me.corriekay.pokegoutil.data.managers.PokemonBagManager;
 import me.corriekay.pokegoutil.data.managers.ProfileManager;
 
+/**
+ * The MainWindowController is the main view of the program after logging in.
+ */
 public class MainWindowController extends BaseController<BorderPane> {
 
     private final AccountManager accountManager = AccountManager.getInstance();
@@ -92,7 +95,7 @@ public class MainWindowController extends BaseController<BorderPane> {
 
     @FXML
     void onAboutClicked(final ActionEvent event) {
-
+        // TODO
     }
 
     @FXML
@@ -112,6 +115,11 @@ public class MainWindowController extends BaseController<BorderPane> {
 
     }
 
+    /**
+     * The player profile will be used to refresh the interface.
+     * 
+     * @param pp the player profile
+     */
     private void refreshGUI(final PlayerProfile pp) {
         boolean done = false;
         if (pp != null) {
