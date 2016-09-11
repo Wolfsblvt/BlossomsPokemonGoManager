@@ -1,5 +1,10 @@
 package me.corriekay.pokegoutil.gui.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.javafx.collections.ObservableListWrapper;
 
 import javafx.beans.binding.Bindings;
@@ -9,7 +14,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -21,14 +31,12 @@ import me.corriekay.pokegoutil.gui.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-public class PokemonTableController extends GridPane {
+/**
+ * The PokemonTableController is use to display the pokemons in a grid.
+ */
+public class PokemonTableController extends BaseController<GridPane> {
     private final String fxmlLayout = "layout/PokemonTable.fxml";
-    private ClassLoader classLoader = getClass().getClassLoader();
+    private final ClassLoader classLoader = getClass().getClassLoader();
 
     @FXML
     private ScrollPane scrollPane;
@@ -36,74 +44,45 @@ public class PokemonTableController extends GridPane {
     @FXML
     private TableView<PokemonModel> pokemonTableView;
 
-    private List<TableColumn<PokemonModel, ?>> columns = new ArrayList<>();
+    private final List<TableColumn<PokemonModel, ?>> columns = new ArrayList<>();
+    private final GridPane gridPane;
 
-    public PokemonTableController(GridPane pane) {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(classLoader.getResource(fxmlLayout));
-        loader.setRoot(this);
-        loader.setController(this);
-        loader.setClassLoader(classLoader);
-        try {
-            final Node root = loader.load();
-            pane.getChildren().clear();
-            pane.getChildren().addAll(root);
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
+    /**
+     * Instantiate the PokemonTableController onto the parent pane.
+     *
+     * @param gridPane parent pane
+     */
+    public PokemonTableController(final GridPane gridPane) {
+        super();
+        this.gridPane = gridPane;
+        initializeController();
     }
 
-    @FXML
-    private void initialize() {
-        pokemonTableView.getColumns().clear();
-        initColumns();
-        pokemonTableView.getColumns().addAll(columns);
-        pokemonTableView.setItems(PokemonBagManager.getAllPokemon());
-        pokemonTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        pokemonTableView.prefHeightProperty()
-                .bind(Bindings.size(pokemonTableView.getItems()).multiply(pokemonTableView.getFixedCellSize()).add(30));
-        pokemonTableView.getColumns().addListener(
-                (ListChangeListener<? super TableColumn<PokemonModel, ?>>) c -> {
-                    saveOrderToConfig();
-                });
-        initRightClickMenu();
-    }
-
-    private void initRightClickMenu() {
-        final ContextMenu cm = new ContextMenu();
-        OperationId[] operations = OperationId.values();
-        for (int i = 0; i < operations.length; i++) {
-            OperationId operation = operations[i];
-            final String actionName = operation.getActionName();
-            MenuItem cmItem = new MenuItem(actionName);
-            cmItem.setOnAction(e -> {
-                comfirmOperation(operation);
-            });
-            cm.getItems().add(cmItem);
-        }
-
-        pokemonTableView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-            if (e.getButton() == MouseButton.SECONDARY) {
-                cm.show(pokemonTableView, e.getScreenX(), e.getScreenY());
-            }
-        });
-    }
-
-    private void comfirmOperation(OperationId operation) {
-        List<Operation> operations = Operation.generateOperations(operation, getSelectedItems());
+    /**
+     * Request confirmation on the selected operation.
+     *
+     * @param operation operation to be done
+     */
+    private void comfirmOperation(final OperationId operation) {
+        final List<Operation> operations = Operation.generateOperations(operation, getSelectedItems());
         new OperationConfirmationController(new ObservableListWrapper<>(operations));
     }
 
+    /**
+     * Get the saved column ordering from config.
+     *
+     * @return saved column ordering from config
+     */
     private ArrayList<ColumnId> getColumnOrderFromConfig() {
-        ArrayList<ColumnId> columnOrder = new ArrayList<>();
-        String config = ConfigNew.getConfig().getString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE);
-        ColumnId[] colIds = ColumnId.values();
+        final ArrayList<ColumnId> columnOrder = new ArrayList<>();
+        final String config = ConfigNew.getConfig().getString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE);
+        final ColumnId[] colIds = ColumnId.values();
 
         if (config == null || config.isEmpty()) {
             columnOrder.addAll(Arrays.asList(colIds));
         } else {
-            String[] split = config.split("-");
-            for (String s : split) {
+            final String[] split = config.split("-");
+            for (final String s : split) {
                 columnOrder.add(colIds[Integer.valueOf(s)]);
             }
         }
@@ -111,36 +90,40 @@ public class PokemonTableController extends GridPane {
         return columnOrder;
     }
 
-    private void saveOrderToConfig() {
-        String columnOrder = "";
-        int i = 0;
-        for (TableColumn<PokemonModel, ?> col : getColumns()) {
-            if (i != 0) {
-                columnOrder += "-";
-            }
-            columnOrder += String.valueOf(ColumnId.get(col.getText()).ordinal());
-            i++;
-        }
-
-        ConfigNew.getConfig().setString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE, columnOrder);
-    }
-
+    /**
+     * Get the columns in the grid view.
+     *
+     * @return columns in the grid view
+     */
     public ObservableList<TableColumn<PokemonModel, ?>> getColumns() {
         return pokemonTableView.getColumns();
     }
 
+    @Override
+    public String getFxmlLayout() {
+        return "layout/PokemonTable.fxml";
+    }
+
+    /**
+     * Get the selected items.
+     *
+     * @return selected items
+     */
     public ObservableList<PokemonModel> getSelectedItems() {
         return pokemonTableView.getSelectionModel().getSelectedItems();
     }
 
+    /**
+     * Initialize the columns in the grid view.
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void initColumns() {
         columns.clear();
 
-        ArrayList<ColumnId> columnOrder = getColumnOrderFromConfig();
+        final ArrayList<ColumnId> columnOrder = getColumnOrderFromConfig();
 
         columnOrder.forEach(c -> {
-            TableColumn<PokemonModel, Property> col = new TableColumn<>(c.getTitle());
+            final TableColumn<PokemonModel, Property> col = new TableColumn<>(c.getTitle());
             switch (c) {
                 case NICKNAME:
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().nicknameProperty());
@@ -247,5 +230,82 @@ public class PokemonTableController extends GridPane {
             }
             columns.add(col);
         });
+    }
+
+    @FXML
+    private void initialize() {
+        pokemonTableView.getColumns().clear();
+        initColumns();
+        pokemonTableView.getColumns().addAll(columns);
+        pokemonTableView.setItems(PokemonBagManager.getAllPokemon());
+        pokemonTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        pokemonTableView.prefHeightProperty()
+        .bind(Bindings.size(pokemonTableView.getItems()).multiply(pokemonTableView.getFixedCellSize()).add(30));
+        pokemonTableView.getColumns().addListener(
+                (ListChangeListener<? super TableColumn<PokemonModel, ?>>) c -> {
+                    saveOrderToConfig();
+                });
+        initRightClickMenu();
+    }
+
+    @Override
+    public void initializeController() {
+        final FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(classLoader.getResource(fxmlLayout));
+        loader.setRoot(this);
+        loader.setController(this);
+        loader.setClassLoader(classLoader);
+        try {
+            final Node root = loader.load();
+            gridPane.getChildren().clear();
+            gridPane.getChildren().addAll(root);
+        } catch (final IOException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    /**
+     * Right click menu event.
+     */
+    private void initRightClickMenu() {
+        final ContextMenu cm = new ContextMenu();
+        final OperationId[] operations = OperationId.values();
+        for (int i = 0; i < operations.length; i++) {
+            final OperationId operation = operations[i];
+            final String actionName = operation.getActionName();
+            final MenuItem cmItem = new MenuItem(actionName);
+            cmItem.setOnAction(e -> {
+                comfirmOperation(operation);
+            });
+            cm.getItems().add(cmItem);
+        }
+
+        pokemonTableView.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+            if (e.getButton() == MouseButton.SECONDARY) {
+                cm.show(pokemonTableView, e.getScreenX(), e.getScreenY());
+            }
+        });
+    }
+
+    /**
+     * Save column ordering to config.
+     */
+    private void saveOrderToConfig() {
+        String columnOrder = "";
+        int i = 0;
+        for (final TableColumn<PokemonModel, ?> col : getColumns()) {
+            if (i != 0) {
+                columnOrder += "-";
+            }
+            columnOrder += String.valueOf(ColumnId.get(col.getText()).ordinal());
+            i++;
+        }
+
+        ConfigNew.getConfig().setString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE, columnOrder);
+    }
+
+    @Override
+    public void setGuiControllerSettings() {
+        // Nothing to set
     }
 }
