@@ -30,6 +30,7 @@ public class PokemonGoMainWindow extends JFrame {
     private final ConfigNew config = ConfigNew.getConfig();
 
     public PokemonGoMainWindow(final PokemonGo pkmngo, final Console console) {
+        super();
         go = pkmngo;
         pp = go.getPlayerProfile();
 
@@ -48,8 +49,8 @@ public class PokemonGoMainWindow extends JFrame {
             System.out.println(msg);
 
         } catch (final NumberFormatException e) {
-            // System.out.println("Unable to login!");
-            // e.printStackTrace();
+            System.out.println("Error retrieving trainer data.");
+            e.printStackTrace();
         }
         refreshTitle();
         setLayout(new BorderLayout());
@@ -109,7 +110,6 @@ public class PokemonGoMainWindow extends JFrame {
     }
 
     public void start() {
-        // pack();
         setVisible(true);
     }
 }

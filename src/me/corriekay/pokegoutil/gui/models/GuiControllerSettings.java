@@ -20,7 +20,7 @@ public class GuiControllerSettings {
         resizeable = true;
         maximized = false;
         stageStyle = StageStyle.DECORATED;
-        setChangeToPrimaryStage(true);
+        changeToPrimaryStage = true;
     }
 
     /**
