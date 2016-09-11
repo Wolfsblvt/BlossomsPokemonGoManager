@@ -27,29 +27,13 @@ public abstract class BaseController<T extends Pane> {
         iconImage = new Image(icon.toExternalForm());
     }
 
-    private final Stage stage;
+    private Stage stage;
     private String title;
 
     /**
-     * Instantiate the controller and set all the settings. Sets the primary stage to this controller.
+     * BaseController constructor. Call initialize() to initialize controller.
      */
     public BaseController() {
-        final FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(getFxmlLayout()));
-        fxmlLoader.setController(this);
-        try {
-            fxmlLoader.load();
-        } catch (final IOException exception) {
-            throw new RuntimeException(exception);
-        }
-        final Scene rootScene = new Scene(fxmlLoader.getRoot());
-
-        final GuiControllerSettings guiControllerSettings = getGuiControllerSettings();
-        stage = new Stage();
-        stage.getIcons().add(iconImage);
-        stage.setTitle(guiControllerSettings.getTitle());
-        stage.setResizable(guiControllerSettings.isResizeable());
-        stage.setScene(rootScene);
-        BlossomsPoGoManager.setNewPrimaryStage(stage);
     }
 
     /**
@@ -73,6 +57,29 @@ public abstract class BaseController<T extends Pane> {
      */
     public String getTitle() {
         return title;
+    }
+
+    /**
+     * Instantiate the controller and set all the settings. Sets the primary stage to this controller.<br>
+     * Not done in constructor due to variables in parent class being initialize only after super() call.
+     */
+    public void initializeBaseController() {
+        final FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(getFxmlLayout()));
+        fxmlLoader.setController(this);
+        try {
+            fxmlLoader.load();
+        } catch (final IOException exception) {
+            throw new RuntimeException(exception);
+        }
+        final Scene rootScene = new Scene(fxmlLoader.getRoot());
+
+        final GuiControllerSettings guiControllerSettings = getGuiControllerSettings();
+        stage = new Stage();
+        stage.getIcons().add(iconImage);
+        stage.setTitle(guiControllerSettings.getTitle());
+        stage.setResizable(guiControllerSettings.isResizeable());
+        stage.setScene(rootScene);
+        BlossomsPoGoManager.setNewPrimaryStage(stage);
     }
 
     /**
