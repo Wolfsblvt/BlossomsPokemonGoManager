@@ -54,7 +54,9 @@ public class ConsoleOutStream extends OutputStream {
     }
 
     /**
-     * @param log sets the log file name
+     * Set the log file name.
+     * 
+     * @param logName the log file name
      */
     public void setLogName(final String logName) {
         this.logName = logName;

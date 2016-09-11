@@ -7,8 +7,8 @@ import me.corriekay.pokegoutil.gui.controller.LogController;
 /**
  * Handles redirection of the console out and err.
  */
-public class ConsolePrintStream extends PrintStream {
-    private static ConsolePrintStream consolePrintStream;
+public final class ConsolePrintStream extends PrintStream {
+    private static ConsolePrintStream instance;
     private static PrintStream stdOut;
     private static PrintStream stdErr;
 
@@ -23,7 +23,7 @@ public class ConsolePrintStream extends PrintStream {
      * @return the consolePrintSteam that is being used
      */
     public static ConsolePrintStream getConsolePrintStream() {
-        return consolePrintStream;
+        return instance;
     }
 
     /**
@@ -32,7 +32,7 @@ public class ConsolePrintStream extends PrintStream {
      * @param e the exception
      */
     public static void printException(final Exception e) {
-        e.printStackTrace(consolePrintStream);
+        e.printStackTrace(instance);
     }
 
     /**
@@ -45,12 +45,12 @@ public class ConsolePrintStream extends PrintStream {
     /**
      * Set the out and err stream.
      *
-     * @param out out stream
-     * @param err err stream
+     * @param outStream out stream
+     * @param errStream err stream
      */
-    private static void setPrintStream(final PrintStream out, final PrintStream err) {
-        System.setOut(out);
-        System.setErr(err);
+    private static void setPrintStream(final PrintStream outStream, final PrintStream errStream) {
+        System.setOut(outStream);
+        System.setErr(errStream);
     }
 
     /**
@@ -59,7 +59,7 @@ public class ConsolePrintStream extends PrintStream {
      * @param logController log controller that handles output to the gui
      */
     public static void setup(final LogController logController) {
-        consolePrintStream = new ConsolePrintStream(logController);
+        instance = new ConsolePrintStream(logController);
     }
 
     /**
