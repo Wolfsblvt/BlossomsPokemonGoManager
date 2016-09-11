@@ -11,7 +11,6 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 
-
 public class BlossomsPoGoManager extends Application {
 
     public static final String VERSION = "v0.1.2-alpha.2";

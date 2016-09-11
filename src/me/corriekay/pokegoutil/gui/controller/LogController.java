@@ -53,6 +53,11 @@ public class LogController {
         return maxLines;
     }
 
+    /**
+     * Get the text area used to append logs.
+     * 
+     * @return text area used to append logs to
+     */
     public JTextArea getTextArea() {
         return textArea;
     }

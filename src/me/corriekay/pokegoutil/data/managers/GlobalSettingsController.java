@@ -6,22 +6,35 @@ import java.nio.charset.Charset;
 import me.corriekay.pokegoutil.gui.controller.LogController;
 import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
 
-public class GlobalSettingsController {
+/**
+ * Global controller to access all settings controllers.
+ */
+public final class GlobalSettingsController {
 
-    static GlobalSettingsController instance;
-
+    private static GlobalSettingsController instance;
     private LogController logController;
 
+    /**
+     * Instantiate a GlobalSettingsController.
+     */
     private GlobalSettingsController() {
         consoleSetup();
     }
 
+    /**
+     * Setup the GlobalSettingController if it has not been initialized.
+     */
     public static void setup() {
         if (instance == null) {
             instance = new GlobalSettingsController();
         }
     }
 
+    /**
+     * Get instance of GlobalSettingController.
+     *
+     * @return instance of GlobalSettingController
+     */
     public static GlobalSettingsController getGlobalSettingsController() {
         if (instance == null) {
             setup();
@@ -29,13 +42,20 @@ public class GlobalSettingsController {
         return instance;
     }
 
+    /**
+     * Setup of console.
+     */
     private void consoleSetup() {
         logController = new LogController();
         ConsolePrintStream.setup(logController);
-
         setDefaultCharset("UTF8");
     }
 
+    /**
+     * Get the log controller instance.
+     *
+     * @return log controller instance
+     */
     public LogController getLogController() {
         return logController;
     }

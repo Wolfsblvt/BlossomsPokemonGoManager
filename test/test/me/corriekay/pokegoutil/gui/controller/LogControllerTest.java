@@ -18,9 +18,8 @@ import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
 public class LogControllerTest {
 
     private JTextArea textArea;
-    private LogController logController;
     private final String[] testLines;
-    private final int numOfLines = 5;
+    private static final int numOfLines = 5;
 
     public LogControllerTest() {
         testLines = new String[numOfLines];
@@ -35,19 +34,25 @@ public class LogControllerTest {
     @Before
     public void beforeTest() {
         textArea = new JTextArea();
-        logController = new LogController();
+        final LogController logController = new LogController();
         logController.setTextArea(textArea);
         logController.setMaxLines(numOfLines);
         ConsolePrintStream.setup(logController);
     }
 
+    /**
+     * Test for empty text area.
+     */
     @Test
-    public void empty_TextArea() {
+    public void emptyTextArea() {
         assertThat("textArea is empty", 0, is(textArea.getText().length()));
     }
 
+    /**
+     * Test for number of lines being trimmed when it is more than the max limit.
+     */
     @Test
-    public void line_Is_Trimmed_To_Max_Length() {
+    public void lineIsTrimmedToMaxLength() {
         printLines();
         printLines();
 
@@ -60,8 +65,11 @@ public class LogControllerTest {
         }
     }
 
+    /**
+     * Test for test lines are captured in the text area.
+     */
     @Test
-    public void lines_Is_Added_To_TextArea() {
+    public void linesIsAddedToTextArea() {
         printLines();
 
         final int expectedLength = numOfLines;
@@ -72,12 +80,20 @@ public class LogControllerTest {
         }
     }
 
+    /**
+     * Print the test lines.
+     */
     private void printLines() {
         for (final String s : testLines) {
             System.out.println(s);
         }
     }
 
+    /**
+     * Get the array of lines in text area.
+     *
+     * @return array of lines in text area
+     */
     private String[] getLines() {
         return textArea.getText().split("\\r?\\n");
     }

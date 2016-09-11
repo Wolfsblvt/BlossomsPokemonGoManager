@@ -20,6 +20,7 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.FileHelper;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
+import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.SmartScroller;
 
@@ -94,11 +95,16 @@ public class PokemonGoMainWindow extends JFrame {
 
         } catch (final NumberFormatException e) {
             System.out.println("Error retrieving trainer data.");
-            e.printStackTrace();
+            ConsolePrintStream.printException(e);
         }
         refreshTitle();
     }
 
+    /**
+     * Initialize the text area and set it to append the logs.
+     *
+     * @param smartscroll use smart scroll
+     */
     private void initializeConsole(final boolean smartscroll) {
         textArea.setEditable(false);
         textArea.setLineWrap(true);

@@ -57,7 +57,6 @@ public final class AccountController {
             return;
         }
 
-
         sIsInit = true;
     }
 

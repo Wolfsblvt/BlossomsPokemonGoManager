@@ -45,12 +45,12 @@ public final class ConsolePrintStream extends PrintStream {
     /**
      * Set the out and err stream.
      *
-     * @param outStream out stream
-     * @param errStream err stream
+     * @param outputStream out stream
+     * @param errorStream err stream
      */
-    private static void setPrintStream(final PrintStream outStream, final PrintStream errStream) {
-        System.setOut(outStream);
-        System.setErr(errStream);
+    private static void setPrintStream(final PrintStream outputStream, final PrintStream errorStream) {
+        System.setOut(outputStream);
+        System.setErr(errorStream);
     }
 
     /**
