@@ -9,12 +9,12 @@ public class ConsolePrintStream extends PrintStream {
     private static PrintStream stdOut;
     private static PrintStream stdErr;
 
-    private ConsolePrintStream(final LogController logController) {
-        super(new ConsoleOutStream(logController));
-        stdOut = System.out;
-        stdErr = System.err;
+    public static ConsolePrintStream getConsolePrintStream() {
+        return consolePrintStream;
+    }
 
-        setPrintStream(this, this);
+    public static void printException(final Exception e) {
+        e.printStackTrace(consolePrintStream);
     }
 
     public static void resetPrintStream() {
@@ -30,7 +30,11 @@ public class ConsolePrintStream extends PrintStream {
         consolePrintStream = new ConsolePrintStream(logController);
     }
 
-    public static ConsolePrintStream getConsolePrintStream() {
-        return consolePrintStream;
+    private ConsolePrintStream(final LogController logController) {
+        super(new ConsoleOutStream(logController));
+        stdOut = System.out;
+        stdErr = System.err;
+
+        setPrintStream(this, this);
     }
 }

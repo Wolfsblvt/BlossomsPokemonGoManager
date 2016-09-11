@@ -24,9 +24,9 @@ public class ConsoleOutStream extends OutputStream {
             if (!f.exists()) {
                 f.createNewFile();
             }
-            filestream = new PrintStream(new FileOutputStream(f));
-        } catch (final Exception e) {
-            e.printStackTrace();
+            filestream = new PrintStream(new FileOutputStream(f, true));
+        } catch (final IOException e) {
+            ConsolePrintStream.printException(e);
         }
     }
 
