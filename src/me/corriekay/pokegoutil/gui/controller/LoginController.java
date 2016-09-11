@@ -15,7 +15,6 @@ import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.data.managers.AccountManager;
 import me.corriekay.pokegoutil.data.models.BpmResult;
 import me.corriekay.pokegoutil.data.models.LoginData;
-import me.corriekay.pokegoutil.gui.models.GuiControllerSettings;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 
 /**
@@ -72,12 +71,9 @@ public class LoginController extends BaseController<StackPane> {
     }
 
     @Override
-    public GuiControllerSettings getGuiControllerSettings() {
-        final GuiControllerSettings guiControllerSettings = new GuiControllerSettings();
+    public void setGuiControllerSettings() {
         guiControllerSettings.setTitle("Login");
         guiControllerSettings.setResizeable(false);
-
-        return guiControllerSettings;
     }
 
     @FXML

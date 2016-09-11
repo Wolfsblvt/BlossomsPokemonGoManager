@@ -29,11 +29,13 @@ public abstract class BaseController<T extends Pane> {
 
     private Stage stage;
     private String title;
+    final public GuiControllerSettings guiControllerSettings = new GuiControllerSettings();
 
     /**
      * BaseController constructor. Call initializeController() to initialize controller.
      */
     public BaseController() {
+        setGuiControllerSettings();
     }
 
     /**
@@ -44,11 +46,9 @@ public abstract class BaseController<T extends Pane> {
     abstract public String getFxmlLayout();
 
     /**
-     * Get the settings used to initialize the controller.
-     *
-     * @return settings used to initialize the controller
+     * Set the settings used to initialize the controller.
      */
-    abstract public GuiControllerSettings getGuiControllerSettings();
+    abstract public void setGuiControllerSettings();
 
     /**
      * Get the title of the window.
@@ -73,11 +73,12 @@ public abstract class BaseController<T extends Pane> {
         }
         final Scene rootScene = new Scene(fxmlLoader.getRoot());
 
-        final GuiControllerSettings guiControllerSettings = getGuiControllerSettings();
         stage = new Stage();
         stage.getIcons().add(iconImage);
         stage.setTitle(guiControllerSettings.getTitle());
         stage.setResizable(guiControllerSettings.isResizeable());
+        stage.setMaximized(guiControllerSettings.isMaximized());
+        stage.initStyle(guiControllerSettings.getStageStyle());
         stage.setScene(rootScene);
         BlossomsPoGoManager.setNewPrimaryStage(stage);
     }

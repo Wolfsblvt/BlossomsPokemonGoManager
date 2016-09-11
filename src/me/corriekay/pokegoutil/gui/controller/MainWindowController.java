@@ -1,15 +1,17 @@
 package me.corriekay.pokegoutil.gui.controller;
 
+import java.text.NumberFormat;
+
 import com.pokegoapi.api.inventory.Stats;
 import com.pokegoapi.api.player.PlayerProfile;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
 
+import POGOProtos.Data.PlayerDataOuterClass.PlayerData;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
@@ -17,7 +19,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.data.managers.AccountManager;
@@ -25,21 +26,10 @@ import me.corriekay.pokegoutil.data.managers.InventoryManager;
 import me.corriekay.pokegoutil.data.managers.PokemonBagManager;
 import me.corriekay.pokegoutil.data.managers.ProfileManager;
 
-import java.io.IOException;
-import java.net.URL;
-import java.text.NumberFormat;
+public class MainWindowController extends BaseController<BorderPane> {
 
-import static POGOProtos.Data.PlayerDataOuterClass.PlayerData;
+    private final AccountManager accountManager = AccountManager.getInstance();
 
-public class MainWindowController extends BorderPane {
-
-    private final String fxmlLayout = "layout/MainWindow.fxml";
-    private final URL icon;
-    private ClassLoader classLoader = getClass().getClassLoader();
-    
-    private AccountManager accountManager = AccountManager.getInstance();
-
-    private Scene rootScene;
     @FXML
     private MenuItem settingsMenuItem;
 
@@ -77,77 +67,80 @@ public class MainWindowController extends BorderPane {
     private GridPane pokemontable;
 
     @FXML
-    private PokemonTableController pokemontableController;
+    private final PokemonTableController pokemontableController;
 
     public MainWindowController() {
-        FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
-        fxmlLoader.setController(this);
-        try {
-            fxmlLoader.load();
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
-        rootScene = new Scene(fxmlLoader.getRoot());
-        Stage stage = new Stage();
-        icon = classLoader.getResource("icon/PokeBall-icon.png");
-        stage.getIcons().add(new Image(icon.toExternalForm()));
-        try {
-            NumberFormat f = NumberFormat.getInstance();
-            PlayerProfile pp = accountManager.getPlayerProfile();
-            stage.setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager", pp.getPlayerData().getUsername(),
-                    f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
-        } catch (NumberFormatException | NullPointerException e) {
-            stage.setTitle("Blossom's Pokémon Go Manager");
-        }
-
+        super();
+        initializeController();
         pokemontableController = new PokemonTableController(pokemontable);
-        stage.initStyle(StageStyle.DECORATED);
-        stage.setScene(rootScene);
-        stage.setMaximized(true);
+    }
 
-        BlossomsPoGoManager.setNewPrimaryStage(stage);
+    @Override
+    public String getFxmlLayout() {
+        return "layout/MainWindow.fxml";
     }
 
     @FXML
-    //TODO fix exceptions
+    // TODO fix exceptions
     private void initialize() {
         quitMenuItem.setOnAction(this::onQuitClicked);
         logOffMenuItem.setOnAction(this::onLogOffClicked);
 
-        PlayerProfile pp = ProfileManager.getProfile();
+        final PlayerProfile pp = ProfileManager.getProfile();
         refreshGUI(pp);
     }
 
-    private void refreshGUI(PlayerProfile pp) {
+    @FXML
+    void onAboutClicked(final ActionEvent event) {
+
+    }
+
+    @FXML
+    void onLogOffClicked(final ActionEvent event) {
+        new LoginController();
+        BlossomsPoGoManager.getPrimaryStage().show();
+    }
+
+    @FXML
+    void onQuitClicked(final ActionEvent event) {
+        // TODO Kill in a more humane way, maybe...
+        System.exit(0);
+    }
+
+    @FXML
+    void onSettingsClicked(final ActionEvent event) {
+
+    }
+
+    private void refreshGUI(final PlayerProfile pp) {
         boolean done = false;
         if (pp != null) {
             while (!done) {
                 done = true;
                 try {
-                    PlayerData pd = pp.getPlayerData();
-                    Stats stats = pp.getStats();
-
+                    final PlayerData pd = pp.getPlayerData();
+                    final Stats stats = pp.getStats();
 
                     Color color = null;
                     switch (pd.getTeam().getNumber()) {
-                        case 0://noteam
+                        case 0 :// noteam
                             color = Color.rgb(160, 160, 160, 0.99);
                             break;
-                        case 1://blue
+                        case 1 :// blue
                             color = Color.rgb(0, 0, 255, 0.99);
                             break;
-                        case 2://red
+                        case 2 :// red
                             color = Color.rgb(204, 0, 0, 0.99);
                             break;
-                        case 3://yellow
+                        case 3 :// yellow
                             color = Color.rgb(255, 255, 0, 0.99);
                             break;
                     }
                     if (color != null) {
-                        int width = (int) teamIcon.getFitWidth();
-                        int height = (int) teamIcon.getFitHeight();
-                        WritableImage dest = new WritableImage(width, height);
-                        PixelWriter writer = dest.getPixelWriter();
+                        final int width = (int) teamIcon.getFitWidth();
+                        final int height = (int) teamIcon.getFitHeight();
+                        final WritableImage dest = new WritableImage(width, height);
+                        final PixelWriter writer = dest.getPixelWriter();
                         for (int x = 0; x < width; x++) {
                             for (int y = 0; y < height; y++) {
                                 writer.setColor(x, y, color);
@@ -157,16 +150,20 @@ public class MainWindowController extends BorderPane {
                     }
                     playerNameLabel.setText(pd.getUsername() + " ");
                     playerLvl.setText("Lvl: " + Integer.toString(stats.getLevel()));
-                    NumberFormat f = NumberFormat.getInstance();
-                    playerStardustLbl.setText(f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))
+                    final NumberFormat f = NumberFormat.getInstance();
+                    playerStardustLbl.setText(f.format(
+                            pp.getCurrency(PlayerProfile.Currency.STARDUST))
                             + " Stardust");
                     nbPkmInBagsLbl.setText(Integer.toString(PokemonBagManager.getNbPokemon())
-                            + "/" + Integer.toString(pp.getPlayerData().getMaxPokemonStorage())
+                            + "/"
+                            + Integer.toString(pp.getPlayerData().getMaxPokemonStorage())
                             + " Pokémon");
-                    nbItemsBagsLbl.setText(Integer.toString(InventoryManager.getInventories().getItemBag().getItemsCount())
-                            + "/" + Integer.toString(pp.getPlayerData().getMaxItemStorage())
+                    nbItemsBagsLbl.setText(
+                            Integer.toString(InventoryManager.getInventories().getItemBag().getItemsCount())
+                            + "/"
+                            + Integer.toString(pp.getPlayerData().getMaxItemStorage())
                             + " Items");
-                } catch (Exception e) {
+                } catch (LoginFailedException | RemoteServerException e) {
                     System.out.println("bad stuff happened:" + e.toString());
                     done = false;
                 }
@@ -174,27 +171,20 @@ public class MainWindowController extends BorderPane {
         }
     }
 
-    @FXML
-    void onAboutClicked(ActionEvent event) {
+    @Override
+    public void setGuiControllerSettings() {
+        try {
+            final NumberFormat f = NumberFormat.getInstance();
+            final PlayerProfile pp = accountManager.getPlayerProfile();
+            guiControllerSettings.setTitle(String.format(
+                    "%s - Stardust: %s - Blossom's Pokémon Go Manager",
+                    pp.getPlayerData().getUsername(),
+                    f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
+        } catch (NumberFormatException | NullPointerException e) {
+            guiControllerSettings.setTitle("Blossom's Pokémon Go Manager");
+        }
 
+        guiControllerSettings.setStageStyle(StageStyle.DECORATED);
+        guiControllerSettings.setMaximized(true);
     }
-
-    @FXML
-    void onLogOffClicked(ActionEvent event) {
-        new LoginController();
-        BlossomsPoGoManager.getPrimaryStage().show();
-    }
-
-
-    @FXML
-    void onQuitClicked(ActionEvent event) {
-        //TODO Kill in a more humane way, maybe...
-        System.exit(0);
-    }
-
-    @FXML
-    void onSettingsClicked(ActionEvent event) {
-
-    }
-
 }
