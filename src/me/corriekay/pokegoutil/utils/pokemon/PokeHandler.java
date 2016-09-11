@@ -4,7 +4,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -211,22 +210,11 @@ public class PokeHandler {
                 final float level = p.getLevel();
                 if (familyId.getNumber() == PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
                     if (p.getPokemonId().getNumber() == PokemonId.EEVEE.getNumber()) {
-                        final PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonId.VAPOREON);
-                        final PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonId.FLAREON);
-                        final PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonId.JOLTEON);
-                        if (vap != null && fla != null && jol != null) {
-                            final Comparator<PokemonMeta> cMeta = (m1, m2) -> {
-                                final int comb1 = PokemonCpUtils.getCpForPokemonLevel(
-                                        m1.getBaseAttack() + iv_attack,
-                                        m1.getBaseDefense() + iv_defense,
-                                        m1.getBaseStamina() + iv_stamina, level);
-                                final int comb2 = PokemonCpUtils.getCpForPokemonLevel(
-                                        m2.getBaseAttack() + iv_attack,
-                                        m2.getBaseDefense() + iv_defense,
-                                        m2.getBaseStamina() + iv_stamina, level);
-                                return comb1 - comb2;
-                            };
-                            highestFamilyId = PokemonId.forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                        final List<PokemonMeta> eeveeEvolutions = PokemonUtils.getEeveeEvolutions();
+                        if (eeveeEvolutions != null) {
+                            highestFamilyId = PokemonId.forNumber(
+                                    Collections.max(eeveeEvolutions, PokemonUtils.getCpComperator(p))
+                                            .getNumber());
                         }
                     } else {
                         // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
