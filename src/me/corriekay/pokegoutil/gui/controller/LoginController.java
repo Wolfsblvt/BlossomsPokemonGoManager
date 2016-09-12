@@ -121,9 +121,9 @@ public class LoginController extends BaseController<StackPane> {
     /**
      * Event handler for getTokenBtn.
      *
-     * @param actionEvent event
+     * @param ignored event
      */
-    private void ongetTokenBtnClicked(final ActionEvent actionEvent) {
+    private void ongetTokenBtnClicked(final ActionEvent ignored) {
         tokenField.setDisable(false);
         Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
     }
@@ -131,9 +131,9 @@ public class LoginController extends BaseController<StackPane> {
     /**
      * Event handler for googleAuthBtn.
      *
-     * @param event event
+     * @param ignored event
      */
-    private void onGoogleAuthBtnClicked(final ActionEvent event) {
+    private void onGoogleAuthBtnClicked(final ActionEvent ignored) {
         final LoginData loginData = new LoginData();
 
         if (configLoginData.hasToken()) {
@@ -150,9 +150,9 @@ public class LoginController extends BaseController<StackPane> {
     /**
      * Event handler for ptcLoginBtn.
      *
-     * @param event event
+     * @param ignored event
      */
-    private void onPtcLoginBtnClicked(final ActionEvent event) {
+    private void onPtcLoginBtnClicked(final ActionEvent ignored) {
         final LoginData loginData = new LoginData();
 
         loginData.setUsername(usernameField.getText());
