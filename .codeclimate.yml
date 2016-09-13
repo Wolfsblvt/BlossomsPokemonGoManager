@@ -4,9 +4,9 @@ languages:
 
 # Ignore files that are not relevant for the check
 exclude_paths:
-    - out/*
-    - target/*
-    - */thirdparty/*
+    - out/
+    - target/
+    - **/thirdparty/
     - checkstyle.xml
 
 # Enables useful engines
