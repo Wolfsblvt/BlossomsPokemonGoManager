@@ -6,6 +6,7 @@ languages:
 exclude_paths:
     - out/*
     - target/*
+    - */thirdparty/*
     - checkstyle.xml
 
 # Enables useful engines

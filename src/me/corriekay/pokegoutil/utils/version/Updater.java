@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
+import me.corriekay.pokegoutil.utils.version.thirdparty.ComparableVersion;
 
 /**
  * An Updater which checks for a newer stable version on GitHub, of this tool.
