@@ -6,7 +6,7 @@ languages:
 exclude_paths:
     - out/
     - target/
-    - **/thirdparty/
+    - "**/thirdparty/"
     - checkstyle.xml
 
 # Enables useful engines
@@ -22,7 +22,7 @@ engines:
   checkstyle:
     enabled: true
     channel: "beta"
-    config: 'checkstyle.xml'
+    config: "checkstyle.xml"
 
 ratings:
   paths:

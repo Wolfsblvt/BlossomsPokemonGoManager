@@ -11,6 +11,7 @@ import javax.swing.JOptionPane;
 
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 import me.corriekay.pokegoutil.utils.version.thirdparty.ComparableVersion;
 
@@ -107,25 +108,26 @@ public class Updater {
         if (hasNewerVersion()) {
             String skipVersion = config.getString(ConfigKey.SKIP_VERSION);
             if (!latestStable.toString().equals(skipVersion)) {
-                System.out.println("New version found! Version: " + latestStable.toString());
+                final String versionFoundString = "New version found! Version: ";
+                System.out.println(versionFoundString + latestStable.toString());
 
                 // First, we remove the skipped entry from config, cause we got a newer one than the one written down there
                 if (skipVersion != null) {
                     config.delete(ConfigKey.SKIP_VERSION);
                 }
 
-                String message = "A new version was found on GitHub.\r\n"
-                        + "Version: " + latestStable + "\r\n"
-                        + "\r\n"
-                        + "Your current version: " + currentVersion + "\r\n"
-                        + "\r\n"
-                        + "It should be updated.\r\n"
-                        + "Click 'Download' to be redirected to GitHub where you can download the new version.\r\n"
-                        + "Click 'Later' to be reminded on next program start.\r\n"
+                String message = "A new version was found on GitHub." + StringLiterals.LINEBREAK
+                        + "Version: " + latestStable + StringLiterals.LINEBREAK
+                        + StringLiterals.LINEBREAK
+                        + "Your current version: " + currentVersion + StringLiterals.LINEBREAK
+                        + StringLiterals.LINEBREAK
+                        + "It should be updated." + StringLiterals.LINEBREAK
+                        + "Click 'Download' to be redirected to GitHub where you can download the new version." + StringLiterals.LINEBREAK
+                        + "Click 'Later' to be reminded on next program start." + StringLiterals.LINEBREAK
                         + "Click 'Ignore' and you won't be notified again until the next version releases.";
 
                 String[] options = new String[]{"Download", "Later", "Ignore this Version"};
-                int response = JOptionPane.showOptionDialog(null, message, "New version found! Version: " + latestStable,
+                int response = JOptionPane.showOptionDialog(null, message, versionFoundString,
                         JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                         null, options, options[0]);
 
