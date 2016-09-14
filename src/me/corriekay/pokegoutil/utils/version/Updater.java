@@ -21,7 +21,7 @@ import me.corriekay.pokegoutil.utils.version.thirdparty.ComparableVersion;
 public class Updater {
 
     public static final String VERSION_FILENAME = "version.txt";
-    public static final String LATEST_VERSION_URL = "https://github.com/Wolfsblvt/BlossomsPokemonGoManager/tree/master/src/main/resources/";
+    public static final String LATEST_VERSION_URL = "https://raw.githubusercontent.com/wolfsblvt/BlossomsPokemonGoManager/master/src/main/resources/";
 
     private static Updater instance;
 
@@ -116,14 +116,14 @@ public class Updater {
                     config.delete(ConfigKey.SKIP_VERSION);
                 }
 
-                String message = "A new version was found on GitHub." + StringLiterals.LINEBREAK
-                        + "Version: " + latestStable + StringLiterals.LINEBREAK
-                        + StringLiterals.LINEBREAK
-                        + "Your current version: " + currentVersion + StringLiterals.LINEBREAK
-                        + StringLiterals.LINEBREAK
-                        + "It should be updated." + StringLiterals.LINEBREAK
-                        + "Click 'Download' to be redirected to GitHub where you can download the new version." + StringLiterals.LINEBREAK
-                        + "Click 'Later' to be reminded on next program start." + StringLiterals.LINEBREAK
+                String message = "A new version was found on GitHub." + StringLiterals.NEWLINE
+                        + "Version: " + latestStable + StringLiterals.NEWLINE
+                        + StringLiterals.NEWLINE
+                        + "Your current version: " + currentVersion + StringLiterals.NEWLINE
+                        + StringLiterals.NEWLINE
+                        + "It should be updated." + StringLiterals.NEWLINE
+                        + "Click 'Download' to be redirected to GitHub where you can download the new version." + StringLiterals.NEWLINE
+                        + "Click 'Later' to be reminded on next program start." + StringLiterals.NEWLINE
                         + "Click 'Ignore' and you won't be notified again until the next version releases.";
 
                 String[] options = new String[]{"Download", "Later", "Ignore this Version"};

@@ -7,7 +7,7 @@ public final class StringLiterals {
     public static final String SPACE = " ";
     public static final String UNDERSCORE = "_";
     public static final String PERCENTAGE = "%";
-    public static final String LINEBREAK = System.lineSeparator();
+    public static final String NEWLINE = System.lineSeparator();
 
     // More uncommon ones
     public static final String FAMILY_PREFIX = "FAMILY_";
