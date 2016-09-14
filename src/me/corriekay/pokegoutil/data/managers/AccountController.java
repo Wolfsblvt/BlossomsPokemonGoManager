@@ -27,6 +27,7 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 import me.corriekay.pokegoutil.utils.ui.Console;
+import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
 
@@ -294,7 +295,7 @@ public final class AccountController {
             UIManager.put("OptionPane.yesButtonText", "Yes");
             UIManager.put("OptionPane.okButtonText", "Ok");
             UIManager.put("OptionPane.cancelButtonText", "Cancel");
-            return JOptionPane.showConfirmDialog(null, "You have saved login data for " + savedLogin.toString() + ". Want to login with that?", "Use Saved Login", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+            return JOptionPane.showConfirmDialog(WindowStuffHelper.alwaysOnTopParent, "You have saved login data for " + savedLogin.toString() + ". Want to login with that?", "Use Saved Login", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
         }
     }
 
