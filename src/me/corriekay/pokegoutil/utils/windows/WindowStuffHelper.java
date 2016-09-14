@@ -2,6 +2,9 @@ package me.corriekay.pokegoutil.utils.windows;
 
 import javax.swing.*;
 
+/**
+ * Helper class that provides useful tools for everything concerning windows.
+ */
 public final class WindowStuffHelper {
     public static final JDialog alwaysOnTopParent = new JDialog();
 
@@ -9,7 +12,7 @@ public final class WindowStuffHelper {
         alwaysOnTopParent.setAlwaysOnTop(true);
     }
 
-    /* Prevent initializing this class */
+    /** Prevent initializing this class */
     private WindowStuffHelper() {
     }
 }
