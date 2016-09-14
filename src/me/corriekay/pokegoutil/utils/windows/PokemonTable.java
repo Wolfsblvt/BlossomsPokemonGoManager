@@ -54,13 +54,11 @@ public class PokemonTable extends JTable {
     // 24 Long - duelAbility
     // 25 Integer - gymOffense
     // 26 Integer - gymDefense
-    // 27 String(Percentage) Move 1 Rating
-    // 28 String(Percentage) - Move 2 Rating
-    // 29 String(Nullable Int) - CP Evolved
-    // 30 String(Nullable Int) - Evolvable
-    // 31 Long - duelAbility IV
-    // 32 Double - gymOffense IV
-    // 33 Long - gymDefense IV
+    // 27 String(Nullable Int) - CP Evolved
+    // 28 String(Nullable Int) - Evolvable
+    // 29 Long - duelAbility IV
+    // 30 Double - gymOffense IV
+    // 31 Long - gymDefense IV
 
     private final ConfigNew config = ConfigNew.getConfig();
 
@@ -128,13 +126,11 @@ public class PokemonTable extends JTable {
         trs.setComparator(24, cLong);
         trs.setComparator(25, cDouble);
         trs.setComparator(26, cLong);
-        trs.setComparator(27, cPercentageWithTwoCharacters);
-        trs.setComparator(28, cPercentageWithTwoCharacters);
-        trs.setComparator(29, cNullableInt);
-        trs.setComparator(30, cNullableInt);
+        trs.setComparator(27, cNullableInt);
+        trs.setComparator(28, cNullableInt);
+        trs.setComparator(29, cLong);
+        trs.setComparator(30, cDouble);
         trs.setComparator(31, cLong);
-        trs.setComparator(32, cDouble);
-        trs.setComparator(33, cLong);
         setRowSorter(trs);
         final List<SortKey> sortKeys = new ArrayList<>();
         sortKeys.add(new SortKey(sortColIndex1, sortOrder1));
@@ -186,13 +182,13 @@ public class PokemonTable extends JTable {
                 case 26:
                     column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
                     break;
-                case 31:
+                case 29:
                     column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_IV_MAX));
                     break;
-                case 32:
+                case 30:
                     column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_IV_MAX));
                     break;
-                case 33:
+                case 31:
                     column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_IV_MAX));
                     break;
 
