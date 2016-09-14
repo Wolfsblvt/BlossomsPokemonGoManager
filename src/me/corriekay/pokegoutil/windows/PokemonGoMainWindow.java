@@ -22,7 +22,7 @@ import java.text.NumberFormat;
 @SuppressWarnings("serial")
 public class PokemonGoMainWindow extends JFrame {
 
-    public static PokemonGoMainWindow window = null;
+    private static PokemonGoMainWindow window = null;
     private final PokemonGo go;
     private final PlayerProfile pp;
     private final JTabbedPane tab = new JTabbedPane();
@@ -94,6 +94,15 @@ public class PokemonGoMainWindow extends JFrame {
         // Check for new version
         Updater updater = Updater.getUpdater();
         updater.checkForNewVersion();
+    }
+
+    /**
+     * Returns the current instance of the PokemonGoMainWindow.
+     *
+     * @return The window.
+     */
+    public static PokemonGoMainWindow getWindow() {
+        return window;
     }
 
     public PokemonGo getPoGo() {

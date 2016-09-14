@@ -1,10 +1,13 @@
 package me.corriekay.pokegoutil.utils.helpers;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 public final class UIHelper {
-    private UIHelper() { /* Prevent initializing this class */ }
+    /** Prevent initializing this class. */
+    private UIHelper() {
+    }
 
     public static void setNativeLookAndFeel() {
         try {

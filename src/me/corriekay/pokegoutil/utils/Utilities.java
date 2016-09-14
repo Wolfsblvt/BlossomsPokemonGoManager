@@ -1,6 +1,7 @@
 package me.corriekay.pokegoutil.utils;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
@@ -10,7 +11,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public final class Utilities {
-    /* Prevent initializing this class */
+    /** Prevent initializing this class. */
     private Utilities() {
     }
 
@@ -60,7 +61,7 @@ public final class Utilities {
 
     public static void sleepRandom(int minMilliseconds, int maxMilliseconds) {
         try {
-            int randomInt = getRandom(minMilliseconds,maxMilliseconds);
+            int randomInt = getRandom(minMilliseconds, maxMilliseconds);
             System.out.println("Waiting " + (randomInt / 1000.0F) + " seconds.");
             TimeUnit.MILLISECONDS.sleep(randomInt);
         } catch (InterruptedException e) {

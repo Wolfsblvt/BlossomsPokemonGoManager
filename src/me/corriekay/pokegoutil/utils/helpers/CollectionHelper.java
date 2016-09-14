@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public final class CollectionHelper {
-    private CollectionHelper() { /* Prevent initializing this class */ }
+    /** Prevent initializing this class. */
+    private CollectionHelper() {
+    }
 
     public static String joinStringArray(String[] args) {
         return joinStringArray(args, "");
