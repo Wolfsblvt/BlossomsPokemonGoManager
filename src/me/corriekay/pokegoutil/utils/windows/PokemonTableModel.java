@@ -73,13 +73,14 @@ public class PokemonTableModel extends AbstractTableModel {
         data.add(new AbstractMap.SimpleEntry<>("Duel Ability", new ArrayList<Long>()));// 24
         data.add(new AbstractMap.SimpleEntry<>("Gym Offense", new ArrayList<Double>()));// 25
         data.add(new AbstractMap.SimpleEntry<>("Gym Defense", new ArrayList<Long>()));// 26
-        data.add(new AbstractMap.SimpleEntry<>("Move 1 Rating", new ArrayList<String>()));// 27
-        data.add(new AbstractMap.SimpleEntry<>("Move 2 Rating", new ArrayList<String>()));// 28
-        data.add(new AbstractMap.SimpleEntry<>("CP Evolved", new ArrayList<String>()));// 29
-        data.add(new AbstractMap.SimpleEntry<>("Evolvable", new ArrayList<String>()));// 30
-        data.add(new AbstractMap.SimpleEntry<>("Duel Ability IV", new ArrayList<Long>()));
-        data.add(new AbstractMap.SimpleEntry<>("Gym Offense IV", new ArrayList<Double>()));
-        data.add(new AbstractMap.SimpleEntry<>("Gym Defense IV", new ArrayList<Long>()));
+        data.add(new AbstractMap.SimpleEntry<>("CP Evolved", new ArrayList<String>()));// 27
+        data.add(new AbstractMap.SimpleEntry<>("Evolvable", new ArrayList<String>()));// 28
+        data.add(new AbstractMap.SimpleEntry<>("Duel Ability IV", new ArrayList<Long>()));// 29
+        data.add(new AbstractMap.SimpleEntry<>("Gym Offense IV", new ArrayList<Double>()));// 30
+        data.add(new AbstractMap.SimpleEntry<>("Gym Defense IV", new ArrayList<Long>()));// 31
+        data.add(new AbstractMap.SimpleEntry<>("Duel Ability Species", new ArrayList<Long>()));// 22
+        data.add(new AbstractMap.SimpleEntry<>("Gym Offense Species", new ArrayList<Double>()));// 33
+        data.add(new AbstractMap.SimpleEntry<>("Gym Defense Species", new ArrayList<Long>()));// 34
 
         ChangeTableData(pokes);
     }
@@ -177,7 +178,7 @@ public class PokemonTableModel extends AbstractTableModel {
             if (highestFamilyId == p.getPokemonId()) {
                 getColumnList(16).add(i.getValue(), maxCpCurrent);
                 getColumnList(17).add(i.getValue(), maxCp);
-                getColumnList(29).add(i.getValue(), "-");
+                getColumnList(27).add(i.getValue(), "-");
             } else if (highestFamilyMeta == null) {
                 System.out.println("Error: Cannot find meta data for " + highestFamilyId.name());
             } else {
@@ -188,7 +189,7 @@ public class PokemonTableModel extends AbstractTableModel {
                 getColumnList(16).add(i.getValue(),
                         PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
                 getColumnList(17).add(i.getValue(), PokemonCpUtils.getMaxCp(attack, defense, stamina));
-                getColumnList(29).add(i.getValue(), String
+                getColumnList(27).add(i.getValue(), String
                         .valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
             }
 
@@ -202,10 +203,10 @@ public class PokemonTableModel extends AbstractTableModel {
             }
             if (p.getCandiesToEvolve() != 0) {
                 getColumnList(19).add(i.getValue(), String.valueOf(p.getCandiesToEvolve()));
-                getColumnList(30).add(i.getValue(), String.valueOf(GetEvolvable(candies, p.getCandiesToEvolve())));
+                getColumnList(28).add(i.getValue(), String.valueOf(GetEvolvable(candies, p.getCandiesToEvolve())));
             } else {
                 getColumnList(19).add(i.getValue(), "-");
-                getColumnList(30).add(i.getValue(), "-");
+                getColumnList(28).add(i.getValue(), "-");
             }
             getColumnList(20).add(i.getValue(), p.getStardustCostsForPowerup());
             getColumnList(21).add(i.getValue(), WordUtils.capitalize(
@@ -215,11 +216,10 @@ public class PokemonTableModel extends AbstractTableModel {
             getColumnList(24).add(i.getValue(), PokemonUtils.duelAbility(p, false));
             getColumnList(25).add(i.getValue(), PokemonUtils.gymOffense(p, false));
             getColumnList(26).add(i.getValue(), PokemonUtils.gymDefense(p, false));
-            getColumnList(27).add(i.getValue(), PokemonUtils.moveRating(p, true));
-            getColumnList(28).add(i.getValue(), PokemonUtils.moveRating(p, false));
-            getColumnList(31).add(i.getValue(), PokemonUtils.duelAbility(p, true));
-            getColumnList(32).add(i.getValue(), PokemonUtils.gymOffense(p, true));
-            getColumnList(33).add(i.getValue(), PokemonUtils.gymDefense(p, true));
+
+            getColumnList(29).add(i.getValue(), PokemonUtils.duelAbility(p, true));
+            getColumnList(30).add(i.getValue(), PokemonUtils.gymOffense(p, true));
+            getColumnList(31).add(i.getValue(), PokemonUtils.gymDefense(p, true));
 
             i.increment();
         });
@@ -268,7 +268,6 @@ public class PokemonTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        // return 31;
         return data.size();
     }
 
