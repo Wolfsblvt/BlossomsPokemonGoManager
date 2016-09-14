@@ -1,15 +1,19 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
+
 import com.pokegoapi.api.player.Team;
 import com.pokegoapi.api.pokemon.*;
+
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 import org.apache.commons.lang3.StringUtils;
 
 public final class PokemonUtils {
-    private PokemonUtils() { /* Prevent initializing this class */ }
+    /** Prevent initializing this class. */
+    private PokemonUtils() {
+    }
 
     /**
      * Maximum duel ability - moveset only
@@ -119,7 +123,7 @@ public final class PokemonUtils {
      * Duel Ability is Tankiness * Gym Offense. A reasonable measure if you don't often/ever dodge,
      * as then you can only attack for as long as you  can stay positive on HP.
      *
-     * @param p A Pokemon object
+     * @param p     A Pokemon object
      * @param useIV Use a pokemon's IV values in the calculations
      * @return Rating of a Pokemon's overall attacking power considering damage, health & defense
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
@@ -134,7 +138,7 @@ public final class PokemonUtils {
      * Gym Offense takes the better of No Weave/Weave Damage over 100s and multiplies by the
      * Pokemon's base attack to arrive at a ranking of raw damage output.
      *
-     * @param p A Pokemon object
+     * @param p     A Pokemon object
      * @param useIV Use a pokemon's IV values in the calculations
      * @return Rating of a Pokemon's pure offensive ability over time considering move set
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
@@ -151,7 +155,7 @@ public final class PokemonUtils {
      * Gym Defense takes the calculated Gym Weave Damage over 100s and multiplies by Tankiness
      * to arrive at a ranking of how much damage a Pokemon will output when defending a gym.
      *
-     * @param p A Pokemon object
+     * @param p     A Pokemon object
      * @param useIV Use a pokemon's IV values in the calculations
      * @return Rating of a Pokemon's AI controlled gym defense over time considering move set
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
@@ -171,7 +175,7 @@ public final class PokemonUtils {
      * <p>
      * Used for duel ability & gym defense calculations
      *
-     * @param p A Pokemon object
+     * @param p     A Pokemon object
      * @param useIV Use a pokemon's IV values in the calculations
      * @return Rating of a Pokemon's tankiness :)
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/

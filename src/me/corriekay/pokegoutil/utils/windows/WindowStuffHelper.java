@@ -12,7 +12,7 @@ public final class WindowStuffHelper {
         alwaysOnTopParent.setAlwaysOnTop(true);
     }
 
-    /** Prevent initializing this class */
+    /** Prevent initializing this class. */
     private WindowStuffHelper() {
     }
 }

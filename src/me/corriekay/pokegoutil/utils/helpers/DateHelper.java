@@ -7,7 +7,9 @@ import java.time.format.DateTimeFormatter;
 
 
 public final class DateHelper {
-    private DateHelper() { /* Prevent initializing this class */ }
+    /** Prevent initializing this class. */
+    private DateHelper() {
+    }
 
     public static final String dateTimeFormat = "yyyy-MM-dd HH:mm:ss";
     public static final String timeFormat = "HH:mm:ss";

@@ -7,7 +7,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public final class Browser {
-    private Browser() { /* Prevent initializing this class */ }
+    /** Prevent initializing this class. */
+    private Browser() {
+    }
 
     /***
      * Opens given URL in users default browser of his operating system.
