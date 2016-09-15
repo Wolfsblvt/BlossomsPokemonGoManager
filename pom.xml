@@ -8,11 +8,10 @@
     <version>0.0.1-SNAPSHOT</version>
     <build>
         <sourceDirectory>src</sourceDirectory>
-        <testSourceDirectory>test</testSourceDirectory>
         <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-            </resource>
+        <resource>
+        <directory>src/main/resources</directory>
+        </resource>
         </resources>
         <plugins>
             <plugin>
@@ -56,48 +55,19 @@
                     </archive>
                 </configuration>
             </plugin>
-			<!-- Maven Assembly Plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.4</version>
-				<configuration>
-					<!-- get all project dependencies -->
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<!-- MainClass in mainfest make a executable jar -->
-					<archive>
-					  <manifest>
-						<mainClass>me.corriekay.pokegoutil.BlossomsPoGoManager</mainClass>
-					  </manifest>
-					</archive>
-
-				</configuration>
-				<executions>
-				  <execution>
-					<id>make-assembly</id>
-                                        <!-- bind to the packaging phase -->
-					<phase>package</phase>
-					<goals>
-						<goal>single</goal>
-					</goals>
-				  </execution>
-				</executions>
-			</plugin>
         </plugins>
     </build>
     <repositories>
         <repository>
-            <id>bintray</id>
-            <url>http://jcenter.bintray.com</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>com.pokegoapi</groupId>
-            <artifactId>PokeGOAPI-library</artifactId>
-            <version>0.4.1</version>
+            <groupId>com.github.Grover-c13</groupId>
+            <artifactId>PokeGOAPI-Java</artifactId>
+            <version>0.3</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -108,18 +78,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-    	    <groupId>org.mockito</groupId>
-    	    <artifactId>mockito-all</artifactId>
-    	    <version>1.10.19</version>
-    	    <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

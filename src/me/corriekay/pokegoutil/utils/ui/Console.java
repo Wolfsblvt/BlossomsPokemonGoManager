@@ -1,25 +1,13 @@
 package me.corriekay.pokegoutil.utils.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+import me.corriekay.pokegoutil.utils.helpers.DateHelper;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
+import java.io.*;
 import java.util.ArrayDeque;
 import java.util.Iterator;
-
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.WindowConstants;
-
-import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 
 @SuppressWarnings("serial")
 public class Console extends JFrame {
@@ -56,27 +44,10 @@ public class Console extends JFrame {
             tf.setText("");
         });
 
-        setDefaultCharset("UTF8");
-
         ConsolePrintStream cps = new ConsolePrintStream();
         System.setOut(cps);
         System.setErr(cps);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    }
-
-    /**
-     * Set the default charset for the console, so that characters are displayed correctly.
-     *
-     * @param charsetName The name of the charset.
-     */
-    public static void setDefaultCharset(final String charsetName) {
-        try {
-            final Field charset = Charset.class.getDeclaredField("defaultCharset");
-            charset.setAccessible(true);
-            charset.set(null, Charset.forName(charsetName));
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            System.out.println(ex.toString());
-        }
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public void clearAllLines() {

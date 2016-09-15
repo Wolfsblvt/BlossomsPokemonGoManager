@@ -2,8 +2,8 @@ package me.corriekay.pokegoutil;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import me.corriekay.pokegoutil.data.managers.AccountController;
-import me.corriekay.pokegoutil.gui.controller.ChooseGuiWindowController;
+import me.corriekay.pokegoutil.DATA.managers.AccountController;
+import me.corriekay.pokegoutil.GUI.controller.ChooseGuiWindowController;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
@@ -16,6 +16,8 @@ public class BlossomsPoGoManager extends Application {
 
     public static final String VERSION = "v0.1.2-alpha.2";
     private static Stage sPrimaryStage;
+
+    private ClassLoader classLoader = getClass().getClassLoader();
 
     public static void main(String[] args) {
         launch(args);

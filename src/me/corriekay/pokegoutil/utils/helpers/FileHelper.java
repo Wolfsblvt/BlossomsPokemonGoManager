@@ -3,14 +3,11 @@ package me.corriekay.pokegoutil.utils.helpers;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-
 import java.awt.*;
 import java.io.*;
 
 public final class FileHelper {
-    /** Prevent initializing this class. */
-    private FileHelper() {
-    }
+    private FileHelper() { /* Prevent initializing this class */ }
 
     private static ClassLoader classLoader = FileHelper.class.getClassLoader();
 

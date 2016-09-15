@@ -7,15 +7,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Objects;
 
 public final class LDocumentListener {
-    /** Prevent initializing this class. */
-    private LDocumentListener() {
-    }
+    private LDocumentListener() { /* Prevent initializing this class */ }
 
     /**
      * Installs a listener to receive notification when the text of any

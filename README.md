@@ -1,18 +1,3 @@
-[![Travis Build Badge](https://img.shields.io/travis/Wolfsblvt/BlossomsPokemonGoManager.svg)](https://travis-ci.org/Wolfsblvt/BlossomsPokemonGoManager)
-[![Codacy](https://img.shields.io/codacy/grade/14b05062286f448fb5b59708c4936e42.svg)](https://www.codacy.com/app/wolfsblvt/BlossomsPokemonGoManager?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Wolfsblvt/BlossomsPokemonGoManager&amp;utm_campaign=Badge_Grade)
-[![Codacy Coverage](https://img.shields.io/codacy/coverage/14b05062286f448fb5b59708c4936e42.svg)](https://www.codacy.com/app/wolfsblvt/BlossomsPokemonGoManager?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Wolfsblvt/BlossomsPokemonGoManager&amp;utm_campaign=Badge_Grade)
-[![Code Climate](https://img.shields.io/codeclimate/github/Wolfsblvt/BlossomsPokemonGoManager.svg)](https://codeclimate.com/github/Wolfsblvt/BlossomsPokemonGoManager)
-[![Code Climate Coverage](https://img.shields.io/codeclimate/coverage/github/Wolfsblvt/BlossomsPokemonGoManager.svg)](https://codeclimate.com/github/Wolfsblvt/BlossomsPokemonGoManager/coverage)
-[![Codebeat](https://codebeat.co/badges/6d02b875-b4c1-4ec5-8c59-53715dc40751)](https://codebeat.co/projects/github-com-wolfsblvt-blossomspokemongomanager)
-[![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-blue.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![Java Version](https://img.shields.io/badge/Java-JRE%208-red.svg)](https://www.java.com/download/)
-
-[![GitHub Latest Release](https://img.shields.io/github/release/Wolfsblvt/BlossomsPokemonGoManager.svg)](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases/latest)
-[![Github Releases](https://img.shields.io/github/downloads/Wolfsblvt/BlossomsPokemonGoManager/latest/total.svg)](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases/latest)
-[![Github All Releases](https://img.shields.io/github/downloads/Wolfsblvt/BlossomsPokemonGoManager/total.svg)](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases)
-
-
-
 # BlossomsPokemonGoManager
 BlossomsPokemonGoManager is a tool created for managing your game. It allows you to sort your Pokémon by several values, to rename, transfer, evolve or to power-up one or several of them.  
 It was made for easier management of Pokémon, deciding which to keep, and which to throw away.

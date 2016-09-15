@@ -27,7 +27,4 @@ Information
 ===========
 BlossomsPogoManager supports both Google authenticated logins, and Pokemon Trainer Club logins.
 
-Original Author: Corrie 'Blossom' Kay
-Current Author: Wolfsblvt
-
-Source: https://github.com/Wolfsblvt/BlossomsPokemonGoManager
+Source: https://github.com/Blossomforth/BlossomsPokemonGoManager
