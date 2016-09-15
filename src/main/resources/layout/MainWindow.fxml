@@ -4,88 +4,72 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
-      minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0"
-      xmlns="http://javafx.com/javafx/8.0.60">
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <MenuBar maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="23.0"
-                 prefWidth="640.0">
+        <MenuBar prefHeight="25.0" prefWidth="576.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem fx:id="settingsMenuItem" mnemonicParsing="false" text="Settings..."/>
-                        <SeparatorMenuItem mnemonicParsing="false"/>
-                        <MenuItem fx:id="logOffMenuItem" mnemonicParsing="false" text="LogOff"/>
-                        <MenuItem fx:id="quitMenuItem" mnemonicParsing="false" text="Quit"/>
+                        <MenuItem fx:id="settingsMenuItem" mnemonicParsing="false" text="Settings..." />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem fx:id="logOffMenuItem" mnemonicParsing="false" text="LogOff" />
+                        <MenuItem fx:id="quitMenuItem" mnemonicParsing="false" text="Quit" />
                     </items>
                 </Menu>
                 <Menu mnemonicParsing="false" text="Help">
                     <items>
-                        <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="About"/>
+                        <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="About" />
                     </items>
                 </Menu>
             </menus>
         </MenuBar>
-        <VBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="640.0">
+        <HBox fx:id="PlayerInfo" alignment="CENTER_LEFT" layoutY="25.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="576.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
             <children>
-                <HBox fx:id="PlayerInfo" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity"
-                      minHeight="-Infinity" minWidth="-Infinity" prefHeight="32.0" prefWidth="640.0">
-                    <children>
-                        <ImageView fx:id="teamIcon" fitHeight="32.0" fitWidth="32.0" preserveRatio="true"/>
-                        <Separator maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                                   orientation="VERTICAL"/>
-                        <Label fx:id="playerNameLabel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                               minWidth="-Infinity" text="PlayerName">
-                            <font>
-                                <Font name="System Bold" size="12.0"/>
-                            </font>
-                        </Label>
-                        <Separator maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                                   orientation="VERTICAL"/>
-                        <Label fx:id="playerLvl" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                               minWidth="-Infinity" text="playerLvl"/>
-                        <Separator maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                                   orientation="VERTICAL"/>
-                        <Label fx:id="playerStardustLbl" maxHeight="-Infinity" maxWidth="-Infinity"
-                               minHeight="-Infinity" minWidth="-Infinity" text="   ########### Stardust">
-                            <font>
-                                <Font name="System Bold" size="12.0"/>
-                            </font>
-                        </Label>
-                        <Separator maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                                   orientation="VERTICAL"/>
-                        <Label fx:id="nbPkmInBagsLbl" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                               minWidth="-Infinity" text="###/### Pokémon"/>
-                        <Separator maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                                   orientation="VERTICAL"/>
-                        <Label fx:id="nbItemsBagsLbl" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                               minWidth="-Infinity" text="###/### Items"/>
-                    </children>
-                </HBox>
+                <ImageView fx:id="teamIcon" fitHeight="32.0" fitWidth="32.0" preserveRatio="true" />
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="playerNameLabel" text="PlayerName">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="playerLvl" text="playerLvl" />
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="playerStardustLbl" text="   ########### Stardust">
+                    <font>
+                        <Font name="System Bold" />
+                    </font>
+                </Label>
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="nbPkmInBagsLbl" text="###/### Pokémon" />
+                <Separator orientation="VERTICAL" />
+                <Label fx:id="nbItemsBagsLbl" text="###/### Items" />
             </children>
-        </VBox>
-        <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                 prefHeight="424.0" prefWidth="640.0" tabClosingPolicy="UNAVAILABLE">
+        </HBox>
+        <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="57">
             <tabs>
-                <Tab text="Pokémon">
+                <Tab text="Pokémon" >
                     <content>
-
-                    </content>
-                    <content>
-                        <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                              prefHeight="396.0" prefWidth="640.0">
+                        <AnchorPane>
                             <children>
-                                <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                                            minWidth="-Infinity" prefHeight="38.0" prefWidth="640.0"/>
-                                <TreeTableView maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                                               minWidth="-Infinity" prefHeight="357.0" prefWidth="640.0">
-                                    <columns>
-                                        <TreeTableColumn prefWidth="75.0" text="#"/>
-                                        <TreeTableColumn prefWidth="75.0" text="nickname"/>
-                                    </columns>
-                                </TreeTableView>
+                                <HBox AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                        <TextField fx:id="searchField" promptText="Search..." />
+                                        <Button fx:id="selectBtn" text="Select" />
+                                    </children>
+                                </HBox>
+                                <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
+                                    <children>
+                                        <Accordion AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                            <panes>
+                                                <TitledPane maxHeight="-Infinity" prefHeight="136.0" prefWidth="576.0" text="Filters" />
+                                            </panes>
+                                        </Accordion>
+                                        <GridPane fx:id="pokemontable" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                                    </children>
+                                </AnchorPane>
                             </children>
-                        </VBox>
+                        </AnchorPane>
                     </content>
                 </Tab>
                 <Tab text="Items">
@@ -95,12 +79,13 @@
                 </Tab>
                 <Tab text="LuckyEggGrinder">
                     <content>
-                        <Button fx:id="openGrinderBtn" prefHeight="25.0" prefWidth="105.0" text="Open"/>
-                        <!-- problem with the embeding atm -->
-                        <!--fx:include fx:id="grinderPane" source="LuckyEggGrinder.fxml" />-->
+                        <fx:include fx:id="luckyEggGrinderPane" source="LuckyEggGrinder.fxml" />
                     </content>
                 </Tab>
             </tabs>
         </TabPane>
+        <ToolBar fx:id="statusBar" prefHeight="27.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Label fx:id="statusBarLeftText" text="Status" />
+        </ToolBar>
     </children>
-</VBox>
+</AnchorPane>
