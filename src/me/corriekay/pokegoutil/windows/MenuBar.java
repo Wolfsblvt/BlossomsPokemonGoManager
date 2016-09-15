@@ -5,10 +5,12 @@ import com.pokegoapi.api.inventory.Stats;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import me.corriekay.pokegoutil.BlossomsPoGoManager;
-import me.corriekay.pokegoutil.DATA.managers.AccountController;
+import me.corriekay.pokegoutil.data.managers.AccountController;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import me.corriekay.pokegoutil.utils.version.Updater;
 
 import javax.swing.*;
 
@@ -58,25 +60,31 @@ public class MenuBar extends JMenuBar {
 
         JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion Window");
         doNotShowBulkPopup.setSelected(config.getBool(ConfigKey.SHOW_BULK_POPUP));
-        doNotShowBulkPopup.addItemListener(e -> config.setBool(ConfigKey.SHOW_BULK_POPUP, doNotShowBulkPopup.isSelected()));
+        doNotShowBulkPopup.addItemListener(
+                e -> {
+                    config.setBool(ConfigKey.SHOW_BULK_POPUP, doNotShowBulkPopup.isSelected());
+                });
         settings.add(doNotShowBulkPopup);
 
         JCheckBoxMenuItem includeFamily = new JCheckBoxMenuItem("Include Family On Searchbar");
         includeFamily.setSelected(config.getBool(ConfigKey.INCLUDE_FAMILY));
-        includeFamily.addItemListener(e -> {
-            config.setBool(ConfigKey.INCLUDE_FAMILY, includeFamily.isSelected());
-            if (!pokemonTab.getSelectedPokemon().isEmpty()) {
-                SwingUtilities.invokeLater(pokemonTab::refreshList);
-            }
-        });
+        includeFamily.addItemListener(
+                e -> {
+                    config.setBool(ConfigKey.INCLUDE_FAMILY, includeFamily.isSelected());
+                    if (!pokemonTab.getSelectedPokemon().isEmpty()) {
+                        SwingUtilities.invokeLater(pokemonTab::refreshList);
+                    }
+                });
         settings.add(includeFamily);
 
-        JCheckBoxMenuItem alternativeIVCalculation = new JCheckBoxMenuItem("Use Alternative IV Calculation (weighted stats)");
+        JCheckBoxMenuItem alternativeIVCalculation = new JCheckBoxMenuItem(
+                "Use Alternative IV Calculation (weighted stats)");
         alternativeIVCalculation.setSelected(config.getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION));
-        alternativeIVCalculation.addItemListener(e -> {
-            config.setBool(ConfigKey.ALTERNATIVE_IV_CALCULATION, alternativeIVCalculation.isSelected());
-            SwingUtilities.invokeLater(pokemonTab::refreshList);
-        });
+        alternativeIVCalculation.addItemListener(
+                e -> {
+                    config.setBool(ConfigKey.ALTERNATIVE_IV_CALCULATION, alternativeIVCalculation.isSelected());
+                    SwingUtilities.invokeLater(pokemonTab::refreshList);
+                });
         settings.add(alternativeIVCalculation);
 
         add(settings);
@@ -84,29 +92,43 @@ public class MenuBar extends JMenuBar {
         // Help menu
         help = new JMenu("Help");
 
+        JMenuItem checkUpdates = new JMenuItem("Check for Updates");
+        checkUpdates.addActionListener(l -> {
+            Updater updater = Updater.getUpdater();
+            updater.checkForNewVersion();
+            if (!updater.hasNewerVersion()) {
+                JOptionPane.showMessageDialog(null,
+                        "No new updates where found. Current version '" + updater.currentVersion + "' is the latest.",
+                        checkUpdates.getText(),
+                        JOptionPane.PLAIN_MESSAGE);
+            }
+        });
+        help.add(checkUpdates);
+
         JMenuItem about = new JMenuItem("About");
         about.addActionListener(l -> JOptionPane.showMessageDialog(null,
                 "Version: " + BlossomsPoGoManager.VERSION
-                        + "\n"
-                        + "\nAuthor: Corrie 'Blossom' Kay"
-                        + "\nCollaborators: Wolfsblvt, Ljay,"
-                        + "\nnaderki, wullxz, Cryptically, "
-                        + "\neralpsahin, weblue, edysantosa,"
-                        + "\ndylanpdx, michael-smith-versacom"
-                        + "\n"
-                        + "\nThis work is protected under the"
-                        + "\nCreative Commons Attribution-"
-                        + "\nNonCommercial-ShareAlike 4.0"
-                        + "\nInternational license, which can"
-                        + "\nbe found here:"
-                        + "\nhttps://creativecommons.org/"
-                        + "\nlicenses/by-nc-sa/4.0/"
-                        + "\n"
-                        + "\nThanks to Grover for providing"
-                        + "\nsuch a great API."
-                        + "\n"
-                        + "\nThanks for Draseart for"
-                        + "\nthe icon art.",
+                        + StringLiterals.NEWLINE
+                        + StringLiterals.NEWLINE + "Original Author: Corrie 'Blossom' Kay"
+                        + StringLiterals.NEWLINE + "Current Author: Wolfsblvt"
+                        + StringLiterals.NEWLINE
+                        + StringLiterals.NEWLINE + "Collaborators: Ljay, naderki, wullxz,"
+                        + StringLiterals.NEWLINE + "Cryptically, eralpsahin, weblue,"
+                        + StringLiterals.NEWLINE + "edysantosa, dylanpdx, michael-smith-versacom"
+                        + StringLiterals.NEWLINE
+                        + StringLiterals.NEWLINE + "This work is protected under the"
+                        + StringLiterals.NEWLINE + "Creative Commons Attribution-"
+                        + StringLiterals.NEWLINE + "NonCommercial-ShareAlike 4.0"
+                        + StringLiterals.NEWLINE + "International license, which can"
+                        + StringLiterals.NEWLINE + "be found here:"
+                        + StringLiterals.NEWLINE + "https://creativecommons.org/"
+                        + StringLiterals.NEWLINE + "licenses/by-nc-sa/4.0/"
+                        + StringLiterals.NEWLINE
+                        + StringLiterals.NEWLINE + "Thanks to Grover for providing"
+                        + StringLiterals.NEWLINE + "such a great API."
+                        + StringLiterals.NEWLINE
+                        + StringLiterals.NEWLINE + "Thanks for Draseart for"
+                        + "the icon art.",
                 "About Blossom's Pokémon Go Manager", JOptionPane.PLAIN_MESSAGE));
         help.add(about);
 
@@ -121,11 +143,14 @@ public class MenuBar extends JMenuBar {
         go.getInventories().updateInventories(true);
         PlayerProfile pp = go.getPlayerProfile();
         Stats stats = pp.getStats();
-        Object[] tstats = {"Trainer Name: " + pp.getPlayerData().getUsername(),
-                "Team: " + PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue()),
-                "Level: " + stats.getLevel(), "XP: " + stats.getExperience() + " ("
-                + (stats.getNextLevelXp() - stats.getExperience()) + " to next level)",
-                "Stardust: " + pp.getCurrency(Currency.STARDUST)};
+        Object[] tstats = {
+                String.format("Trainer Name: %s", pp.getPlayerData().getUsername()),
+                String.format("Team: %s", PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue())),
+                String.format("Level: %d", stats.getLevel()),
+                String.format("XP: %d (%d to next level)",
+                        stats.getExperience(),
+                        (stats.getNextLevelXp() - stats.getExperience())),
+                String.format("Stardust: %d", pp.getCurrency(Currency.STARDUST))};
         JOptionPane.showMessageDialog(null, tstats, "Trainer Stats", JOptionPane.PLAIN_MESSAGE);
     }
 }
