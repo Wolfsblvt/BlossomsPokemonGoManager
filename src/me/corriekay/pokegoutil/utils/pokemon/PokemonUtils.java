@@ -1,65 +1,19 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
-
 import com.pokegoapi.api.player.Team;
 import com.pokegoapi.api.pokemon.*;
-
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 import org.apache.commons.lang3.StringUtils;
 
 public final class PokemonUtils {
-    /** Prevent initializing this class. */
-    private PokemonUtils() {
-    }
+    private PokemonUtils() { /* Prevent initializing this class */ }
 
-    /**
-     * Maximum duel ability - moveset only
-     * Currently Mewtwo Pyscho Cut & Hyperbeam
-     */
-    public static final long DUEL_ABILITY_MAX = 21_602_780_920L;
-
-    /**
-     * Maximum duel ability - moveset & Max IV
-     * Currently Mewtwo Pyscho Cut & Hyperbeam
-     */
-    public static final long DUEL_ABILITY_IV_MAX = 26_161_393_326L;
-
-    /**
-     * Maximum gym offense - moveset only
-     * Currently Mewtwo Psycho Cut & Hyperbeam
-     */
-    public static final long GYM_OFFENSE_MAX = 504_455L;
-
-    /**
-     * Maximum gym offense - moveset & Max IV
-     * Currently Mewtwo Pyscho Cut & Hyperbeam
-     */
-    public static final long GYM_OFFENSE_IV_MAX = 531_099L;
-
-    /**
-     * Maximum gym defense - moveset only
-     * Currently Mewtwo Confusion & Psychic
-     */
-    public static final long GYM_DEFENSE_MAX = 10_033_663_200L;
-
-    /**
-     * Maximum gym defense - moveset & Max IV
-     * Currently Mewtwo Confusion & Psychic
-     */
-    public static final long GYM_DEFENSE_IV_MAX = 12_150_963_825L;
-
-    /**
-     * Damage bonus from a critical hit - currently no damage bonus in game, change when game is fixed
-     */
-    public static final double CRIT_DAMAGE_BONUS = 0;
-
-    /**
-     * Time in ms for a powermove to be performed
-     */
-    public static final int MOVE2_CHARGE_DELAY_MS = 500;
+    public static final long DUEL_ABILITY_MAX = 21_858_183_256L;
+    public static final long GYM_OFFENSE_MAX = 510_419L;
+    public static final long GYM_DEFENSE_MAX = 9_530_079_725L;
 
     public static double ivRating(Pokemon p) {
         if (ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION)) {
@@ -123,49 +77,40 @@ public final class PokemonUtils {
      * Duel Ability is Tankiness * Gym Offense. A reasonable measure if you don't often/ever dodge,
      * as then you can only attack for as long as you  can stay positive on HP.
      *
-     * @param p     A Pokemon object
-     * @param useIV Use a pokemon's IV values in the calculations
+     * @param p A Pokemon object
      * @return Rating of a Pokemon's overall attacking power considering damage, health & defense
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static long duelAbility(Pokemon p, boolean useIV) {
-        double duelAbility = PokemonUtils.gymOffense(p, useIV) * PokemonUtils.tankiness(p, useIV);
-        return Math.round(duelAbility);
+    public static long duelAbility(Pokemon p) {
+        return PokemonUtils.gymOffense(p) * PokemonUtils.tankiness(p);
     }
 
     /**
      * Gym Offense takes the better of No Weave/Weave Damage over 100s and multiplies by the
      * Pokemon's base attack to arrive at a ranking of raw damage output.
      *
-     * @param p     A Pokemon object
-     * @param useIV Use a pokemon's IV values in the calculations
+     * @param p A Pokemon object
      * @return Rating of a Pokemon's pure offensive ability over time considering move set
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static double gymOffense(Pokemon p, boolean useIV) {
-
-        int attackIV = (useIV) ? p.getIndividualAttack() : 0;
-
-        return Math.max(PokemonUtils.dpsForMove(p, true) * 100, PokemonUtils.weaveDPS(p, 0)) * (p.getMeta().getBaseAttack() + attackIV);
+    public static long gymOffense(Pokemon p) {
+        double gymOffense = Math.max(PokemonUtils.dpsForMove(p, true) * 100, PokemonUtils.weaveDPS(p, 0)) * (p.getMeta().getBaseAttack() + p.getIndividualAttack());
+        return Math.round(gymOffense);
     }
 
     /**
      * Gym Defense takes the calculated Gym Weave Damage over 100s and multiplies by Tankiness
      * to arrive at a ranking of how much damage a Pokemon will output when defending a gym.
      *
-     * @param p     A Pokemon object
-     * @param useIV Use a pokemon's IV values in the calculations
+     * @param p A Pokemon object
      * @return Rating of a Pokemon's AI controlled gym defense over time considering move set
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static long gymDefense(Pokemon p, boolean useIV) {
-
-        int attackIV = (useIV) ? p.getIndividualAttack() : 0;
-
-        double gymDefense = PokemonUtils.weaveDPS(p, 2000) * (p.getMeta().getBaseAttack() + attackIV) * PokemonUtils.tankiness(p, useIV);
+    public static long gymDefense(Pokemon p) {
+        double gymDefense = PokemonUtils.weaveDPS(p, 2000) * (p.getMeta().getBaseAttack() + p.getIndividualAttack()) * PokemonUtils.tankiness(p);
         return Math.round(gymDefense);
     }
 
@@ -175,18 +120,13 @@ public final class PokemonUtils {
      * <p>
      * Used for duel ability & gym defense calculations
      *
-     * @param p     A Pokemon object
-     * @param useIV Use a pokemon's IV values in the calculations
+     * @param p A Pokemon object
      * @return Rating of a Pokemon's tankiness :)
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static long tankiness(Pokemon p, boolean useIV) {
-
-        int staminaIV = (useIV) ? p.getIndividualStamina() : 0;
-        int defenseIV = (useIV) ? p.getIndividualDefense() : 0;
-
-        return (p.getMeta().getBaseStamina() + staminaIV) * (p.getMeta().getBaseDefense() + defenseIV);
+    public static long tankiness(Pokemon p) {
+        return (p.getMeta().getBaseStamina() + p.getIndividualStamina()) * (p.getMeta().getBaseDefense() + p.getIndividualDefense());
     }
 
     /**
@@ -202,48 +142,55 @@ public final class PokemonUtils {
      * @link i607ch00
      */
     public static double weaveDPS(Pokemon p, Integer additionalDelay) {
+        double critDamageBonus = 0.5;
+        int chargeDelayMS = 500;
 
         PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
         PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
         double moveOneStab = (p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType())) ? 1.25 : 1;
         double moveTwoStab = (p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType())) ? 1.25 : 1;
 
-        //Translation reference
+        //=CEILING(AB621/U621)
+        //   *(R621*(1+S621*0.25))
+        //   +X621*(1+Y621*0.25)*(1+($AJ$1*Z621/100))
+        //AB = Move 2 Energy
+        //U = Move 1 Energy
         //R = Move 1 Power
         //S = Move 1 Stab
-        //T = Move 1 Speed
-        //U = Move 1 Energy
         //X = Move 2 Power
         //Y = Move 2 Stab
+        //AJ = Crit Damage Bonus
         //Z = Move 2 Crit Chance
-        //AA = Move 2 Speed
-        //AB = Move 2 Energy
-        //AC = Weave Cycle Damage
-        //AD = Average Weave Cycle Length (ms)
-        //AF = Average Gym Weave Cycle Length (ms)
-        //AJ1 = Crit Damage Bonus
-        //AL1 = Charge Delay
-
-        //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)
-        double weaveEnergyUsageRatio = (Math.abs(pm2.getEnergy()) == 100) ? Math.ceil((double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy()) : (double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy();
-
-        //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*T2+(AA2+$AL$1)
-        //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*(T2+2000)+(AA2+$AL$1)
-        double weaveCycleLength = weaveEnergyUsageRatio * (pm1.getTime() + additionalDelay) + (pm2.getTime() + PokemonUtils.MOVE2_CHARGE_DELAY_MS);
-
-        //=FLOOR(100000/AD2)
-        //*(X2*(1+Y2*0.25) * (1+($AJ$1*Z2/100)))
-        //+CEILING(FLOOR(100000/AD2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))
-        //*(R2*(1+(S2*0.25)))
-        //+FLOOR((100000-(FLOOR(100000/AD2)*(AA2+$AL$1)+CEILING(FLOOR(100000/AD2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*T2))/T2)
-        //*(R2*(1+(S2*0.25)))
-        //=FLOOR(100000/AF2)*(X2*(1+Y2*0.25)*(1+($AJ$1*Z2/100)))+CEILING(FLOOR(100000/AF2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*(R2*(1+(S2*0.25)))+FLOOR((100000-(FLOOR(100000/AF2)*(AA2+$AL$1)+CEILING(FLOOR(100000/AF2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*(T2+2000)))/(T2+2000))*(R2*(1+(S2*0.25)))
-        double weaveDPS = Math.floor(100000 / weaveCycleLength)
-                * (pm2.getPower() * moveTwoStab * (1 + (PokemonUtils.CRIT_DAMAGE_BONUS * pm2.getCritChance())))
-                + Math.ceil(Math.floor(100000 / weaveCycleLength) * weaveEnergyUsageRatio)
+        double weaveCycleDmg = Math.ceil(Math.abs(pm2.getEnergy()) / pm1.getEnergy())
                 * (pm1.getPower() * moveOneStab)
-                + Math.floor((100000 - (Math.floor(100000 / weaveCycleLength) * (pm2.getTime() + PokemonUtils.MOVE2_CHARGE_DELAY_MS) + Math.ceil(Math.floor(100000 / weaveCycleLength) * weaveEnergyUsageRatio) * (pm1.getTime() + additionalDelay))) / (pm1.getTime() + additionalDelay))
-                * (pm1.getPower() * moveOneStab);
+                + pm2.getPower() * moveTwoStab * (1 + (critDamageBonus * pm2.getCritChance()));
+
+        //=CEILING(AB621/U621)
+        // *T621
+        // +(AA621+$AL$1)
+        //=CEILING(AB621/U621)*(T621+2000)+(AA621+$AL$1)
+        //AB  = Move 2 Energy
+        //U = Move 1 Energy
+        //T = Move 1 Speed
+        //AA = Move 2 Speed
+        //AL1 = Charge Delay
+        double weaveCycleLength = Math.ceil(Math.abs(pm2.getEnergy()) / pm1.getEnergy())
+                * (pm1.getTime() + additionalDelay)
+                + (pm2.getTime() + chargeDelayMS);
+
+        //=AC621*FLOOR(100000/AD621)
+        // + (R621*(1+(S621*0.25)))
+        // * FLOOR(MOD(100000,AD621)/T621)
+        //=AC621*FLOOR(100000/AF621)+(R621*(1+(S621*0.25)))*FLOOR(MOD(100000,AF621)/(2000+T621))
+        //AC = Weave Cycle Damage
+        //AD = Weave Cycle Length (ms)
+        //R = Move 1  Power
+        //S = Move 1  Stab
+        //AD = Weave Cycle Length (ms)
+        //T = Move 1  Speed
+        double weaveDPS = weaveCycleDmg * Math.floor(100000 / weaveCycleLength)
+                + (pm1.getPower() * moveOneStab)
+                * Math.floor((100000 % weaveCycleLength) / (pm1.getTime() + additionalDelay));
 
         return weaveDPS;
     }

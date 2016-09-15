@@ -6,9 +6,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 public final class JTableColumnPacker {
-    /** Prevent initializing this class. */
-    private JTableColumnPacker() {
-    }
+    private JTableColumnPacker() { /* Prevent initializing this class */ }
 
     public static void packColumn(JTable table, int vColIndex, int margin) {
         DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();

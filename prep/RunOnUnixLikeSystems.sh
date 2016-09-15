@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-java -jar BlossomsPogoManager.jar
+start java -jar BlossomsPogoManager.jar
