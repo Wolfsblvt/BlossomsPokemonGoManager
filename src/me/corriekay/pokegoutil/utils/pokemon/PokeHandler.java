@@ -363,7 +363,7 @@ public class PokeHandler {
         MOVE_TYPE_2("Move 2 abbreviated (Ghost = Gh)") {
             @Override
             public String get(Pokemon p) {
-                final String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
+                final String type = PokemonMoveMetaRegistry.getMeta(p.getMove2()).getType().toString();
                 final boolean hasStab = type.equals(p.getMeta().getType1().toString()) || type.equals(p.getMeta().getType2().toString());
                 return hasStab ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
