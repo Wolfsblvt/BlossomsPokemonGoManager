@@ -55,15 +55,16 @@ public class MenuBar extends JMenuBar {
 
         JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer After Evolve");
         tAfterE.setSelected(config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE));
-        tAfterE.addItemListener(e -> config.setBool(ConfigKey.TRANSFER_AFTER_EVOLVE, tAfterE.isSelected()));
+        tAfterE.addItemListener(e -> {
+            config.setBool(ConfigKey.TRANSFER_AFTER_EVOLVE, tAfterE.isSelected());
+            SwingUtilities.invokeLater(pokemonTab::refreshList);
+        });
         settings.add(tAfterE);
 
         JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion Window");
         doNotShowBulkPopup.setSelected(config.getBool(ConfigKey.SHOW_BULK_POPUP));
         doNotShowBulkPopup.addItemListener(
-                e -> {
-                    config.setBool(ConfigKey.SHOW_BULK_POPUP, doNotShowBulkPopup.isSelected());
-                });
+                e -> config.setBool(ConfigKey.SHOW_BULK_POPUP, doNotShowBulkPopup.isSelected()));
         settings.add(doNotShowBulkPopup);
 
         JCheckBoxMenuItem includeFamily = new JCheckBoxMenuItem("Include Family On Searchbar");
