@@ -729,7 +729,7 @@ public class PokemonTab extends JPanel {
 
                 if (favoriteResult == SetFavoritePokemonResponse.Result.SUCCESS) {
                     System.out.println(String.format(
-                            "Favorite for %s set to %b, Result: Seccess!",
+                            "Favorite for %s set to %b, Result: Success!",
                             PokeHandler.getLocalPokeName(poke),
                             !poke.isFavorite()));
                     success.increment();

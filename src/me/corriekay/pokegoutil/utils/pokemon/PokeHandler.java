@@ -429,6 +429,18 @@ public class PokeHandler {
                 return UnicodeHelper.get(type);
             }
         },
+        SWORD_UNICODE("Sword in Unicode symbol ⚔  to represent the best offensive moveset") {
+            @Override
+            public String get(Pokemon p) {
+                return UnicodeHelper.get("shield");
+            }
+        },
+        SHIELD_UNICODE("Shield in Unicode symbol ⛨  to represent the best defensive moveset") {
+            @Override
+            public String get(Pokemon p) {
+                return UnicodeHelper.get("shield");
+            }
+        },
         ID("Pokédex Id") {
             @Override
             public String get(final Pokemon p) {
