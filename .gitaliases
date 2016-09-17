@@ -13,6 +13,8 @@
     ####################
     # Go to the branch with given name
     go = "checkout"
+    # Gets the given remote branch locally and set to track it
+	get = "checkout -t"
     # Go back to develop branch
     return = "checkout develop"
     # Removes the last commit

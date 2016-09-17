@@ -142,7 +142,6 @@
         <property name="allowThrowsTagsForSubclasses" value="true"/>
         <property name="allowMissingPropertyJavadoc" value="true"/>
     </module>
-    <module name="JavadocParagraph"/>
     <module name="JavadocStyle"/>
     <module name="JavadocTagContinuationIndentation"/>
     <module name="JavadocType">

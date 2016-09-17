@@ -32,6 +32,7 @@ public enum ConfigKey {
 
     LANGUAGE("options.lang", "en", Type.STRING),
     FONT_SIZE("options.fontsize", 0, Type.INTEGER),
+    SKIP_VERSION("options.skipversion", null, Type.STRING),
 
     DELAY_RENAME_MIN("delay.rename.min", 1000, Type.INTEGER),
     DELAY_RENAME_MAX("delay.rename.max", 5000, Type.INTEGER),

@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.WindowConstants;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
@@ -23,6 +24,8 @@ import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.SmartScroller;
+import me.corriekay.pokegoutil.utils.version.Updater;
+
 
 @SuppressWarnings("serial")
 public class PokemonGoMainWindow extends JFrame {
@@ -31,6 +34,7 @@ public class PokemonGoMainWindow extends JFrame {
     public JScrollPane jsp;
 
     public static PokemonGoMainWindow window = null;
+
     private final PokemonGo go;
     private final PlayerProfile pp;
     private final JTabbedPane tab = new JTabbedPane();
@@ -79,7 +83,7 @@ public class PokemonGoMainWindow extends JFrame {
         final int posx = config.getInt(ConfigKey.WINDOW_POS_X, pt.x);
         final int posy = config.getInt(ConfigKey.WINDOW_POS_Y, pt.y);
         setLocation(posx, posy);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         final PokemonTab pokemonTab = new PokemonTab(go);
         setJMenuBar(new MenuBar(go, pokemonTab));
@@ -106,6 +110,10 @@ public class PokemonGoMainWindow extends JFrame {
             ConsolePrintStream.printException(e);
         }
         refreshTitle();
+
+        // Check for new version
+        Updater updater = Updater.getUpdater();
+        updater.checkForNewVersion();
     }
 
     /**
@@ -125,6 +133,16 @@ public class PokemonGoMainWindow extends JFrame {
         add(jsp, BorderLayout.SOUTH);
 
         globalSettings.getLogController().setTextArea(textArea);
+
+    }
+
+    /**
+     * Returns the current instance of the PokemonGoMainWindow.
+     *
+     * @return The window.
+     */
+    public static PokemonGoMainWindow getWindow() {
+        return window;
     }
 
     public PokemonGo getPoGo() {
