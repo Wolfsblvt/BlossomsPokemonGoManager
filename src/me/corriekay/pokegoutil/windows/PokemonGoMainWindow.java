@@ -33,7 +33,7 @@ public class PokemonGoMainWindow extends JFrame {
     public JTextArea textArea = new JTextArea();
     public JScrollPane jsp;
 
-    public static PokemonGoMainWindow window = null;
+    public static PokemonGoMainWindow instance = null;
 
     private final PokemonGo go;
     private final PlayerProfile pp;
@@ -53,7 +53,7 @@ public class PokemonGoMainWindow extends JFrame {
     public PokemonGoMainWindow(final PokemonGo pkmngo, final boolean smartscroll) {
         super();
 
-        window = this;
+        instance = this;
         go = pkmngo;
         pp = go.getPlayerProfile();
 
@@ -112,7 +112,7 @@ public class PokemonGoMainWindow extends JFrame {
         refreshTitle();
 
         // Check for new version
-        Updater updater = Updater.getUpdater();
+        final Updater updater = Updater.getUpdater();
         updater.checkForNewVersion();
     }
 
@@ -139,10 +139,10 @@ public class PokemonGoMainWindow extends JFrame {
     /**
      * Returns the current instance of the PokemonGoMainWindow.
      *
-     * @return The window.
+     * @return instance of the PokemonGoMainWindow
      */
-    public static PokemonGoMainWindow getWindow() {
-        return window;
+    public static PokemonGoMainWindow getInstance() {
+        return instance;
     }
 
     public PokemonGo getPoGo() {
