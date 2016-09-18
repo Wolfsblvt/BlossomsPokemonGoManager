@@ -1,8 +1,5 @@
 package me.corriekay.pokegoutil.gui.controller;
 
-import java.io.IOException;
-import java.net.URL;
-
 import com.pokegoapi.exceptions.InvalidCurrencyException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
@@ -10,29 +7,22 @@ import com.pokegoapi.exceptions.RemoteServerException;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import me.corriekay.pokegoutil.data.models.BpmOperationResult;
 import me.corriekay.pokegoutil.data.models.PokemonModel;
 import me.corriekay.pokegoutil.data.models.operations.Operation;
 import me.corriekay.pokegoutil.utils.Utilities;
 
-public class OperationConfirmationController extends AnchorPane {
-
-    private final String fxmlLayout = "layout/ConfirmOperationWindow.fxml";
-    private final URL icon;
-    private final ClassLoader classLoader = getClass().getClassLoader();
-
-    private final Scene rootScene;
+/**
+ * The OperationConfirmationController is use to handle all operations related actions.
+ */
+public class OperationConfirmationController extends BaseController<AnchorPane> {
 
     @FXML
     private ListView<Operation> operationListView;
@@ -60,26 +50,8 @@ public class OperationConfirmationController extends AnchorPane {
 
     public OperationConfirmationController(final ObservableList<Operation> operations) {
         super();
-
-        final FXMLLoader fxmlLoader = new FXMLLoader(classLoader.getResource(fxmlLayout));
-        fxmlLoader.setController(this);
-        try {
-            fxmlLoader.load();
-        } catch (final IOException exception) {
-            throw new RuntimeException(exception);
-        }
-        rootScene = new Scene(fxmlLoader.getRoot());
-        final Stage stage = new Stage();
-        icon = classLoader.getResource("icon/PokeBall-icon.png");
-        stage.getIcons().add(new Image(icon.toExternalForm()));
-        stage.setTitle("Please Review Operations");
-        stage.initStyle(StageStyle.UTILITY);
-        stage.setResizable(false);
-        stage.setScene(rootScene);
-
+        initializeController();
         operationListView.setItems(operations);
-
-        stage.show();
     }
 
     @FXML
@@ -131,5 +103,18 @@ public class OperationConfirmationController extends AnchorPane {
 
     private void cancelOperations(final ActionEvent actionEvent) {
         rootScene.getWindow().hide();
+    }
+
+    @Override
+    public String getFxmlLayout() {
+        return "layout/ConfirmOperationWindow.fxml";
+    }
+
+    @Override
+    public void setGuiControllerSettings() {
+        guiControllerSettings.setTitle("Please Review Operations");
+        guiControllerSettings.setStageStyle(StageStyle.UTILITY);
+        guiControllerSettings.setResizeable(false);
+        guiControllerSettings.setChangeToPrimaryStage(false);
     }
 }

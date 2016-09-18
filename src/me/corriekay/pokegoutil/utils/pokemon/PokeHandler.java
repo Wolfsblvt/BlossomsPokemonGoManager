@@ -1,46 +1,52 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
-import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
-import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.function.BiConsumer;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
 import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
-import com.pokegoapi.util.PokeNames;
+import com.pokegoapi.util.PokeDictionary;
+
+import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
+import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.UnicodeHelper;
 
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.UnsupportedEncodingException;
-import java.util.*;
-import java.util.function.BiConsumer;
-
 public class PokeHandler {
 
-    private ArrayList<Pokemon> mons;
+    private final ArrayList<Pokemon> mons;
 
-    public PokeHandler(Pokemon pokemon) {
+    public PokeHandler(final Pokemon pokemon) {
         this(new Pokemon[]{pokemon});
     }
 
-    public PokeHandler(Pokemon[] pokemon) {
+    public PokeHandler(final Pokemon[] pokemon) {
         this(Arrays.asList(pokemon));
     }
 
-    public PokeHandler(List<Pokemon> pokemon) {
+    public PokeHandler(final List<Pokemon> pokemon) {
         mons = new ArrayList<>(pokemon);
     }
 
     // region Static helper methods to handle Pokémon
 
-    public static PokeNick generatePokemonNickname(String pattern, Pokemon pokemon) {
-        PokeNick nick = new PokeNick(pattern, pokemon);
+    public static PokeNick generatePokemonNickname(final String pattern, final Pokemon pokemon) {
+        final PokeNick nick = new PokeNick(pattern, pokemon);
         return nick;
     }
 
@@ -51,8 +57,8 @@ public class PokeHandler {
      * @param pokemon The Pokemon to rename
      * @return The result of type <c>NicknamePokemonResponse.Result</c>
      */
-    public static NicknamePokemonResponse.Result renameWithPattern(String pattern, Pokemon pokemon) {
-        PokeNick pokeNick = generatePokemonNickname(pattern, pokemon);
+    public static NicknamePokemonResponse.Result renameWithPattern(final String pattern, final Pokemon pokemon) {
+        final PokeNick pokeNick = generatePokemonNickname(pattern, pokemon);
 
         if (pokeNick.equals(pokemon.getNickname())) {
             // Why renaming to the same nickname?
@@ -61,7 +67,7 @@ public class PokeHandler {
 
         // Actually renaming the Pokémon with the calculated nickname
         try {
-            NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick.toString());
+            final NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick.toString());
             return result;
         } catch (LoginFailedException | RemoteServerException e) {
             System.out.println("Error while renaming "
@@ -77,19 +83,19 @@ public class PokeHandler {
      * @param id The Pokémon ID
      * @return The translated Pokémon name
      */
-    public static String getLocalPokeName(int id) {
+    public static String getLocalPokeName(final int id) {
         // TODO: change call to getConfigItem to config class once implemented
-        String lang = ConfigNew.getConfig().getString(ConfigKey.LANGUAGE);
+        final String lang = ConfigNew.getConfig().getString(ConfigKey.LANGUAGE);
 
         Locale locale;
-        String[] langar = lang.split("_");
+        final String[] langar = lang.split("_");
         if (langar.length == 1) {
             locale = new Locale(langar[0]);
         } else {
             locale = new Locale(langar[0], langar[1]);
         }
 
-        String name = PokeNames.getDisplayName(id, locale);
+        String name = PokeDictionary.getDisplayName(id, locale);
         // For non-latin
         if (!Utilities.isLatin(name)) {
             return name;
@@ -97,7 +103,7 @@ public class PokeHandler {
 
         try {
             name = new String(name.getBytes("ISO-8859-1"), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
+        } catch (final UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         return name;
@@ -109,7 +115,7 @@ public class PokeHandler {
      * @param pokemon The Pokémon
      * @return The translated Pokémon name
      */
-    public static String getLocalPokeName(Pokemon pokemon) {
+    public static String getLocalPokeName(final Pokemon pokemon) {
         return getLocalPokeName(pokemon.getPokemonId().getNumber());
     }
 
@@ -125,11 +131,11 @@ public class PokeHandler {
      * value.
      */
     public LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> bulkRenameWithPattern(final String pattern,
-                                                                                        final BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback) {
-        LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> results = new LinkedHashMap<>();
+            final BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback) {
+        final LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> results = new LinkedHashMap<>();
 
         mons.forEach(p -> {
-            NicknamePokemonResponse.Result result = renameWithPattern(pattern, p);
+            final NicknamePokemonResponse.Result result = renameWithPattern(pattern, p);
             if (perPokeCallback != null) {
                 perPokeCallback.accept(result, p);
             }
@@ -139,7 +145,7 @@ public class PokeHandler {
         return results;
     }
 
-    public void bulkRenameWithPattern(String pattern) {
+    public void bulkRenameWithPattern(final String pattern) {
         bulkRenameWithPattern(pattern, null);
     }
 
@@ -156,70 +162,59 @@ public class PokeHandler {
     public enum ReplacePattern {
         NICK("Nickname") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return p.getNickname();
             }
         },
         NAME("Pokémon Name") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return getLocalPokeName(p);
             }
         },
         NAME_4("Pokémon Name (First four letters)") {
             @Override
-            public String get(Pokemon p) {
-                String name = getLocalPokeName(p);
+            public String get(final Pokemon p) {
+                final String name = getLocalPokeName(p);
                 return (name.length() <= 4) ? name : name.substring(0, 3) + ".";
             }
         },
         NAME_6("Pokémon Name (First six letters)") {
             @Override
-            public String get(Pokemon p) {
-                String name = getLocalPokeName(p);
+            public String get(final Pokemon p) {
+                final String name = getLocalPokeName(p);
                 return (name.length() <= 4) ? name : name.substring(0, 5) + ".";
             }
         },
         NAME_8("Pokémon Name (First eight letters)") {
             @Override
-            public String get(Pokemon p) {
-                String name = getLocalPokeName(p);
+            public String get(final Pokemon p) {
+                final String name = getLocalPokeName(p);
                 return (name.length() <= 8) ? name : name.substring(0, 7) + ".";
             }
         },
         CP("Combat Points") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return String.valueOf(p.getCp());
             }
         },
         CP_EVOLVED("CP if pokemon was fully evolved (equals %cp% for highest species in the family)") {
             @Override
-            public String get(Pokemon p) {
-                PokemonFamilyId familyId = p.getPokemonFamily();
+            public String get(final Pokemon p) {
+                final PokemonFamilyId familyId = p.getPokemonFamily();
                 PokemonId highestFamilyId = PokemonMetaRegistry.getHighestForFamily(familyId);
-                int iv_attack = p.getIndividualAttack();
-                int iv_defense = p.getIndividualDefense();
-                int iv_stamina = p.getIndividualStamina();
-                float level = p.getLevel();
+                final int ivAttack = p.getIndividualAttack();
+                final int ivDefense = p.getIndividualDefense();
+                final int ivStamina = p.getIndividualStamina();
+                final float level = p.getLevel();
                 if (familyId.getNumber() == PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
                     if (p.getPokemonId().getNumber() == PokemonId.EEVEE.getNumber()) {
-                        PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonId.VAPOREON);
-                        PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonId.FLAREON);
-                        PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonId.JOLTEON);
-                        if (vap != null && fla != null && jol != null) {
-                            Comparator<PokemonMeta> cMeta = (m1, m2) -> {
-                                int comb1 = PokemonCpUtils.getCpForPokemonLevel(
-                                        m1.getBaseAttack() + iv_attack,
-                                        m1.getBaseDefense() + iv_defense,
-                                        m1.getBaseStamina() + iv_stamina, level);
-                                int comb2 = PokemonCpUtils.getCpForPokemonLevel(
-                                        m2.getBaseAttack() + iv_attack,
-                                        m2.getBaseDefense() + iv_defense,
-                                        m2.getBaseStamina() + iv_stamina, level);
-                                return comb1 - comb2;
-                            };
-                            highestFamilyId = PokemonId.forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                        final List<PokemonMeta> eeveeEvolutions = PokemonUtils.getEeveeEvolutions();
+                        if (eeveeEvolutions != null) {
+                            highestFamilyId = PokemonId.forNumber(
+                                    Collections.max(eeveeEvolutions, PokemonUtils.getEeveeCpComperator(p))
+                                    .getNumber());
                         }
                     } else {
                         // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
@@ -231,34 +226,34 @@ public class PokeHandler {
                  * This calculation is redundant for pokemon already evolved, but as rename has delays anyway, this
                  * won't hurt performance.
                  */
-                PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
-                int attack = highestFamilyMeta.getBaseAttack() + iv_attack;
-                int defense = highestFamilyMeta.getBaseDefense() + iv_defense;
-                int stamina = highestFamilyMeta.getBaseStamina() + iv_stamina;
+                final PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
+                final int attack = highestFamilyMeta.getBaseAttack() + ivAttack;
+                final int defense = highestFamilyMeta.getBaseDefense() + ivDefense;
+                final int stamina = highestFamilyMeta.getBaseStamina() + ivStamina;
                 return String.valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, level));
             }
         },
         HP("Hit Points") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return String.valueOf(p.getMaxStamina());
             }
         },
         LEVEL("Pokémon Level") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return String.valueOf(p.getLevel());
             }
         },
         IV_RATING("IV Rating in two digits (XX for 100%)") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p));
             }
         },
         IV_HEX("IV Values in hexadecimal, like \"9FA\" (F = 15)") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return (Integer.toHexString(p.getIndividualAttack())
                         + Integer.toHexString(p.getIndividualDefense())
                         + Integer.toHexString(p.getIndividualStamina())).toUpperCase();
@@ -266,95 +261,95 @@ public class PokeHandler {
         },
         IV_ATT("IV Attack") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return String.valueOf(p.getIndividualAttack());
             }
         },
         IV_DEF("IV Defense") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return String.valueOf(p.getIndividualDefense());
             }
         },
         IV_STAM("IV Stamina") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return String.valueOf(p.getIndividualStamina());
             }
         },
         IV_ATT_UNI("IV Attack Unicode (⓯  for 15)") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return UnicodeHelper.get(String.valueOf(p.getIndividualAttack()));
             }
         },
         IV_DEF_UNI("IV Defense Unicode (⓯  for 15)") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return UnicodeHelper.get(String.valueOf(p.getIndividualDefense()));
             }
         },
         IV_STAM_UNI("IV Stamina Unicode (⓯  for 15)") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return UnicodeHelper.get(String.valueOf(p.getIndividualStamina()));
             }
         },
         DUEL_ABILITY_RATING("Duel Ability in two digits (XX for 100%)") {
             @Override
-            public String get(Pokemon p) {
-                long duelAbility = PokemonUtils.duelAbility(p, false);
+            public String get(final Pokemon p) {
+                final long duelAbility = PokemonUtils.duelAbility(p, false);
                 return Utilities.percentageWithTwoCharacters(duelAbility, PokemonUtils.DUEL_ABILITY_MAX);
             }
         },
         GYM_OFFENSE_RATING("Gym Offense in two digits (XX for 100%)") {
             @Override
-            public String get(Pokemon p) {
-                double gymOffense = PokemonUtils.gymOffense(p, false);
+            public String get(final Pokemon p) {
+                final double gymOffense = PokemonUtils.gymOffense(p, false);
                 return Utilities.percentageWithTwoCharacters(gymOffense, PokemonUtils.GYM_OFFENSE_MAX);
             }
         },
         GYM_DEFENSE_RATING("Gym Defense in two digits (XX for 100%)") {
             @Override
-            public String get(Pokemon p) {
-                long gymDefense = PokemonUtils.gymDefense(p, false);
+            public String get(final Pokemon p) {
+                final long gymDefense = PokemonUtils.gymDefense(p, false);
                 return Utilities.percentageWithTwoCharacters(gymDefense, PokemonUtils.GYM_DEFENSE_MAX);
             }
         },
         DUEL_ABILITY_IV_RATING("Duel Ability (w IVs) in two digits (XX for 100%)") {
             @Override
-            public String get(Pokemon p) {
-                long duelAbility = PokemonUtils.duelAbility(p, true);
+            public String get(final Pokemon p) {
+                final long duelAbility = PokemonUtils.duelAbility(p, true);
                 return Utilities.percentageWithTwoCharacters(duelAbility, PokemonUtils.DUEL_ABILITY_IV_MAX);
             }
         },
         GYM_OFFENSE_IV_RATING("Gym Offense (w IVs) in two digits (XX for 100%)") {
             @Override
-            public String get(Pokemon p) {
-                double gymOffense = PokemonUtils.gymOffense(p, true);
+            public String get(final Pokemon p) {
+                final double gymOffense = PokemonUtils.gymOffense(p, true);
                 return Utilities.percentageWithTwoCharacters(gymOffense, PokemonUtils.GYM_OFFENSE_IV_MAX);
             }
         },
         GYM_DEFENSE_IV_RATING("Gym Defense (w IVs) in two digits (XX for 100%)") {
             @Override
-            public String get(Pokemon p) {
-                long gymDefense = PokemonUtils.gymDefense(p, true);
+            public String get(final Pokemon p) {
+                final long gymDefense = PokemonUtils.gymDefense(p, true);
                 return Utilities.percentageWithTwoCharacters(gymDefense, PokemonUtils.GYM_DEFENSE_IV_MAX);
             }
         },
         MAX_CP("Maximum possible CP (with Trainer Level 40)") {
             @Override
-            public String get(Pokemon p) {
-                PokemonMeta meta = p.getMeta();
-                int attack = meta.getBaseAttack() + p.getIndividualAttack();
-                int defense = meta.getBaseDefense() + p.getIndividualDefense();
-                int stamina = meta.getBaseStamina() + p.getIndividualStamina();
+            public String get(final Pokemon p) {
+                final PokemonMeta meta = p.getMeta();
+                final int attack = meta.getBaseAttack() + p.getIndividualAttack();
+                final int defense = meta.getBaseDefense() + p.getIndividualDefense();
+                final int stamina = meta.getBaseStamina() + p.getIndividualStamina();
                 return String.valueOf(PokemonCpUtils.getMaxCp(attack, defense, stamina));
             }
         },
         MOVE_TYPE_1("Move 1 abbreviated (Ghost = Gh)") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 final String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
                 final boolean hasStab = type.equals(p.getMeta().getType1().toString()) || type.equals(p.getMeta().getType2().toString());
                 return (hasStab) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
@@ -362,7 +357,7 @@ public class PokeHandler {
         },
         MOVE_TYPE_2("Move 2 abbreviated (Ghost = Gh)") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 final String type = PokemonMoveMetaRegistry.getMeta(p.getMove2()).getType().toString();
                 final boolean hasStab = type.equals(p.getMeta().getType1().toString()) || type.equals(p.getMeta().getType2().toString());
                 return hasStab ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
@@ -370,67 +365,67 @@ public class PokeHandler {
         },
         MOVE_TYPE_1_UNI("Move 1 abbreviated (Eletric = ⚡)") {
             @Override
-            public String get(Pokemon p) {
-                String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
+            public String get(final Pokemon p) {
+                final String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
                 return UnicodeHelper.get(type);
             }
         },
         MOVE_TYPE_2_UNI("Move 2 abbreviated (Eletric = ⚡)") {
             @Override
-            public String get(Pokemon p) {
-                String type = PokemonMoveMetaRegistry.getMeta(p.getMove2()).getType().toString();
+            public String get(final Pokemon p) {
+                final String type = PokemonMoveMetaRegistry.getMeta(p.getMove2()).getType().toString();
                 return UnicodeHelper.get(type);
             }
         },
         DPS_1("Damage per second for Move 1") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return String.valueOf(Math.round(PokemonUtils.dpsForMove(p, true)));
             }
         },
         DPS_2("Damage per second for Move 2") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return String.valueOf(Math.round(PokemonUtils.dpsForMove(p, false)));
             }
         },
         DPS_1_RATING("Rating for Move 1 (Percentage of max possible) in two digits (XX for 100%)") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return PokemonUtils.moveRating(p, true);
             }
         },
         DPS_2_RATING("Rating for Move 2 (Percentage of max possible) in two digits (XX for 100%)") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return PokemonUtils.moveRating(p, false);
             }
         },
         TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh)") {
             @Override
-            public String get(Pokemon p) {
-                String type = p.getMeta().getType1().toString();
+            public String get(final Pokemon p) {
+                final String type = p.getMeta().getType1().toString();
                 return abbreviateType(type);
             }
         },
         TYPE_2("Pokémon Type 2 abbreviated (Ghost = Gh)") {
             @Override
-            public String get(Pokemon p) {
-                String type = p.getMeta().getType2().toString();
+            public String get(final Pokemon p) {
+                final String type = p.getMeta().getType2().toString();
                 return abbreviateType(type);
             }
         },
         TYPE_1_UNI("Pokémon Type 1 Unicode (Eletric = ⚡)") {
             @Override
-            public String get(Pokemon p) {
-                String type = p.getMeta().getType1().toString();
+            public String get(final Pokemon p) {
+                final String type = p.getMeta().getType1().toString();
                 return UnicodeHelper.get(type);
             }
         },
         TYPE_2_UNI("Pokémon Type 2 Unicode (Eletric = ⚡)") {
             @Override
-            public String get(Pokemon p) {
-                String type = p.getMeta().getType2().toString();
+            public String get(final Pokemon p) {
+                final String type = p.getMeta().getType2().toString();
                 return UnicodeHelper.get(type);
             }
         },
@@ -448,12 +443,12 @@ public class PokeHandler {
         },
         ID("Pokédex Id") {
             @Override
-            public String get(Pokemon p) {
+            public String get(final Pokemon p) {
                 return String.valueOf(p.getPokemonId().getNumber());
             }
         };
 
-        private static String abbreviateType(String type) {
+        private static String abbreviateType(final String type) {
             if ("none".equalsIgnoreCase(type)) {
                 return "__";
             } else if ("fighting".equalsIgnoreCase(type) || "ground".equalsIgnoreCase(type)) {
@@ -466,7 +461,7 @@ public class PokeHandler {
 
         private final String friendlyName;
 
-        ReplacePattern(String friendlyName) {
+        ReplacePattern(final String friendlyName) {
             this.friendlyName = friendlyName;
         }
 
@@ -474,6 +469,7 @@ public class PokeHandler {
          * Returns the friendly name for the replacement pattern. Can be used to
          * generate explanations for possible placeholders automatically.
          */
+        @Override
         public String toString() {
             return friendlyName;
         }

@@ -1,18 +1,30 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
-import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.api.player.Team;
-import com.pokegoapi.api.pokemon.*;
+import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import com.pokegoapi.api.pokemon.PokemonMoveMeta;
+import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
+import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
-import org.apache.commons.lang3.StringUtils;
 
 public final class PokemonUtils {
-    /** Prevent initializing this class. */
+    private static final int NORMAL_MULTIPLIER = 1;
+    private static final double STAB_MULTIPLIER = 1.25;
+
     private PokemonUtils() {
+        /* Prevent initializing this class */
     }
 
     /**
@@ -61,22 +73,34 @@ public final class PokemonUtils {
      */
     public static final int MOVE2_CHARGE_DELAY_MS = 500;
 
-    public static double ivRating(Pokemon p) {
+    public static double ivRating(final Pokemon p) {
         if (ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION)) {
-            PokemonMeta meta = p.getMeta();
-            double cpMax = (meta.getBaseAttack() + 15) * Math.pow(meta.getBaseDefense() + 15, 0.5) * Math.pow(meta.getBaseStamina() + 15, 0.5);
-            double cpMin = meta.getBaseAttack() * Math.pow(meta.getBaseDefense(), 0.5) * Math.pow(meta.getBaseStamina(), 0.5);
-            double cpIv = (meta.getBaseAttack() + p.getIndividualAttack()) * Math.pow(meta.getBaseDefense() + p.getIndividualDefense(), 0.5) * Math.pow(meta.getBaseStamina() + p.getIndividualStamina(), 0.5);
+            final PokemonMeta meta = p.getMeta();
+            final double cpMax = (meta.getBaseAttack() + 15)
+                    * Math.pow(meta.getBaseDefense() + 15, 0.5)
+                    * Math.pow(meta.getBaseStamina() + 15, 0.5);
+            final double cpMin = meta.getBaseAttack()
+                    * Math.pow(meta.getBaseDefense(), 0.5)
+                    * Math.pow(meta.getBaseStamina(), 0.5);
+            final double cpIv = (meta.getBaseAttack() + p.getIndividualAttack())
+                    * Math.pow(meta.getBaseDefense() + p.getIndividualDefense(), 0.5)
+                    * Math.pow(meta.getBaseStamina() + p.getIndividualStamina(), 0.5);
             return (cpIv - cpMin) / (cpMax - cpMin);
         } else {
             return (p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina()) / 45.0;
         }
     }
 
-    public static String convertTeamColorToName(int teamValue) {
-        Team[] teams = Team.values();
+    /**
+     * Convert team int value to string.
+     *
+     * @param teamValue team int value
+     * @return team string value
+     */
+    public static String convertTeamColorToName(final int teamValue) {
+        final Team[] teams = Team.values();
 
-        for (Team team : teams) {
+        for (final Team team : teams) {
             if (team.getValue() == teamValue) {
                 return StringUtils.capitalize(team.toString().toLowerCase().replaceAll("team_", ""));
             }
@@ -84,37 +108,41 @@ public final class PokemonUtils {
         return "UNKNOWN_TEAM";
     }
 
-    public static String moveRating(Pokemon p, boolean primary) {
-        PokemonMeta pMeta = p.getMeta();
+    public static String moveRating(final Pokemon p, final boolean primary) {
+        final PokemonMeta pMeta = p.getMeta();
 
         double highestDps = 0;
-        PokemonMove[] moves = (primary) ? pMeta.getQuickMoves() : pMeta.getCinematicMoves();
-        for (PokemonMove move : moves) {
-            double dps = dpsForMove(p, move, primary);
-            if (dps > highestDps) highestDps = dps;
+        final PokemonMove[] moves = primary ? pMeta.getQuickMoves() : pMeta.getCinematicMoves();
+        for (final PokemonMove move : moves) {
+            final double dps = dpsForMove(p, move, primary);
+            if (dps > highestDps) {
+                highestDps = dps;
+            }
         }
 
         // Now rate it
-        double currentDps = dpsForMove(p, primary);
+        final double currentDps = dpsForMove(p, primary);
         return Utilities.percentageWithTwoCharacters(currentDps, highestDps);
     }
 
-    public static double dpsForMove(Pokemon p, boolean primary) {
-        PokemonMove move = (primary) ? p.getMove1() : p.getMove2();
+    public static double dpsForMove(final Pokemon p, final boolean primary) {
+        final PokemonMove move = primary ? p.getMove1() : p.getMove2();
         return dpsForMove(p, move, primary);
     }
 
-    private static double dpsForMove(Pokemon p, PokemonMove move, boolean primary) {
-        PokemonMoveMeta meta = PokemonMoveMetaRegistry.getMeta(move);
+    private static double dpsForMove(final Pokemon p, final PokemonMove move, final boolean primary) {
+        final PokemonMoveMeta meta = PokemonMoveMetaRegistry.getMeta(move);
         if (primary) {
             double dps1 = (double) meta.getPower() / (double) meta.getTime() * 1000;
-            if (p.getMeta().getType1().equals(meta.getType()) || p.getMeta().getType2().equals(meta.getType()))
+            if (p.getMeta().getType1().equals(meta.getType()) || p.getMeta().getType2().equals(meta.getType())) {
                 dps1 = dps1 * 1.25;
+            }
             return dps1;
         } else {
             double dps2 = (double) meta.getPower() / (double) (meta.getTime() + 500) * 1000;
-            if (p.getMeta().getType1().equals(meta.getType()) || p.getMeta().getType2().equals(meta.getType()))
+            if (p.getMeta().getType1().equals(meta.getType()) || p.getMeta().getType2().equals(meta.getType())) {
                 dps2 = dps2 * 1.25;
+            }
             return dps2;
         }
     }
@@ -129,8 +157,8 @@ public final class PokemonUtils {
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static long duelAbility(Pokemon p, boolean useIV) {
-        double duelAbility = PokemonUtils.gymOffense(p, useIV) * PokemonUtils.tankiness(p, useIV);
+    public static long duelAbility(final Pokemon p, final boolean useIV) {
+        final double duelAbility = PokemonUtils.gymOffense(p, useIV) * PokemonUtils.tankiness(p, useIV);
         return Math.round(duelAbility);
     }
 
@@ -144,9 +172,9 @@ public final class PokemonUtils {
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static double gymOffense(Pokemon p, boolean useIV) {
+    public static double gymOffense(final Pokemon p, final boolean useIV) {
 
-        int attackIV = (useIV) ? p.getIndividualAttack() : 0;
+        final int attackIV = useIV ? p.getIndividualAttack() : 0;
 
         return Math.max(PokemonUtils.dpsForMove(p, true) * 100, PokemonUtils.weaveDPS(p, 0)) * (p.getMeta().getBaseAttack() + attackIV);
     }
@@ -161,11 +189,11 @@ public final class PokemonUtils {
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static long gymDefense(Pokemon p, boolean useIV) {
+    public static long gymDefense(final Pokemon p, final boolean useIV) {
 
-        int attackIV = (useIV) ? p.getIndividualAttack() : 0;
+        final int attackIV = useIV ? p.getIndividualAttack() : 0;
 
-        double gymDefense = PokemonUtils.weaveDPS(p, 2000) * (p.getMeta().getBaseAttack() + attackIV) * PokemonUtils.tankiness(p, useIV);
+        final double gymDefense = PokemonUtils.weaveDPS(p, 2000) * (p.getMeta().getBaseAttack() + attackIV) * PokemonUtils.tankiness(p, useIV);
         return Math.round(gymDefense);
     }
 
@@ -181,10 +209,10 @@ public final class PokemonUtils {
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static long tankiness(Pokemon p, boolean useIV) {
+    public static long tankiness(final Pokemon p, final boolean useIV) {
 
-        int staminaIV = (useIV) ? p.getIndividualStamina() : 0;
-        int defenseIV = (useIV) ? p.getIndividualDefense() : 0;
+        final int staminaIV = useIV ? p.getIndividualStamina() : 0;
+        final int defenseIV = useIV ? p.getIndividualDefense() : 0;
 
         return (p.getMeta().getBaseStamina() + staminaIV) * (p.getMeta().getBaseDefense() + defenseIV);
     }
@@ -201,12 +229,12 @@ public final class PokemonUtils {
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static double weaveDPS(Pokemon p, Integer additionalDelay) {
+    public static double weaveDPS(final Pokemon p, final Integer additionalDelay) {
 
-        PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
-        PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
-        double moveOneStab = (p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType())) ? 1.25 : 1;
-        double moveTwoStab = (p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType())) ? 1.25 : 1;
+        final PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
+        final PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
+        final double moveOneStab = p.getMeta().getType1().equals(pm1.getType()) || p.getMeta().getType2().equals(pm1.getType()) ? STAB_MULTIPLIER : NORMAL_MULTIPLIER;
+        final double moveTwoStab = p.getMeta().getType1().equals(pm2.getType()) || p.getMeta().getType2().equals(pm2.getType()) ? STAB_MULTIPLIER : NORMAL_MULTIPLIER;
 
         //Translation reference
         //R = Move 1 Power
@@ -225,11 +253,19 @@ public final class PokemonUtils {
         //AL1 = Charge Delay
 
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)
-        double weaveEnergyUsageRatio = (Math.abs(pm2.getEnergy()) == 100) ? Math.ceil((double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy()) : (double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy();
+        final double weaveEnergyUsageRatio;
+
+        if (Math.abs(pm2.getEnergy()) == 100) {
+            weaveEnergyUsageRatio = Math.ceil((double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy());
+        } else {
+            weaveEnergyUsageRatio = (double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy();
+        }
 
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*T2+(AA2+$AL$1)
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*(T2+2000)+(AA2+$AL$1)
-        double weaveCycleLength = weaveEnergyUsageRatio * (pm1.getTime() + additionalDelay) + (pm2.getTime() + PokemonUtils.MOVE2_CHARGE_DELAY_MS);
+        final double weaveCycleLength = weaveEnergyUsageRatio
+                * (pm1.getTime() + additionalDelay)
+                + pm2.getTime() + PokemonUtils.MOVE2_CHARGE_DELAY_MS;
 
         //=FLOOR(100000/AD2)
         //*(X2*(1+Y2*0.25) * (1+($AJ$1*Z2/100)))
@@ -238,7 +274,7 @@ public final class PokemonUtils {
         //+FLOOR((100000-(FLOOR(100000/AD2)*(AA2+$AL$1)+CEILING(FLOOR(100000/AD2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*T2))/T2)
         //*(R2*(1+(S2*0.25)))
         //=FLOOR(100000/AF2)*(X2*(1+Y2*0.25)*(1+($AJ$1*Z2/100)))+CEILING(FLOOR(100000/AF2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*(R2*(1+(S2*0.25)))+FLOOR((100000-(FLOOR(100000/AF2)*(AA2+$AL$1)+CEILING(FLOOR(100000/AF2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*(T2+2000)))/(T2+2000))*(R2*(1+(S2*0.25)))
-        double weaveDPS = Math.floor(100000 / weaveCycleLength)
+        final double weaveDPS = Math.floor(100000 / weaveCycleLength)
                 * (pm2.getPower() * moveTwoStab * (1 + (PokemonUtils.CRIT_DAMAGE_BONUS * pm2.getCritChance())))
                 + Math.ceil(Math.floor(100000 / weaveCycleLength) * weaveEnergyUsageRatio)
                 * (pm1.getPower() * moveOneStab)
@@ -246,5 +282,65 @@ public final class PokemonUtils {
                 * (pm1.getPower() * moveOneStab);
 
         return weaveDPS;
+    }
+
+    /**
+     * Get cp comparator for max cp.
+     *
+     * @return cp comparator for max cp
+     */
+    public static Comparator<PokemonMeta> getMaxCpComperator() {
+        final Comparator<PokemonMeta> cMeta = (m1, m2) -> {
+            final int comb1 = PokemonCpUtils.getMaxCp(m1.getBaseAttack(), m1.getBaseDefense(),
+                    m1.getBaseStamina());
+            final int comb2 = PokemonCpUtils.getMaxCp(m2.getBaseAttack(), m2.getBaseDefense(),
+                    m2.getBaseStamina());
+            return comb1 - comb2;
+        };
+        return cMeta;
+    }
+
+    /**
+     * Get cp comparator based on stats and current level of eevee.
+     *
+     * @param p eevee pokemon
+     * @return cp comparator based on stats and current level of eevee
+     */
+    public static Comparator<PokemonMeta> getEeveeCpComperator(final Pokemon p) {
+        final int ivAttack = p.getIndividualAttack();
+        final int ivDefense = p.getIndividualDefense();
+        final int ivStamina = p.getIndividualStamina();
+        final float level = p.getLevel();
+
+        final Comparator<PokemonMeta> cMeta = (m1, m2) -> {
+            final int comb1 = PokemonCpUtils.getCpForPokemonLevel(
+                    m1.getBaseAttack() + ivAttack,
+                    m1.getBaseDefense() + ivDefense,
+                    m1.getBaseStamina() + ivStamina,
+                    level);
+            final int comb2 = PokemonCpUtils.getCpForPokemonLevel(
+                    m2.getBaseAttack() + ivAttack,
+                    m2.getBaseDefense() + ivDefense,
+                    m2.getBaseStamina() + ivStamina,
+                    level);
+            return comb1 - comb2;
+        };
+        return cMeta;
+    }
+
+    /**
+     * Get the evolutions of eevee.
+     *
+     * @return evolution of eevee
+     */
+    public static List<PokemonMeta> getEeveeEvolutions() {
+        final PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonId.VAPOREON);
+        final PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonId.FLAREON);
+        final PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonId.JOLTEON);
+
+        if (vap == null || fla == null || jol == null) {
+            return null;
+        }
+        return Arrays.asList(vap, fla, jol);
     }
 }

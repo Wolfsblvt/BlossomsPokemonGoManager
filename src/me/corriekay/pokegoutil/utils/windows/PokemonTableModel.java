@@ -3,12 +3,14 @@ package me.corriekay.pokegoutil.utils.windows;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.text.WordUtils;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.pokemon.Pokemon;
@@ -24,9 +26,6 @@ import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.mutable.MutableInt;
-import org.apache.commons.lang3.text.WordUtils;
 
 @SuppressWarnings({"serial", "rawtypes"})
 
@@ -116,9 +115,9 @@ public class PokemonTableModel extends AbstractTableModel {
                     p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " "))
                     + " (" + String.format("%.2f", dps1) + "dps)");
             getColumnList(11)
-                    .add(i.getValue(),
-                            WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " ("
-                                    + String.format("%.2f", dps2) + "dps)");
+            .add(i.getValue(),
+                    WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " ("
+                            + String.format("%.2f", dps2) + "dps)");
             getColumnList(13).add(i.getValue(), p.getMaxStamina());
 
             int trainerLevel = 1;
@@ -150,19 +149,11 @@ public class PokemonTableModel extends AbstractTableModel {
             // Eeveelutions exception handling
             if (familyId.getNumber() == PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
                 if (p.getPokemonId().getNumber() == PokemonId.EEVEE.getNumber()) {
-                    final PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonId.VAPOREON);
-                    final PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonId.FLAREON);
-                    final PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonId.JOLTEON);
-                    if (vap != null && fla != null && jol != null) {
-                        final Comparator<PokemonMeta> cMeta = (m1, m2) -> {
-                            final int comb1 = PokemonCpUtils.getMaxCp(m1.getBaseAttack(), m1.getBaseDefense(),
-                                    m1.getBaseStamina());
-                            final int comb2 = PokemonCpUtils.getMaxCp(m2.getBaseAttack(), m2.getBaseDefense(),
-                                    m2.getBaseStamina());
-                            return comb1 - comb2;
-                        };
-                        highestFamilyId = PokemonId
-                                .forNumber(Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                    final List<PokemonMeta> eeveeEvolutions = PokemonUtils.getEeveeEvolutions();
+                    if (eeveeEvolutions != null) {
+                        highestFamilyId = PokemonId.forNumber(
+                                Collections.max(eeveeEvolutions, PokemonUtils.getMaxCpComperator())
+                                .getNumber());
                     }
                 } else {
                     // This is one of the eeveelutions, so

@@ -26,13 +26,12 @@ import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
-import me.corriekay.pokegoutil.utils.ui.Console;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import okhttp3.OkHttpClient;
 
-/*this controller does the login/log off, and different account information (aka player data)
- *
+/**
+ * This controller does the login/log off, and different account information (aka player data).
  */
 @Deprecated
 public final class AccountController {
@@ -44,7 +43,6 @@ public final class AccountController {
     protected PokemonGo go = null;
     protected OkHttpClient http;
     protected CredentialProvider cp;
-    private Console console;
     private boolean logged = false;
 
     private AccountController() {
@@ -55,12 +53,13 @@ public final class AccountController {
         return instance;
     }
 
-    public static void initialize(final Console console) {
+    /**
+     * Does pre-initializiton before using of the class.
+     */
+    public static void initialize() {
         if (sIsInit) {
             return;
         }
-
-        instance.console = console;
 
         sIsInit = true;
     }
@@ -141,7 +140,7 @@ public final class AccountController {
                 }
             } else if (response == JOptionPane.NO_OPTION) {
                 //Using Google, remove PTC infos
-                String googleAuthTitle = "Google Auth";
+                final String googleAuthTitle = "Google Auth";
                 deleteLoginData(LoginType.PTC, true);
                 String authCode = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, null);
                 boolean refresh = false;
@@ -228,7 +227,7 @@ public final class AccountController {
         }
         instance.go = go;
         initOtherControllers(go);
-        instance.mainWindow = new PokemonGoMainWindow(go, instance.console);
+        instance.mainWindow = new PokemonGoMainWindow(go, true);
         instance.mainWindow.start();
     }
 

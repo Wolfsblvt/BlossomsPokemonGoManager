@@ -30,6 +30,10 @@ import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
+
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
@@ -53,9 +57,6 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import me.corriekay.pokegoutil.utils.windows.PokemonTable;
 import me.corriekay.pokegoutil.utils.windows.PokemonTableModel;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.mutable.MutableInt;
 
 /**
  * The main PokemonTab.
@@ -102,9 +103,9 @@ public class PokemonTab extends JPanel {
             if (event.getSource() == pt.getSelectionModel() && pt.getRowSelectionAllowed()) {
                 final int selectedRows = pt.getSelectedRowCount();
                 if (selectedRows >= WHEN_TO_SHOW_SELECTION_TITLE) {
-                    PokemonGoMainWindow.getWindow().setTitle(selectedRows + " Pokémon selected");
+                    PokemonGoMainWindow.getInstance().setTitle(selectedRows + " Pokémon selected");
                 } else {
-                    PokemonGoMainWindow.getWindow().refreshTitle();
+                    PokemonGoMainWindow.getInstance().refreshTitle();
                 }
             }
         });
@@ -279,7 +280,7 @@ public class PokemonTab extends JPanel {
     }
 
     private void renameSelected() {
-        ArrayList<Pokemon> selection = getSelectedPokemon();
+        final ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.isEmpty()) {
             return;
         }
@@ -287,7 +288,7 @@ public class PokemonTab extends JPanel {
         final PokeHandler handler = new PokeHandler(selection);
         final String renamePattern = inputOperation(BatchOperation.RENAME, selection);
 
-        MutableInt err = new MutableInt(),
+        final MutableInt err = new MutableInt(),
                 skipped = new MutableInt(),
                 success = new MutableInt(),
                 total = new MutableInt(1);
@@ -355,7 +356,7 @@ public class PokemonTab extends JPanel {
     }
 
     private void transferSelected() {
-        ArrayList<Pokemon> selection = getSelectedPokemon();
+        final ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.isEmpty()) {
             return;
         }
@@ -437,7 +438,7 @@ public class PokemonTab extends JPanel {
     }
 
     private void evolveSelected() {
-        ArrayList<Pokemon> selection = getSelectedPokemon();
+        final ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.isEmpty()) {
             return;
         }
@@ -508,9 +509,9 @@ public class PokemonTab extends JPanel {
                                             + "(Candies: %d[%d-%d+%d], "
                                             + "CP: %d[+%d], "
                                             + "HP: %d[+%d])",
-                                    newCandies, candies, candiesToEvolve, candyRefund,
-                                    newCp, (newCp - cp),
-                                    newHp, (newHp - hp)));
+                                            newCandies, candies, candiesToEvolve, candyRefund,
+                                            newCp, (newCp - cp),
+                                            newHp, (newHp - hp)));
                         } else {
                             // Sleep before transferring
                             final int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
@@ -541,9 +542,9 @@ public class PokemonTab extends JPanel {
                                         + "(Candies: %d[%d-%d+%d], "
                                         + "CP: %d[+%d], "
                                         + "HP: %d[+%d])",
-                                newCandies, candies, candiesToEvolve, candyRefund,
-                                newCp, (newCp - cp),
-                                newHp, (newHp - hp)));
+                                        newCandies, candies, candiesToEvolve, candyRefund,
+                                        newCp, (newCp - cp),
+                                        newHp, (newHp - hp)));
                     }
                     go.getInventories().updateInventories(true);
                     success.increment();
@@ -583,13 +584,13 @@ public class PokemonTab extends JPanel {
         }
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText(String.format(
-                        "Pokémon batch evolve%s complete!",
-                        (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : "")),
+                "Pokémon batch evolve%s complete!",
+                (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : "")),
                 selection.size(), success, skipped, err);
     }
 
     private void powerUpSelected() {
-        ArrayList<Pokemon> selection = getSelectedPokemon();
+        final ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.isEmpty()) {
             return;
         }
@@ -633,9 +634,9 @@ public class PokemonTab extends JPanel {
                             "Error. Not enough candy/stardust to power up %s. "
                                     + "Stardust: %d/%d, "
                                     + "Candy: %d/%d",
-                            PokeHandler.getLocalPokeName(poke),
-                            stardust, stardustToPowerUp,
-                            candies, candiesToPowerUp));
+                                    PokeHandler.getLocalPokeName(poke),
+                                    stardust, stardustToPowerUp,
+                                    candies, candiesToPowerUp));
                     return;
                 }
 
@@ -655,11 +656,11 @@ public class PokemonTab extends JPanel {
                                     + "CP: %d[+%d], "
                                     + "HP: %d[+%d], "
                                     + "Stardust used %d[remainding: %d])",
-                            newCandies, candies, candiesToPowerUp,
-                            newCp, (newCp - cp),
-                            newHp, (newHp - hp),
-                            stardustToPowerUp,
-                            go.getPlayerProfile().getCurrency(Currency.STARDUST)));
+                                    newCandies, candies, candiesToPowerUp,
+                                    newCp, (newCp - cp),
+                                    newHp, (newHp - hp),
+                                    stardustToPowerUp,
+                                    go.getPlayerProfile().getCurrency(Currency.STARDUST)));
 
                     success.increment();
                 } else {
@@ -686,7 +687,7 @@ public class PokemonTab extends JPanel {
         });
         try {
             go.getInventories().updateInventories(true);
-            PokemonGoMainWindow.getWindow().refreshTitle();
+            PokemonGoMainWindow.getInstance().refreshTitle();
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -697,7 +698,7 @@ public class PokemonTab extends JPanel {
 
     // feature added by Ben Kauffman
     private void toggleFavorite() {
-        ArrayList<Pokemon> selection = getSelectedPokemon();
+        final ArrayList<Pokemon> selection = getSelectedPokemon();
         if (selection.isEmpty()) {
             return;
         }
@@ -755,7 +756,7 @@ public class PokemonTab extends JPanel {
             }
         });
         try {
-            PokemonGoMainWindow.getWindow().refreshTitle();
+            PokemonGoMainWindow.getInstance().refreshTitle();
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -786,7 +787,14 @@ public class PokemonTab extends JPanel {
         }
     }
 
-    private String inputOperation(BatchOperation operation, ArrayList<Pokemon> pokes) {
+    /**
+     * Handles.. idk why we have this. @author Cryptic
+     *
+     * @param operation operation to be done
+     * @param pokes list of pokemons
+     * @return rename pattern
+     */
+    private String inputOperation(final BatchOperation operation, final ArrayList<Pokemon> pokes) {
         JPanel panel;
         String message = "";
         String savedPattern = "";
@@ -797,24 +805,32 @@ public class PokemonTab extends JPanel {
                 savedPattern = config.getString(ConfigKey.RENAME_PATTERN);
                 message = "Renaming " + pokes.size() + " Pokémon.";
                 break;
-
             default:
                 panel = buildPanelForOperation(operation, pokes);
                 break;
         }
 
-        String input = (String) JOptionPane.showInputDialog(null, panel, message, JOptionPane.PLAIN_MESSAGE, null, null, savedPattern);
+        final String input = (String) JOptionPane.showInputDialog(null, panel, message, JOptionPane.PLAIN_MESSAGE, null, null, savedPattern);
         if (input != null) {
             switch (operation) {
                 case RENAME:
                     config.setString(ConfigKey.RENAME_PATTERN, input);
+                default :
+                    break;
             }
         }
         return input;
     }
 
-    private boolean confirmOperation(BatchOperation operation, ArrayList<Pokemon> pokes) {
-        JPanel panel = buildPanelForOperation(operation, pokes);
+    /**
+     * Prompt for confirmation before doing the operation.
+     *
+     * @param operation operation to be done
+     * @param pokes list of pokemons
+     * @return ok was selected
+     */
+    private boolean confirmOperation(final BatchOperation operation, final ArrayList<Pokemon> pokes) {
+        final JPanel panel = buildPanelForOperation(operation, pokes);
 
         final int response = JOptionPane.showConfirmDialog(null, panel,
                 String.format(
@@ -869,7 +885,7 @@ public class PokemonTab extends JPanel {
                     str += " " + p.getStardustCostsForPowerup() + " Stardust";
                     break;
                 case RENAME:
-                    for (PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
+                    for (final PokeHandler.ReplacePattern pattern : PokeHandler.ReplacePattern.values()) {
                         str += StringLiterals.PERCENTAGE + pattern.name().toLowerCase() + "% -> " + pattern.toString() + "\n";
                     }
                     break;
@@ -890,15 +906,15 @@ public class PokemonTab extends JPanel {
      * @return The panel.
      */
     private JPanel buildPanelForRename() {
-        JPanel panel = new JPanel();
+        final JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setAlignmentX(LEFT_ALIGNMENT);
 
-        JPanel innerPanel = new JPanel();
+        final JPanel innerPanel = new JPanel();
         innerPanel.setLayout(new BoxLayout(innerPanel, BoxLayout.Y_AXIS));
         innerPanel.setAlignmentX(LEFT_ALIGNMENT);
 
-        JScrollPane scroll = new JScrollPane(innerPanel);
+        final JScrollPane scroll = new JScrollPane(innerPanel);
         scroll.setAlignmentX(LEFT_ALIGNMENT);
 
         panel.setPreferredSize(new Dimension(POPUP_WIDTH, POPUP_HEIGHT));
@@ -907,19 +923,21 @@ public class PokemonTab extends JPanel {
         panel.add(new JLabel("Patterns are going to be replaced with the Pokémons values."));
         panel.add(new JLabel("Existing patterns: (double click on item to copy)"));
 
-        JList<ReplacePattern> listPattern = new JList<>(ReplacePattern.values());
+        final JList<ReplacePattern> listPattern = new JList<>(ReplacePattern.values());
         listPattern.setCellRenderer(new ReplacePatternRenderer());
 
         listPattern.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent mouseEvent) {
+            @Override
+            public void mouseClicked(final MouseEvent mouseEvent) {
                 @SuppressWarnings("unchecked")
+                final
                 JList<ReplacePattern> theList = ((JList<ReplacePattern>) mouseEvent.getSource());
-                boolean isDoubleClick = mouseEvent.getClickCount() == 2;
+                final boolean isDoubleClick = mouseEvent.getClickCount() == 2;
                 if (isDoubleClick) {
-                    int index = theList.locationToIndex(mouseEvent.getPoint());
+                    final int index = theList.locationToIndex(mouseEvent.getPoint());
                     if (index >= 0) {
-                        ReplacePattern replacePattern = theList.getModel().getElementAt(index);
-                        Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        final ReplacePattern replacePattern = theList.getModel().getElementAt(index);
+                        final Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
                         cb.setContents(new StringSelection(StringLiterals.PERCENTAGE + replacePattern.name().toLowerCase() + StringLiterals.PERCENTAGE), null);
                     }
                 }
@@ -934,8 +952,8 @@ public class PokemonTab extends JPanel {
     public ArrayList<Pokemon> getSelectedPokemon() {
         final ArrayList<Pokemon> pokes = new ArrayList<>();
         final PokemonTableModel model = (PokemonTableModel) pt.getModel();
-        for (int i : pt.getSelectedRows()) {
-            Pokemon poke = model.getPokemonByIndex(i);
+        for (final int i : pt.getSelectedRows()) {
+            final Pokemon poke = model.getPokemonByIndex(i);
             if (poke != null) {
                 pokes.add(poke);
             }
@@ -1004,8 +1022,8 @@ public class PokemonTab extends JPanel {
         }
 
         @Override
-        public Component getListCellRendererComponent(JList<? extends ReplacePattern> list, ReplacePattern value,
-                                                      int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList<? extends ReplacePattern> list, final ReplacePattern value,
+                final int index, final boolean isSelected, final boolean cellHasFocus) {
             //Get the selected index. (The index param isn't always valid, so just use the value.)
             if (isSelected) {
                 setBackground(list.getSelectionBackground());
@@ -1015,7 +1033,7 @@ public class PokemonTab extends JPanel {
                 setForeground(list.getForeground());
             }
 
-            String str = StringLiterals.PERCENTAGE + value.name().toLowerCase() + "% -> " + value.toString() + "\n";
+            final String str = StringLiterals.PERCENTAGE + value.name().toLowerCase() + "% -> " + value.toString() + "\n";
             setText(str);
             setFont(list.getFont());
 

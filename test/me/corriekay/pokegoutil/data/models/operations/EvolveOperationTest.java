@@ -88,8 +88,7 @@ public class EvolveOperationTest {
         final BpmOperationResult result = operation.execute();
 
         Assert.assertThat(RESULT_SHOULD_FAIL, false, is(result.isSuccess()));
-        Assert.assertThat("Not enough candies", result.getOperationError(),
-                is(OperationError.INSUFFICENT_CANDIES));
+        Assert.assertThat("Not enough candies", result.getOperationError(), is(OperationError.INSUFFICENT_CANDIES));
     }
 
     /**
