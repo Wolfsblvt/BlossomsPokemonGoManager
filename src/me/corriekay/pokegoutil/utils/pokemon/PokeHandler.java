@@ -303,43 +303,22 @@ public class PokeHandler {
         DUEL_ABILITY_RATING("Duel Ability in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                long duelAbility = PokemonUtils.duelAbility(p, false);
-                return Utilities.percentageWithTwoCharacters(duelAbility, PokemonUtils.DUEL_ABILITY_MAX);
+                long duelAbility = PokemonUtils.duelAbility(p);
+                return Utilities.percentageWithTwoCharacters(duelAbility, PokemonValueCache.getHighestStats().duelAbility);
             }
         },
         GYM_OFFENSE_RATING("Gym Offense in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                double gymOffense = PokemonUtils.gymOffense(p, false);
-                return Utilities.percentageWithTwoCharacters(gymOffense, PokemonUtils.GYM_OFFENSE_MAX);
+                double gymOffense = PokemonUtils.gymOffense(p);
+                return Utilities.percentageWithTwoCharacters(gymOffense, PokemonValueCache.getHighestStats().gymOffense);
             }
         },
         GYM_DEFENSE_RATING("Gym Defense in two digits (XX for 100%)") {
             @Override
             public String get(Pokemon p) {
-                long gymDefense = PokemonUtils.gymDefense(p, false);
-                return Utilities.percentageWithTwoCharacters(gymDefense, PokemonUtils.GYM_DEFENSE_MAX);
-            }
-        },
-        DUEL_ABILITY_IV_RATING("Duel Ability (w IVs) in two digits (XX for 100%)") {
-            @Override
-            public String get(Pokemon p) {
-                long duelAbility = PokemonUtils.duelAbility(p, true);
-                return Utilities.percentageWithTwoCharacters(duelAbility, PokemonUtils.DUEL_ABILITY_IV_MAX);
-            }
-        },
-        GYM_OFFENSE_IV_RATING("Gym Offense (w IVs) in two digits (XX for 100%)") {
-            @Override
-            public String get(Pokemon p) {
-                double gymOffense = PokemonUtils.gymOffense(p, true);
-                return Utilities.percentageWithTwoCharacters(gymOffense, PokemonUtils.GYM_OFFENSE_IV_MAX);
-            }
-        },
-        GYM_DEFENSE_IV_RATING("Gym Defense (w IVs) in two digits (XX for 100%)") {
-            @Override
-            public String get(Pokemon p) {
-                long gymDefense = PokemonUtils.gymDefense(p, true);
-                return Utilities.percentageWithTwoCharacters(gymDefense, PokemonUtils.GYM_DEFENSE_IV_MAX);
+                long gymDefense = PokemonUtils.gymDefense(p);
+                return Utilities.percentageWithTwoCharacters(gymDefense, PokemonValueCache.getHighestStats().gymDefense);
             }
         },
         MAX_CP("Maximum possible CP (with Trainer Level 40)") {

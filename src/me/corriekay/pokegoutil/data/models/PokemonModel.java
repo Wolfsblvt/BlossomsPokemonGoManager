@@ -403,13 +403,13 @@ public class PokemonModel {
                 .replaceAll("item_", "").replaceAll(UNDERSCORE, " ")));
         setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(pokemon.getCreationTimeMs())));
         setIsFavorite(pokemon.isFavorite());
-        setDuelAbility(PokemonUtils.duelAbility(pokemon, false));
-        setGymOffense(PokemonUtils.gymOffense(pokemon, false));
-        setGymDefense(PokemonUtils.gymDefense(pokemon, false));
+        setDuelAbility(PokemonUtils.duelAbility(pokemon));
+        setGymOffense(PokemonUtils.gymOffense(pokemon));
+        setGymDefense(PokemonUtils.gymDefense(pokemon));
 
-        setDuelAbilityIv(PokemonUtils.duelAbility(pokemon, true));
-        setGymOffenseIv(PokemonUtils.gymOffense(pokemon, true));
-        setGymDefenseIv(PokemonUtils.gymDefense(pokemon, true));
+        setDuelAbilityIv(PokemonUtils.duelAbility(pokemon));
+        setGymOffenseIv(PokemonUtils.gymOffense(pokemon));
+        setGymDefenseIv(PokemonUtils.gymDefense(pokemon));
         setMove1Rating(PokemonUtils.moveRating(pokemon, true));
         setMove2Rating(PokemonUtils.moveRating(pokemon, false));
     }

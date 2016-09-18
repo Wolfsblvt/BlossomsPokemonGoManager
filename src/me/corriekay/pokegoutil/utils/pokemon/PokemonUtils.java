@@ -17,6 +17,11 @@ public final class PokemonUtils {
     }
 
     /**
+     * The maximum for an individual value.
+     */
+    public static final int MAX_IV = 15;
+
+    /**
      * Damage bonus from a critical hit - currently no damage bonus in game, change when game is fixed
      */
     public static final double CRIT_DAMAGE_BONUS = 0;
@@ -55,7 +60,8 @@ public final class PokemonUtils {
         double highestDps = 0;
         PokemonMove[] moves = (primary) ? pMeta.getQuickMoves() : pMeta.getCinematicMoves();
         for (PokemonMove move : moves) {
-            double dps = dpsForMove(p, move, primary);
+            PokemonMoveMeta moveMeta = PokemonMoveMetaRegistry.getMeta(move);
+            double dps = dpsForMove(p.getPokemonId(), moveMeta, primary);
             if (dps > highestDps) highestDps = dps;
         }
 
@@ -73,27 +79,28 @@ public final class PokemonUtils {
      */
     public static double dpsForMove(Pokemon p, boolean primary) {
         PokemonMove move = (primary) ? p.getMove1() : p.getMove2();
-        return dpsForMove(p, move, primary);
+        PokemonMoveMeta moveMeta = PokemonMoveMetaRegistry.getMeta(move);
+        return dpsForMove(p.getPokemonId(), moveMeta, primary);
     }
 
     /**
      * Calculates the no weave dps for current move. Just plain damage, without dodging or any other attack.
      *
-     * @param p       A Pokemon object.
-     * @param move    The move to calculate the dps for.
-     * @param primary If it should be calculated for the primary more or the secondary.
+     * @param pokemonId The pokemonId to check for.
+     * @param moveMeta  The move to calculate the dps for.
+     * @param primary   If it should be calculated for the primary more or the secondary.
      * @return The clean dps.
      */
-    private static double dpsForMove(Pokemon p, PokemonMove move, boolean primary) {
-        PokemonMoveMeta meta = PokemonMoveMetaRegistry.getMeta(move);
+    private static double dpsForMove(PokemonId pokemonId, PokemonMoveMeta moveMeta, boolean primary) {
+        PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
         if (primary) {
-            double dps1 = (double) meta.getPower() / (double) meta.getTime() * 1000;
-            if (p.getMeta().getType1().equals(meta.getType()) || p.getMeta().getType2().equals(meta.getType()))
+            double dps1 = (double) moveMeta.getPower() / (double) moveMeta.getTime() * 1000;
+            if (meta.getType1().equals(moveMeta.getType()) || meta.getType2().equals(moveMeta.getType()))
                 dps1 = dps1 * 1.25;
             return dps1;
         } else {
-            double dps2 = (double) meta.getPower() / (double) (meta.getTime() + 500) * 1000;
-            if (p.getMeta().getType1().equals(meta.getType()) || p.getMeta().getType2().equals(meta.getType()))
+            double dps2 = (double) moveMeta.getPower() / (double) (moveMeta.getTime() + 500) * 1000;
+            if (meta.getType1().equals(moveMeta.getType()) || meta.getType2().equals(moveMeta.getType()))
                 dps2 = dps2 * 1.25;
             return dps2;
         }
@@ -104,13 +111,32 @@ public final class PokemonUtils {
      * as then you can only attack for as long as you  can stay positive on HP.
      *
      * @param p     A Pokemon object
-     * @param useIV Use a pokemon's IV values in the calculations
      * @return Rating of a Pokemon's overall attacking power considering damage, health & defense
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static long duelAbility(Pokemon p, boolean useIV) {
-        double duelAbility = PokemonUtils.gymOffense(p, useIV) * PokemonUtils.tankiness(p, useIV);
+    public static long duelAbility(Pokemon p) {
+        PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
+        PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
+        return duelAbility(p.getPokemonId(), pm1, pm2, p.getIndividualAttack(), p.getIndividualDefense(), p.getIndividualStamina());
+    }
+
+    /**
+     * Duel Ability is Tankiness * Gym Offense. A reasonable measure if you don't often/ever dodge,
+     * as then you can only attack for as long as you  can stay positive on HP.
+     *
+     * @param pokemonId The id of the pokemon
+     * @param pm1       The first move of the pokemon
+     * @param pm2       The second move of the pokemon
+     * @param attackIV  The attackIV of the pokemon
+     * @param defenseIV The defenseIV of the pokemon
+     * @param staminaIV The staminaIV of the pokemon
+     * @return Rating of a Pokemon's overall attacking power considering damage, health & defense
+     * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @link i607ch00
+     */
+    public static long duelAbility(PokemonId pokemonId, PokemonMoveMeta pm1, PokemonMoveMeta pm2, int attackIV, int defenseIV, int staminaIV) {
+        double duelAbility = PokemonUtils.gymOffense(pokemonId, pm1, pm2, attackIV) * PokemonUtils.tankiness(pokemonId, defenseIV, staminaIV);
         return Math.round(duelAbility);
     }
 
@@ -119,32 +145,31 @@ public final class PokemonUtils {
      * Pokemon's base attack to arrive at a ranking of raw damage output.
      *
      * @param p     A Pokemon object
-     * @param useIV Use a pokemon's IV values in the calculations
      * @return Rating of a Pokemon's pure offensive ability over time considering move set
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static double gymOffense(Pokemon p, boolean useIV) {
-
-        int attackIV = (useIV) ? p.getIndividualAttack() : 0;
-
-        return Math.max(PokemonUtils.dpsForMove(p, true) * 100, PokemonUtils.weaveDps(p, 0)) * (p.getMeta().getBaseAttack() + attackIV);
-    }
-
-    /**
-     * Gym Defense takes the calculated Gym Weave Damage over 100s and multiplies by Tankiness
-     * to arrive at a ranking of how much damage a Pokemon will output when defending a gym.
-     *
-     * @param p     A Pokemon object
-     * @param useIV Use a pokemon's IV values in the calculations
-     * @return Rating of a Pokemon's AI controlled gym defense over time considering move set
-     * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
-     * @link i607ch00
-     */
-    public static long gymDefense(Pokemon p, boolean useIV) {
+    public static double gymOffense(Pokemon p) {
         PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
         PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
-        return gymDefense(p.getPokemonId(), pm1, pm2, p.getIndividualAttack(), p.getIndividualDefense(), p.getIndividualStamina(), useIV);
+        return gymOffense(p.getPokemonId(), pm1, pm2, p.getIndividualAttack());
+    }
+
+    /**
+     * Gym Offense takes the better of No Weave/Weave Damage over 100s and multiplies by the
+     * Pokemon's base attack to arrive at a ranking of raw damage output.
+     *
+     * @param pokemonId The id of the pokemon
+     * @param pm1       The first move of the pokemon
+     * @param pm2       The second move of the pokemon
+     * @param attackIV  The attackIV of the pokemon
+     * @return Rating of a Pokemon's pure offensive ability over time considering move set
+     * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @link i607ch00
+     */
+    public static double gymOffense(PokemonId pokemonId, PokemonMoveMeta pm1, PokemonMoveMeta pm2, int attackIV) {
+        PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
+        return Math.max(PokemonUtils.dpsForMove(pokemonId, pm1, true) * 100, PokemonUtils.weaveDps(pokemonId, pm1, pm2, 0)) * (meta.getBaseAttack() + attackIV);
     }
 
     /**
@@ -152,16 +177,34 @@ public final class PokemonUtils {
      * to arrive at a ranking of how much damage a Pokemon will output when defending a gym.
      *
      * @param p     A Pokemon object
-     * @param useIV Use a pokemon's IV values in the calculations
      * @return Rating of a Pokemon's AI controlled gym defense over time considering move set
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static long gymDefense(PokemonId pokemonId, PokemonMoveMeta pm1, PokemonMoveMeta pm2, int attackIV, int defenseIV, int staminaIV, boolean useIV) {
-        PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
-        attackIV = (useIV) ? attackIV : 0;
+    public static long gymDefense(Pokemon p) {
+        PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(p.getMove1());
+        PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(p.getMove2());
+        return gymDefense(p.getPokemonId(), pm1, pm2, p.getIndividualAttack(), p.getIndividualDefense(), p.getIndividualStamina());
+    }
 
-        double gymDefense = PokemonUtils.weaveDps(pokemonId, pm1, pm2, 2000) * (meta.getBaseAttack() + attackIV) * PokemonUtils.tankiness(pokemonId, defenseIV, staminaIV, useIV);
+    /**
+     * Gym Defense takes the calculated Gym Weave Damage over 100s and multiplies by Tankiness
+     * to arrive at a ranking of how much damage a Pokemon will output when defending a gym.
+     *
+     * @param pokemonId The id of the pokemon
+     * @param pm1       The first move of the pokemon
+     * @param pm2       The second move of the pokemon
+     * @param attackIV  The attackIV of the pokemon
+     * @param defenseIV The defenseIV of the pokemon
+     * @param staminaIV The staminaIV of the pokemon
+     * @return Rating of a Pokemon's AI controlled gym defense over time considering move set
+     * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
+     * @link i607ch00
+     */
+    public static long gymDefense(PokemonId pokemonId, PokemonMoveMeta pm1, PokemonMoveMeta pm2, int attackIV, int defenseIV, int staminaIV) {
+        PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
+
+        double gymDefense = PokemonUtils.weaveDps(pokemonId, pm1, pm2, 2000) * (meta.getBaseAttack() + attackIV) * PokemonUtils.tankiness(pokemonId, defenseIV, staminaIV);
         return Math.round(gymDefense);
     }
 
@@ -172,13 +215,12 @@ public final class PokemonUtils {
      * Used for duel ability & gym defense calculations
      *
      * @param p     A Pokemon object
-     * @param useIV Use a pokemon's IV values in the calculations
      * @return Rating of a Pokemon's tankiness :)
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static long tankiness(Pokemon p, boolean useIV) {
-        return tankiness(p.getPokemonId(), p.getIndividualDefense(), p.getIndividualStamina(), useIV);
+    public static long tankiness(Pokemon p) {
+        return tankiness(p.getPokemonId(), p.getIndividualDefense(), p.getIndividualStamina());
     }
 
     /**
@@ -190,16 +232,12 @@ public final class PokemonUtils {
      * @param pokemonId The id of the pokemon
      * @param defenseIV The defenseIV of the pokemon
      * @param staminaIV The staminaIV of the pokemon
-     * @param useIV     Use a pokemon's IV values in the calculations
      * @return Rating of a Pokemon's tankiness :)
      * @link https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
      * @link i607ch00
      */
-    public static long tankiness(PokemonId pokemonId, int defenseIV, int staminaIV, boolean useIV) {
+    public static long tankiness(PokemonId pokemonId, int defenseIV, int staminaIV) {
         PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
-        defenseIV = (useIV) ? defenseIV : 0;
-        staminaIV = (useIV) ? staminaIV : 0;
-
         return (meta.getBaseStamina() + staminaIV) * (meta.getBaseDefense() + defenseIV);
     }
 

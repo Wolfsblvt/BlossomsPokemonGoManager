@@ -107,7 +107,7 @@ public class MenuBar extends JMenuBar {
 
         JMenuItem about = new JMenuItem("About");
         about.addActionListener(l -> JOptionPane.showMessageDialog(null,
-                "Version: " + BlossomsPoGoManager.VERSION
+                "Version: " + Updater.getUpdater().currentVersion
                         + StringLiterals.NEWLINE
                         + StringLiterals.NEWLINE + "Original Author: Corrie 'Blossom' Kay"
                         + StringLiterals.NEWLINE + "Current Author: Wolfsblvt"

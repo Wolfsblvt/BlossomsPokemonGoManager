@@ -22,6 +22,7 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonValueCache;
 
 @SuppressWarnings("serial")
 public class PokemonTable extends JTable {
@@ -174,22 +175,13 @@ public class PokemonTable extends JTable {
                 // @see
                 // https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
                 case 24:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_MAX));
+                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonValueCache.getHighestStats().duelAbility));
                     break;
                 case 25:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
+                    column.setCellRenderer(new MoveSetRankingRenderer((long) PokemonValueCache.getHighestStats().gymOffense));
                     break;
                 case 26:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
-                    break;
-                case 29:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_IV_MAX));
-                    break;
-                case 30:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_IV_MAX));
-                    break;
-                case 31:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_IV_MAX));
+                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonValueCache.getHighestStats().gymDefense));
                     break;
 
                 default:

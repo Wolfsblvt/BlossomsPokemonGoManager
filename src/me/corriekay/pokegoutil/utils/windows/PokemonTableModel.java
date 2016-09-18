@@ -75,9 +75,6 @@ public class PokemonTableModel extends AbstractTableModel {
         data.add(new AbstractMap.SimpleEntry<>("Gym Defense", new ArrayList<Long>()));// 26
         data.add(new AbstractMap.SimpleEntry<>("CP Evolved", new ArrayList<String>()));// 27
         data.add(new AbstractMap.SimpleEntry<>("Evolvable", new ArrayList<String>()));// 28
-        data.add(new AbstractMap.SimpleEntry<>("Duel Ability IV", new ArrayList<Long>()));// 29
-        data.add(new AbstractMap.SimpleEntry<>("Gym Offense IV", new ArrayList<Double>()));// 30
-        data.add(new AbstractMap.SimpleEntry<>("Gym Defense IV", new ArrayList<Long>()));// 31
         data.add(new AbstractMap.SimpleEntry<>("Duel Ability Species", new ArrayList<Long>()));// 22
         data.add(new AbstractMap.SimpleEntry<>("Gym Offense Species", new ArrayList<Double>()));// 33
         data.add(new AbstractMap.SimpleEntry<>("Gym Defense Species", new ArrayList<Long>()));// 34
@@ -213,13 +210,9 @@ public class PokemonTableModel extends AbstractTableModel {
                     p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
             getColumnList(22).add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
             getColumnList(23).add(i.getValue(), (p.isFavorite()) ? "True" : "");
-            getColumnList(24).add(i.getValue(), PokemonUtils.duelAbility(p, false));
-            getColumnList(25).add(i.getValue(), PokemonUtils.gymOffense(p, false));
-            getColumnList(26).add(i.getValue(), PokemonUtils.gymDefense(p, false));
-
-            getColumnList(29).add(i.getValue(), PokemonUtils.duelAbility(p, true));
-            getColumnList(30).add(i.getValue(), PokemonUtils.gymOffense(p, true));
-            getColumnList(31).add(i.getValue(), PokemonUtils.gymDefense(p, true));
+            getColumnList(24).add(i.getValue(), PokemonUtils.duelAbility(p));
+            getColumnList(25).add(i.getValue(), PokemonUtils.gymOffense(p));
+            getColumnList(26).add(i.getValue(), PokemonUtils.gymDefense(p));
 
             i.increment();
         });
