@@ -4,7 +4,6 @@ import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.inventory.Stats;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
-import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.data.managers.AccountController;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
@@ -108,7 +107,7 @@ public class MenuBar extends JMenuBar {
 
         JMenuItem about = new JMenuItem("About");
         about.addActionListener(l -> JOptionPane.showMessageDialog(null,
-            "Version: " + BlossomsPoGoManager.VERSION
+            "Version: " + Updater.getUpdater().currentVersion
                 + StringLiterals.NEWLINE
                 + StringLiterals.NEWLINE + "Original Author: Corrie 'Blossom' Kay"
                 + StringLiterals.NEWLINE + "Current Author: Wolfsblvt"

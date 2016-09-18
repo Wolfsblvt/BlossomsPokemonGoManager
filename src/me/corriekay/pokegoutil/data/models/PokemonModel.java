@@ -1,34 +1,23 @@
 package me.corriekay.pokegoutil.data.models;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-
+import POGOProtos.Enums.PokemonFamilyIdOuterClass;
+import POGOProtos.Enums.PokemonIdOuterClass;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
-
-import POGOProtos.Enums.PokemonFamilyIdOuterClass;
-import POGOProtos.Enums.PokemonIdOuterClass;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import me.corriekay.pokegoutil.data.managers.AccountManager;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class PokemonModel {
     private static final String UNDERSCORE = "_";
@@ -259,9 +248,9 @@ public class PokemonModel {
 
     public String getSummary() {
         return String.format(
-                "%s (%s) IV: %s CP: %d",
-                getNickname(), getSpecies(),
-                getIv(), getCp());
+            "%s (%s) IV: %s CP: %d",
+            getNickname(), getSpecies(),
+            getIv(), getCp());
     }
 
     public String getType1() {
@@ -309,15 +298,15 @@ public class PokemonModel {
         final Double dps1 = PokemonUtils.dpsForMove(pokemon, true);
         final Double dps2 = PokemonUtils.dpsForMove(pokemon, false);
         setMove1(String.format("%s (%.2fdps)",
-                WordUtils.capitalize(
-                        pokemon.getMove1().toString().toLowerCase()
-                                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-                dps1));
+            WordUtils.capitalize(
+                pokemon.getMove1().toString().toLowerCase()
+                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+            dps1));
         setMove2(String.format("%s (%.2fdps)",
-                WordUtils.capitalize(
-                        pokemon.getMove2().toString().toLowerCase()
-                                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-                dps2));
+            WordUtils.capitalize(
+                pokemon.getMove2().toString().toLowerCase()
+                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+            dps2));
 
         setCp(pokemon.getCp());
         setHp(pokemon.getMaxStamina());
@@ -347,17 +336,17 @@ public class PokemonModel {
                 if (vap != null && fla != null && jol != null) {
                     final Comparator<PokemonMeta> cMeta = (m1, m2) -> {
                         final int comb1 = PokemonCpUtils.getMaxCp(
-                                m1.getBaseAttack(),
-                                m1.getBaseDefense(),
-                                m1.getBaseStamina());
+                            m1.getBaseAttack(),
+                            m1.getBaseDefense(),
+                            m1.getBaseStamina());
                         final int comb2 = PokemonCpUtils.getMaxCp(
-                                m2.getBaseAttack(),
-                                m2.getBaseDefense(),
-                                m2.getBaseStamina());
+                            m2.getBaseAttack(),
+                            m2.getBaseDefense(),
+                            m2.getBaseStamina());
                         return comb1 - comb2;
                     };
                     highestFamilyId = PokemonIdOuterClass.PokemonId.forNumber(
-                            Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                        Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
                 }
             } else {
                 // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
@@ -381,7 +370,7 @@ public class PokemonModel {
                 setMaxEvolvedCpCurrent(PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
                 setMaxEvolvedCp(PokemonCpUtils.getMaxCp(attack, defense, stamina));
                 setCpEvolved(String.valueOf(
-                        PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, pokemon.getLevel())));
+                    PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, pokemon.getLevel())));
             }
         }
 
@@ -399,17 +388,17 @@ public class PokemonModel {
         }
         setDustToLevel(pokemon.getStardustCostsForPowerup());
         setPokeball(WordUtils.capitalize(
-                pokemon.getPokeball().toString().toLowerCase()
+            pokemon.getPokeball().toString().toLowerCase()
                 .replaceAll("item_", "").replaceAll(UNDERSCORE, " ")));
         setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(pokemon.getCreationTimeMs())));
         setIsFavorite(pokemon.isFavorite());
-        setDuelAbility(PokemonUtils.duelAbility(pokemon, false));
-        setGymOffense(PokemonUtils.gymOffense(pokemon, false));
-        setGymDefense(PokemonUtils.gymDefense(pokemon, false));
+        setDuelAbility(PokemonUtils.duelAbility(pokemon));
+        setGymOffense(PokemonUtils.gymOffense(pokemon));
+        setGymDefense(PokemonUtils.gymDefense(pokemon));
 
-        setDuelAbilityIv(PokemonUtils.duelAbility(pokemon, true));
-        setGymOffenseIv(PokemonUtils.gymOffense(pokemon, true));
-        setGymDefenseIv(PokemonUtils.gymDefense(pokemon, true));
+        setDuelAbilityIv(PokemonUtils.duelAbility(pokemon));
+        setGymOffenseIv(PokemonUtils.gymOffense(pokemon));
+        setGymDefenseIv(PokemonUtils.gymDefense(pokemon));
         setMove1Rating(PokemonUtils.moveRating(pokemon, true));
         setMove2Rating(PokemonUtils.moveRating(pokemon, false));
     }

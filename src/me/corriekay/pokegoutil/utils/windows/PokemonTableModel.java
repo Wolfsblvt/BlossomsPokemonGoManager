@@ -1,24 +1,11 @@
 package me.corriekay.pokegoutil.utils.windows;
 
-import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.swing.table.AbstractTableModel;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.mutable.MutableInt;
-import org.apache.commons.lang3.text.WordUtils;
-
+import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
-
-import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
@@ -26,8 +13,18 @@ import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.apache.commons.lang3.text.WordUtils;
 
-@SuppressWarnings({"serial", "rawtypes"})
+import javax.swing.table.AbstractTableModel;
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+@SuppressWarnings( {"serial", "rawtypes"})
 
 public class PokemonTableModel extends AbstractTableModel {
 
@@ -74,9 +71,6 @@ public class PokemonTableModel extends AbstractTableModel {
         data.add(new AbstractMap.SimpleEntry<>("Gym Defense", new ArrayList<Long>()));// 26
         data.add(new AbstractMap.SimpleEntry<>("CP Evolved", new ArrayList<String>()));// 27
         data.add(new AbstractMap.SimpleEntry<>("Evolvable", new ArrayList<String>()));// 28
-        data.add(new AbstractMap.SimpleEntry<>("Duel Ability IV", new ArrayList<Long>()));// 29
-        data.add(new AbstractMap.SimpleEntry<>("Gym Offense IV", new ArrayList<Double>()));// 30
-        data.add(new AbstractMap.SimpleEntry<>("Gym Defense IV", new ArrayList<Long>()));// 31
         data.add(new AbstractMap.SimpleEntry<>("Duel Ability Species", new ArrayList<Long>()));// 22
         data.add(new AbstractMap.SimpleEntry<>("Gym Offense Species", new ArrayList<Double>()));// 33
         data.add(new AbstractMap.SimpleEntry<>("Gym Defense Species", new ArrayList<Long>()));// 34
@@ -107,18 +101,18 @@ public class PokemonTableModel extends AbstractTableModel {
             getColumnList(7).add(i.getValue(), p.getIndividualStamina());
             getColumnList(8).add(i.getValue(), StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()));
             getColumnList(9).add(i.getValue(), StringUtils.capitalize(
-                    p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
+                p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
 
             final Double dps1 = PokemonUtils.dpsForMove(p, true);
             final Double dps2 = PokemonUtils.dpsForMove(p, false);
 
             getColumnList(10).add(i.getValue(), WordUtils.capitalize(
-                    p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " "))
-                    + " (" + String.format("%.2f", dps1) + "dps)");
+                p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " "))
+                + " (" + String.format("%.2f", dps1) + "dps)");
             getColumnList(11)
-            .add(i.getValue(),
+                .add(i.getValue(),
                     WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " ("
-                            + String.format("%.2f", dps2) + "dps)");
+                        + String.format("%.2f", dps2) + "dps)");
             getColumnList(13).add(i.getValue(), p.getMaxStamina());
 
             int trainerLevel = 1;
@@ -153,7 +147,7 @@ public class PokemonTableModel extends AbstractTableModel {
                     final List<PokemonMeta> eeveeEvolutions = PokemonUtils.getEeveeEvolutions();
                     if (eeveeEvolutions != null) {
                         highestFamilyId = PokemonId.forNumber(
-                                Collections.max(eeveeEvolutions, PokemonUtils.getMaxCpComperator())
+                            Collections.max(eeveeEvolutions, PokemonUtils.getMaxCpComperator())
                                 .getNumber());
                     }
                 } else {
@@ -178,10 +172,10 @@ public class PokemonTableModel extends AbstractTableModel {
                 final int stamina = highestFamilyMeta.getBaseStamina() + p.getIndividualStamina();
 
                 getColumnList(16).add(i.getValue(),
-                        PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
+                    PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
                 getColumnList(17).add(i.getValue(), PokemonCpUtils.getMaxCp(attack, defense, stamina));
                 getColumnList(27).add(i.getValue(), String
-                        .valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
+                    .valueOf(PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, p.getLevel())));
             }
 
             int candies = 0;
@@ -201,16 +195,16 @@ public class PokemonTableModel extends AbstractTableModel {
             }
             getColumnList(20).add(i.getValue(), p.getStardustCostsForPowerup());
             getColumnList(21).add(i.getValue(), WordUtils.capitalize(
-                    p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
+                p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
             getColumnList(22).add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
             getColumnList(23).add(i.getValue(), (p.isFavorite()) ? "True" : "");
-            getColumnList(24).add(i.getValue(), PokemonUtils.duelAbility(p, false));
-            getColumnList(25).add(i.getValue(), PokemonUtils.gymOffense(p, false));
-            getColumnList(26).add(i.getValue(), PokemonUtils.gymDefense(p, false));
+            getColumnList(24).add(i.getValue(), PokemonUtils.duelAbility(p));
+            getColumnList(25).add(i.getValue(), PokemonUtils.gymOffense(p));
+            getColumnList(26).add(i.getValue(), PokemonUtils.gymDefense(p));
 
-            getColumnList(29).add(i.getValue(), PokemonUtils.duelAbility(p, true));
-            getColumnList(30).add(i.getValue(), PokemonUtils.gymOffense(p, true));
-            getColumnList(31).add(i.getValue(), PokemonUtils.gymDefense(p, true));
+            getColumnList(29).add(i.getValue(), PokemonUtils.duelAbility(p));
+            getColumnList(30).add(i.getValue(), PokemonUtils.gymOffense(p));
+            getColumnList(31).add(i.getValue(), PokemonUtils.gymDefense(p));
 
             i.increment();
         });

@@ -1,27 +1,22 @@
 package me.corriekay.pokegoutil.utils.windows;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.List;
-
-import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.SortOrder;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.pokemon.Pokemon;
-
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonValueCache;
+
+import javax.swing.*;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class PokemonTable extends JTable {
@@ -91,7 +86,7 @@ public class PokemonTable extends JTable {
         final Comparator<Float> cFloat = Float::compareTo;
         final Comparator<Double> cDouble = Double::compareTo;
         final Comparator<String> cDate = (date1, date2) -> DateHelper.fromString(date1)
-                .compareTo(DateHelper.fromString(date2));
+            .compareTo(DateHelper.fromString(date2));
         final Comparator<String> cNullableInt = (s1, s2) -> {
             if ("-".equals(s1)) {
                 s1 = "0";
@@ -139,28 +134,28 @@ public class PokemonTable extends JTable {
 
         // Add listener to save those sorting values
         trs.addRowSorterListener(
-                e -> {
-                    final RowSorter<TableModel> sorter = trs;
-                    if (sorter != null) {
-                        @SuppressWarnings("unchecked")
-                        final
-                        List<SortKey> keys = (List<SortKey>) sorter.getSortKeys();
-                        if (keys.size() > 0) {
-                            final SortKey prim = keys.get(0);
-                            sortOrder1 = prim.getSortOrder();
-                            config.setString(ConfigKey.SORT_ORDER_1, sortOrder1.toString());
-                            sortColIndex1 = prim.getColumn();
-                            config.setInt(ConfigKey.SORT_COLINDEX_1, sortColIndex1);
-                        }
-                        if (keys.size() > 1) {
-                            final SortKey sec = keys.get(1);
-                            sortOrder2 = sec.getSortOrder();
-                            config.setString(ConfigKey.SORT_ORDER_2, sortOrder2.toString());
-                            sortColIndex2 = sec.getColumn();
-                            config.setInt(ConfigKey.SORT_COLINDEX_2, sortColIndex2);
-                        }
+            e -> {
+                final RowSorter<TableModel> sorter = trs;
+                if (sorter != null) {
+                    @SuppressWarnings("unchecked")
+                    final
+                    List<SortKey> keys = (List<SortKey>) sorter.getSortKeys();
+                    if (keys.size() > 0) {
+                        final SortKey prim = keys.get(0);
+                        sortOrder1 = prim.getSortOrder();
+                        config.setString(ConfigKey.SORT_ORDER_1, sortOrder1.toString());
+                        sortColIndex1 = prim.getColumn();
+                        config.setInt(ConfigKey.SORT_COLINDEX_1, sortColIndex1);
                     }
-                });
+                    if (keys.size() > 1) {
+                        final SortKey sec = keys.get(1);
+                        sortOrder2 = sec.getSortOrder();
+                        config.setString(ConfigKey.SORT_ORDER_2, sortOrder2.toString());
+                        sortColIndex2 = sec.getColumn();
+                        config.setInt(ConfigKey.SORT_COLINDEX_2, sortColIndex2);
+                    }
+                }
+            });
 
         // Add cell Renderers
         DefaultCellRenderer defaultCellRenderer = new DefaultCellRenderer();
@@ -174,22 +169,13 @@ public class PokemonTable extends JTable {
                 // @see
                 // https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
                 case 24:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_MAX));
+                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonValueCache.getHighestStats().duelAbility));
                     break;
                 case 25:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_MAX));
+                    column.setCellRenderer(new MoveSetRankingRenderer((long) PokemonValueCache.getHighestStats().gymOffense));
                     break;
                 case 26:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_MAX));
-                    break;
-                case 29:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.DUEL_ABILITY_IV_MAX));
-                    break;
-                case 30:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_OFFENSE_IV_MAX));
-                    break;
-                case 31:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonUtils.GYM_DEFENSE_IV_MAX));
+                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonValueCache.getHighestStats().gymDefense));
                     break;
 
                 default:

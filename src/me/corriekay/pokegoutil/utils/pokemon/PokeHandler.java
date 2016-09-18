@@ -1,16 +1,8 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.function.BiConsumer;
-
-import org.apache.commons.lang3.StringUtils;
-
+import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
+import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
@@ -18,21 +10,22 @@ import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.util.PokeDictionary;
-
-import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
-import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.UnicodeHelper;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.UnsupportedEncodingException;
+import java.util.*;
+import java.util.function.BiConsumer;
 
 public class PokeHandler {
 
     private final ArrayList<Pokemon> mons;
 
     public PokeHandler(final Pokemon pokemon) {
-        this(new Pokemon[]{pokemon});
+        this(new Pokemon[] {pokemon});
     }
 
     public PokeHandler(final Pokemon[] pokemon) {
@@ -71,8 +64,8 @@ public class PokeHandler {
             return result;
         } catch (LoginFailedException | RemoteServerException e) {
             System.out.println("Error while renaming "
-                    + getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
-                    + Utilities.getRealExceptionMessage(e));
+                + getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
+                + Utilities.getRealExceptionMessage(e));
             return NicknamePokemonResponse.Result.UNRECOGNIZED;
         }
     }
@@ -131,7 +124,7 @@ public class PokeHandler {
      * value.
      */
     public LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> bulkRenameWithPattern(final String pattern,
-            final BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback) {
+                                                                                        final BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback) {
         final LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> results = new LinkedHashMap<>();
 
         mons.forEach(p -> {
@@ -213,7 +206,7 @@ public class PokeHandler {
                         final List<PokemonMeta> eeveeEvolutions = PokemonUtils.getEeveeEvolutions();
                         if (eeveeEvolutions != null) {
                             highestFamilyId = PokemonId.forNumber(
-                                    Collections.max(eeveeEvolutions, PokemonUtils.getEeveeCpComperator(p))
+                                Collections.max(eeveeEvolutions, PokemonUtils.getEeveeCpComperator(p))
                                     .getNumber());
                         }
                     } else {
@@ -255,8 +248,8 @@ public class PokeHandler {
             @Override
             public String get(final Pokemon p) {
                 return (Integer.toHexString(p.getIndividualAttack())
-                        + Integer.toHexString(p.getIndividualDefense())
-                        + Integer.toHexString(p.getIndividualStamina())).toUpperCase();
+                    + Integer.toHexString(p.getIndividualDefense())
+                    + Integer.toHexString(p.getIndividualStamina())).toUpperCase();
             }
         },
         IV_ATT("IV Attack") {
@@ -297,44 +290,23 @@ public class PokeHandler {
         },
         DUEL_ABILITY_RATING("Duel Ability in two digits (XX for 100%)") {
             @Override
-            public String get(final Pokemon p) {
-                final long duelAbility = PokemonUtils.duelAbility(p, false);
-                return Utilities.percentageWithTwoCharacters(duelAbility, PokemonUtils.DUEL_ABILITY_MAX);
+            public String get(Pokemon p) {
+                long duelAbility = PokemonUtils.duelAbility(p);
+                return Utilities.percentageWithTwoCharacters(duelAbility, PokemonValueCache.getHighestStats().duelAbility);
             }
         },
         GYM_OFFENSE_RATING("Gym Offense in two digits (XX for 100%)") {
             @Override
-            public String get(final Pokemon p) {
-                final double gymOffense = PokemonUtils.gymOffense(p, false);
-                return Utilities.percentageWithTwoCharacters(gymOffense, PokemonUtils.GYM_OFFENSE_MAX);
+            public String get(Pokemon p) {
+                double gymOffense = PokemonUtils.gymOffense(p);
+                return Utilities.percentageWithTwoCharacters(gymOffense, PokemonValueCache.getHighestStats().gymOffense);
             }
         },
         GYM_DEFENSE_RATING("Gym Defense in two digits (XX for 100%)") {
             @Override
-            public String get(final Pokemon p) {
-                final long gymDefense = PokemonUtils.gymDefense(p, false);
-                return Utilities.percentageWithTwoCharacters(gymDefense, PokemonUtils.GYM_DEFENSE_MAX);
-            }
-        },
-        DUEL_ABILITY_IV_RATING("Duel Ability (w IVs) in two digits (XX for 100%)") {
-            @Override
-            public String get(final Pokemon p) {
-                final long duelAbility = PokemonUtils.duelAbility(p, true);
-                return Utilities.percentageWithTwoCharacters(duelAbility, PokemonUtils.DUEL_ABILITY_IV_MAX);
-            }
-        },
-        GYM_OFFENSE_IV_RATING("Gym Offense (w IVs) in two digits (XX for 100%)") {
-            @Override
-            public String get(final Pokemon p) {
-                final double gymOffense = PokemonUtils.gymOffense(p, true);
-                return Utilities.percentageWithTwoCharacters(gymOffense, PokemonUtils.GYM_OFFENSE_IV_MAX);
-            }
-        },
-        GYM_DEFENSE_IV_RATING("Gym Defense (w IVs) in two digits (XX for 100%)") {
-            @Override
-            public String get(final Pokemon p) {
-                final long gymDefense = PokemonUtils.gymDefense(p, true);
-                return Utilities.percentageWithTwoCharacters(gymDefense, PokemonUtils.GYM_DEFENSE_IV_MAX);
+            public String get(Pokemon p) {
+                long gymDefense = PokemonUtils.gymDefense(p);
+                return Utilities.percentageWithTwoCharacters(gymDefense, PokemonValueCache.getHighestStats().gymDefense);
             }
         },
         MAX_CP("Maximum possible CP (with Trainer Level 40)") {

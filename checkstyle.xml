@@ -185,14 +185,7 @@
         <property name="allowIfAllCharactersEscaped" value="true"/>
     </module>
     <module name="CommentsIndentation"/>
-    <module name="FinalParameters">
-        <!--
-          we will not use that fanatic validation, extra modifiers pollute a code
-          it is better to use extra validation(Check) that argument is reassigned
-          But this Check will exists as it was created by community demand.
-        -->
-        <property name="severity" value="ignore"/>
-    </module>
+    <module name="FinalParameters"/>
     <module name="Indentation">
         <property name="basicOffset" value="4"/>
         <property name="braceAdjustment" value="0"/>
