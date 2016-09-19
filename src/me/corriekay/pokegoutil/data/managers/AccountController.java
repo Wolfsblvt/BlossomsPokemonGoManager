@@ -19,15 +19,18 @@ import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
+import com.pokegoapi.exceptions.AsyncPokemonGoException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
+
 import okhttp3.OkHttpClient;
 
 /**
@@ -71,6 +74,7 @@ public final class AccountController {
         OkHttpClient http;
         CredentialProvider cp;
         PokemonGo go = null;
+        int tries = 0;
         while (!instance.logged) {
             //BEGIN LOGIN WINDOW
             go = null;
@@ -112,11 +116,11 @@ public final class AccountController {
                 final Object[] panel = {panel1, panel2,};
 
                 response = JOptionPane.showConfirmDialog(
-                        WindowStuffHelper.alwaysOnTopParent,
-                        panel,
-                        "Login",
-                        JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE);
+                    WindowStuffHelper.alwaysOnTopParent,
+                    panel,
+                    "Login",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE);
             }
 
             if (response == JOptionPane.CANCEL_OPTION) {
@@ -134,7 +138,7 @@ public final class AccountController {
                         deleteLoginData(LoginType.PTC);
                     }
                 } catch (final Exception e) {
-                    alertFailedLogin(e.getMessage());
+                    alertFailedLogin(e.getClass().getSimpleName() + ": " + e.getMessage(), tries);
                     deleteLoginData(LoginType.PTC);
                     continue;
                 }
@@ -148,25 +152,25 @@ public final class AccountController {
                     //We need to get the auth code, as we do not have it yet.
                     UIManager.put("OptionPane.okButtonText", "Ok");
                     JOptionPane.showMessageDialog(WindowStuffHelper.alwaysOnTopParent,
-                            "You will need to provide a google authentication key to log in. Press OK to continue.",
-                            googleAuthTitle,
-                            JOptionPane.PLAIN_MESSAGE);
+                        "You will need to provide a google authentication key to log in. Press OK to continue.",
+                        googleAuthTitle,
+                        JOptionPane.PLAIN_MESSAGE);
 
                     //We're gonna try to load the page using the users browser
                     JOptionPane.showMessageDialog(WindowStuffHelper.alwaysOnTopParent,
-                            "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue",
-                            googleAuthTitle,
-                            JOptionPane.PLAIN_MESSAGE);
+                        "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue",
+                        googleAuthTitle,
+                        JOptionPane.PLAIN_MESSAGE);
                     final boolean success = Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
 
                     if (!success) {
                         // Okay, couldn't open it. We use the manual copy window
                         UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
                         if (JOptionPane.showConfirmDialog(WindowStuffHelper.alwaysOnTopParent,
-                                "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.",
-                                googleAuthTitle,
-                                JOptionPane.OK_CANCEL_OPTION,
-                                JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION) {
+                            "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.",
+                            googleAuthTitle,
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION) {
                             final StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
                             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
                         }
@@ -174,9 +178,9 @@ public final class AccountController {
                     }
                     //The user should have the auth code now. Lets get it.
                     authCode = JOptionPane.showInputDialog(WindowStuffHelper.alwaysOnTopParent,
-                            "Please provide the authentication code",
-                            googleAuthTitle,
-                            JOptionPane.PLAIN_MESSAGE);
+                        "Please provide the authentication code",
+                        googleAuthTitle,
+                        JOptionPane.PLAIN_MESSAGE);
                 } else {
                     refresh = true;
                 }
@@ -185,7 +189,6 @@ public final class AccountController {
                     if (refresh) {
                         // Based on usage in https://github.com/Grover-c13/PokeGOAPI-Java
                         provider = new GoogleUserCredentialProvider(http, authCode);
-                        provider.refreshToken(authCode);
                     } else {
                         provider = new GoogleUserCredentialProvider(http);
                         provider.login(authCode);
@@ -200,7 +203,7 @@ public final class AccountController {
                         deleteLoginData(LoginType.GOOGLE);
                     }
                 } catch (final Exception e) {
-                    alertFailedLogin(e.getMessage());
+                    alertFailedLogin(e.getClass().getSimpleName() + ": " + e.getMessage(), tries);
                     deleteLoginData(LoginType.GOOGLE);
                     continue;
                 }
@@ -215,8 +218,8 @@ public final class AccountController {
                 try {
                     go = new PokemonGo(http);
                     go.login(cp);
-                } catch (LoginFailedException | RemoteServerException e) {
-                    alertFailedLogin(e.getMessage());
+                } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException e) {
+                    alertFailedLogin(e.getClass().getSimpleName() + ": " + e.getMessage(), tries);
                     deleteLoginData(LoginType.BOTH);
                     continue;
                 }
@@ -236,11 +239,19 @@ public final class AccountController {
         PokemonBagManager.initialize(go);
     }
 
-    private static void alertFailedLogin(final String message) {
+    /**
+     * Alerts a failed login with a popup showing the specific error.
+     *
+     * @param message The message that is shown.
+     * @param tries   The number of the try that this is (zero based).
+     */
+    private static void alertFailedLogin(final String message, final int tries) {
         JOptionPane.showMessageDialog(WindowStuffHelper.alwaysOnTopParent,
-                "Unfortunately, your login has failed. Reason: " + message + "\nPress OK to try again.",
-                "Login Failed",
-                JOptionPane.PLAIN_MESSAGE);
+            "Unfortunately, your login has failed. Reason: " + message
+                + StringLiterals.NEWLINE + "This is try number " + (tries + 1) + "."
+                + StringLiterals.NEWLINE + "Press OK to try again.",
+            "Login Failed",
+            JOptionPane.PLAIN_MESSAGE);
     }
 
     private static boolean checkSaveAuth() {
@@ -249,9 +260,9 @@ public final class AccountController {
         UIManager.put("OptionPane.okButtonText", "Ok");
         UIManager.put("OptionPane.cancelButtonText", "Cancel");
         return JOptionPane.showConfirmDialog(WindowStuffHelper.alwaysOnTopParent,
-                "Do you wish to save the password/auth token?\nCaution: These are saved in plain-text.", "Save Authentication?",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+            "Do you wish to save the password/auth token?\nCaution: These are saved in plain-text.", "Save Authentication?",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
     }
 
     private static LoginType checkSavedConfig() {
@@ -320,9 +331,9 @@ public final class AccountController {
             UIManager.put("OptionPane.okButtonText", "Ok");
             UIManager.put("OptionPane.cancelButtonText", "Cancel");
             return JOptionPane.showConfirmDialog(WindowStuffHelper.alwaysOnTopParent,
-                    "You have saved login data for " + savedLogin.toString() + ". Want to login with that?",
-                    "Use Saved Login",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+                "You have saved login data for " + savedLogin.toString() + ". Want to login with that?",
+                "Use Saved Login",
+                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
         }
     }
 
