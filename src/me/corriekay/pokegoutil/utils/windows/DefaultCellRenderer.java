@@ -27,6 +27,7 @@ public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
         setText(value.toString());
         setOpaque(true);
         setDefaultSelectionColors(table, isSelected, this);
+        setFont(table.getFont());
         return this;
     }
 
