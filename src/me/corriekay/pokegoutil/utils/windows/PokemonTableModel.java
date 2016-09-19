@@ -13,6 +13,7 @@ import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonValueCache;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.text.WordUtils;
@@ -71,9 +72,9 @@ public class PokemonTableModel extends AbstractTableModel {
         data.add(new AbstractMap.SimpleEntry<>("Gym Defense", new ArrayList<Long>()));// 26
         data.add(new AbstractMap.SimpleEntry<>("CP Evolved", new ArrayList<String>()));// 27
         data.add(new AbstractMap.SimpleEntry<>("Evolvable", new ArrayList<String>()));// 28
-        data.add(new AbstractMap.SimpleEntry<>("Duel Ability Species", new ArrayList<Long>()));// 22
-        data.add(new AbstractMap.SimpleEntry<>("Gym Offense Species", new ArrayList<Double>()));// 33
-        data.add(new AbstractMap.SimpleEntry<>("Gym Defense Species", new ArrayList<Long>()));// 34
+        data.add(new AbstractMap.SimpleEntry<>("Duel Ability Species", new ArrayList<Long>()));// 29
+        data.add(new AbstractMap.SimpleEntry<>("Gym Offense Species", new ArrayList<Double>()));// 30
+        data.add(new AbstractMap.SimpleEntry<>("Gym Defense Species", new ArrayList<Long>()));// 31
 
         ChangeTableData(pokes);
     }
@@ -198,13 +199,13 @@ public class PokemonTableModel extends AbstractTableModel {
                 p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
             getColumnList(22).add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
             getColumnList(23).add(i.getValue(), (p.isFavorite()) ? "True" : "");
-            getColumnList(24).add(i.getValue(), PokemonUtils.duelAbility(p));
-            getColumnList(25).add(i.getValue(), PokemonUtils.gymOffense(p));
-            getColumnList(26).add(i.getValue(), PokemonUtils.gymDefense(p));
+            getColumnList(24).add(i.getValue(), Utilities.percentage(PokemonUtils.duelAbility(p), PokemonValueCache.getHighestStats().duelAbility));
+            getColumnList(25).add(i.getValue(), Utilities.percentage(PokemonUtils.gymOffense(p), PokemonValueCache.getHighestStats().gymOffense));
+            getColumnList(26).add(i.getValue(), Utilities.percentage(PokemonUtils.gymDefense(p), PokemonValueCache.getHighestStats().gymDefense));
 
-            getColumnList(29).add(i.getValue(), PokemonUtils.duelAbility(p));
-            getColumnList(30).add(i.getValue(), PokemonUtils.gymOffense(p));
-            getColumnList(31).add(i.getValue(), PokemonUtils.gymDefense(p));
+            getColumnList(29).add(i.getValue(), Utilities.percentage(PokemonUtils.duelAbility(p), PokemonValueCache.getStats(p.getPokemonId()).duelAbility));
+            getColumnList(30).add(i.getValue(), Utilities.percentage(PokemonUtils.gymOffense(p), PokemonValueCache.getStats(p.getPokemonId()).gymOffense));
+            getColumnList(31).add(i.getValue(), Utilities.percentage(PokemonUtils.gymDefense(p), PokemonValueCache.getStats(p.getPokemonId()).gymDefense));
 
             i.increment();
         });

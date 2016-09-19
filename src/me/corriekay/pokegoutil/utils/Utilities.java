@@ -36,6 +36,17 @@ public final class Utilities {
         return Math.round(decimalNumber * 100 * 100) / 100.0;
     }
 
+    /**
+     * Rounds given decimal number (like 0.75345) to a percentage with two decimals (75.35)
+     *
+     * @param number  The real part.
+     * @param maximum The maximum of the number.
+     * @return The percentage value
+     */
+    public static double percentage(double number, double maximum) {
+        return percentage(Math.min(number / maximum, maximum));
+    }
+
     public static String percentageWithTwoCharacters(double number, double maximum) {
         return percentageWithTwoCharacters(Math.min(number / maximum, maximum));
     }
@@ -79,8 +90,8 @@ public final class Utilities {
         String message = e.getMessage();
         if (e instanceof InvalidProtocolBufferException || "Contents of buffer are null".equals(message)) {
             message = "Server hasn't responded in time. "
-                    + "Seems to be busy. "
-                    + "The action may have been successful though. (" + message + ")";
+                + "Seems to be busy. "
+                + "The action may have been successful though. (" + message + ")";
         }
         return message;
     }

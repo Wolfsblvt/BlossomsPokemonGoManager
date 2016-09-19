@@ -96,14 +96,8 @@ public class PokemonTable extends JTable {
             }
             return Integer.parseInt(s1) - Integer.parseInt(s2);
         };
-        final Comparator<Long> cLong = Long::compareTo;
-        final Comparator<String> cPercentageWithTwoCharacters = (s1, s2) -> {
-            final int i1 = ("XX".equals(s1)) ? 100 : Integer.parseInt(s1);
-            final int i2 = ("XX".equals(s2)) ? 100 : Integer.parseInt(s2);
-            return i1 - i2;
-        };
         trs.setComparator(0, cInt);
-        trs.setComparator(3, cPercentageWithTwoCharacters);
+        trs.setComparator(3, cDouble);
         trs.setComparator(4, cFloat);
         trs.setComparator(5, cInt);
         trs.setComparator(6, cInt);
@@ -118,14 +112,14 @@ public class PokemonTable extends JTable {
         trs.setComparator(19, cNullableInt);
         trs.setComparator(20, cInt);
         trs.setComparator(22, cDate);
-        trs.setComparator(24, cLong);
+        trs.setComparator(24, cDouble);
         trs.setComparator(25, cDouble);
-        trs.setComparator(26, cLong);
+        trs.setComparator(26, cDouble);
         trs.setComparator(27, cNullableInt);
         trs.setComparator(28, cNullableInt);
-        trs.setComparator(29, cLong);
+        trs.setComparator(29, cDouble);
         trs.setComparator(30, cDouble);
-        trs.setComparator(31, cLong);
+        trs.setComparator(31, cDouble);
         setRowSorter(trs);
         final List<SortKey> sortKeys = new ArrayList<>();
         sortKeys.add(new SortKey(sortColIndex1, sortOrder1));
@@ -169,14 +163,14 @@ public class PokemonTable extends JTable {
                 // @see
                 // https://www.reddit.com/r/TheSilphRoad/comments/4vcobt/posthotfix_pokemon_go_full_moveset_rankings/
                 case 24:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonValueCache.getHighestStats().duelAbility));
-                    break;
+                    //column.setCellRenderer(new MoveSetRankingRenderer(PokemonValueCache.getHighestStats().duelAbility));
+                    //break;
                 case 25:
-                    column.setCellRenderer(new MoveSetRankingRenderer((long) PokemonValueCache.getHighestStats().gymOffense));
-                    break;
+                    //column.setCellRenderer(new MoveSetRankingRenderer((long) PokemonValueCache.getHighestStats().gymOffense));
+                    //break;
                 case 26:
-                    column.setCellRenderer(new MoveSetRankingRenderer(PokemonValueCache.getHighestStats().gymDefense));
-                    break;
+                    //column.setCellRenderer(new MoveSetRankingRenderer(PokemonValueCache.getHighestStats().gymDefense));
+                    //break;
 
                 default:
                     column.setCellRenderer(defaultCellRenderer);
