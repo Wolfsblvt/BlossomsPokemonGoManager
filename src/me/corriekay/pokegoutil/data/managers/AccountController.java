@@ -138,7 +138,7 @@ public final class AccountController {
                         deleteLoginData(LoginType.PTC);
                     }
                 } catch (final Exception e) {
-                    alertFailedLogin(e.getClass().getSimpleName() + ": " + e.getMessage(), tries);
+                    alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                     deleteLoginData(LoginType.PTC);
                     continue;
                 }
@@ -203,7 +203,7 @@ public final class AccountController {
                         deleteLoginData(LoginType.GOOGLE);
                     }
                 } catch (final Exception e) {
-                    alertFailedLogin(e.getClass().getSimpleName() + ": " + e.getMessage(), tries);
+                    alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                     deleteLoginData(LoginType.GOOGLE);
                     continue;
                 }
@@ -219,7 +219,7 @@ public final class AccountController {
                     go = new PokemonGo(http);
                     go.login(cp);
                 } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException e) {
-                    alertFailedLogin(e.getClass().getSimpleName() + ": " + e.getMessage(), tries);
+                    alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                     deleteLoginData(LoginType.BOTH);
                     continue;
                 }
@@ -242,12 +242,14 @@ public final class AccountController {
     /**
      * Alerts a failed login with a popup showing the specific error.
      *
-     * @param message The message that is shown.
-     * @param tries   The number of the try that this is (zero based).
+     * @param exceptionClass The class of the exception, or error type.
+     * @param message        The message that is shown.
+     * @param tries          The number of the try that this is (zero based).
      */
-    private static void alertFailedLogin(final String message, final int tries) {
+    private static void alertFailedLogin(final String exceptionClass, final String message, final int tries) {
         JOptionPane.showMessageDialog(WindowStuffHelper.alwaysOnTopParent,
-            "Unfortunately, your login has failed. Reason: " + message
+            "Unfortunately, your login has failed. Reason: "
+                + StringLiterals.NEWLINE + exceptionClass + ": " +message
                 + StringLiterals.NEWLINE + "This is try number " + (tries + 1) + "."
                 + StringLiterals.NEWLINE + "Press OK to try again.",
             "Login Failed",
