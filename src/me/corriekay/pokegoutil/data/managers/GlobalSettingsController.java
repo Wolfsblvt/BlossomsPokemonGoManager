@@ -48,7 +48,6 @@ public final class GlobalSettingsController {
     private void consoleSetup() {
         logController = new LogController();
         ConsolePrintStream.setup(logController);
-        setDefaultCharset("UTF8");
     }
 
     /**
@@ -58,20 +57,5 @@ public final class GlobalSettingsController {
      */
     public LogController getLogController() {
         return logController;
-    }
-
-    /**
-     * Set the default charset for the console, so that characters are displayed correctly.
-     *
-     * @param charsetName The name of the charset.
-     */
-    private void setDefaultCharset(final String charsetName) {
-        try {
-            final Field charset = Charset.class.getDeclaredField("defaultCharset");
-            charset.setAccessible(true);
-            charset.set(null, Charset.forName(charsetName));
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            ConsolePrintStream.printException(ex);
-        }
     }
 }
