@@ -29,6 +29,7 @@ public class MoveSetRankingRenderer extends JLabel implements TableCellRenderer 
         setToolTipText(NumberFormat.getInstance().format(value));
         setOpaque(true);
         setDefaultSelectionColors(table, isSelected, this);
+        setFont(table.getFont());
         return this;
     }
 
