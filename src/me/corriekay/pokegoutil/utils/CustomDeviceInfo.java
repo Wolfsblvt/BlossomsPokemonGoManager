@@ -2,6 +2,11 @@ package me.corriekay.pokegoutil.utils;
 
 import com.pokegoapi.api.device.DeviceInfos;
 
+/**
+ * A class that implements DeviceInfos and get all the configuration from the config.json file.
+ * If you want different DeviceInfo passed to API, change the configuration in config file.
+ * @author FernandoTBarros
+ */
 public class CustomDeviceInfo implements DeviceInfos {
 
     private static ConfigNew config = ConfigNew.getConfig();

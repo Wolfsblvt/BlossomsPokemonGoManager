@@ -48,7 +48,7 @@ public enum ConfigKey {
 //    DEVICEINFO_CUSTOM("deviceInfo.custom", false, Type.BOOLEAN),
     DEVICE_INFO_ANDROID_BOARD_NAME("deviceInfo.android.boardName", "", Type.STRING),
     DEVICE_INFO_ANDROID_BOOTLOADER("deviceInfo.android.bootloader", "", Type.STRING),
-    DEVICE_INFO_DEVICE_BRAND("deviceInfo.device.brand", "Apple", Type.STRING),
+    DEVICE_INFO_DEVICE_BRAND("deviceInfo.device.brand", StringLiterals.APPLE, Type.STRING),
     DEVICE_INFO_DEVICE_ID("deviceInfo.device.id", "3562002a3ec39ccf64eff96879219ad1", Type.STRING),
     DEVICE_INFO_DEVICE_MODEL("deviceInfo.device.model", "iPad", Type.STRING),
     DEVICE_INFO_DEVICE_MODELBOOT("deviceInfo.device.modelBoot", "iPad4,9", Type.STRING),
@@ -57,7 +57,7 @@ public enum ConfigKey {
     DEVICE_INFO_FIRMWARE_FINGERPRINT("deviceInfo.firmware.fingerprint", "", Type.STRING),
     DEVICE_INFO_FIRMWARE_TAGS("deviceInfo.firmware.tags", "", Type.STRING),
     DEVICE_INFO_FIRMWARE_TYPE("deviceInfo.firmware.type", "9.3.1", Type.STRING),
-    DEVICE_INFO_HARDWARE_MANUFACUTER("deviceInfo.hardware.manufacturer", "Apple", Type.STRING),
+    DEVICE_INFO_HARDWARE_MANUFACUTER("deviceInfo.hardware.manufacturer", StringLiterals.APPLE, Type.STRING),
     DEVICE_INFO_HARDWARE_MODEL("deviceInfo.hardware.model", "J87mAP", Type.STRING);
     
     public final String keyName;
