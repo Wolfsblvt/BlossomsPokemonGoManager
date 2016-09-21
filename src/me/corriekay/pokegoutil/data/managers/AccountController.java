@@ -15,6 +15,8 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.device.DeviceInfo;
+import com.pokegoapi.api.device.DeviceInfos;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
@@ -26,6 +28,7 @@ import com.pokegoapi.exceptions.RemoteServerException;
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.CustomDeviceInfo;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
@@ -217,6 +220,7 @@ public final class AccountController {
             if (cp != null) {
                 try {
                     go = new PokemonGo(http);
+                    go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
                     go.login(cp);
                 } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException e) {
                     alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);

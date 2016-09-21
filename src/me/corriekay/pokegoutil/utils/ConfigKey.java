@@ -43,8 +43,23 @@ public enum ConfigKey {
     DELAY_POWERUP_MIN("delay.powerUp.min", 1000, Type.INTEGER),
     DELAY_POWERUP_MAX("delay.powerUp.max", 5000, Type.INTEGER),
     DELAY_FAVORITE_MIN("delay.favorite.min", 1000, Type.INTEGER),
-    DELAY_FAVORITE_MAX("delay.favorite.max", 3000, Type.INTEGER),;
+    DELAY_FAVORITE_MAX("delay.favorite.max", 3000, Type.INTEGER),
 
+//    DEVICEINFO_CUSTOM("deviceInfo.custom", false, Type.BOOLEAN),
+    DEVICE_INFO_ANDROID_BOARD_NAME("deviceInfo.android.boardName", "", Type.STRING),
+    DEVICE_INFO_ANDROID_BOOTLOADER("deviceInfo.android.bootloader", "", Type.STRING),
+    DEVICE_INFO_DEVICE_BRAND("deviceInfo.device.brand", "Apple", Type.STRING),
+    DEVICE_INFO_DEVICE_ID("deviceInfo.device.id", "3562002a3ec39ccf64eff96879219ad1", Type.STRING),
+    DEVICE_INFO_DEVICE_MODEL("deviceInfo.device.model", "iPad", Type.STRING),
+    DEVICE_INFO_DEVICE_MODELBOOT("deviceInfo.device.modelBoot", "iPad4,9", Type.STRING),
+    DEVICE_INFO_DEVICE_MODELIDENTIFIER("deviceInfo.device.modelIdentifier", "", Type.STRING),
+    DEVICE_INFO_FIRMWARE_BRAND("deviceInfo.firmware.brand", "iPhone OS", Type.STRING),
+    DEVICE_INFO_FIRMWARE_FINGERPRINT("deviceInfo.firmware.fingerprint", "", Type.STRING),
+    DEVICE_INFO_FIRMWARE_TAGS("deviceInfo.firmware.tags", "", Type.STRING),
+    DEVICE_INFO_FIRMWARE_TYPE("deviceInfo.firmware.type", "9.3.1", Type.STRING),
+    DEVICE_INFO_HARDWARE_MANUFACUTER("deviceInfo.hardware.manufacturer", "Apple", Type.STRING),
+    DEVICE_INFO_HARDWARE_MODEL("deviceInfo.hardware.model", "J87mAP", Type.STRING);
+    
     public final String keyName;
     public final Object defaultValue;
     public final Type type;
