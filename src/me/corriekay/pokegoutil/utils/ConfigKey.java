@@ -45,20 +45,20 @@ public enum ConfigKey {
     DELAY_FAVORITE_MIN("delay.favorite.min", 1000, Type.INTEGER),
     DELAY_FAVORITE_MAX("delay.favorite.max", 3000, Type.INTEGER),
 
-//    DEVICEINFO_CUSTOM("deviceInfo.custom", false, Type.BOOLEAN),
-    DEVICE_INFO_ANDROID_BOARD_NAME("deviceInfo.android.boardName", "", Type.STRING),
-    DEVICE_INFO_ANDROID_BOOTLOADER("deviceInfo.android.bootloader", "", Type.STRING),
-    DEVICE_INFO_DEVICE_BRAND("deviceInfo.device.brand", StringLiterals.APPLE, Type.STRING),
-    DEVICE_INFO_DEVICE_ID("deviceInfo.device.id", "3562002a3ec39ccf64eff96879219ad1", Type.STRING),
-    DEVICE_INFO_DEVICE_MODEL("deviceInfo.device.model", "iPad", Type.STRING),
-    DEVICE_INFO_DEVICE_MODELBOOT("deviceInfo.device.modelBoot", "iPad4,9", Type.STRING),
-    DEVICE_INFO_DEVICE_MODELIDENTIFIER("deviceInfo.device.modelIdentifier", "", Type.STRING),
-    DEVICE_INFO_FIRMWARE_BRAND("deviceInfo.firmware.brand", "iPhone OS", Type.STRING),
-    DEVICE_INFO_FIRMWARE_FINGERPRINT("deviceInfo.firmware.fingerprint", "", Type.STRING),
-    DEVICE_INFO_FIRMWARE_TAGS("deviceInfo.firmware.tags", "", Type.STRING),
-    DEVICE_INFO_FIRMWARE_TYPE("deviceInfo.firmware.type", "9.3.1", Type.STRING),
-    DEVICE_INFO_HARDWARE_MANUFACUTER("deviceInfo.hardware.manufacturer", StringLiterals.APPLE, Type.STRING),
-    DEVICE_INFO_HARDWARE_MODEL("deviceInfo.hardware.model", "J87mAP", Type.STRING);
+    DEVICE_INFO_USE_CUSTOM("deviceInfo.useCustom", false, Type.BOOLEAN),
+    DEVICE_INFO_CUSTOM_ANDROID_BOARD_NAME("deviceInfo.custom.android.boardName", "", Type.STRING),
+    DEVICE_INFO_CUSTOM_ANDROID_BOOTLOADER("deviceInfo.custom.android.bootloader", "", Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_BRAND("deviceInfo.custom.device.brand", StringLiterals.APPLE, Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_ID("deviceInfo.custom.device.id", "3562002a3ec39ccf64eff96879219ad1", Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_MODEL("deviceInfo.custom.device.model", "iPad", Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_MODELBOOT("deviceInfo.custom.device.modelBoot", "iPad4,9", Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_MODELIDENTIFIER("deviceInfo.custom.device.modelIdentifier", "", Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_BRAND("deviceInfo.custom.firmware.brand", "iPhone OS", Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_FINGERPRINT("deviceInfo.custom.firmware.fingerprint", "", Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_TAGS("deviceInfo.custom.firmware.tags", "", Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_TYPE("deviceInfo.custom.firmware.type", "9.3.1", Type.STRING),
+    DEVICE_INFO_CUSTOM_HARDWARE_MANUFACUTER("deviceInfo.custom.hardware.manufacturer", StringLiterals.APPLE, Type.STRING),
+    DEVICE_INFO_CUSTOM_HARDWARE_MODEL("deviceInfo.custom.hardware.model", "J87mAP", Type.STRING);
     
     public final String keyName;
     public final Object defaultValue;

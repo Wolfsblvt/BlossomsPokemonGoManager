@@ -235,7 +235,9 @@ public final class AccountManager {
     private void prepareLogin(final CredentialProvider cp, final OkHttpClient http)
             throws LoginFailedException, RemoteServerException {
         go = new PokemonGo(http);
-        go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
+        if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
+            go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
+        }
         go.login(cp);
         playerAccount = new PlayerAccount(go.getPlayerProfile());
         initOtherControllers();

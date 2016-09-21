@@ -220,7 +220,9 @@ public final class AccountController {
             if (cp != null) {
                 try {
                     go = new PokemonGo(http);
-                    go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
+                    if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
+                        go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
+                    }
                     go.login(cp);
                 } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException e) {
                     alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
