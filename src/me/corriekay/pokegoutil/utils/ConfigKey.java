@@ -31,7 +31,7 @@ public enum ConfigKey {
     ALTERNATIVE_IV_CALCULATION("settings.alternativeIvCalculation", false, Type.BOOLEAN),
 
     LANGUAGE("options.lang", "en", Type.STRING),
-    FONT_SIZE("options.fontsize", 12, Type.INTEGER),
+    FONT_SIZE("options.font.size", 12, Type.INTEGER),
     SKIP_VERSION("options.skipversion", null, Type.STRING),
 
     DELAY_RENAME_MIN("delay.rename.min", 1000, Type.INTEGER),
