@@ -23,7 +23,6 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import javax.swing.table.AbstractTableModel;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,55 +36,20 @@ public class PokemonTableModel extends AbstractTableModel {
     private final ArrayList<Pokemon> pokeCol = new ArrayList<>();
     private final PokemonGo go;
 
-    private final ArrayList<SimpleEntry<String, ArrayList>> data;
-
     @Deprecated
     PokemonTableModel(final PokemonGo go, final List<Pokemon> pokes, final PokemonTable pt) {
         this.pt = pt;
         this.go = go;
 
-        // TODO: remove the "data" here. We will use PokemonTableColumn enum for it.
-
-        data = new ArrayList<>();
-
-        data.add(new SimpleEntry<>("Id", new ArrayList<Integer>())); // 0
-        data.add(new SimpleEntry<>("Nickname", new ArrayList<String>()));// 1
-        data.add(new SimpleEntry<>("Species", new ArrayList<String>()));// 2
-        data.add(new SimpleEntry<>("IV %", new ArrayList<String>()));// 3
-        data.add(new SimpleEntry<>("Lvl", new ArrayList<Double>()));// 4
-        data.add(new SimpleEntry<>("Atk", new ArrayList<Integer>()));// 5
-        data.add(new SimpleEntry<>("Def", new ArrayList<Integer>()));// 6
-        data.add(new SimpleEntry<>("Stam", new ArrayList<Integer>()));// 7
-        data.add(new SimpleEntry<>("Type 1", new ArrayList<String>()));// 8
-        data.add(new SimpleEntry<>("Type 2", new ArrayList<String>()));// 9
-        data.add(new SimpleEntry<>("Move 1", new ArrayList<String>()));// 10
-        data.add(new SimpleEntry<>("Move 2", new ArrayList<String>()));// 11
-        data.add(new SimpleEntry<>("CP", new ArrayList<Integer>()));// 12
-        data.add(new SimpleEntry<>("HP", new ArrayList<Integer>()));// 13
-        data.add(new SimpleEntry<>("Max CP (Cur)", new ArrayList<Integer>()));// 14
-        data.add(new SimpleEntry<>("Max CP (40)", new ArrayList<Integer>()));// 15
-        data.add(new SimpleEntry<>("Max Evolved CP (Cur)", new ArrayList<Integer>()));// 16
-        data.add(new SimpleEntry<>("Max Evolved CP (40)", new ArrayList<Integer>()));// 17
-        data.add(new SimpleEntry<>("Candies", new ArrayList<Integer>()));// 18
-        data.add(new SimpleEntry<>("To Evolve", new ArrayList<String>()));// 19
-        data.add(new SimpleEntry<>("Stardust", new ArrayList<Integer>()));// 20
-        data.add(new SimpleEntry<>("Caught With", new ArrayList<String>()));// 21
-        data.add(new SimpleEntry<>("Time Caught", new ArrayList<String>()));// 22
-        data.add(new SimpleEntry<>("Favorite", new ArrayList<String>()));// 23
-        data.add(new SimpleEntry<>("Duel Ability", new ArrayList<Long>()));// 24
-        data.add(new SimpleEntry<>("Gym Offense", new ArrayList<Double>()));// 25
-        data.add(new SimpleEntry<>("Gym Defense", new ArrayList<Long>()));// 26
-        data.add(new SimpleEntry<>("CP Evolved", new ArrayList<String>()));// 27
-        data.add(new SimpleEntry<>("Evolvable", new ArrayList<String>()));// 28
-        data.add(new SimpleEntry<>("Duel Ability Species", new ArrayList<Long>()));// 29
-        data.add(new SimpleEntry<>("Gym Offense Species", new ArrayList<Double>()));// 30
-        data.add(new SimpleEntry<>("Gym Defense Species", new ArrayList<Long>()));// 31
-
-        ChangeTableData(pokes);
+        updateTableData(pokes);
     }
 
-    @SuppressWarnings("unchecked")
-    public void ChangeTableData(final List<Pokemon> pokes) {
+    /**
+     * Updates the table data with given pokemon list.
+     *
+     * @param pokes The list of pokemon that should be displayed
+     */
+    public void updateTableData(final List<Pokemon> pokes) {
         ClearTable();
 
         final MutableInt i = new MutableInt();
@@ -199,7 +163,7 @@ public class PokemonTableModel extends AbstractTableModel {
             getColumnList(21).add(i.getValue(), WordUtils.capitalize(
                 p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " ")));
             getColumnList(22).add(i.getValue(), DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs())));
-            getColumnList(23).add(i.getValue(), (p.isFavorite()) ? "True" : "");
+            getColumnList(23).add(i.getValue(), (p.isFavorite()) ? "Yes" : "");
             getColumnList(24).add(i.getValue(), Utilities.percentage(PokemonUtils.duelAbility(p), PokemonValueCache.getHighestStats().duelAbility));
             getColumnList(25).add(i.getValue(), Utilities.percentage(PokemonUtils.gymOffense(p), PokemonValueCache.getHighestStats().gymOffense));
             getColumnList(26).add(i.getValue(), Utilities.percentage(PokemonUtils.gymDefense(p), PokemonValueCache.getHighestStats().gymDefense));

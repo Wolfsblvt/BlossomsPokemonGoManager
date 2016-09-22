@@ -5,20 +5,15 @@ import com.pokegoapi.api.pokemon.Pokemon;
 
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
-import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonValueCache;
 
 import javax.swing.*;
 import javax.swing.RowSorter.SortKey;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -100,7 +95,7 @@ public class PokemonTable extends JTable {
     }
 
     public void constructNewTableModel(final List<Pokemon> pokes) {
-        ptm.ChangeTableData(pokes);
+        ptm.updateTableData(pokes);
         pack();
     }
 
