@@ -2,10 +2,12 @@ package me.corriekay.pokegoutil.utils.windows;
 
 import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
+
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
@@ -14,12 +16,13 @@ import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonValueCache;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.text.WordUtils;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.AbstractMap;
+
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,53 +37,51 @@ public class PokemonTableModel extends AbstractTableModel {
     private final ArrayList<Pokemon> pokeCol = new ArrayList<>();
     private final PokemonGo go;
 
-    private final ArrayList<AbstractMap.SimpleEntry<String, ArrayList>> data;
+    private final ArrayList<SimpleEntry<String, ArrayList>> data;
 
     @Deprecated
     PokemonTableModel(final PokemonGo go, final List<Pokemon> pokes, final PokemonTable pt) {
         this.pt = pt;
         this.go = go;
 
+        // TODO: remove the "data" here. We will use PokemonTableColumn enum for it.
+
         data = new ArrayList<>();
 
-        data.add(new AbstractMap.SimpleEntry<>("Id", new ArrayList<Integer>())); // 0
-        data.add(new AbstractMap.SimpleEntry<>("Nickname", new ArrayList<String>()));// 1
-        data.add(new AbstractMap.SimpleEntry<>("Species", new ArrayList<String>()));// 2
-        data.add(new AbstractMap.SimpleEntry<>("IV %", new ArrayList<String>()));// 3
-        data.add(new AbstractMap.SimpleEntry<>("Lvl", new ArrayList<Double>()));// 4
-        data.add(new AbstractMap.SimpleEntry<>("Atk", new ArrayList<Integer>()));// 5
-        data.add(new AbstractMap.SimpleEntry<>("Def", new ArrayList<Integer>()));// 6
-        data.add(new AbstractMap.SimpleEntry<>("Stam", new ArrayList<Integer>()));// 7
-        data.add(new AbstractMap.SimpleEntry<>("Type 1", new ArrayList<String>()));// 8
-        data.add(new AbstractMap.SimpleEntry<>("Type 2", new ArrayList<String>()));// 9
-        data.add(new AbstractMap.SimpleEntry<>("Move 1", new ArrayList<String>()));// 10
-        data.add(new AbstractMap.SimpleEntry<>("Move 2", new ArrayList<String>()));// 11
-        data.add(new AbstractMap.SimpleEntry<>("CP", new ArrayList<Integer>()));// 12
-        data.add(new AbstractMap.SimpleEntry<>("HP", new ArrayList<Integer>()));// 13
-        data.add(new AbstractMap.SimpleEntry<>("Max CP (Cur)", new ArrayList<Integer>()));// 14
-        data.add(new AbstractMap.SimpleEntry<>("Max CP (40)", new ArrayList<Integer>()));// 15
-        data.add(new AbstractMap.SimpleEntry<>("Max Evolved CP (Cur)", new ArrayList<Integer>()));// 16
-        data.add(new AbstractMap.SimpleEntry<>("Max Evolved CP (40)", new ArrayList<Integer>()));// 17
-        data.add(new AbstractMap.SimpleEntry<>("Candies", new ArrayList<Integer>()));// 18
-        data.add(new AbstractMap.SimpleEntry<>("To Evolve", new ArrayList<String>()));// 19
-        data.add(new AbstractMap.SimpleEntry<>("Stardust", new ArrayList<Integer>()));// 20
-        data.add(new AbstractMap.SimpleEntry<>("Caught With", new ArrayList<String>()));// 21
-        data.add(new AbstractMap.SimpleEntry<>("Time Caught", new ArrayList<String>()));// 22
-        data.add(new AbstractMap.SimpleEntry<>("Favorite", new ArrayList<String>()));// 23
-        data.add(new AbstractMap.SimpleEntry<>("Duel Ability", new ArrayList<Long>()));// 24
-        data.add(new AbstractMap.SimpleEntry<>("Gym Offense", new ArrayList<Double>()));// 25
-        data.add(new AbstractMap.SimpleEntry<>("Gym Defense", new ArrayList<Long>()));// 26
-        data.add(new AbstractMap.SimpleEntry<>("CP Evolved", new ArrayList<String>()));// 27
-        data.add(new AbstractMap.SimpleEntry<>("Evolvable", new ArrayList<String>()));// 28
-        data.add(new AbstractMap.SimpleEntry<>("Duel Ability Species", new ArrayList<Long>()));// 29
-        data.add(new AbstractMap.SimpleEntry<>("Gym Offense Species", new ArrayList<Double>()));// 30
-        data.add(new AbstractMap.SimpleEntry<>("Gym Defense Species", new ArrayList<Long>()));// 31
+        data.add(new SimpleEntry<>("Id", new ArrayList<Integer>())); // 0
+        data.add(new SimpleEntry<>("Nickname", new ArrayList<String>()));// 1
+        data.add(new SimpleEntry<>("Species", new ArrayList<String>()));// 2
+        data.add(new SimpleEntry<>("IV %", new ArrayList<String>()));// 3
+        data.add(new SimpleEntry<>("Lvl", new ArrayList<Double>()));// 4
+        data.add(new SimpleEntry<>("Atk", new ArrayList<Integer>()));// 5
+        data.add(new SimpleEntry<>("Def", new ArrayList<Integer>()));// 6
+        data.add(new SimpleEntry<>("Stam", new ArrayList<Integer>()));// 7
+        data.add(new SimpleEntry<>("Type 1", new ArrayList<String>()));// 8
+        data.add(new SimpleEntry<>("Type 2", new ArrayList<String>()));// 9
+        data.add(new SimpleEntry<>("Move 1", new ArrayList<String>()));// 10
+        data.add(new SimpleEntry<>("Move 2", new ArrayList<String>()));// 11
+        data.add(new SimpleEntry<>("CP", new ArrayList<Integer>()));// 12
+        data.add(new SimpleEntry<>("HP", new ArrayList<Integer>()));// 13
+        data.add(new SimpleEntry<>("Max CP (Cur)", new ArrayList<Integer>()));// 14
+        data.add(new SimpleEntry<>("Max CP (40)", new ArrayList<Integer>()));// 15
+        data.add(new SimpleEntry<>("Max Evolved CP (Cur)", new ArrayList<Integer>()));// 16
+        data.add(new SimpleEntry<>("Max Evolved CP (40)", new ArrayList<Integer>()));// 17
+        data.add(new SimpleEntry<>("Candies", new ArrayList<Integer>()));// 18
+        data.add(new SimpleEntry<>("To Evolve", new ArrayList<String>()));// 19
+        data.add(new SimpleEntry<>("Stardust", new ArrayList<Integer>()));// 20
+        data.add(new SimpleEntry<>("Caught With", new ArrayList<String>()));// 21
+        data.add(new SimpleEntry<>("Time Caught", new ArrayList<String>()));// 22
+        data.add(new SimpleEntry<>("Favorite", new ArrayList<String>()));// 23
+        data.add(new SimpleEntry<>("Duel Ability", new ArrayList<Long>()));// 24
+        data.add(new SimpleEntry<>("Gym Offense", new ArrayList<Double>()));// 25
+        data.add(new SimpleEntry<>("Gym Defense", new ArrayList<Long>()));// 26
+        data.add(new SimpleEntry<>("CP Evolved", new ArrayList<String>()));// 27
+        data.add(new SimpleEntry<>("Evolvable", new ArrayList<String>()));// 28
+        data.add(new SimpleEntry<>("Duel Ability Species", new ArrayList<Long>()));// 29
+        data.add(new SimpleEntry<>("Gym Offense Species", new ArrayList<Double>()));// 30
+        data.add(new SimpleEntry<>("Gym Defense Species", new ArrayList<Long>()));// 31
 
         ChangeTableData(pokes);
-    }
-
-    private ArrayList getColumnList(final int columnIndex) {
-        return data.get(columnIndex).getValue();
     }
 
     @SuppressWarnings("unchecked")
@@ -91,7 +92,7 @@ public class PokemonTableModel extends AbstractTableModel {
 
         pokes.forEach(p -> {
             pokeCol.add(i.getValue(), p);
-            getColumnList(0).add(i.getValue(), p.getMeta().getNumber());
+            PokemonTableColumn.ID.data.add(i.getValue(), p.getMeta().getNumber());
             getColumnList(1).add(i.getValue(), p.getNickname());
             getColumnList(2).add(i.getValue(), PokeHandler.getLocalPokeName(p));
             getColumnList(3).add(i.getValue(), Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
@@ -215,8 +216,8 @@ public class PokemonTableModel extends AbstractTableModel {
 
     private void ClearTable() {
         pokeCol.clear();
-        for (final SimpleEntry<String, ArrayList> entry : data) {
-            entry.getValue().clear();
+        for (final PokemonTableColumn column : PokemonTableColumn.values()) {
+            column.data.clear();
         }
     }
 
@@ -249,12 +250,12 @@ public class PokemonTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(final int columnIndex) {
-        return data.get(columnIndex).getKey();
+        return PokemonTableColumn.getForId(columnIndex).name();
     }
 
     @Override
     public int getColumnCount() {
-        return data.size();
+        return PokemonTableColumn.values().length;
     }
 
     @Override
@@ -264,6 +265,6 @@ public class PokemonTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(final int rowIndex, final int columnIndex) {
-        return data.get(columnIndex).getValue().get(rowIndex);
+        return PokemonTableColumn.getForId(columnIndex).data.get(rowIndex);
     }
 }
