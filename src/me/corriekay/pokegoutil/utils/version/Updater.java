@@ -136,13 +136,13 @@ public class Updater {
                         String latestReleaseUrl = "https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases/latest";
                         Browser.openUrl(latestReleaseUrl);
                         System.exit(0);
-                        return;
+                        break;
                     case 1: // Later
                         // We do nothing here
-                        return;
+                        break;
                     case 2: // Ignore
                         config.setString(ConfigKey.SKIP_VERSION, latestStable.toString());
-                        return;
+                        break;
                     default:
                         // Can't happen
                 }
