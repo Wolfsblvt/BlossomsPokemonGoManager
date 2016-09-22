@@ -40,25 +40,25 @@ public class LoginDataTest {
         // LoginData, Expected LoginType, Expected PTC isValid,Expected Google isValid
         final List<Object[]> list = new ArrayList<Object[]>();
 
-        list.add(new Object[]{new LoginData(USER, PASS), LoginType.PTC, true, false});
-        list.add(new Object[]{new LoginData(USER, EMPTY), LoginType.PTC, false, false});
-        list.add(new Object[]{new LoginData(EMPTY, PASS), LoginType.PTC, false, false});
-        list.add(new Object[]{new LoginData(EMPTY, EMPTY), LoginType.PTC, false, false});
-        list.add(new Object[]{new LoginData(USER, null), LoginType.PTC, false, false});
-        list.add(new Object[]{new LoginData(null, PASS), LoginType.PTC, false, false});
-        list.add(new Object[]{new LoginData(null, null), LoginType.PTC, false, false});
+        list.add(new Object[] {new LoginData(USER, PASS), LoginType.PTC, true, false});
+        list.add(new Object[] {new LoginData(USER, EMPTY), LoginType.PTC, false, false});
+        list.add(new Object[] {new LoginData(EMPTY, PASS), LoginType.PTC, false, false});
+        list.add(new Object[] {new LoginData(EMPTY, EMPTY), LoginType.PTC, false, false});
+        list.add(new Object[] {new LoginData(USER, null), LoginType.PTC, false, false});
+        list.add(new Object[] {new LoginData(null, PASS), LoginType.PTC, false, false});
+        list.add(new Object[] {new LoginData(null, null), LoginType.PTC, false, false});
 
-        list.add(new Object[]{new LoginData(TOKEN), LoginType.GOOGLE, false, true});
-        list.add(new Object[]{new LoginData(null), LoginType.GOOGLE, false, false});
-        list.add(new Object[]{new LoginData(EMPTY), LoginType.GOOGLE, false, false});
+        list.add(new Object[] {new LoginData(TOKEN), LoginType.GOOGLE_AUTH, false, true});
+        list.add(new Object[] {new LoginData(null), LoginType.GOOGLE_AUTH, false, false});
+        list.add(new Object[] {new LoginData(EMPTY), LoginType.GOOGLE_AUTH, false, false});
 
-        list.add(new Object[]{new LoginData(USER, PASS, TOKEN), LoginType.BOTH, true, true});
-        list.add(new Object[]{new LoginData(EMPTY, EMPTY, EMPTY), LoginType.BOTH, false, false});
-        list.add(new Object[]{new LoginData(null, null, null), LoginType.BOTH, false, false});
-        list.add(new Object[]{new LoginData(USER, PASS, EMPTY), LoginType.BOTH, true, false});
-        list.add(new Object[]{new LoginData(USER, PASS, null), LoginType.BOTH, true, false});
-        list.add(new Object[]{new LoginData(EMPTY, EMPTY, TOKEN), LoginType.BOTH, false, true});
-        list.add(new Object[]{new LoginData(null, null, TOKEN), LoginType.BOTH, false, true});
+        list.add(new Object[] {new LoginData(USER, PASS, TOKEN), LoginType.ALL, true, true});
+        list.add(new Object[] {new LoginData(EMPTY, EMPTY, EMPTY), LoginType.ALL, false, false});
+        list.add(new Object[] {new LoginData(null, null, null), LoginType.ALL, false, false});
+        list.add(new Object[] {new LoginData(USER, PASS, EMPTY), LoginType.ALL, true, false});
+        list.add(new Object[] {new LoginData(USER, PASS, null), LoginType.ALL, true, false});
+        list.add(new Object[] {new LoginData(EMPTY, EMPTY, TOKEN), LoginType.ALL, false, true});
+        list.add(new Object[] {new LoginData(null, null, TOKEN), LoginType.ALL, false, true});
 
         return list;
     }
@@ -66,9 +66,9 @@ public class LoginDataTest {
     /**
      * Instantiate a LoginDataTest using the parameters from data().
      *
-     * @param loginData login data to test
-     * @param expectedLoginType login type expected
-     * @param expectedPtcIsValid expected ptc is valid
+     * @param loginData             login data to test
+     * @param expectedLoginType     login type expected
+     * @param expectedPtcIsValid    expected ptc is valid
      * @param expectedGoogleIsValid expected google is valid
      */
     public LoginDataTest(final LoginData loginData, final LoginType expectedLoginType, final boolean expectedPtcIsValid, final boolean expectedGoogleIsValid) {

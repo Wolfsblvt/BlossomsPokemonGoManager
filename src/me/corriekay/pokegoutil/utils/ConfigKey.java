@@ -6,10 +6,12 @@ public enum ConfigKey {
 
     DEVELOPFLAG("develop", false, Type.BOOLEAN),
 
-    LOGIN_SAVE_AUTH("login.SaveAuth", false, Type.BOOLEAN),
-    LOGIN_GOOGLE_AUTH_TOKEN("login.GoogleAuthToken", null, Type.STRING),
-    LOGIN_PTC_USERNAME("login.PTCUsername", null, Type.STRING),
-    LOGIN_PTC_PASSWORD("login.PTCPassword", null, Type.STRING),
+    LOGIN_SAVE_AUTH("login.saveAuth", false, Type.BOOLEAN),
+    LOGIN_GOOGLE_AUTH_TOKEN("login.google.authToken", null, Type.STRING),
+    LOGIN_GOOGLE_APP_USERNAME("login.google.username", null, Type.STRING),
+    LOGIN_GOOGLE_APP_PASSWORD("login.google.password", null, Type.STRING),
+    LOGIN_PTC_USERNAME("login.ptc.username", null, Type.STRING),
+    LOGIN_PTC_PASSWORD("login.ptc.password", null, Type.STRING),
 
     WINDOW_WIDTH("options.window.width", 800, Type.INTEGER),
     WINDOW_HEIGHT("options.window.height", 650, Type.INTEGER),
@@ -31,7 +33,7 @@ public enum ConfigKey {
     ALTERNATIVE_IV_CALCULATION("settings.alternativeIvCalculation", false, Type.BOOLEAN),
 
     LANGUAGE("options.lang", "en", Type.STRING),
-    FONT_SIZE("options.fontsize", 0, Type.INTEGER),
+    FONT_SIZE("options.font.size", 12, Type.INTEGER),
     SKIP_VERSION("options.skipversion", null, Type.STRING),
 
     DELAY_RENAME_MIN("delay.rename.min", 1000, Type.INTEGER),

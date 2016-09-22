@@ -16,7 +16,7 @@ public class LoginData {
 
     public LoginData(String token) {
         this.token = token;
-        this.loginType = LoginType.GOOGLE;
+        this.loginType = LoginType.GOOGLE_AUTH;
     }
 
     public LoginData(String username, String password) {
@@ -29,7 +29,7 @@ public class LoginData {
         this.username = username;
         this.password = password;
         this.token = token;
-        this.loginType = LoginType.BOTH;
+        this.loginType = LoginType.ALL;
     }
 
     public LoginType getLoginType() {

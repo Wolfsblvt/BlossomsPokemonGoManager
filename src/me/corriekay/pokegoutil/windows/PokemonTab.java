@@ -76,6 +76,7 @@ public class PokemonTab extends JPanel {
     private static final String GYM_SKIPPED_MESSAGE_UNFORMATTED = "%s with %d CP is in gym, skipping.";
     private static final int POPUP_WIDTH = 500;
     private static final int POPUP_HEIGHT = 400;
+    private static final int MIN_FONT_SIZE = 2;
 
     /**
      * Creates an instance of the PokemonTab.
@@ -222,13 +223,13 @@ public class PokemonTab extends JPanel {
 
         // Set font size if specified in config
         final Font font = pt.getFont();
-        final int size = config.getInt(ConfigKey.FONT_SIZE, font.getSize());
+        final int size = Math.max(MIN_FONT_SIZE, config.getInt(ConfigKey.FONT_SIZE, font.getSize()));
         if (size != font.getSize()) {
             pt.setFont(font.deriveFont((float) size));
         }
 
         // Font size dropdown
-        final String[] sizes = {"11", "12", "13", "14", "15", "16", "17", "18"};
+        final String[] sizes = {"8", "10", "11", "12", "14", "16", "18"};
         final JComboBox<String> fontSize = new JComboBox<>(sizes);
         fontSize.setSelectedItem(String.valueOf(size));
         fontSize.addActionListener(e -> new SwingWorker<Void, Void>() {
@@ -1052,7 +1053,7 @@ public class PokemonTab extends JPanel {
                 setForeground(list.getForeground());
             }
 
-            final String str = StringLiterals.PERCENTAGE + value.name().toLowerCase() + "% -> " + value.toString() + "\n";
+            final String str = StringLiterals.PERCENTAGE + value.name().toLowerCase() + StringLiterals.PERCENTAGE + " -> " + value.toString() + StringLiterals.NEWLINE;
             setText(str);
             setFont(list.getFont());
 
