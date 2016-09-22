@@ -76,6 +76,7 @@ public class PokemonTab extends JPanel {
     private static final String SKIPPED_MESSAGE_UNFORMATTED = "%s with %d CP is in gym, skipping.";
     private static final int POPUP_WIDTH = 500;
     private static final int POPUP_HEIGHT = 400;
+    private static final int MIN_FONT_SIZE = 2;
 
     /**
      * Creates an instance of the PokemonTab.
@@ -222,11 +223,7 @@ public class PokemonTab extends JPanel {
 
         // Set font size if specified in config
         final Font font = pt.getFont();
-        // TODO: We screw up here!
-        {
-            int test = 42;
-        }
-        final int size = config.getInt(ConfigKey.FONT_SIZE, font.getSize());
+        final int size = Math.max(MIN_FONT_SIZE, config.getInt(ConfigKey.FONT_SIZE, font.getSize()));
         if (size != font.getSize()) {
             pt.setFont(font.deriveFont((float) size));
         }
