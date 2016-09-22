@@ -142,7 +142,7 @@ public class LoginController extends BaseController<StackPane> {
         } else {
             loginData.setToken(tokenField.getText());
         }
-        loginData.setLoginType(LoginType.GOOGLE);
+        loginData.setLoginType(LoginType.GOOGLE_AUTH);
 
         tryLogin(loginData);
     }
