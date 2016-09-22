@@ -6,6 +6,8 @@ import java.util.NoSuchElementException;
 
 import javax.swing.table.TableCellRenderer;
 
+import com.pokegoapi.api.pokemon.Pokemon;
+
 import me.corriekay.pokegoutil.data.enums.ColumnType;
 import me.corriekay.pokegoutil.utils.helpers.CollectionHelper;
 
@@ -13,8 +15,18 @@ import me.corriekay.pokegoutil.utils.helpers.CollectionHelper;
  * A class that holds data relevant for each column
  */
 public enum PokeColumn {
-    POKEDEX_ID(0, "#", ColumnType.INT),
-    NICKNAME(1, "Nickname", ColumnType.STRING),
+    POKEDEX_ID(0, "#", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getMeta().getNumber();
+        }
+    },
+    NICKNAME(1, "Nickname", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getNickname();
+        }
+    },
     SPECIES(2, "Species", ColumnType.STRING),
     IV_RATING(3, "IV %", ColumnType.PERCENTAGE),
     LEVEL(4, "Lvl", ColumnType.DOUBLE),
@@ -66,6 +78,16 @@ public enum PokeColumn {
         this.data = CollectionHelper.provideArrayList(columnType.clazz);
     }
 
+    public static PokeColumn getForId(int id) {
+        for (final PokeColumn column : PokeColumn.values()) {
+            if (column.id == id) {
+                return column;
+            }
+        }
+        // If not found, we throw an exception
+        throw new NoSuchElementException("There is no column with id " + id);
+    }
+
     /**
      * Returns the comparator for the given column, based on the column type.
      *
@@ -84,13 +106,12 @@ public enum PokeColumn {
         return columnType.tableCellRenderer;
     }
 
-    public static PokeColumn getForId(int id) {
-        for (final PokeColumn column : PokeColumn.values()) {
-            if (column.id == id) {
-                return column;
-            }
-        }
-        // If not found, we throw an exception
-        throw new NoSuchElementException("There is no column with id " + id);
-    }
+    /**
+     * This method must be overwritten and should return what should be the
+     * data that has to be displayed.
+     *
+     * @param p The Pokémon that of that row.
+     * @return The data that has to be displayed
+     */
+    public abstract Object get(Pokemon p);
 }

@@ -57,8 +57,12 @@ public class PokemonTableModel extends AbstractTableModel {
 
         pokes.forEach(p -> {
             pokeCol.add(i.getValue(), p);
-            PokeColumn.POKEDEX_ID.data.add(i.getValue(), p.getMeta().getNumber());
-            PokeColumn.NICKNAME.data.add(i.getValue(), p.getNickname());
+
+            for (final PokeColumn column : PokeColumn.values()) {
+                // Now lets add the value for that column
+                column.data.add(i.getValue(), column.get(p));
+            }
+
             getColumnList(2).add(i.getValue(), PokeHandler.getLocalPokeName(p));
             getColumnList(3).add(i.getValue(), Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
             getColumnList(4).add(i.getValue(), p.getLevel());
