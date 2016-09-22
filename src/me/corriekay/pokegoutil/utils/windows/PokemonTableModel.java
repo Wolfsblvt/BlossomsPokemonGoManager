@@ -63,29 +63,7 @@ public class PokemonTableModel extends AbstractTableModel {
                 column.data.add(i.getValue(), column.get(p));
             }
 
-            getColumnList(2).add(i.getValue(), PokeHandler.getLocalPokeName(p));
-            getColumnList(3).add(i.getValue(), Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
-            getColumnList(4).add(i.getValue(), p.getLevel());
-            getColumnList(12).add(i.getValue(), p.getCp());
-            getColumnList(5).add(i.getValue(), p.getIndividualAttack());
-            getColumnList(6).add(i.getValue(), p.getIndividualDefense());
-            getColumnList(7).add(i.getValue(), p.getIndividualStamina());
-            getColumnList(8).add(i.getValue(), StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase()));
-            getColumnList(9).add(i.getValue(), StringUtils.capitalize(
-                p.getMeta().getType2().toString().toLowerCase().replaceAll("none", "")));
-
-            final Double dps1 = PokemonUtils.dpsForMove(p, true);
-            final Double dps2 = PokemonUtils.dpsForMove(p, false);
-
-            getColumnList(10).add(i.getValue(), WordUtils.capitalize(
-                p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " "))
-                + " (" + String.format("%.2f", dps1) + "dps)");
-            getColumnList(11)
-                .add(i.getValue(),
-                    WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " ("
-                        + String.format("%.2f", dps2) + "dps)");
-            getColumnList(13).add(i.getValue(), p.getMaxStamina());
-
+            // TODO: Remove data below, that goes in the PokeColumn enum
             int trainerLevel = 1;
             try {
                 trainerLevel = go.getPlayerProfile().getStats().getLevel();

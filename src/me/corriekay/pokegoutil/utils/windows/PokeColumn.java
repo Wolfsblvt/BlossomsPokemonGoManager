@@ -6,10 +6,16 @@ import java.util.NoSuchElementException;
 
 import javax.swing.table.TableCellRenderer;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+
 import com.pokegoapi.api.pokemon.Pokemon;
 
 import me.corriekay.pokegoutil.data.enums.ColumnType;
+import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.CollectionHelper;
+import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 /**
  * A class that holds data relevant for each column
@@ -27,35 +33,185 @@ public enum PokeColumn {
             return p.getNickname();
         }
     },
-    SPECIES(2, "Species", ColumnType.STRING),
-    IV_RATING(3, "IV %", ColumnType.PERCENTAGE),
-    LEVEL(4, "Lvl", ColumnType.DOUBLE),
-    IV_ATTACK(5, "Atk", ColumnType.INT),
-    IV_DEFENSE(6, "Def", ColumnType.INT),
-    IV_STAMINA(7, "Stam", ColumnType.INT),
-    TYPE_1(8, "Type 1", ColumnType.STRING),
-    TYPE_2(9, "Type 2", ColumnType.STRING),
-    MOVE_1(10, "Move 1", ColumnType.STRING),
-    MOVE_2(11, "Move 2", ColumnType.STRING),
-    CP(12, "CP", ColumnType.INT),
-    HP(13, "HP", ColumnType.INT),
-    MAX_CP_CUR(14, "Max CP (Cur)", ColumnType.INT),
-    MAX_CP_40(15, "Max CP (40)", ColumnType.INT),
-    MAX_CP_EVOLVED_CUR(16, "Max CP Evolved (Cur)", ColumnType.INT),
-    MAX_CP_EVOLVED_40(17, "Max CP Evolved (40)", ColumnType.INT),
-    CANDIES(18, "Candies", ColumnType.STRING),
-    CANDIES_TO_EVOLVE(19, "To Evolve", ColumnType.NULLABLE_INT),
-    STARDUST_TO_POWERUP(20, "Stardust", ColumnType.INT),
-    CAUGHT_WITH(21, "Caught With", ColumnType.STRING),
-    CAUGHT_TIME(22, "Caught Time", ColumnType.DATE),
-    FAVORITE(23, "Favorite", ColumnType.STRING),
-    DUEL_ABILITY(24, "Duel Ability", ColumnType.PERCENTAGE),
-    GYM_OFFENSE(25, "Gym Offense", ColumnType.PERCENTAGE),
-    GYM_DEFENSE(26, "Gym Defense", ColumnType.PERCENTAGE),
-    CP_EVOLVED(27, "CP Evolved", ColumnType.NULLABLE_INT),
-    EVOLVABLE_COUNT(28, "Evolvable", ColumnType.NULLABLE_INT),
-    DUEL_ABILITY_RATING(29, "Duel Ability Rating", ColumnType.PERCENTAGE),
-    GYM_OFFENSE_RATING(30, "Gym Offense Rating", ColumnType.PERCENTAGE),
+    SPECIES(2, "Species", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return PokeHandler.getLocalPokeName(p);
+        }
+    },
+    IV_RATING(3, "IV %", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return Utilities.percentage(PokemonUtils.ivRating(p));
+        }
+    },
+    LEVEL(4, "Lvl", ColumnType.DOUBLE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getLevel();
+        }
+    },
+    IV_ATTACK(5, "Atk", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getIndividualAttack();
+        }
+    },
+    IV_DEFENSE(6, "Def", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getIndividualDefense();
+        }
+    },
+    IV_STAMINA(7, "Stam", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getIndividualStamina();
+        }
+    },
+    TYPE_1(8, "Type 1", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase());
+        }
+    },
+    TYPE_2(9, "Type 2", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", ""));
+        }
+    },
+    MOVE_1(10, "Move 1", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final Double dps1 = PokemonUtils.dpsForMove(p, true);
+            return WordUtils.capitalize(
+                p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " "))
+                + " (" + String.format("%.2f", dps1) + "dps)";
+        }
+    },
+    MOVE_2(11, "Move 2", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final Double dps2 = PokemonUtils.dpsForMove(p, false);
+            return WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " ("
+                + String.format("%.2f", dps2) + "dps)";
+        }
+    },
+    CP(12, "CP", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getCp();
+        }
+    },
+    HP(13, "HP", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getMaxStamina();
+        }
+    },
+    MAX_CP_CUR(14, "Max CP (Cur)", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    MAX_CP_40(15, "Max CP (40)", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    MAX_CP_EVOLVED_CUR(16, "Max CP Evolved (Cur)", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    MAX_CP_EVOLVED_40(17, "Max CP Evolved (40)", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    CANDIES(18, "Candies", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    CANDIES_TO_EVOLVE(19, "To Evolve", ColumnType.NULLABLE_INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    STARDUST_TO_POWERUP(20, "Stardust", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    CAUGHT_WITH(21, "Caught With", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    CAUGHT_TIME(22, "Caught Time", ColumnType.DATE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    FAVORITE(23, "Favorite", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    DUEL_ABILITY(24, "Duel Ability", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    GYM_OFFENSE(25, "Gym Offense", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    GYM_DEFENSE(26, "Gym Defense", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    CP_EVOLVED(27, "CP Evolved", ColumnType.NULLABLE_INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    EVOLVABLE_COUNT(28, "Evolvable", ColumnType.NULLABLE_INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    DUEL_ABILITY_RATING(29, "Duel Ability Rating", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
+    GYM_OFFENSE_RATING(30, "Gym Offense Rating", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return;
+        }
+    },
     GYM_DEFENSE_RATING(31, "Gym Defense Rating", ColumnType.PERCENTAGE);
 
 
