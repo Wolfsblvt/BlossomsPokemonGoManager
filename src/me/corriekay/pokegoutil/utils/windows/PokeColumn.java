@@ -12,8 +12,8 @@ import me.corriekay.pokegoutil.utils.helpers.CollectionHelper;
 /**
  * A class that holds data relevant for each column
  */
-public enum PokemonTableColumn {
-    ID(0, "Id", ColumnType.INT),
+public enum PokeColumn {
+    POKEDEX_ID(0, "#", ColumnType.INT),
     NICKNAME(1, "Nickname", ColumnType.STRING),
     SPECIES(2, "Species", ColumnType.STRING),
     IV_RATING(3, "IV %", ColumnType.PERCENTAGE),
@@ -59,7 +59,7 @@ public enum PokemonTableColumn {
      * @param name       The name of the column.
      * @param columnType The type of the column.
      */
-    PokemonTableColumn(int id, String name, ColumnType columnType) {
+    PokeColumn(int id, String name, ColumnType columnType) {
         this.id = id;
         this.name = name;
         this.columnType = columnType;
@@ -84,8 +84,8 @@ public enum PokemonTableColumn {
         return columnType.tableCellRenderer;
     }
 
-    public static PokemonTableColumn getForId(int id) {
-        for (final PokemonTableColumn column : PokemonTableColumn.values()) {
+    public static PokeColumn getForId(int id) {
+        for (final PokeColumn column : PokeColumn.values()) {
             if (column.id == id) {
                 return column;
             }

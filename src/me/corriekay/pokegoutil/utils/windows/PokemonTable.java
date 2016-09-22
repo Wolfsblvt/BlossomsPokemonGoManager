@@ -49,7 +49,7 @@ public class PokemonTable extends JTable {
         final TableRowSorter<TableModel> trs = new TableRowSorter<>(ptm);
 
         // Set the comparator for each column that is defined.
-        for (final PokemonTableColumn column : PokemonTableColumn.values()) {
+        for (final PokeColumn column : PokeColumn.values()) {
             trs.setComparator(column.id, column.getComparator());
         }
 
@@ -89,7 +89,7 @@ public class PokemonTable extends JTable {
         Enumeration<TableColumn> enumerator = getColumnModel().getColumns();
         while (enumerator.hasMoreElements()) {
             TableColumn designColumn = enumerator.nextElement();
-            PokemonTableColumn column = PokemonTableColumn.getForId(designColumn.getModelIndex());
+            PokeColumn column = PokeColumn.getForId(designColumn.getModelIndex());
             designColumn.setCellRenderer(column.getCellRenderer());
         }
     }

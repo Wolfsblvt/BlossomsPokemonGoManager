@@ -49,6 +49,7 @@ public class PokemonTableModel extends AbstractTableModel {
      *
      * @param pokes The list of pokemon that should be displayed
      */
+    @SuppressWarnings("unchecked")
     public void updateTableData(final List<Pokemon> pokes) {
         ClearTable();
 
@@ -56,8 +57,8 @@ public class PokemonTableModel extends AbstractTableModel {
 
         pokes.forEach(p -> {
             pokeCol.add(i.getValue(), p);
-            PokemonTableColumn.ID.data.add(i.getValue(), p.getMeta().getNumber());
-            getColumnList(1).add(i.getValue(), p.getNickname());
+            PokeColumn.POKEDEX_ID.data.add(i.getValue(), p.getMeta().getNumber());
+            PokeColumn.NICKNAME.data.add(i.getValue(), p.getNickname());
             getColumnList(2).add(i.getValue(), PokeHandler.getLocalPokeName(p));
             getColumnList(3).add(i.getValue(), Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
             getColumnList(4).add(i.getValue(), p.getLevel());
@@ -180,7 +181,7 @@ public class PokemonTableModel extends AbstractTableModel {
 
     private void ClearTable() {
         pokeCol.clear();
-        for (final PokemonTableColumn column : PokemonTableColumn.values()) {
+        for (final PokeColumn column : PokeColumn.values()) {
             column.data.clear();
         }
     }
@@ -214,12 +215,12 @@ public class PokemonTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(final int columnIndex) {
-        return PokemonTableColumn.getForId(columnIndex).name();
+        return PokeColumn.getForId(columnIndex).name();
     }
 
     @Override
     public int getColumnCount() {
-        return PokemonTableColumn.values().length;
+        return PokeColumn.values().length;
     }
 
     @Override
@@ -229,6 +230,6 @@ public class PokemonTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(final int rowIndex, final int columnIndex) {
-        return PokemonTableColumn.getForId(columnIndex).data.get(rowIndex);
+        return PokeColumn.getForId(columnIndex).data.get(rowIndex);
     }
 }
