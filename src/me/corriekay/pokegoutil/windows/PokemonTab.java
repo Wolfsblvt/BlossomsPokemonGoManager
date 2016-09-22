@@ -39,12 +39,6 @@ import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.Pokemon;
 
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
-import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
-import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse;
-import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse;
-import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass.UpgradePokemonResponse;
-
 import me.corriekay.pokegoutil.data.enums.BatchOperation;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
@@ -58,6 +52,12 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import me.corriekay.pokegoutil.utils.windows.PokemonTable;
 import me.corriekay.pokegoutil.utils.windows.PokemonTableModel;
+
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
+import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
+import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse;
+import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse;
+import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass.UpgradePokemonResponse;
 
 /**
  * The main PokemonTab.
@@ -73,7 +73,7 @@ public class PokemonTab extends JPanel {
 
     // Used constants
     private static final int WHEN_TO_SHOW_SELECTION_TITLE = 2;
-    private static final String SKIPPED_MESSAGE_UNFORMATTED = "%s with %d CP is in gym, skipping.";
+    private static final String GYM_SKIPPED_MESSAGE_UNFORMATTED = "%s with %d CP is in gym, skipping.";
     private static final int POPUP_WIDTH = 500;
     private static final int POPUP_HEIGHT = 400;
     private static final int MIN_FONT_SIZE = 2;
@@ -386,7 +386,7 @@ public class PokemonTab extends JPanel {
 
             if (!poke.getDeployedFortId().isEmpty()) {
                 System.out.println(String.format(
-                    SKIPPED_MESSAGE_UNFORMATTED,
+                    GYM_SKIPPED_MESSAGE_UNFORMATTED,
                     PokeHandler.getLocalPokeName(poke),
                     poke.getCp()));
                 skipped.increment();
@@ -463,7 +463,7 @@ public class PokemonTab extends JPanel {
 
             if (!poke.getDeployedFortId().isEmpty()) {
                 System.out.println(String.format(
-                    SKIPPED_MESSAGE_UNFORMATTED,
+                    GYM_SKIPPED_MESSAGE_UNFORMATTED,
                     PokeHandler.getLocalPokeName(poke),
                     +poke.getCp()));
                 skipped.increment();
@@ -477,8 +477,7 @@ public class PokemonTab extends JPanel {
                 final int hp = poke.getMaxStamina();
                 boolean afterTransfer = false;
 
-                // Check if user has enough candy, otherwise we don't
-                // need to call server
+                // Check if user has enough candy, otherwise we don't need to call server
                 if (candies < candiesToEvolve) {
                     err.increment();
                     System.out.println(String.format(
@@ -486,6 +485,15 @@ public class PokemonTab extends JPanel {
                         PokeHandler.getLocalPokeName(poke),
                         candies,
                         candiesToEvolve));
+                    return;
+                }
+
+                // Check if pokemon is already highest evolution, otherwise we don't need to call server
+                if (poke.getEvolutionForm().isFullyEvolved()) {
+                    skipped.increment();
+                    System.out.println(String.format(
+                        "Skipped evolving %s. Is already highest evolution.",
+                        PokeHandler.getLocalPokeName(poke)));
                     return;
                 }
 
@@ -612,9 +620,10 @@ public class PokemonTab extends JPanel {
                     total.getValue(),
                     selection.size()));
                 total.increment();
+
                 if (!poke.getDeployedFortId().isEmpty()) {
                     System.out.println(String.format(
-                        SKIPPED_MESSAGE_UNFORMATTED,
+                        GYM_SKIPPED_MESSAGE_UNFORMATTED,
                         PokeHandler.getLocalPokeName(poke),
                         +poke.getCp()));
                     skipped.increment();
@@ -628,8 +637,7 @@ public class PokemonTab extends JPanel {
                 final int stardustToPowerUp = poke.getStardustCostsForPowerup();
                 final int candiesToPowerUp = poke.getCandyCostsForPowerup();
 
-                // Check if user has enough candy and stardust,
-                // otherwise we don't need to call server
+                // Check if user has enough candy and stardust, otherwise we don't need to call server
                 if (candies < candiesToPowerUp || stardust < stardustToPowerUp) {
                     err.increment();
                     System.out.println(String.format(
@@ -639,6 +647,16 @@ public class PokemonTab extends JPanel {
                         PokeHandler.getLocalPokeName(poke),
                         stardust, stardustToPowerUp,
                         candies, candiesToPowerUp));
+                    return;
+                }
+
+                // Check we aren't at max level, otherwise we don't need to call server
+                if (poke.getCp() >= poke.getMaxCpForPlayer()) {
+                    skipped.increment();
+                    System.out.println(String.format(
+                        "Skipping power-up of %s. It is already MaxCP: %d",
+                        PokeHandler.getLocalPokeName(poke),
+                        poke.getCp()));
                     return;
                 }
 
