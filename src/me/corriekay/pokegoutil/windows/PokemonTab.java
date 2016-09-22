@@ -222,6 +222,10 @@ public class PokemonTab extends JPanel {
 
         // Set font size if specified in config
         final Font font = pt.getFont();
+        // TODO: We screw up here!
+        {
+            int test = 42;
+        }
         final int size = config.getInt(ConfigKey.FONT_SIZE, font.getSize());
         if (size != font.getSize()) {
             pt.setFont(font.deriveFont((float) size));
@@ -1034,7 +1038,7 @@ public class PokemonTab extends JPanel {
                 setForeground(list.getForeground());
             }
 
-            final String str = StringLiterals.PERCENTAGE + value.name().toLowerCase() + "% -> " + value.toString() + "\n";
+            final String str = StringLiterals.PERCENTAGE + value.name().toLowerCase() + StringLiterals.PERCENTAGE + " -> " + value.toString() + StringLiterals.NEWLINE;
             setText(str);
             setFont(list.getFont());
 
