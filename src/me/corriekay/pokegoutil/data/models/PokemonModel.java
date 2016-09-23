@@ -11,7 +11,7 @@ import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -288,15 +288,15 @@ public class PokemonModel {
         setNickname(pokemon.getNickname());
         setSpecies(PokeHandler.getLocalPokeName(pokemon));
         setLevel(pokemon.getLevel());
-        setIv(Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(pokemon)));
+        setIv(Utilities.percentageWithTwoCharacters(PokemonCalculationUtils.ivRating(pokemon)));
         setAtk(pokemon.getIndividualAttack());
         setDef(pokemon.getIndividualDefense());
         setStam(pokemon.getIndividualStamina());
         setType1(StringUtils.capitalize(meta.getType1().toString().toLowerCase()));
         setType2(StringUtils.capitalize(meta.getType2().toString().toLowerCase()));
 
-        final Double dps1 = PokemonUtils.dpsForMove(pokemon, true);
-        final Double dps2 = PokemonUtils.dpsForMove(pokemon, false);
+        final Double dps1 = PokemonCalculationUtils.dpsForMove(pokemon, true);
+        final Double dps2 = PokemonCalculationUtils.dpsForMove(pokemon, false);
         setMove1(String.format("%s (%.2fdps)",
             WordUtils.capitalize(
                 pokemon.getMove1().toString().toLowerCase()
@@ -392,13 +392,13 @@ public class PokemonModel {
                 .replaceAll("item_", "").replaceAll(UNDERSCORE, " ")));
         setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(pokemon.getCreationTimeMs())));
         setIsFavorite(pokemon.isFavorite());
-        setDuelAbility(PokemonUtils.duelAbility(pokemon));
-        setGymOffense(PokemonUtils.gymOffense(pokemon));
-        setGymDefense(PokemonUtils.gymDefense(pokemon));
+        setDuelAbility(PokemonCalculationUtils.duelAbility(pokemon));
+        setGymOffense(PokemonCalculationUtils.gymOffense(pokemon));
+        setGymDefense(PokemonCalculationUtils.gymDefense(pokemon));
 
-        setDuelAbilityIv(PokemonUtils.duelAbility(pokemon));
-        setGymOffenseIv(PokemonUtils.gymOffense(pokemon));
-        setGymDefenseIv(PokemonUtils.gymDefense(pokemon));
+        setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
+        setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
+        setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
         setMove1Rating(null); // TODO: Move rating does not exist anymore
         setMove2Rating(null); // TODO: Move rating does not exist anymore
     }

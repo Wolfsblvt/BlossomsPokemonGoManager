@@ -48,7 +48,7 @@ import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler.ReplacePattern;
 import me.corriekay.pokegoutil.utils.pokemon.PokeNick;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import me.corriekay.pokegoutil.utils.windows.PokemonTable;
 import me.corriekay.pokegoutil.utils.windows.PokemonTableModel;
@@ -892,7 +892,7 @@ public class PokemonTab extends JPanel {
             String str = String.format("%s - CP: %d, IV: %s%%",
                 PokeHandler.getLocalPokeName(p),
                 p.getCp(),
-                Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(p)));
+                Utilities.percentageWithTwoCharacters(PokemonCalculationUtils.ivRating(p)));
 
             switch (operation) {
                 case EVOLVE:

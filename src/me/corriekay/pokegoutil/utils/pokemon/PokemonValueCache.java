@@ -13,8 +13,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * A Cache class which calculates and saves several values for Pokémon to make them easily available.
  */
@@ -59,15 +57,15 @@ public final class PokemonValueCache {
                 for (PokemonMove move2 : meta.getCinematicMoves()) {
                     PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(move2);
 
-                    long duelAbility = PokemonUtils.duelAbility(pokemonId, pm1, pm2, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV);
+                    long duelAbility = PokemonCalculationUtils.duelAbility(pokemonId, pm1, pm2, PokemonCalculationUtils.MAX_IV, PokemonCalculationUtils.MAX_IV, PokemonCalculationUtils.MAX_IV);
                     if (duelAbility > highestDuelAbility.value) {
                         highestDuelAbility = new PokemonPerformance(pokemonId, duelAbility, pm1, pm2);
                     }
-                    double gymOffense = PokemonUtils.gymOffense(pokemonId, pm1, pm2, PokemonUtils.MAX_IV);
+                    double gymOffense = PokemonCalculationUtils.gymOffense(pokemonId, pm1, pm2, PokemonCalculationUtils.MAX_IV);
                     if (gymOffense > highestGymOffense.value) {
                         highestGymOffense = new PokemonPerformance(pokemonId, gymOffense, pm1, pm2);
                     }
-                    long gymDefense = PokemonUtils.gymDefense(pokemonId, pm1, pm2, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV);
+                    long gymDefense = PokemonCalculationUtils.gymDefense(pokemonId, pm1, pm2, PokemonCalculationUtils.MAX_IV, PokemonCalculationUtils.MAX_IV, PokemonCalculationUtils.MAX_IV);
                     if (gymDefense > highestGymDefense.value) {
                         highestGymDefense = new PokemonPerformance(pokemonId, gymDefense, pm1, pm2);
                     }

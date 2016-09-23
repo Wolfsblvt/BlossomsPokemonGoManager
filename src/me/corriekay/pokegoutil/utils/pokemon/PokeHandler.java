@@ -2,7 +2,6 @@ package me.corriekay.pokegoutil.utils.pokemon;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -11,8 +10,6 @@ import java.util.function.BiConsumer;
 import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.api.pokemon.PokemonMeta;
-import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
 import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
@@ -25,8 +22,6 @@ import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.UnicodeHelper;
 import me.corriekay.pokegoutil.utils.windows.PokeColumn;
 
-import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 
 public class PokeHandler {
@@ -315,13 +310,13 @@ public class PokeHandler {
         DPS_1("Damage per second for Move 1") {
             @Override
             public String get(final Pokemon p) {
-                return String.valueOf(Math.round(PokemonUtils.dpsForMove(p, true)));
+                return String.valueOf(Math.round(PokemonCalculationUtils.dpsForMove(p, true)));
             }
         },
         DPS_2("Damage per second for Move 2") {
             @Override
             public String get(final Pokemon p) {
-                return String.valueOf(Math.round(PokemonUtils.dpsForMove(p, false)));
+                return String.valueOf(Math.round(PokemonCalculationUtils.dpsForMove(p, false)));
             }
         },
         TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh)") {
