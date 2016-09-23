@@ -13,6 +13,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * A Cache class which calculates and saves several values for Pokémon to make them easily available.
  */
@@ -26,12 +28,9 @@ public final class PokemonValueCache {
     static {
         map = new EnumMap<>(PokemonId.class);
 
-        long globalHighestDuelAbility = 0;
-        PokemonId globalHighestDuelAbilityPokemon = PokemonId.WEEDLE;
-        double globalHighestGymOffense = 0;
-        PokemonId globalHighestGymOffensePokemon = PokemonId.WEEDLE;
-        long globalHighestGymDefense = 0;
-        PokemonId globalHighestGymDefensePokemon = PokemonId.WEEDLE;
+        PokemonPerformance globalHighestDuelAbility = PokemonPerformance.DEFAULT;
+        PokemonPerformance globalHighestGymOffense = PokemonPerformance.DEFAULT;
+        PokemonPerformance globalHighestGymDefense = PokemonPerformance.DEFAULT;
 
         EnumMap<PokemonId, PokemonMeta> pokemonMetas = PokemonMetaRegistry.getMeta();
         for (final Map.Entry<PokemonId, PokemonMeta> entry : pokemonMetas.entrySet()) {
@@ -52,25 +51,25 @@ public final class PokemonValueCache {
                 continue;
             }
 
-            long highestDuelAbility = 0;
-            double highestGymOffense = 0;
-            long highestGymDefense = 0;
+            PokemonPerformance highestDuelAbility = PokemonPerformance.DEFAULT;
+            PokemonPerformance highestGymOffense = PokemonPerformance.DEFAULT;
+            PokemonPerformance highestGymDefense = PokemonPerformance.DEFAULT;
             for (PokemonMove move1 : meta.getQuickMoves()) {
                 PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(move1);
                 for (PokemonMove move2 : meta.getCinematicMoves()) {
                     PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(move2);
 
                     long duelAbility = PokemonUtils.duelAbility(pokemonId, pm1, pm2, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV);
-                    if (duelAbility > highestDuelAbility) {
-                        highestDuelAbility = duelAbility;
+                    if (duelAbility > highestDuelAbility.value) {
+                        highestDuelAbility = new PokemonPerformance(pokemonId, duelAbility, pm1, pm2);
                     }
                     double gymOffense = PokemonUtils.gymOffense(pokemonId, pm1, pm2, PokemonUtils.MAX_IV);
-                    if (gymOffense > highestGymOffense) {
-                        highestGymOffense = gymOffense;
+                    if (gymOffense > highestGymOffense.value) {
+                        highestGymOffense = new PokemonPerformance(pokemonId, gymOffense, pm1, pm2);
                     }
                     long gymDefense = PokemonUtils.gymDefense(pokemonId, pm1, pm2, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV);
-                    if (gymDefense > highestGymDefense) {
-                        highestGymDefense = gymDefense;
+                    if (gymDefense > highestGymDefense.value) {
+                        highestGymDefense = new PokemonPerformance(pokemonId, gymDefense, pm1, pm2);
                     }
                 }
             }
@@ -79,21 +78,19 @@ public final class PokemonValueCache {
             map.put(pokemonId, stats);
 
             // Save if the stats are highest until now
-            if (stats.duelAbility > globalHighestDuelAbility) {
+            if (stats.duelAbility.value > globalHighestDuelAbility.value) {
                 globalHighestDuelAbility = stats.duelAbility;
-                globalHighestDuelAbilityPokemon = pokemonId;
             }
-            if (stats.gymOffense > globalHighestGymOffense) {
+            if (stats.gymOffense.value > globalHighestGymOffense.value) {
                 globalHighestGymOffense = stats.gymOffense;
-                globalHighestGymOffensePokemon = pokemonId;
             }
-            if (stats.gymDefense > globalHighestGymDefense) {
+            if (stats.gymDefense.value > globalHighestGymDefense.value) {
                 globalHighestGymDefense = stats.gymDefense;
-                globalHighestGymDefensePokemon = pokemonId;
             }
         }
 
         highestStats = new PokemonPerformanceStats(null, globalHighestDuelAbility, globalHighestGymOffense, globalHighestGymDefense);
+
         // TODO: Remove debug logging, or advance logging to logging class
         System.out.println("Highest Duel Ability: " + globalHighestDuelAbilityPokemon);
         System.out.println("Highest Gym Offense: " + globalHighestGymOffensePokemon);
@@ -109,17 +106,45 @@ public final class PokemonValueCache {
     }
 
 
+    /**
+     * A class to save the best perfomances of a given Pokémon.
+     */
     public static final class PokemonPerformanceStats {
-        private final PokemonId id;
-        public final long duelAbility;
-        public final double gymOffense;
-        public final long gymDefense;
+        public final PokemonId id;
+        public final PokemonPerformance duelAbility;
+        public final PokemonPerformance gymOffense;
+        public final PokemonPerformance gymDefense;
 
-        private PokemonPerformanceStats(PokemonId id, long duelAbility, double gymOffense, long gymDefense) {
+        private PokemonPerformanceStats(PokemonId id, PokemonPerformance duelAbility, PokemonPerformance gymOffense, PokemonPerformance gymDefense) {
             this.id = id;
             this.duelAbility = duelAbility;
             this.gymOffense = gymOffense;
             this.gymDefense = gymDefense;
+        }
+    }
+
+    /**
+     * A class to save a specific performance of a given Pokémon with given moveset.
+     */
+    public static final class PokemonPerformance {
+        public static final PokemonPerformance DEFAULT = new PokemonPerformance(null, 0, null, null);
+
+        public final PokemonId id;
+        public final double value;
+        public final PokemonMoveMeta move1;
+        public final PokemonMoveMeta move2;
+
+        private PokemonPerformance(PokemonId id, double value, PokemonMoveMeta move1, PokemonMoveMeta move2) {
+            this.id = id;
+            this.value = value;
+            this.move1 = move1;
+            this.move2 = move2;
+        }
+
+        @Override
+        public String toString() {
+            return PokeHandler.getLocalPokeName(id.getNumber()) + " with "
+                + move1.getMove().toString(); // TODO: Finish building string
         }
     }
 }
