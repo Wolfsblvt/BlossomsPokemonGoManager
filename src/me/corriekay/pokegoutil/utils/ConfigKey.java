@@ -46,19 +46,19 @@ public enum ConfigKey {
     DELAY_FAVORITE_MAX("delay.favorite.max", 3000, Type.INTEGER),
 
     DEVICE_INFO_USE_CUSTOM("deviceInfo.useCustom", false, Type.BOOLEAN),
-    DEVICE_INFO_CUSTOM_ANDROID_BOARD_NAME("deviceInfo.custom.android.boardName", "", Type.STRING),
-    DEVICE_INFO_CUSTOM_ANDROID_BOOTLOADER("deviceInfo.custom.android.bootloader", "", Type.STRING),
-    DEVICE_INFO_CUSTOM_DEVICE_BRAND("deviceInfo.custom.device.brand", StringLiterals.APPLE, Type.STRING),
-    DEVICE_INFO_CUSTOM_DEVICE_ID("deviceInfo.custom.device.id", "3562002a3ec39ccf64eff96879219ad1", Type.STRING),
-    DEVICE_INFO_CUSTOM_DEVICE_MODEL("deviceInfo.custom.device.model", "iPad", Type.STRING),
-    DEVICE_INFO_CUSTOM_DEVICE_MODELBOOT("deviceInfo.custom.device.modelBoot", "iPad4,9", Type.STRING),
-    DEVICE_INFO_CUSTOM_DEVICE_MODELIDENTIFIER("deviceInfo.custom.device.modelIdentifier", "", Type.STRING),
-    DEVICE_INFO_CUSTOM_FIRMWARE_BRAND("deviceInfo.custom.firmware.brand", "iPhone OS", Type.STRING),
-    DEVICE_INFO_CUSTOM_FIRMWARE_FINGERPRINT("deviceInfo.custom.firmware.fingerprint", "", Type.STRING),
-    DEVICE_INFO_CUSTOM_FIRMWARE_TAGS("deviceInfo.custom.firmware.tags", "", Type.STRING),
-    DEVICE_INFO_CUSTOM_FIRMWARE_TYPE("deviceInfo.custom.firmware.type", "9.3.1", Type.STRING),
-    DEVICE_INFO_CUSTOM_HARDWARE_MANUFACUTER("deviceInfo.custom.hardware.manufacturer", StringLiterals.APPLE, Type.STRING),
-    DEVICE_INFO_CUSTOM_HARDWARE_MODEL("deviceInfo.custom.hardware.model", "J87mAP", Type.STRING);
+    DEVICE_INFO_CUSTOM_ANDROID_BOARD_NAME("deviceInfo.custom.android.boardName", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_ANDROID_BOOTLOADER("deviceInfo.custom.android.bootloader", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_BRAND("deviceInfo.custom.device.brand", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_ID("deviceInfo.custom.device.id", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_MODEL("deviceInfo.custom.device.model", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_MODELBOOT("deviceInfo.custom.device.modelBoot", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_MODELIDENTIFIER("deviceInfo.custom.device.modelIdentifier", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_BRAND("deviceInfo.custom.firmware.brand", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_FINGERPRINT("deviceInfo.custom.firmware.fingerprint", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_TAGS("deviceInfo.custom.firmware.tags", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_TYPE("deviceInfo.custom.firmware.type", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_HARDWARE_MANUFACUTER("deviceInfo.custom.hardware.manufacturer", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_HARDWARE_MODEL("deviceInfo.custom.hardware.model", null, Type.STRING);
     
     public final String keyName;
     public final Object defaultValue;
