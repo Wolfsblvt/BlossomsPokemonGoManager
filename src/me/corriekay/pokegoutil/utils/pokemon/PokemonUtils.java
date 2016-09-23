@@ -48,7 +48,6 @@ public final class PokemonUtils {
      * @return The translated Pokémon name
      */
     public static String getLocalPokeName(final int id) {
-        // TODO: change call to getConfigItem to config class once implemented
         final String lang = ConfigNew.getConfig().getString(ConfigKey.LANGUAGE);
 
         Locale locale;

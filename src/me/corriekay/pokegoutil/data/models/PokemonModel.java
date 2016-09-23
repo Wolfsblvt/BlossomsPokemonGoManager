@@ -63,8 +63,6 @@ public class PokemonModel {
     private final LongProperty duelAbilityIv = new SimpleLongProperty();
     private final DoubleProperty gymOffenseIv = new SimpleDoubleProperty();
     private final LongProperty gymDefenseIv = new SimpleLongProperty();
-    private final StringProperty move1Rating = new SimpleStringProperty();
-    private final StringProperty move2Rating = new SimpleStringProperty();
     private final StringProperty cpEvolved = new SimpleStringProperty();
     private final StringProperty evolvable = new SimpleStringProperty();
 
@@ -218,16 +216,8 @@ public class PokemonModel {
         return move1.get();
     }
 
-    public String getMove1Rating() {
-        return move1Rating.get();
-    }
-
     public String getMove2() {
         return move2.get();
-    }
-
-    public String getMove2Rating() {
-        return move2Rating.get();
     }
 
     public String getNickname() {
@@ -411,8 +401,6 @@ public class PokemonModel {
         setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
-        setMove1Rating(null); // TODO: Move rating does not exist anymore
-        setMove2Rating(null); // TODO: Move rating does not exist anymore
     }
 
     public BooleanProperty isFavoriteProperty() {
@@ -455,16 +443,8 @@ public class PokemonModel {
         return move1;
     }
 
-    public StringProperty move1RatingProperty() {
-        return move1Rating;
-    }
-
     public StringProperty move2Property() {
         return move2;
-    }
-
-    public StringProperty move2RatingProperty() {
-        return move2Rating;
     }
 
     public StringProperty nicknameProperty() {
@@ -575,16 +555,8 @@ public class PokemonModel {
         this.move1.set(move1);
     }
 
-    public void setMove1Rating(final String move1Rating) {
-        this.move1Rating.set(move1Rating);
-    }
-
     public void setMove2(final String move2) {
         this.move2.set(move2);
-    }
-
-    public void setMove2Rating(final String move2Rating) {
-        this.move2Rating.set(move2Rating);
     }
 
     public void setNickname(final String nickname) {

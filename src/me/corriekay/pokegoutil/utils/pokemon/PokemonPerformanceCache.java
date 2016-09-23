@@ -14,7 +14,7 @@ import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 /**
  * A Cache class which calculates and saves several values for Pokémon to make them easily available.
  */
-public final class PokemonValueCache {
+public final class PokemonPerformanceCache {
     private static final EnumMap<PokemonId, PokemonPerformanceStats> map;
     private static final PokemonPerformanceStats highestStats;
 

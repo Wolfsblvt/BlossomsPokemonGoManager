@@ -17,7 +17,7 @@ import me.corriekay.pokegoutil.utils.helpers.CollectionHelper;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonValueCache;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonPerformanceCache;
 
 /**
  * A class that holds data relevant for each column
@@ -186,19 +186,19 @@ public enum PokeColumn {
     DUEL_ABILITY(24, "Duel Ability", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonValueCache.getHighestStats().duelAbility.value);
+            return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonPerformanceCache.getHighestStats().duelAbility.value);
         }
     },
     GYM_OFFENSE(25, "Gym Offense", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonValueCache.getHighestStats().gymOffense.value);
+            return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonPerformanceCache.getHighestStats().gymOffense.value);
         }
     },
     GYM_DEFENSE(26, "Gym Defense", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonValueCache.getHighestStats().gymDefense.value);
+            return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonPerformanceCache.getHighestStats().gymDefense.value);
         }
     },
     CP_EVOLVED(27, "CP Evolved", ColumnType.NULLABLE_INT) {
@@ -236,19 +236,19 @@ public enum PokeColumn {
     DUEL_ABILITY_RATING(29, "Duel Ability Rating", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonValueCache.getStats(p.getPokemonId()).duelAbility.value);
+            return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonPerformanceCache.getStats(p.getPokemonId()).duelAbility.value);
         }
     },
     GYM_OFFENSE_RATING(30, "Gym Offense Rating", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonValueCache.getStats(p.getPokemonId()).gymOffense.value);
+            return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonPerformanceCache.getStats(p.getPokemonId()).gymOffense.value);
         }
     },
     GYM_DEFENSE_RATING(31, "Gym Defense Rating", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonValueCache.getStats(p.getPokemonId()).gymDefense.value);
+            return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonPerformanceCache.getStats(p.getPokemonId()).gymDefense.value);
         }
     };
 
