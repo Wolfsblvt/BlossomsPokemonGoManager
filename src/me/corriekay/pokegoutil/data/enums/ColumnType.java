@@ -5,41 +5,45 @@ import java.util.Comparator;
 import javax.swing.table.TableCellRenderer;
 
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
-import me.corriekay.pokegoutil.utils.windows.DefaultCellRenderer;
-import me.corriekay.pokegoutil.utils.windows.PercentageCellRenderer;
+import me.corriekay.pokegoutil.utils.windows.renderer.DefaultCellRenderer;
+import me.corriekay.pokegoutil.utils.windows.renderer.NumberCellRenderer;
+import me.corriekay.pokegoutil.utils.windows.renderer.PercentageCellRenderer;
 
 
 public enum ColumnType {
     DATE(
         String.class,
-        ObjectHolder.dateStringComparator
+        Comparators.dateStringComparator
     ),
     INT(
         Integer.class,
-        ObjectHolder.intComparator
+        Comparators.intComparator,
+        CellRenderers.numberCellRenderer
     ),
     DOUBLE(
         Double.class,
-        ObjectHolder.doubleComparator
+        Comparators.doubleComparator,
+        CellRenderers.numberCellRenderer
     ),
     NULLABLE_INT(
         String.class,
-        ObjectHolder.nullableIntComparator
+        Comparators.nullableIntComparator,
+        CellRenderers.numberCellRenderer
     ),
     PERCENTAGE(
         Double.class,
-        ObjectHolder.doubleComparator,
-        ObjectHolder.percentageCellRenderer
+        Comparators.doubleComparator,
+        CellRenderers.percentageCellRenderer
     ),
     STRING(
         String.class,
-        ObjectHolder.stringComparator
+        Comparators.stringComparator
     );
 
     /**
-     * This private class is needed to create the objects that are used in this enum.
+     * This private class is needed to create the comparators that are used in this enum.
      */
-    private static final class ObjectHolder {
+    private static final class Comparators {
         // The comparators.
         public static final Comparator<String> dateStringComparator = (date1, date2) -> DateHelper.fromString(date1)
             .compareTo(DateHelper.fromString(date2));
@@ -55,9 +59,14 @@ public enum ColumnType {
             }
             return Integer.compare(Integer.parseInt(s1), Integer.parseInt(s2));
         };
+    }
 
-        // The cell renderers.
+    /**
+     * This private class is needed to create the cell renderers that are used in this enum.
+     */
+    private static final class CellRenderers {
         public static final DefaultCellRenderer defaultCellRenderer = new DefaultCellRenderer();
+        public static final NumberCellRenderer numberCellRenderer = new NumberCellRenderer();
         public static final PercentageCellRenderer percentageCellRenderer = new PercentageCellRenderer();
     }
 
@@ -73,7 +82,7 @@ public enum ColumnType {
      * @param comparator The comparator for that column.
      */
     ColumnType(final Class clazz, final Comparator comparator) {
-        this(clazz, comparator, ObjectHolder.defaultCellRenderer);
+        this(clazz, comparator, CellRenderers.defaultCellRenderer);
     }
 
     /**

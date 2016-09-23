@@ -2,12 +2,15 @@ package me.corriekay.pokegoutil.utils.pokemon;
 
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
+
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
 import com.pokegoapi.api.pokemon.PokemonMoveMeta;
 import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 
+import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,13 +27,30 @@ public final class PokemonValueCache {
         map = new EnumMap<>(PokemonId.class);
 
         long globalHighestDuelAbility = 0;
+        PokemonId globalHighestDuelAbilityPokemon = PokemonId.WEEDLE;
         double globalHighestGymOffense = 0;
+        PokemonId globalHighestGymOffensePokemon = PokemonId.WEEDLE;
         long globalHighestGymDefense = 0;
+        PokemonId globalHighestGymDefensePokemon = PokemonId.WEEDLE;
 
         EnumMap<PokemonId, PokemonMeta> pokemonMetas = PokemonMetaRegistry.getMeta();
         for (final Map.Entry<PokemonId, PokemonMeta> entry : pokemonMetas.entrySet()) {
             final PokemonId pokemonId = entry.getKey();
             final PokemonMeta meta = entry.getValue();
+
+            // We skip Pokémon that are currently not available
+            List<PokemonId> notAvailablePokemon = Arrays.asList(
+                PokemonId.DITTO,
+                PokemonId.ARTICUNO,
+                PokemonId.ZAPDOS,
+                PokemonId.MOLTRES,
+                PokemonId.MEWTWO,
+                PokemonId.MEW,
+                PokemonId.UNRECOGNIZED
+            );
+            if (notAvailablePokemon.contains(pokemonId)) {
+                continue;
+            }
 
             long highestDuelAbility = 0;
             double highestGymOffense = 0;
@@ -61,16 +81,23 @@ public final class PokemonValueCache {
             // Save if the stats are highest until now
             if (stats.duelAbility > globalHighestDuelAbility) {
                 globalHighestDuelAbility = stats.duelAbility;
+                globalHighestDuelAbilityPokemon = pokemonId;
             }
             if (stats.gymOffense > globalHighestGymOffense) {
                 globalHighestGymOffense = stats.gymOffense;
+                globalHighestGymOffensePokemon = pokemonId;
             }
             if (stats.gymDefense > globalHighestGymDefense) {
                 globalHighestGymDefense = stats.gymDefense;
+                globalHighestGymDefensePokemon = pokemonId;
             }
         }
 
         highestStats = new PokemonPerformanceStats(null, globalHighestDuelAbility, globalHighestGymOffense, globalHighestGymDefense);
+        // TODO: Remove debug logging, or advance logging to logging class
+        System.out.println("Highest Duel Ability: " + globalHighestDuelAbilityPokemon);
+        System.out.println("Highest Gym Offense: " + globalHighestGymOffensePokemon);
+        System.out.println("Highest Gym Defense: " + globalHighestGymDefensePokemon);
     }
 
     public static PokemonPerformanceStats getHighestStats() {

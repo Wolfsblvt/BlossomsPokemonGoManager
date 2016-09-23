@@ -15,46 +15,32 @@ public final class Utilities {
     private Utilities() {
     }
 
-    private static final CharsetEncoder iso88591Encoder = Charset.forName("ISO-8859-1").newEncoder();
     private static final Random random = new Random(System.currentTimeMillis());
 
     public static boolean isEven(long i) {
         return i % 2 == 0;
     }
 
-    public static boolean isLatin(String str) {
-        return iso88591Encoder.canEncode(str);
-    }
-
     /**
-     * Rounds given decimal number (like 0.75345) to a percentage with two decimals (75.35)
-     *
-     * @param decimalNumber The decimal number
-     * @return The percentage value
-     */
-    public static double percentage(double decimalNumber) {
-        return Math.round(decimalNumber * 100 * 100) / 100.0;
-    }
-
-    /**
-     * Rounds given decimal number (like 0.75345) to a percentage with two decimals (75.35)
+     * Takes to numbers and creates a decimal percentage of it (like 0.7542).
      *
      * @param number  The real part.
      * @param maximum The maximum of the number.
      * @return The percentage value
      */
     public static double percentage(double number, double maximum) {
-        return percentage(Math.min(number / maximum, maximum));
+        return Math.min(number / maximum, maximum);
     }
 
-    public static String percentageWithTwoCharacters(double number, double maximum) {
-        return percentageWithTwoCharacters(Math.min(number / maximum, maximum));
-    }
-
+    /**
+     * Returns the percentage with two characters, based on a given double decimal number (like 0.7531).
+     *
+     * @param decimalNumber The given decimal number.
+     * @return Percentage string.
+     */
     public static String percentageWithTwoCharacters(double decimalNumber) {
-        long rounded = Math.round(percentage(decimalNumber));
-        return (rounded < 100) ? StringUtils.leftPad(String.valueOf(rounded), 2, '0') : "XX";
-
+        double percentage = decimalNumber * 100;
+        return (percentage < 100) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
     }
 
     public static Color randomColor() {

@@ -71,24 +71,6 @@ public final class PokemonUtils {
         return "UNKNOWN_TEAM";
     }
 
-    public static String moveRating(final Pokemon p, final boolean primary) {
-        final PokemonMeta pMeta = p.getMeta();
-
-        double highestDps = 0;
-        final PokemonMove[] moves = primary ? pMeta.getQuickMoves() : pMeta.getCinematicMoves();
-        for (final PokemonMove move : moves) {
-            PokemonMoveMeta moveMeta = PokemonMoveMetaRegistry.getMeta(move);
-            double dps = dpsForMove(p.getPokemonId(), moveMeta, primary);
-            if (dps > highestDps) {
-                highestDps = dps;
-            }
-        }
-
-        // Now rate it
-        final double currentDps = dpsForMove(p, primary);
-        return Utilities.percentageWithTwoCharacters(currentDps, highestDps);
-    }
-
     /**
      * Calculates the no weave dps for current move. Just plain damage, without dodging or any other attack.
      *
@@ -344,65 +326,5 @@ public final class PokemonUtils {
             * (pm1.getPower() * moveOneStab);
 
         return weaveDPS;
-    }
-
-    /**
-     * Get cp comparator for max cp.
-     *
-     * @return cp comparator for max cp
-     */
-    public static Comparator<PokemonMeta> getMaxCpComperator() {
-        final Comparator<PokemonMeta> cMeta = (m1, m2) -> {
-            final int comb1 = PokemonCpUtils.getMaxCp(m1.getBaseAttack(), m1.getBaseDefense(),
-                m1.getBaseStamina());
-            final int comb2 = PokemonCpUtils.getMaxCp(m2.getBaseAttack(), m2.getBaseDefense(),
-                m2.getBaseStamina());
-            return comb1 - comb2;
-        };
-        return cMeta;
-    }
-
-    /**
-     * Get cp comparator based on stats and current level of eevee.
-     *
-     * @param p eevee pokemon
-     * @return cp comparator based on stats and current level of eevee
-     */
-    public static Comparator<PokemonMeta> getEeveeCpComperator(final Pokemon p) {
-        final int ivAttack = p.getIndividualAttack();
-        final int ivDefense = p.getIndividualDefense();
-        final int ivStamina = p.getIndividualStamina();
-        final float level = p.getLevel();
-
-        final Comparator<PokemonMeta> cMeta = (m1, m2) -> {
-            final int comb1 = PokemonCpUtils.getCpForPokemonLevel(
-                m1.getBaseAttack() + ivAttack,
-                m1.getBaseDefense() + ivDefense,
-                m1.getBaseStamina() + ivStamina,
-                level);
-            final int comb2 = PokemonCpUtils.getCpForPokemonLevel(
-                m2.getBaseAttack() + ivAttack,
-                m2.getBaseDefense() + ivDefense,
-                m2.getBaseStamina() + ivStamina,
-                level);
-            return comb1 - comb2;
-        };
-        return cMeta;
-    }
-
-    /**
-     * Get the evolutions of eevee.
-     *
-     * @return evolution of eevee
-     */
-    public static List<PokemonMeta> getEeveeEvolutions() {
-        final PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonId.VAPOREON);
-        final PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonId.FLAREON);
-        final PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonId.JOLTEON);
-
-        if (vap == null || fla == null || jol == null) {
-            return null;
-        }
-        return Arrays.asList(vap, fla, jol);
     }
 }

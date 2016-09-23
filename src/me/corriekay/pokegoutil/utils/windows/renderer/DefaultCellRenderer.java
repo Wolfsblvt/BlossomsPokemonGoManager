@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.utils.windows;
+package me.corriekay.pokegoutil.utils.windows.renderer;
 
 import java.awt.Component;
 
@@ -31,12 +31,13 @@ public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
 
     /**
      * Sets the native look and feel for the TableCellRenderer.
-     * This method should be called first in getTableCellRendererComponent() when extending this CellRenderer.
+     * This method should be called first in getTableCellRendererComponent() when extending this CellRenderer,
+     * or should be overwritten and called then.
      *
      * @param table      The table.
      * @param isSelected If the cell is selected.
      */
-    void setNativeLookAndFeel(JTable table, boolean isSelected) {
+    public void setNativeLookAndFeel(JTable table, boolean isSelected) {
         setOpaque(true);
         setDefaultSelectionColors(table, isSelected);
         setFont(table.getFont());

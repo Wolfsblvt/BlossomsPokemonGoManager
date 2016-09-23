@@ -399,8 +399,8 @@ public class PokemonModel {
         setDuelAbilityIv(PokemonUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonUtils.gymDefense(pokemon));
-        setMove1Rating(PokemonUtils.moveRating(pokemon, true));
-        setMove2Rating(PokemonUtils.moveRating(pokemon, false));
+        setMove1Rating(null); // TODO: Move rating does not exist anymore
+        setMove2Rating(null); // TODO: Move rating does not exist anymore
     }
 
     public BooleanProperty isFavoriteProperty() {
