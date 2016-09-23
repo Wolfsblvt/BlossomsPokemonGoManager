@@ -1,23 +1,35 @@
 package me.corriekay.pokegoutil.data.models;
 
-import POGOProtos.Enums.PokemonFamilyIdOuterClass;
-import POGOProtos.Enums.PokemonIdOuterClass;
-import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.api.pokemon.PokemonMeta;
-import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
-import javafx.beans.property.*;
-import me.corriekay.pokegoutil.data.managers.AccountManager;
-import me.corriekay.pokegoutil.utils.Utilities;
-import me.corriekay.pokegoutil.utils.helpers.DateHelper;
-import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
+
+import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+
+import me.corriekay.pokegoutil.data.managers.AccountManager;
+import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.helpers.DateHelper;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+
+import POGOProtos.Enums.PokemonFamilyIdOuterClass;
+import POGOProtos.Enums.PokemonIdOuterClass;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.LongProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 public class PokemonModel {
     private static final String UNDERSCORE = "_";
@@ -286,7 +298,7 @@ public class PokemonModel {
 
         setNumId(meta.getNumber());
         setNickname(pokemon.getNickname());
-        setSpecies(PokeHandler.getLocalPokeName(pokemon));
+        setSpecies(PokemonUtils.getLocalPokeName(pokemon));
         setLevel(pokemon.getLevel());
         setIv(Utilities.percentageWithTwoCharacters(PokemonCalculationUtils.ivRating(pokemon)));
         setAtk(pokemon.getIndividualAttack());

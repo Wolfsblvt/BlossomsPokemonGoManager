@@ -4,13 +4,14 @@ import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
-import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result;
 import me.corriekay.pokegoutil.data.enums.OperationError;
 import me.corriekay.pokegoutil.data.models.BpmOperationResult;
 import me.corriekay.pokegoutil.data.models.PokemonModel;
 import me.corriekay.pokegoutil.gui.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
-import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+
+import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result;
 
 public class TransferOperation extends Operation {
 
@@ -40,23 +41,23 @@ public class TransferOperation extends Operation {
 
         if (transferResult != Result.SUCCESS) {
             return new BpmOperationResult(String.format(
-                    "Error transferring %s, result: %s",
-                    PokeHandler.getLocalPokeName(poke),
-                    transferResult.toString()),
-                    OperationError.TRANSFER_FAIL);
+                "Error transferring %s, result: %s",
+                PokemonUtils.getLocalPokeName(poke),
+                transferResult.toString()),
+                OperationError.TRANSFER_FAIL);
         }
 
         final int newCandies = poke.getCandy();
         final BpmOperationResult result = new BpmOperationResult();
 
         result.addSuccessMessage(String.format(
-                "Transferring %s, Result: Success!",
-                PokeHandler.getLocalPokeName(poke)));
+            "Transferring %s, Result: Success!",
+            PokemonUtils.getLocalPokeName(poke)));
 
         result.addSuccessMessage(String.format(
-                "Stat changes: (Candies : %d[+%d])",
-                newCandies,
-                (newCandies - candies)));
+            "Stat changes: (Candies : %d[+%d])",
+            newCandies,
+            (newCandies - candies)));
 
         return result;
     }

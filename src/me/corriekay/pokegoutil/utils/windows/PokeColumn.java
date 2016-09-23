@@ -6,9 +6,6 @@ import java.util.NoSuchElementException;
 
 import javax.swing.table.TableCellRenderer;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.NoSuchItemException;
 
@@ -18,8 +15,8 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.CollectionHelper;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
-import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonValueCache;
 
 /**
@@ -41,7 +38,7 @@ public enum PokeColumn {
     SPECIES(2, "Species", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return PokeHandler.getLocalPokeName(p);
+            return PokemonUtils.getLocalPokeName(p);
         }
     },
     IV_RATING(3, "IV %", ColumnType.PERCENTAGE) {
@@ -77,21 +74,20 @@ public enum PokeColumn {
     TYPE_1(8, "Type 1", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return StringUtils.capitalize(p.getMeta().getType1().toString().toLowerCase());
+            return PokemonUtils.formatType(p.getMeta().getType1());
         }
     },
     TYPE_2(9, "Type 2", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return StringUtils.capitalize(p.getMeta().getType2().toString().toLowerCase().replaceAll("none", ""));
+            return PokemonUtils.formatType(p.getMeta().getType2());
         }
     },
     MOVE_1(10, "Move 1", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             final Double dps1 = PokemonCalculationUtils.dpsForMove(p, true);
-            return WordUtils.capitalize(
-                p.getMove1().toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " "))
+            return PokemonUtils.formatMove(p.getMove1())
                 + " (" + String.format("%.2f", dps1) + "dps)";
         }
     },
@@ -99,8 +95,8 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             final Double dps2 = PokemonCalculationUtils.dpsForMove(p, false);
-            return WordUtils.capitalize(p.getMove2().toString().toLowerCase().replaceAll("_", " ")) + " ("
-                + String.format("%.2f", dps2) + "dps)";
+            return PokemonUtils.formatMove(p.getMove2())
+                + " (" + String.format("%.2f", dps2) + "dps)";
         }
     },
     CP(12, "CP", ColumnType.INT) {
@@ -172,7 +168,7 @@ public enum PokeColumn {
     CAUGHT_WITH(21, "Caught With", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return WordUtils.capitalize(p.getPokeball().toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " "));
+            return PokemonUtils.formatItem(p.getPokeball());
         }
     },
     CAUGHT_TIME(22, "Caught Time", ColumnType.DATE) {
@@ -190,19 +186,19 @@ public enum PokeColumn {
     DUEL_ABILITY(24, "Duel Ability", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonValueCache.getHighestStats().duelAbility);
+            return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonValueCache.getHighestStats().duelAbility.value);
         }
     },
     GYM_OFFENSE(25, "Gym Offense", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonValueCache.getHighestStats().gymOffense);
+            return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonValueCache.getHighestStats().gymOffense.value);
         }
     },
     GYM_DEFENSE(26, "Gym Defense", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonValueCache.getHighestStats().gymDefense);
+            return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonValueCache.getHighestStats().gymDefense.value);
         }
     },
     CP_EVOLVED(27, "CP Evolved", ColumnType.NULLABLE_INT) {
@@ -240,19 +236,19 @@ public enum PokeColumn {
     DUEL_ABILITY_RATING(29, "Duel Ability Rating", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonValueCache.getStats(p.getPokemonId()).duelAbility);
+            return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonValueCache.getStats(p.getPokemonId()).duelAbility.value);
         }
     },
     GYM_OFFENSE_RATING(30, "Gym Offense Rating", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonValueCache.getStats(p.getPokemonId()).gymOffense);
+            return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonValueCache.getStats(p.getPokemonId()).gymOffense.value);
         }
     },
     GYM_DEFENSE_RATING(31, "Gym Defense Rating", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonValueCache.getStats(p.getPokemonId()).gymDefense);
+            return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonValueCache.getStats(p.getPokemonId()).gymDefense.value);
         }
     };
 

@@ -1,17 +1,15 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
-import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
+import java.util.EnumMap;
+import java.util.Map;
 
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
 import com.pokegoapi.api.pokemon.PokemonMoveMeta;
 import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
+import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 
 /**
  * A Cache class which calculates and saves several values for Pokémon to make them easily available.
@@ -36,16 +34,7 @@ public final class PokemonValueCache {
             final PokemonMeta meta = entry.getValue();
 
             // We skip Pokémon that are currently not available
-            List<PokemonId> notAvailablePokemon = Arrays.asList(
-                PokemonId.DITTO,
-                PokemonId.ARTICUNO,
-                PokemonId.ZAPDOS,
-                PokemonId.MOLTRES,
-                PokemonId.MEWTWO,
-                PokemonId.MEW,
-                PokemonId.UNRECOGNIZED
-            );
-            if (notAvailablePokemon.contains(pokemonId)) {
+            if (PokemonUtils.NOT_EXISTING_POKEMON_LIST.contains(pokemonId)) {
                 continue;
             }
 
@@ -90,9 +79,9 @@ public final class PokemonValueCache {
         highestStats = new PokemonPerformanceStats(null, globalHighestDuelAbility, globalHighestGymOffense, globalHighestGymDefense);
 
         // TODO: Remove debug logging, or advance logging to logging class
-        System.out.println("Highest Duel Ability: " + globalHighestDuelAbilityPokemon);
-        System.out.println("Highest Gym Offense: " + globalHighestGymOffensePokemon);
-        System.out.println("Highest Gym Defense: " + globalHighestGymDefensePokemon);
+        System.out.println("Highest Duel Ability: " + globalHighestDuelAbility.toString());
+        System.out.println("Highest Gym Offense: " + globalHighestGymOffense.toString());
+        System.out.println("Highest Gym Defense: " + globalHighestGymDefense.toString());
     }
 
     public static PokemonPerformanceStats getHighestStats() {
@@ -141,8 +130,10 @@ public final class PokemonValueCache {
 
         @Override
         public String toString() {
-            return PokeHandler.getLocalPokeName(id.getNumber()) + " with "
-                + move1.getMove().toString(); // TODO: Finish building string
+            return PokemonUtils.getLocalPokeName(id.getNumber()) + " with "
+                + PokemonUtils.formatMove(move1.getMove()) + " and "
+                + PokemonUtils.formatMove(move2.getMove()) + " has "
+                + value;
         }
     }
 }

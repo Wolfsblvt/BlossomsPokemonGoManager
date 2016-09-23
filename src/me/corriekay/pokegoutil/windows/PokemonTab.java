@@ -49,6 +49,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler.ReplacePattern;
 import me.corriekay.pokegoutil.utils.pokemon.PokeNick;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import me.corriekay.pokegoutil.utils.windows.PokemonTable;
 import me.corriekay.pokegoutil.utils.windows.PokemonTableModel;
@@ -310,7 +311,7 @@ public class PokemonTab extends JPanel {
             if (isSkipped) {
                 System.out.println(String.format(
                     "Skipped renaming %s, already named %s",
-                    PokeHandler.getLocalPokeName(pokemon),
+                    PokemonUtils.getLocalPokeName(pokemon),
                     pokemon.getNickname()));
                 skipped.increment();
                 return;
@@ -326,14 +327,14 @@ public class PokemonTab extends JPanel {
                 }
                 System.out.println(String.format(
                     "Renaming %s from \"%s\" to \"%s\", Result: Success!",
-                    PokeHandler.getLocalPokeName(pokemon),
+                    PokemonUtils.getLocalPokeName(pokemon),
                     pokemon.getNickname(),
                     PokeHandler.generatePokemonNickname(renamePattern, pokemon)));
             } else {
                 err.increment();
                 System.out.println(String.format(
                     "Renaming %s failed! Code: %s; Nick: %s",
-                    PokeHandler.getLocalPokeName(pokemon),
+                    PokemonUtils.getLocalPokeName(pokemon),
                     renameResult.toString(),
                     PokeHandler.generatePokemonNickname(renamePattern, pokemon)));
             }
@@ -378,7 +379,7 @@ public class PokemonTab extends JPanel {
             if (poke.isFavorite()) {
                 System.out.println(String.format(
                     "%s with %d CP is favorite, skipping.",
-                    PokeHandler.getLocalPokeName(poke),
+                    PokemonUtils.getLocalPokeName(poke),
                     poke.getCp()));
                 skipped.increment();
                 return;
@@ -387,7 +388,7 @@ public class PokemonTab extends JPanel {
             if (!poke.getDeployedFortId().isEmpty()) {
                 System.out.println(String.format(
                     GYM_SKIPPED_MESSAGE_UNFORMATTED,
-                    PokeHandler.getLocalPokeName(poke),
+                    PokemonUtils.getLocalPokeName(poke),
                     poke.getCp()));
                 skipped.increment();
                 return;
@@ -401,7 +402,7 @@ public class PokemonTab extends JPanel {
                     final int newCandies = poke.getCandy();
                     System.out.println(String.format(
                         "Transferring %s, Result: Success!",
-                        PokeHandler.getLocalPokeName(poke)));
+                        PokemonUtils.getLocalPokeName(poke)));
                     System.out.println(String.format(
                         "Stat changes: (Candies : %d[+%d])",
                         newCandies,
@@ -410,7 +411,7 @@ public class PokemonTab extends JPanel {
                 } else {
                     System.out.println(String.format(
                         "Error transferring %s, result: %s",
-                        PokeHandler.getLocalPokeName(poke),
+                        PokemonUtils.getLocalPokeName(poke),
                         transferResult.toString()));
                     err.increment();
                 }
@@ -425,7 +426,7 @@ public class PokemonTab extends JPanel {
                 err.increment();
                 System.out.println(String.format(
                     "Error transferring %s! %s",
-                    PokeHandler.getLocalPokeName(poke),
+                    PokemonUtils.getLocalPokeName(poke),
                     Utilities.getRealExceptionMessage(e)));
             }
         });
@@ -464,7 +465,7 @@ public class PokemonTab extends JPanel {
             if (!poke.getDeployedFortId().isEmpty()) {
                 System.out.println(String.format(
                     GYM_SKIPPED_MESSAGE_UNFORMATTED,
-                    PokeHandler.getLocalPokeName(poke),
+                    PokemonUtils.getLocalPokeName(poke),
                     +poke.getCp()));
                 skipped.increment();
                 return;
@@ -482,7 +483,7 @@ public class PokemonTab extends JPanel {
                     err.increment();
                     System.out.println(String.format(
                         "Error. Not enough candy to evolve %s. %d available, %d needed.",
-                        PokeHandler.getLocalPokeName(poke),
+                        PokemonUtils.getLocalPokeName(poke),
                         candies,
                         candiesToEvolve));
                     return;
@@ -493,7 +494,7 @@ public class PokemonTab extends JPanel {
                     skipped.increment();
                     System.out.println(String.format(
                         "Skipped evolving %s. Is already highest evolution.",
-                        PokeHandler.getLocalPokeName(poke)));
+                        PokemonUtils.getLocalPokeName(poke)));
                     return;
                 }
 
@@ -506,7 +507,7 @@ public class PokemonTab extends JPanel {
                     int candyRefund = 1;
                     System.out.println(String.format(
                         "Evolving %s. Evolve result: %s",
-                        PokeHandler.getLocalPokeName(poke),
+                        PokemonUtils.getLocalPokeName(poke),
                         evolutionResultWrapper.getResult().toString()));
                     if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
                         if (newPoke.isFavorite()) {
@@ -562,7 +563,7 @@ public class PokemonTab extends JPanel {
                     err.increment();
                     System.out.println(String.format(
                         "Error evolving %s, result: %s",
-                        PokeHandler.getLocalPokeName(poke),
+                        PokemonUtils.getLocalPokeName(poke),
                         evolutionResultWrapper.getResult().toString()));
                 }
 
@@ -583,7 +584,7 @@ public class PokemonTab extends JPanel {
                 err.increment();
                 System.out.println(String.format(
                     "Error evolving %s! %s",
-                    PokeHandler.getLocalPokeName(poke),
+                    PokemonUtils.getLocalPokeName(poke),
                     Utilities.getRealExceptionMessage(e)));
             }
         });
@@ -624,7 +625,7 @@ public class PokemonTab extends JPanel {
                 if (!poke.getDeployedFortId().isEmpty()) {
                     System.out.println(String.format(
                         GYM_SKIPPED_MESSAGE_UNFORMATTED,
-                        PokeHandler.getLocalPokeName(poke),
+                        PokemonUtils.getLocalPokeName(poke),
                         +poke.getCp()));
                     skipped.increment();
                     return;
@@ -644,7 +645,7 @@ public class PokemonTab extends JPanel {
                         "Error. Not enough candy/stardust to power up %s. "
                             + "Stardust: %d/%d, "
                             + "Candy: %d/%d",
-                        PokeHandler.getLocalPokeName(poke),
+                        PokemonUtils.getLocalPokeName(poke),
                         stardust, stardustToPowerUp,
                         candies, candiesToPowerUp));
                     return;
@@ -655,7 +656,7 @@ public class PokemonTab extends JPanel {
                     skipped.increment();
                     System.out.println(String.format(
                         "Skipping power-up of %s. It is already MaxCP: %d",
-                        PokeHandler.getLocalPokeName(poke),
+                        PokemonUtils.getLocalPokeName(poke),
                         poke.getCp()));
                     return;
                 }
@@ -668,7 +669,7 @@ public class PokemonTab extends JPanel {
                     final int newHp = poke.getMaxStamina();
                     System.out.println(String.format(
                         "Powering Up %s, Result: Success!",
-                        PokeHandler.getLocalPokeName(poke)));
+                        PokemonUtils.getLocalPokeName(poke)));
 
                     System.out.println(String.format(
                         "Stat changes: "
@@ -687,7 +688,7 @@ public class PokemonTab extends JPanel {
                     err.increment();
                     System.out.println(String.format(
                         "Error powering up %s, result: %s",
-                        PokeHandler.getLocalPokeName(poke),
+                        PokemonUtils.getLocalPokeName(poke),
                         upgradeResult.toString()));
                 }
 
@@ -701,7 +702,7 @@ public class PokemonTab extends JPanel {
                 err.increment();
                 System.out.println(String.format(
                     "Error powering up %s! %s",
-                    PokeHandler.getLocalPokeName(poke),
+                    PokemonUtils.getLocalPokeName(poke),
                     Utilities.getRealExceptionMessage(e)));
             }
         });
@@ -743,21 +744,21 @@ public class PokemonTab extends JPanel {
                     .setFavoritePokemon(!poke.isFavorite());
                 System.out.println(String.format(
                     "Attempting to set favorite for %s to %b...",
-                    PokeHandler.getLocalPokeName(poke),
+                    PokemonUtils.getLocalPokeName(poke),
                     !poke.isFavorite()));
                 go.getPlayerProfile().updateProfile();
 
                 if (favoriteResult == SetFavoritePokemonResponse.Result.SUCCESS) {
                     System.out.println(String.format(
                         "Favorite for %s set to %b, Result: Success!",
-                        PokeHandler.getLocalPokeName(poke),
+                        PokemonUtils.getLocalPokeName(poke),
                         !poke.isFavorite()));
                     success.increment();
                 } else {
                     err.increment();
                     System.out.println(String.format(
                         "Error toggling favorite for %s, result: %s",
-                        PokeHandler.getLocalPokeName(poke),
+                        PokemonUtils.getLocalPokeName(poke),
                         favoriteResult.toString()));
                 }
 
@@ -771,7 +772,7 @@ public class PokemonTab extends JPanel {
                 err.increment();
                 System.out.println(String.format(
                     "Error toggling favorite for %s! %s",
-                    PokeHandler.getLocalPokeName(poke),
+                    PokemonUtils.getLocalPokeName(poke),
                     Utilities.getRealExceptionMessage(e)));
             }
         });
@@ -890,7 +891,7 @@ public class PokemonTab extends JPanel {
 
         pokes.forEach(p -> {
             String str = String.format("%s - CP: %d, IV: %s%%",
-                PokeHandler.getLocalPokeName(p),
+                PokemonUtils.getLocalPokeName(p),
                 p.getCp(),
                 Utilities.percentageWithTwoCharacters(PokemonCalculationUtils.ivRating(p)));
 
@@ -994,14 +995,14 @@ public class PokemonTab extends JPanel {
                     // Try translating family name
                     try {
                         final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
-                        familyName = PokeHandler.getLocalPokeName(familyPokemonId.getNumber());
+                        familyName = PokemonUtils.getLocalPokeName(familyPokemonId.getNumber());
                     } catch (final IllegalArgumentException e) {
                         familyName = poke.getPokemonFamily().toString();
                     }
                 }
 
                 String searchme = Utilities.concatString(',',
-                    PokeHandler.getLocalPokeName(poke),
+                    PokemonUtils.getLocalPokeName(poke),
                     ((useFamilyName) ? familyName : ""),
                     poke.getNickname(),
                     poke.getMeta().getType1().toString(),

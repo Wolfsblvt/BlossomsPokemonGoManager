@@ -10,7 +10,7 @@ import me.corriekay.pokegoutil.data.models.BpmOperationResult;
 import me.corriekay.pokegoutil.data.models.PokemonModel;
 import me.corriekay.pokegoutil.gui.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
-import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 public class EvolveOperation extends Operation {
 
@@ -61,7 +61,7 @@ public class EvolveOperation extends Operation {
 
         result.addSuccessMessage(String.format(
                 "Evolving %s. Evolve result: %s",
-                PokeHandler.getLocalPokeName(poke),
+                PokemonUtils.getLocalPokeName(poke),
                 evolutionResult.getResult().toString()));
 
         result.addSuccessMessage(String.format(

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,10 +12,7 @@ import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
-import com.pokegoapi.util.PokeDictionary;
 
-import me.corriekay.pokegoutil.utils.ConfigKey;
-import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.UnicodeHelper;
@@ -68,41 +64,10 @@ public class PokeHandler {
             return result;
         } catch (LoginFailedException | RemoteServerException e) {
             System.out.println("Error while renaming "
-                + getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
+                + PokemonUtils.getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
                 + Utilities.getRealExceptionMessage(e));
             return NicknamePokemonResponse.Result.UNRECOGNIZED;
         }
-    }
-
-    /**
-     * Returns the Name for the Pokémon with <c>id</c> in the current language.
-     *
-     * @param id The Pokémon ID
-     * @return The translated Pokémon name
-     */
-    public static String getLocalPokeName(final int id) {
-        // TODO: change call to getConfigItem to config class once implemented
-        final String lang = ConfigNew.getConfig().getString(ConfigKey.LANGUAGE);
-
-        Locale locale;
-        final String[] langar = lang.split("_");
-        if (langar.length == 1) {
-            locale = new Locale(langar[0]);
-        } else {
-            locale = new Locale(langar[0], langar[1]);
-        }
-
-        return PokeDictionary.getDisplayName(id, locale);
-    }
-
-    /**
-     * Returns the Name of the Pokémon <c>pokemon</c> in the current language.
-     *
-     * @param pokemon The Pokémon
-     * @return The translated Pokémon name
-     */
-    public static String getLocalPokeName(final Pokemon pokemon) {
-        return getLocalPokeName(pokemon.getPokemonId().getNumber());
     }
 
     // endregion
