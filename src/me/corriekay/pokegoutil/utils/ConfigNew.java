@@ -243,7 +243,7 @@ public final class ConfigNew {
      */
     public void setString(final ConfigKey configKey, final String value) {
         try {
-            final FindResult res = findNode(configKey.keyName, value!=null);
+            final FindResult res = findNode(configKey.keyName, true);
             // Set if value is different or if default value should be added
             if (!res.getNode().optString(res.getName(), "." + configKey.getDefaultValue()).equals(value)) {
                 res.getNode().put(res.getName(), StringEscapeUtils.escapeJson(value));
