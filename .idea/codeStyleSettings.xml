@@ -14,6 +14,8 @@
             <emptyLine />
             <package name="javax" withSubpackages="true" static="false" />
             <emptyLine />
+            <package name="org.apache" withSubpackages="true" static="false" />
+            <emptyLine />
             <package name="com.pokegoapi" withSubpackages="true" static="false" />
             <emptyLine />
             <package name="me.corriekay.pokegoutil" withSubpackages="true" static="false" />
@@ -23,9 +25,6 @@
             <package name="" withSubpackages="true" static="true" />
           </value>
         </option>
-        <MarkdownNavigatorCodeStyleSettings>
-          <option name="RIGHT_MARGIN" value="72" />
-        </MarkdownNavigatorCodeStyleSettings>
         <XML>
           <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
         </XML>
