@@ -1,7 +1,7 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
-import POGOProtos.Enums.PokemonIdOuterClass;
-import POGOProtos.Enums.PokemonMoveOuterClass;
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
+import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 
 /**
  * A class to save a specific performance of a given Pokémon with given moveset.
@@ -9,10 +9,10 @@ import POGOProtos.Enums.PokemonMoveOuterClass;
 public final class PokemonPerformance {
     public static final PokemonPerformance DEFAULT = new PokemonPerformance(null, 0, null, null);
 
-    public final PokemonIdOuterClass.PokemonId pokemonId;
+    public final PokemonId pokemonId;
     public final double value;
-    public final PokemonMoveOuterClass.PokemonMove move1;
-    public final PokemonMoveOuterClass.PokemonMove move2;
+    public final PokemonMove move1;
+    public final PokemonMove move2;
 
     /**
      * Creates an instance of this performance stats object.
@@ -23,7 +23,7 @@ public final class PokemonPerformance {
      * @param move1     The Primary Move.
      * @param move2     The Secondary Move.
      */
-    PokemonPerformance(final PokemonIdOuterClass.PokemonId pokemonId, final double value, final PokemonMoveOuterClass.PokemonMove move1, final PokemonMoveOuterClass.PokemonMove move2) {
+    PokemonPerformance(final PokemonId pokemonId, final double value, final PokemonMove move1, final PokemonMove move2) {
         this.pokemonId = pokemonId;
         this.value = value;
         this.move1 = move1;

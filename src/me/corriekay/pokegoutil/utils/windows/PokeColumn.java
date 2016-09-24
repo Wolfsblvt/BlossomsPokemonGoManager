@@ -278,10 +278,8 @@ public enum PokeColumn {
      * @return The column.
      */
     public static PokeColumn getForId(final int id) {
-        // TODO: We break checkstyle willingly, to see that this check is working
-        final int data = id;
         for (final PokeColumn column : PokeColumn.values()) {
-            if (column.id == data) {
+            if (column.id == id) {
                 return column;
             }
         }

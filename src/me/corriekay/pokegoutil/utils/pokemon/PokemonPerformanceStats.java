@@ -1,12 +1,12 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
-import POGOProtos.Enums.PokemonIdOuterClass;
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 
 /**
  * Holds the Duel Ability, Gym Offense and Gym Defense Perfomances for given Pokémon.
  */
 public final class PokemonPerformanceStats {
-    public final PokemonIdOuterClass.PokemonId pokemonId;
+    public final PokemonId pokemonId;
     public final PokemonPerformance duelAbility;
     public final PokemonPerformance gymOffense;
     public final PokemonPerformance gymDefense;
@@ -20,7 +20,7 @@ public final class PokemonPerformanceStats {
      * @param gymOffense  The Gym Offense Performance.
      * @param gymDefense  The Gym Defense Performance.
      */
-    PokemonPerformanceStats(final PokemonIdOuterClass.PokemonId pokemonId,
+    PokemonPerformanceStats(final PokemonId pokemonId,
                             final PokemonPerformance duelAbility,
                             final PokemonPerformance gymOffense,
                             final PokemonPerformance gymDefense) {

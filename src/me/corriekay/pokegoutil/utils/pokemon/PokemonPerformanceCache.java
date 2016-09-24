@@ -97,6 +97,7 @@ public final class PokemonPerformanceCache {
      * @return The performance stats.
      */
     public static PokemonPerformanceStats getStats(final PokemonId pokemonId) {
+        final int HIGHEST_STATS = 1;
         return MAP.get(pokemonId);
     }
 
