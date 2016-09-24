@@ -92,6 +92,11 @@ public enum ColumnId {
         this.title = title;
     }
 
+    /**
+     * Gets the title of this column.
+     *
+     * @return The title.
+     */
     public String getTitle() {
         return title;
     }

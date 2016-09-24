@@ -101,6 +101,10 @@ public class PokemonCpUtils {
         LEVEL_CPMULTIPLIER.put(40.5F, 0.7931164F);
     }
 
+    /** Prevent initializing this class. */
+    private PokemonCpUtils() {
+    }
+
     private static float getLevel(float cpMuliplier) {
         float level;
         if (cpMuliplier < 0.734f) {
