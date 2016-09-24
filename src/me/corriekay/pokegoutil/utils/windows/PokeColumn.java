@@ -12,6 +12,7 @@ import com.pokegoapi.exceptions.NoSuchItemException;
 import me.corriekay.pokegoutil.data.enums.ColumnType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.CollectionHelper;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
@@ -20,7 +21,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonPerformanceCache;
 
 /**
- * A class that holds data relevant for each column
+ * A class that holds data relevant for each column.
  */
 public enum PokeColumn {
     POKEDEX_ID(0, "#", ColumnType.INT) {
@@ -86,17 +87,15 @@ public enum PokeColumn {
     MOVE_1(10, "Move 1", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            final Double dps1 = PokemonCalculationUtils.dpsForMove(p, true);
             return PokemonUtils.formatMove(p.getMove1())
-                + " (" + String.format("%.2f", dps1) + "dps)";
+                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, true));
         }
     },
     MOVE_2(11, "Move 2", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            final Double dps2 = PokemonCalculationUtils.dpsForMove(p, false);
             return PokemonUtils.formatMove(p.getMove2())
-                + " (" + String.format("%.2f", dps2) + "dps)";
+                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, false));
         }
     },
     CP(12, "CP", ColumnType.INT) {
@@ -155,7 +154,7 @@ public enum PokeColumn {
             if (p.getCandiesToEvolve() != 0) {
                 return String.valueOf(p.getCandiesToEvolve());
             } else {
-                return "-";
+                return StringLiterals.NO_VALUE_SIGN;
             }
         }
     },
@@ -211,11 +210,11 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             if (p.getCandiesToEvolve() != 0) {
-                int candies = p.getCandy();
-                int candiesToEvolve = p.getCandiesToEvolve();
+                final int candies = p.getCandy();
+                final int candiesToEvolve = p.getCandiesToEvolve();
 
                 int evolvable = (int) ((double) candies / candiesToEvolve);
-                int rest = (candies % candiesToEvolve);
+                int rest = candies % candiesToEvolve;
                 final boolean transferAfterEvolve = ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE);
 
                 // We iterate and get how many candies are added while evolving and if that can make up for some more evolves
@@ -229,7 +228,7 @@ public enum PokeColumn {
 
                 return String.valueOf(evolvable);
             } else {
-                return "-";
+                return StringLiterals.NO_VALUE_SIGN;
             }
         }
     },
@@ -265,14 +264,20 @@ public enum PokeColumn {
      * @param name       The name of the column.
      * @param columnType The type of the column.
      */
-    PokeColumn(int id, String name, ColumnType columnType) {
+    PokeColumn(final int id, final String name, final ColumnType columnType) {
         this.id = id;
         this.name = name;
         this.columnType = columnType;
         this.data = CollectionHelper.provideArrayList(columnType.clazz);
     }
 
-    public static PokeColumn getForId(int id) {
+    /**
+     * Gets the column for given id.
+     *
+     * @param id The id.
+     * @return The column.
+     */
+    public static PokeColumn getForId(final int id) {
         for (final PokeColumn column : PokeColumn.values()) {
             if (column.id == id) {
                 return column;

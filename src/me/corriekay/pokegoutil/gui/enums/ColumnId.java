@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * Column ID file.
  * data types:
  * 0 String - Nickname
  * 1 Integer - Pokemon Number
@@ -39,7 +40,10 @@ import java.util.Map;
  * 31 Long - duelAbility IV
  * 32 Double - gymOffense IV
  * 33 Long - gymDefense IV
+ *
+ * @deprecated The new and better enum PokeColumn should be used.
  */
+@Deprecated
 public enum ColumnId {
     NUMBER("Number"),
     NICKNAME("Nickname"),
@@ -68,19 +72,18 @@ public enum ColumnId {
     DUELABILITY("Duel Ability"),
     GYMOFFENSE("Gym Offense"),
     GYMDEFENSE("Gym Defense"),
-    MOVE1RATING("Move 1 Rating"),
-    MOVE2RATING("Move 2 Rating"),
     CPEVOLVED("CP Evolved"),
     EVOLVABLE("Evolvable"),
     DUELABILITYIV("Duel Ability IV"),
     GYMOFFENSEIV("Gym Offense IV"),
     GYMDEFENSEIV("Gym Defense IV");
 
-    private static final Map<String,ColumnId> titleMap = new HashMap<String, ColumnId>();
+    private static final Map<String, ColumnId> titleMap = new HashMap<>();
 
     static {
-        for(ColumnId id : ColumnId.values())
-            titleMap.put(id.getTitle(),id);
+        for (ColumnId id : ColumnId.values()) {
+            titleMap.put(id.getTitle(), id);
+        }
     }
 
     private String title;
@@ -89,7 +92,9 @@ public enum ColumnId {
         this.title = title;
     }
 
-    public String getTitle() { return title; }
+    public String getTitle() {
+        return title;
+    }
 
     public static ColumnId get(String title) {
         return titleMap.get(title);

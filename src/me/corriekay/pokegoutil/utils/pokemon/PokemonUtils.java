@@ -9,20 +9,26 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import com.pokegoapi.api.player.Team;
 import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.api.pokemon.PokemonMeta;
+import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import com.pokegoapi.api.pokemon.PokemonMoveMeta;
+import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.api.pokemon.PokemonType;
 import com.pokegoapi.util.PokeDictionary;
 
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 import POGOProtos.Inventory.Item.ItemIdOuterClass.ItemId;
 
 /**
- * General Pokemon helper functions
+ * General Pokemon helper functions.
  */
 public final class PokemonUtils {
+    public static final int MAX_IV = 15;
 
     /**
      * A list of all currently not existing Pokémon.
@@ -42,7 +48,7 @@ public final class PokemonUtils {
     }
 
     /**
-     * Returns the Name for the Pokémon with <c>id</c> in the current language.
+     * Returns the Name for the Pokémon with given id in the current language.
      *
      * @param id The Pokémon ID
      * @return The translated Pokémon name
@@ -50,8 +56,8 @@ public final class PokemonUtils {
     public static String getLocalPokeName(final int id) {
         final String lang = ConfigNew.getConfig().getString(ConfigKey.LANGUAGE);
 
-        Locale locale;
-        final String[] langar = lang.split("_");
+        final Locale locale;
+        final String[] langar = lang.split(StringLiterals.UNDERSCORE);
         if (langar.length == 1) {
             locale = new Locale(langar[0]);
         } else {
@@ -62,7 +68,7 @@ public final class PokemonUtils {
     }
 
     /**
-     * Returns the Name of the Pokémon <c>pokemon</c> in the current language.
+     * Returns the Name of the Pokémon pokemon in the current language.
      *
      * @param pokemon The Pokémon
      * @return The translated Pokémon name
@@ -88,16 +94,68 @@ public final class PokemonUtils {
         return "UNKNOWN_TEAM";
     }
 
-    public static String formatType(PokemonType pokemonType) {
+    /**
+     * Formats given Pokémon Type to a readable String.
+     *
+     * @param pokemonType The Pokémon Type.
+     * @return Pokémon Type String.
+     */
+    public static String formatType(final PokemonType pokemonType) {
         return StringUtils.capitalize(pokemonType.toString().toLowerCase().replaceAll("none", ""));
     }
 
-    public static String formatMove(PokemonMove move) {
-        return WordUtils.capitalize(move.toString().toLowerCase().replaceAll("_fast", "").replaceAll("_", " "));
+    /**
+     * Formats given Pokémon Move to a readable String.
+     *
+     * @param move The Pokémon Move.
+     * @return Pokémon Move String.
+     */
+    public static String formatMove(final PokemonMove move) {
+        return WordUtils.capitalize(move.toString().toLowerCase().replaceAll("_fast", "").replaceAll(StringLiterals.UNDERSCORE, StringLiterals.SPACE));
     }
 
-    public static String formatItem(ItemId item) {
-        return WordUtils.capitalize(item.toString().toLowerCase().replaceAll("item_", "").replaceAll("_", " "));
+    /**
+     * Formats given DPS (= Damage per second) to a readable String. With braces.
+     *
+     * @param dps The DPS.
+     * @return DPS String.
+     */
+    public static String formatDps(final double dps) {
+        return "(" + String.format("%.2f", dps) + " dps)";
+    }
+
+    /**
+     * Formats given Item to a readable String.
+     *
+     * @param item The Item.
+     * @return Item String.
+     */
+    public static String formatItem(final ItemId item) {
+        return WordUtils.capitalize(item.toString().toLowerCase().replaceAll("item_", "").replaceAll(StringLiterals.UNDERSCORE, StringLiterals.SPACE));
+    }
+
+    /**
+     * Checks if given Pokémon has STAB (=Same Type Attack Bonus), for primary or secondary move.
+     *
+     * @param p       The Pokémon.
+     * @param primary If it should check the primary move, or not.
+     * @return Weather or not the Pokémon has STAB.
+     */
+    public static boolean hasStab(final Pokemon p, final boolean primary) {
+        return hasStab(p.getPokemonId(), primary ? p.getMove1() : p.getMove2());
+    }
+
+    /**
+     * Checks if a Pokémon with given ID has STAB (=Same Type Attack Bonus) with given move.
+     *
+     * @param pokemonId The Pokémons ID.
+     * @param move      The move.
+     * @return Weather or not the Pokémon has STAB.
+     */
+    public static boolean hasStab(final PokemonId pokemonId, final PokemonMove move) {
+        final PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
+        final PokemonMoveMeta moveMeta = PokemonMoveMetaRegistry.getMeta(move);
+        return meta.getType1().equals(moveMeta.getType()) || meta.getType2().equals(moveMeta.getType());
     }
 }
 

@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * We don't need this class anymore, cause the Pogo-API can do all that his class does as well.
+ * Utility class to provide functions calculating CP.
+ *
+ * @deprecated We don't need this class anymore, cause the Pogo-API can do all that his class does as well.
  */
 @Deprecated
 public class PokemonCpUtils {

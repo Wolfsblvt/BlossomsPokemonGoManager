@@ -1,16 +1,18 @@
 package me.corriekay.pokegoutil.utils;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-
-import org.apache.commons.lang3.StringUtils;
-
-import java.awt.*;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
+import java.awt.Color;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.protobuf.InvalidProtocolBufferException;
+
 public final class Utilities {
+
+
+    public static final int PERCENTAGE_FACTOR = 100;
+
     /** Prevent initializing this class. */
     private Utilities() {
     }
@@ -39,8 +41,8 @@ public final class Utilities {
      * @return Percentage string.
      */
     public static String percentageWithTwoCharacters(double decimalNumber) {
-        double percentage = decimalNumber * 100;
-        return (percentage < 100) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
+        double percentage = decimalNumber * PERCENTAGE_FACTOR;
+        return (percentage < PERCENTAGE_FACTOR) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
     }
 
     public static Color randomColor() {

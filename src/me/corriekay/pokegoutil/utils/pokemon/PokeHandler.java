@@ -126,22 +126,25 @@ public class PokeHandler {
         NAME_4("Pokémon Name (First four letters)") {
             @Override
             public String get(final Pokemon p) {
+                final int length = 4;
                 final String name = String.valueOf(PokeColumn.SPECIES.get(p));
-                return (name.length() <= 4) ? name : name.substring(0, 3) + StringLiterals.DOT;
+                return (name.length() <= length) ? name : name.substring(0, length - 1) + StringLiterals.DOT;
             }
         },
         NAME_6("Pokémon Name (First six letters)") {
             @Override
             public String get(final Pokemon p) {
+                final int length = 6;
                 final String name = String.valueOf(PokeColumn.SPECIES.get(p));
-                return (name.length() <= 4) ? name : name.substring(0, 5) + StringLiterals.DOT;
+                return (name.length() <= length) ? name : name.substring(0, length - 1) + StringLiterals.DOT;
             }
         },
         NAME_8("Pokémon Name (First eight letters)") {
             @Override
             public String get(final Pokemon p) {
+                final int length = 8;
                 final String name = String.valueOf(PokeColumn.SPECIES.get(p));
-                return (name.length() <= 8) ? name : name.substring(0, 7) + StringLiterals.DOT;
+                return (name.length() <= length) ? name : name.substring(0, length - 1) + StringLiterals.DOT;
             }
         },
         CP("Combat Points") {
