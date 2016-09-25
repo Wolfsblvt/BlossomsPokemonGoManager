@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.Box;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -16,6 +15,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.device.DeviceInfo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleAutoCredentialProvider;
@@ -28,6 +28,7 @@ import com.pokegoapi.exceptions.RemoteServerException;
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.CustomDeviceInfo;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
@@ -330,6 +331,9 @@ public final class AccountController {
             try {
                 if (credentialProvider != null) {
                     go = new PokemonGo(http);
+                    if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
+                        go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
+                    }
                     go.login(credentialProvider);
                 } else {
                     throw new IllegalStateException("credentialProvider is null.");
