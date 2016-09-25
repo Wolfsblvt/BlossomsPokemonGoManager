@@ -18,7 +18,7 @@
 
     <!-- General Misc -->
     <module name="NewlineAtEndOfFile">
-        <property name="lineSeparator" value="lf" />
+        <property name="lineSeparator" value="lf"/>
     </module>
     <module name="Translation">
         <property name="fileExtensions" value="properties, translations"/>
