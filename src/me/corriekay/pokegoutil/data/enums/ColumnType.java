@@ -4,60 +4,73 @@ import java.util.Comparator;
 
 import javax.swing.table.TableCellRenderer;
 
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.windows.renderer.DefaultCellRenderer;
 import me.corriekay.pokegoutil.utils.windows.renderer.NumberCellRenderer;
 import me.corriekay.pokegoutil.utils.windows.renderer.PercentageCellRenderer;
 
-
+/**
+ * Enum that defines all possible column types for table columns.
+ */
 public enum ColumnType {
     DATE(
         String.class,
-        Comparators.dateStringComparator
+        Comparators.DATE_STRING
     ),
     INT(
         Integer.class,
-        Comparators.intComparator,
-        CellRenderers.numberCellRenderer
+        Comparators.INT,
+        CellRenderers.NUMBER
+    ),
+    LONG(
+        Integer.class,
+        Comparators.LONG,
+        CellRenderers.NUMBER
     ),
     DOUBLE(
         Double.class,
-        Comparators.doubleComparator,
-        CellRenderers.numberCellRenderer
+        Comparators.DOUBLE,
+        CellRenderers.NUMBER
     ),
     NULLABLE_INT(
         String.class,
-        Comparators.nullableIntComparator,
-        CellRenderers.numberCellRenderer
+        Comparators.NULLABLE_INT,
+        CellRenderers.NUMBER
     ),
     PERCENTAGE(
         Double.class,
-        Comparators.doubleComparator,
-        CellRenderers.percentageCellRenderer
+        Comparators.DOUBLE,
+        CellRenderers.PERCENTAGE
     ),
     STRING(
         String.class,
-        Comparators.stringComparator
+        Comparators.STRING
     );
+
+    public final Class clazz;
+    public final Comparator comparator;
+    public final TableCellRenderer tableCellRenderer;
 
     /**
      * This private class is needed to create the comparators that are used in this enum.
      */
     private static final class Comparators {
         // The comparators.
-        public static final Comparator<String> dateStringComparator = (date1, date2) -> DateHelper.fromString(date1)
+        private static final Comparator<String> DATE_STRING = (date1, date2) -> DateHelper.fromString(date1)
             .compareTo(DateHelper.fromString(date2));
-        public static final Comparator<Double> doubleComparator = Double::compareTo;
-        public static final Comparator<Integer> intComparator = Integer::compareTo;
-        public static final Comparator<String> stringComparator = String::compareTo;
-        public static final Comparator<String> nullableIntComparator = (s1, s2) -> {
-            if ("-".equals(s1)) {
-                s1 = "0";
+        private static final Comparator<Double> DOUBLE = Double::compareTo;
+        private static final Comparator<Integer> INT = Integer::compareTo;
+        private static final Comparator<Long> LONG = Long::compareTo;
+        private static final Comparator<String> STRING = String::compareTo;
+        private static final Comparator<String> NULLABLE_INT = (left, right) -> {
+            if (StringLiterals.NO_VALUE_SIGN.equals(left)) {
+                left = String.valueOf(0);
             }
-            if ("-".equals(s2)) {
-                s2 = "0";
+            if (StringLiterals.NO_VALUE_SIGN.equals(right)) {
+                right = String.valueOf(0);
             }
-            return Integer.compare(Integer.parseInt(s1), Integer.parseInt(s2));
+            return Integer.compare(Integer.parseInt(left), Integer.parseInt(right));
         };
     }
 
@@ -65,15 +78,10 @@ public enum ColumnType {
      * This private class is needed to create the cell renderers that are used in this enum.
      */
     private static final class CellRenderers {
-        public static final DefaultCellRenderer defaultCellRenderer = new DefaultCellRenderer();
-        public static final NumberCellRenderer numberCellRenderer = new NumberCellRenderer();
-        public static final PercentageCellRenderer percentageCellRenderer = new PercentageCellRenderer();
+        public static final DefaultCellRenderer DEFAULT = new DefaultCellRenderer();
+        public static final NumberCellRenderer NUMBER = new NumberCellRenderer();
+        public static final PercentageCellRenderer PERCENTAGE = new PercentageCellRenderer();
     }
-
-
-    public final Class clazz;
-    public final Comparator comparator;
-    public final TableCellRenderer tableCellRenderer;
 
     /**
      * Constructor to create a column type enum field.
@@ -82,7 +90,7 @@ public enum ColumnType {
      * @param comparator The comparator for that column.
      */
     ColumnType(final Class clazz, final Comparator comparator) {
-        this(clazz, comparator, CellRenderers.defaultCellRenderer);
+        this(clazz, comparator, CellRenderers.DEFAULT);
     }
 
     /**

@@ -1,5 +1,8 @@
 package me.corriekay.pokegoutil.data.enums;
 
+/**
+ * An enum containing all different login types.
+ */
 public enum LoginType {
     GOOGLE_AUTH,
     GOOGLE_APP_PASSWORD,
@@ -14,7 +17,7 @@ public enum LoginType {
      * @param loginType The given login type.
      * @return Weather or not the login type is google.
      */
-    public static boolean isGoogle(LoginType loginType) {
+    public static boolean isGoogle(final LoginType loginType) {
         return loginType == GOOGLE_APP_PASSWORD || loginType == GOOGLE_AUTH;
     }
 }
