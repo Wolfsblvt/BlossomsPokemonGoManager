@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.utils.windows;
+package me.corriekay.pokegoutil.utils.windows.renderer;
 
 import java.awt.Component;
 
@@ -24,11 +24,23 @@ public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
                                                    boolean hasFocus, int rowIndex, int columnIndex) {
+        setNativeLookAndFeel(table, isSelected);
         setText(value.toString());
-        setOpaque(true);
-        setDefaultSelectionColors(table, isSelected, this);
-        setFont(table.getFont());
         return this;
+    }
+
+    /**
+     * Sets the native look and feel for the TableCellRenderer.
+     * This method should be called first in getTableCellRendererComponent() when extending this CellRenderer,
+     * or should be overwritten and called then.
+     *
+     * @param table      The table.
+     * @param isSelected If the cell is selected.
+     */
+    public void setNativeLookAndFeel(JTable table, boolean isSelected) {
+        setOpaque(true);
+        setDefaultSelectionColors(table, isSelected);
+        setFont(table.getFont());
     }
 
     /**
@@ -36,15 +48,14 @@ public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
      *
      * @param table      The table.
      * @param isSelected If the cell is selected.
-     * @param cell       The cell.
      */
-    private void setDefaultSelectionColors(JTable table, boolean isSelected, JLabel cell) {
+    private void setDefaultSelectionColors(JTable table, boolean isSelected) {
         if (isSelected) {
-            cell.setBackground(table.getSelectionBackground());
-            cell.setForeground(table.getSelectionForeground());
+            this.setBackground(table.getSelectionBackground());
+            this.setForeground(table.getSelectionForeground());
         } else {
-            cell.setBackground(table.getBackground());
-            cell.setForeground(table.getForeground());
+            this.setBackground(table.getBackground());
+            this.setForeground(table.getForeground());
         }
     }
 }

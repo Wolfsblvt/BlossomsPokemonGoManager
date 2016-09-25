@@ -206,12 +206,6 @@ public class PokemonTableController extends BaseController<GridPane> {
                 case GYMDEFENSE :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymDefenseProperty());
                     break;
-                case MOVE1RATING :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().move1RatingProperty());
-                    break;
-                case MOVE2RATING :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().move2RatingProperty());
-                    break;
                 case CPEVOLVED :
                     col.setCellValueFactory(cellData -> (Property) cellData.getValue().cpEvolvedProperty());
                     break;

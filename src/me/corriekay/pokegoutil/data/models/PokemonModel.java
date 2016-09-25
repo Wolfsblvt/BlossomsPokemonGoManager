@@ -11,6 +11,13 @@ import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
 
+import me.corriekay.pokegoutil.data.managers.AccountManager;
+import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.helpers.DateHelper;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+
 import POGOProtos.Enums.PokemonFamilyIdOuterClass;
 import POGOProtos.Enums.PokemonIdOuterClass;
 import javafx.beans.property.BooleanProperty;
@@ -23,12 +30,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import me.corriekay.pokegoutil.data.managers.AccountManager;
-import me.corriekay.pokegoutil.utils.Utilities;
-import me.corriekay.pokegoutil.utils.helpers.DateHelper;
-import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 public class PokemonModel {
     private static final String UNDERSCORE = "_";
@@ -62,8 +63,6 @@ public class PokemonModel {
     private final LongProperty duelAbilityIv = new SimpleLongProperty();
     private final DoubleProperty gymOffenseIv = new SimpleDoubleProperty();
     private final LongProperty gymDefenseIv = new SimpleLongProperty();
-    private final StringProperty move1Rating = new SimpleStringProperty();
-    private final StringProperty move2Rating = new SimpleStringProperty();
     private final StringProperty cpEvolved = new SimpleStringProperty();
     private final StringProperty evolvable = new SimpleStringProperty();
 
@@ -217,16 +216,8 @@ public class PokemonModel {
         return move1.get();
     }
 
-    public String getMove1Rating() {
-        return move1Rating.get();
-    }
-
     public String getMove2() {
         return move2.get();
-    }
-
-    public String getMove2Rating() {
-        return move2Rating.get();
     }
 
     public String getNickname() {
@@ -259,9 +250,9 @@ public class PokemonModel {
 
     public String getSummary() {
         return String.format(
-                "%s (%s) IV: %s CP: %d",
-                getNickname(), getSpecies(),
-                getIv(), getCp());
+            "%s (%s) IV: %s CP: %d",
+            getNickname(), getSpecies(),
+            getIv(), getCp());
     }
 
     public String getType1() {
@@ -297,27 +288,27 @@ public class PokemonModel {
 
         setNumId(meta.getNumber());
         setNickname(pokemon.getNickname());
-        setSpecies(PokeHandler.getLocalPokeName(pokemon));
+        setSpecies(PokemonUtils.getLocalPokeName(pokemon));
         setLevel(pokemon.getLevel());
-        setIv(Utilities.percentageWithTwoCharacters(PokemonUtils.ivRating(pokemon)));
+        setIv(Utilities.percentageWithTwoCharacters(PokemonCalculationUtils.ivRating(pokemon)));
         setAtk(pokemon.getIndividualAttack());
         setDef(pokemon.getIndividualDefense());
         setStam(pokemon.getIndividualStamina());
         setType1(StringUtils.capitalize(meta.getType1().toString().toLowerCase()));
         setType2(StringUtils.capitalize(meta.getType2().toString().toLowerCase()));
 
-        final Double dps1 = PokemonUtils.dpsForMove(pokemon, true);
-        final Double dps2 = PokemonUtils.dpsForMove(pokemon, false);
+        final Double dps1 = PokemonCalculationUtils.dpsForMove(pokemon, true);
+        final Double dps2 = PokemonCalculationUtils.dpsForMove(pokemon, false);
         setMove1(String.format("%s (%.2fdps)",
-                WordUtils.capitalize(
-                        pokemon.getMove1().toString().toLowerCase()
-                                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-                dps1));
+            WordUtils.capitalize(
+                pokemon.getMove1().toString().toLowerCase()
+                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+            dps1));
         setMove2(String.format("%s (%.2fdps)",
-                WordUtils.capitalize(
-                        pokemon.getMove2().toString().toLowerCase()
-                                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-                dps2));
+            WordUtils.capitalize(
+                pokemon.getMove2().toString().toLowerCase()
+                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+            dps2));
 
         setCp(pokemon.getCp());
         setHp(pokemon.getMaxStamina());
@@ -347,17 +338,17 @@ public class PokemonModel {
                 if (vap != null && fla != null && jol != null) {
                     final Comparator<PokemonMeta> cMeta = (m1, m2) -> {
                         final int comb1 = PokemonCpUtils.getMaxCp(
-                                m1.getBaseAttack(),
-                                m1.getBaseDefense(),
-                                m1.getBaseStamina());
+                            m1.getBaseAttack(),
+                            m1.getBaseDefense(),
+                            m1.getBaseStamina());
                         final int comb2 = PokemonCpUtils.getMaxCp(
-                                m2.getBaseAttack(),
-                                m2.getBaseDefense(),
-                                m2.getBaseStamina());
+                            m2.getBaseAttack(),
+                            m2.getBaseDefense(),
+                            m2.getBaseStamina());
                         return comb1 - comb2;
                     };
                     highestFamilyId = PokemonIdOuterClass.PokemonId.forNumber(
-                            Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                        Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
                 }
             } else {
                 // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
@@ -381,7 +372,7 @@ public class PokemonModel {
                 setMaxEvolvedCpCurrent(PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
                 setMaxEvolvedCp(PokemonCpUtils.getMaxCp(attack, defense, stamina));
                 setCpEvolved(String.valueOf(
-                        PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, pokemon.getLevel())));
+                    PokemonCpUtils.getCpForPokemonLevel(attack, defense, stamina, pokemon.getLevel())));
             }
         }
 
@@ -399,19 +390,17 @@ public class PokemonModel {
         }
         setDustToLevel(pokemon.getStardustCostsForPowerup());
         setPokeball(WordUtils.capitalize(
-                pokemon.getPokeball().toString().toLowerCase()
+            pokemon.getPokeball().toString().toLowerCase()
                 .replaceAll("item_", "").replaceAll(UNDERSCORE, " ")));
         setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(pokemon.getCreationTimeMs())));
         setIsFavorite(pokemon.isFavorite());
-        setDuelAbility(PokemonUtils.duelAbility(pokemon, false));
-        setGymOffense(PokemonUtils.gymOffense(pokemon, false));
-        setGymDefense(PokemonUtils.gymDefense(pokemon, false));
+        setDuelAbility(PokemonCalculationUtils.duelAbility(pokemon));
+        setGymOffense(PokemonCalculationUtils.gymOffense(pokemon));
+        setGymDefense(PokemonCalculationUtils.gymDefense(pokemon));
 
-        setDuelAbilityIv(PokemonUtils.duelAbility(pokemon, true));
-        setGymOffenseIv(PokemonUtils.gymOffense(pokemon, true));
-        setGymDefenseIv(PokemonUtils.gymDefense(pokemon, true));
-        setMove1Rating(PokemonUtils.moveRating(pokemon, true));
-        setMove2Rating(PokemonUtils.moveRating(pokemon, false));
+        setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
+        setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
+        setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
     }
 
     public BooleanProperty isFavoriteProperty() {
@@ -454,16 +443,8 @@ public class PokemonModel {
         return move1;
     }
 
-    public StringProperty move1RatingProperty() {
-        return move1Rating;
-    }
-
     public StringProperty move2Property() {
         return move2;
-    }
-
-    public StringProperty move2RatingProperty() {
-        return move2Rating;
     }
 
     public StringProperty nicknameProperty() {
@@ -574,16 +555,8 @@ public class PokemonModel {
         this.move1.set(move1);
     }
 
-    public void setMove1Rating(final String move1Rating) {
-        this.move1Rating.set(move1Rating);
-    }
-
     public void setMove2(final String move2) {
         this.move2.set(move2);
-    }
-
-    public void setMove2Rating(final String move2Rating) {
-        this.move2Rating.set(move2Rating);
     }
 
     public void setNickname(final String nickname) {

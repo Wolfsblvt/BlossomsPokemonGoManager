@@ -9,6 +9,12 @@ package me.corriekay.pokegoutil.utils.pokemon;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility class to provide functions calculating CP.
+ *
+ * @deprecated We don't need this class anymore, cause the Pogo-API can do all that his class does as well.
+ */
+@Deprecated
 public class PokemonCpUtils {
     private static final Map<Float, Float> LEVEL_CPMULTIPLIER = new HashMap<>();
 
@@ -95,6 +101,10 @@ public class PokemonCpUtils {
         LEVEL_CPMULTIPLIER.put(40.5F, 0.7931164F);
     }
 
+    /** Prevent initializing this class. */
+    private PokemonCpUtils() {
+    }
+
     private static float getLevel(float cpMuliplier) {
         float level;
         if (cpMuliplier < 0.734f) {
@@ -147,10 +157,10 @@ public class PokemonCpUtils {
     /**
      * Get the CP for the given values
      *
-     * @param attack       All attack values combined
-     * @param defense      All defense values combined
-     * @param stamina      All stamina values combined
-     * @param level the Pokémon level for which the CP should be calculated
+     * @param attack  All attack values combined
+     * @param defense All defense values combined
+     * @param stamina All stamina values combined
+     * @param level   the Pokémon level for which the CP should be calculated
      * @return Maximum CP for these levels
      */
     public static int getCpForPokemonLevel(int attack, int defense, int stamina, float level) {
