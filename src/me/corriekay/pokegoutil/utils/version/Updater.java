@@ -13,6 +13,7 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
+import me.corriekay.pokegoutil.utils.helpers.FileHelper;
 import me.corriekay.pokegoutil.utils.version.thirdparty.ComparableVersion;
 
 /**
@@ -39,7 +40,7 @@ public class Updater {
         // Read the local version file as version
         ClassLoader classLoader = getClass().getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream(VERSION_FILENAME);
-        String versionString = readVersionFile(inputStream);
+        String versionString = FileHelper.readFile(inputStream);
         currentVersion = new ComparableVersion(versionString);
         System.out.println("Current version: " + versionString);
     }
@@ -72,10 +73,10 @@ public class Updater {
      * Tries to save it locally under latestStable.
      */
     public void queryLatestVersion() {
-        String callUrl = LATEST_VERSION_URL + VERSION_FILENAME;
+        final String callUrl = LATEST_VERSION_URL + VERSION_FILENAME;
         try {
-            URL url = new URL(callUrl);
-            String latestVersionString = readVersionFile(url.openStream());
+            final URL url = new URL(callUrl);
+            final String latestVersionString = FileHelper.readFile(url.openStream());
             latestStable = new ComparableVersion(latestVersionString);
             System.out.println("Latest version from server: " + latestVersionString);
         } catch (IOException ex) {
@@ -117,19 +118,19 @@ public class Updater {
                 }
 
                 String message = "A new version was found on GitHub." + StringLiterals.NEWLINE
-                        + "Version: " + latestStable + StringLiterals.NEWLINE
-                        + StringLiterals.NEWLINE
-                        + "Your current version: " + currentVersion + StringLiterals.NEWLINE
-                        + StringLiterals.NEWLINE
-                        + "It should be updated." + StringLiterals.NEWLINE
-                        + "Click 'Download' to be redirected to GitHub where you can download the new version." + StringLiterals.NEWLINE
-                        + "Click 'Later' to be reminded on next program start." + StringLiterals.NEWLINE
-                        + "Click 'Ignore' and you won't be notified again until the next version releases.";
+                    + "Version: " + latestStable + StringLiterals.NEWLINE
+                    + StringLiterals.NEWLINE
+                    + "Your current version: " + currentVersion + StringLiterals.NEWLINE
+                    + StringLiterals.NEWLINE
+                    + "It should be updated." + StringLiterals.NEWLINE
+                    + "Click 'Download' to be redirected to GitHub where you can download the new version." + StringLiterals.NEWLINE
+                    + "Click 'Later' to be reminded on next program start." + StringLiterals.NEWLINE
+                    + "Click 'Ignore' and you won't be notified again until the next version releases.";
 
-                String[] options = new String[]{"Download", "Later", "Ignore this Version"};
+                String[] options = new String[] {"Download", "Later", "Ignore this Version"};
                 int response = JOptionPane.showOptionDialog(null, message, versionFoundString,
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-                        null, options, options[0]);
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                    null, options, options[0]);
 
                 switch (response) {
                     case 0: // Download
@@ -152,30 +153,5 @@ public class Updater {
                 System.out.println("Latest version " + latestStable.toString() + " found, but ignored.");
             }
         }
-    }
-
-    /**
-     * Read version file from given input stream and returns the version.
-     *
-     * @param inputStream The InputStream of the version file.
-     * @return The version string.
-     */
-    private String readVersionFile(InputStream inputStream) {
-        String str;
-        StringBuilder buf = new StringBuilder();
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            while ((str = reader.readLine()) != null) {
-                buf.append(str).append("\n");
-            }
-        } catch (IOException e) {
-            System.out.println("Could not read file:" + e.toString());
-        } finally {
-            try {
-                inputStream.close();
-            } catch (Throwable ignore) {
-            }
-        }
-        return buf.toString().trim();
     }
 }

@@ -6,8 +6,13 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.charset.Charset;
+
+import me.corriekay.pokegoutil.utils.StringLiterals;
 
 public final class FileHelper {
+    public static final Charset CHARSET = Charset.forName("UTF-8");
+
     /** Prevent initializing this class. */
     private FileHelper() {
     }
@@ -72,10 +77,6 @@ public final class FileHelper {
         }
     }
 
-    public static String readFile(String url) {
-        return readFile(new File(url));
-    }
-
     public static String readFile(File file) {
         try {
             BufferedReader in = new BufferedReader(new FileReader(file));
@@ -98,6 +99,31 @@ public final class FileHelper {
             e.printStackTrace(); //TODO tagging for future exception handling/logging
         }
         return null;
+    }
+
+    /**
+     * Read file from given input stream and returns it.
+     *
+     * @param inputStream The InputStream of the file.
+     * @return The file as string.
+     */
+    public static String readFile(final InputStream inputStream) {
+        String str;
+        final StringBuilder buf = new StringBuilder();
+        try {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, CHARSET));
+            while ((str = reader.readLine()) != null) {
+                buf.append(str).append(StringLiterals.NEWLINE);
+            }
+        } catch (IOException e) {
+            System.out.println("Could not read file:" + e.toString());
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException ignore) {
+            }
+        }
+        return buf.toString().trim();
     }
 
     public static void saveFile(File file, String saveme) {
