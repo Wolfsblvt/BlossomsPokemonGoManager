@@ -9,6 +9,7 @@ import javax.swing.table.TableCellRenderer;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.NoSuchItemException;
 
+import me.corriekay.pokegoutil.utils.AutoIncrementer;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
@@ -23,93 +24,93 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
  * A class that holds data relevant for each column.
  */
 public enum PokeColumn {
-    POKEDEX_ID(0, "#", ColumnType.INT) {
+    POKEDEX_ID("#", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getMeta().getNumber();
         }
     },
-    NICKNAME(1, "Nickname", ColumnType.STRING) {
+    NICKNAME("Nickname", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             return p.getNickname();
         }
     },
-    SPECIES(2, "Species", ColumnType.STRING) {
+    SPECIES("Species", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             return PokemonUtils.getLocalPokeName(p);
         }
     },
-    IV_RATING(3, "IV %", ColumnType.PERCENTAGE) {
+    IV_RATING("IV %", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
             return PokemonCalculationUtils.ivRating(p);
         }
     },
-    LEVEL(4, "Lvl", ColumnType.DOUBLE) {
+    LEVEL("Lvl", ColumnType.DOUBLE) {
         @Override
         public Object get(final Pokemon p) {
             return p.getLevel();
         }
     },
-    IV_ATTACK(5, "Atk", ColumnType.INT) {
+    IV_ATTACK("Atk", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getIndividualAttack();
         }
     },
-    IV_DEFENSE(6, "Def", ColumnType.INT) {
+    IV_DEFENSE("Def", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getIndividualDefense();
         }
     },
-    IV_STAMINA(7, "Stam", ColumnType.INT) {
+    IV_STAMINA("Stam", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getIndividualStamina();
         }
     },
-    TYPE_1(8, "Type 1", ColumnType.STRING) {
+    TYPE_1("Type 1", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             return PokemonUtils.formatType(p.getMeta().getType1());
         }
     },
-    TYPE_2(9, "Type 2", ColumnType.STRING) {
+    TYPE_2("Type 2", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             return PokemonUtils.formatType(p.getMeta().getType2());
         }
     },
-    MOVE_1(10, "Move 1", ColumnType.STRING) {
+    MOVE_1("Move 1", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             return PokemonUtils.formatMove(p.getMove1())
                 + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, true));
         }
     },
-    MOVE_2(11, "Move 2", ColumnType.STRING) {
+    MOVE_2("Move 2", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             return PokemonUtils.formatMove(p.getMove2())
                 + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, false));
         }
     },
-    CP(12, "CP", ColumnType.INT) {
+    CP("CP", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getCp();
         }
     },
-    HP(13, "HP", ColumnType.INT) {
+    HP("HP", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getMaxStamina();
         }
     },
-    MAX_CP_CUR(14, "Max CP (Cur)", ColumnType.INT) {
+    MAX_CP_CUR("Max CP (Cur)", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             try {
@@ -119,7 +120,7 @@ public enum PokeColumn {
             }
         }
     },
-    MAX_CP_40(15, "Max CP (40)", ColumnType.INT) {
+    MAX_CP_40("Max CP (40)", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             try {
@@ -129,25 +130,25 @@ public enum PokeColumn {
             }
         }
     },
-    MAX_CP_EVOLVED_CUR(16, "Max CP Evolved (Cur)", ColumnType.INT) {
+    MAX_CP_EVOLVED_CUR("Max CP Evolved (Cur)", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getMaxCpFullEvolveAndPowerupForPlayer();
         }
     },
-    MAX_CP_EVOLVED_40(17, "Max CP Evolved (40)", ColumnType.INT) {
+    MAX_CP_EVOLVED_40("Max CP Evolved (40)", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getCpFullEvolveAndPowerup();
         }
     },
-    CANDIES(18, "Candies", ColumnType.INT) {
+    CANDIES("Candies", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getCandy();
         }
     },
-    CANDIES_TO_EVOLVE(19, "To Evolve", ColumnType.NULLABLE_INT) {
+    CANDIES_TO_EVOLVE("To Evolve", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
             if (p.getCandiesToEvolve() != 0) {
@@ -157,55 +158,55 @@ public enum PokeColumn {
             }
         }
     },
-    STARDUST_TO_POWERUP(20, "Stardust", ColumnType.INT) {
+    STARDUST_TO_POWERUP("Stardust", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getStardustCostsForPowerup();
         }
     },
-    CAUGHT_WITH(21, "Caught With", ColumnType.STRING) {
+    CAUGHT_WITH("Caught With", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             return PokemonUtils.formatItem(p.getPokeball());
         }
     },
-    CAUGHT_TIME(22, "Caught Time", ColumnType.DATE) {
+    CAUGHT_TIME("Caught Time", ColumnType.DATE) {
         @Override
         public Object get(final Pokemon p) {
             return DateHelper.toString(DateHelper.fromTimestamp(p.getCreationTimeMs()));
         }
     },
-    FAVORITE(23, "Favorite", ColumnType.STRING) {
+    FAVORITE("Favorite", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             return (p.isFavorite()) ? "Yes" : "";
         }
     },
-    DUEL_ABILITY(24, "Duel Ability", ColumnType.PERCENTAGE) {
+    DUEL_ABILITY("Duel Ability", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
             return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonPerformanceCache.getHighestStats().duelAbility.value);
         }
     },
-    GYM_OFFENSE(25, "Gym Offense", ColumnType.PERCENTAGE) {
+    GYM_OFFENSE("Gym Offense", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
             return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonPerformanceCache.getHighestStats().gymOffense.value);
         }
     },
-    GYM_DEFENSE(26, "Gym Defense", ColumnType.PERCENTAGE) {
+    GYM_DEFENSE("Gym Defense", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
             return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonPerformanceCache.getHighestStats().gymDefense.value);
         }
     },
-    CP_EVOLVED(27, "CP Evolved", ColumnType.NULLABLE_INT) {
+    CP_EVOLVED("CP Evolved", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getCpAfterFullEvolve();
         }
     },
-    EVOLVABLE_COUNT(28, "Evolvable", ColumnType.NULLABLE_INT) {
+    EVOLVABLE_COUNT("Evolvable", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
             if (p.getCandiesToEvolve() != 0) {
@@ -231,25 +232,24 @@ public enum PokeColumn {
             }
         }
     },
-    DUEL_ABILITY_RATING(29, "Duel Ability Rating", ColumnType.PERCENTAGE) {
+    DUEL_ABILITY_RATING("Duel Ability Rating", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
             return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonPerformanceCache.getStats(p.getPokemonId()).duelAbility.value);
         }
     },
-    GYM_OFFENSE_RATING(30, "Gym Offense Rating", ColumnType.PERCENTAGE) {
+    GYM_OFFENSE_RATING("Gym Offense Rating", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
             return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonPerformanceCache.getStats(p.getPokemonId()).gymOffense.value);
         }
     },
-    GYM_DEFENSE_RATING(31, "Gym Defense Rating", ColumnType.PERCENTAGE) {
+    GYM_DEFENSE_RATING("Gym Defense Rating", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
             return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonPerformanceCache.getStats(p.getPokemonId()).gymDefense.value);
         }
     };
-
 
     public final int id;
     public final String name;
@@ -259,12 +259,11 @@ public enum PokeColumn {
     /**
      * Constructor to create the enum entries.
      *
-     * @param id         The id of the column.
      * @param name       The name of the column.
      * @param columnType The type of the column.
      */
-    PokeColumn(final int id, final String name, final ColumnType columnType) {
-        this.id = id;
+    PokeColumn(final String name, final ColumnType columnType) {
+        this.id = InternalAutoIncrementer.INSTANCE.get();
         this.name = name;
         this.columnType = columnType;
         this.data = CollectionHelper.provideArrayList(columnType.clazz);
@@ -312,4 +311,11 @@ public enum PokeColumn {
      * @return The data that has to be displayed
      */
     public abstract Object get(Pokemon p);
+
+    /**
+     * We need an wrapper for the auto-incrementer here, so that we can access it statically.
+     */
+    private static class InternalAutoIncrementer {
+        static final AutoIncrementer INSTANCE = new AutoIncrementer(1);
+    }
 }
