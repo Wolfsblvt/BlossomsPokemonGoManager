@@ -269,7 +269,10 @@
             <property name="severity" value="warning"/>
             <property name="format" value="(TODO)|(FIXME)"/>
         </module>
-        <module name="TrailingComment"/>
+        <module name="TrailingComment">
+            <!-- We allow trailing comments on "case xxx:" lines too, to describe what the case does. -->
+            <property name="format" value="^((\s*)|(\s*case(.*?):\s*))$"/>
+        </module>
         <module name="UncommentedMain">
             <property name="excludedClasses" value="\.Main$"/>
         </module>

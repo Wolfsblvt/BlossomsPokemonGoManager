@@ -13,10 +13,10 @@ import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
+import me.corriekay.pokegoutil.data.enums.PokeColumn;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.UnicodeHelper;
-import me.corriekay.pokegoutil.utils.windows.PokeColumn;
 
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 
@@ -53,7 +53,7 @@ public class PokeHandler {
     public static NicknamePokemonResponse.Result renameWithPattern(final String pattern, final Pokemon pokemon) {
         final PokeNick pokeNick = generatePokemonNickname(pattern, pokemon);
 
-        if (pokeNick.equals(pokemon.getNickname())) {
+        if (pokeNick.toString().equals(pokemon.getNickname())) {
             // Why renaming to the same nickname?
             return NicknamePokemonResponse.Result.UNSET; // We need to use UNSET here. No chance to extend the enum
         }

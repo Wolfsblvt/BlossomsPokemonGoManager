@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.utils.windows;
+package me.corriekay.pokegoutil.data.enums;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,7 +10,6 @@ import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.NoSuchItemException;
 import com.pokegoapi.google.common.geometry.S2CellId;
 
-import me.corriekay.pokegoutil.data.enums.ColumnType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;

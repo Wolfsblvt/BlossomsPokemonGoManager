@@ -306,11 +306,11 @@ public class PokemonTab extends JPanel {
             final PokeNick pokeNick = PokeHandler.generatePokemonNickname(renamePattern, pokemon);
 
             // We check if the Pokemon was skipped
-            final boolean isSkipped = (pokeNick.equals(pokemon.getNickname())
-                && renameResult.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE);
+            final boolean isSkipped = pokeNick.toString().equals(pokemon.getNickname())
+                && renameResult.getNumber() == NicknamePokemonResponse.Result.UNSET_VALUE;
             if (isSkipped) {
                 System.out.println(String.format(
-                    "Skipped renaming %s, already named %s",
+                    "Skipped renaming %s, already named \"%s\"",
                     PokemonUtils.getLocalPokeName(pokemon),
                     pokemon.getNickname()));
                 skipped.increment();
@@ -321,7 +321,7 @@ public class PokemonTab extends JPanel {
                 success.increment();
                 if (pokeNick.isTooLong()) {
                     System.out.println(String.format(
-                        "WARNING: Nickname \"%s\" is too long. Get's cut to: %s",
+                        "WARNING: Nickname \"%s\" is too long. Get's cut to: \"%s\"",
                         pokeNick.fullNickname,
                         pokeNick.toString()));
                 }
@@ -333,7 +333,7 @@ public class PokemonTab extends JPanel {
             } else {
                 err.increment();
                 System.out.println(String.format(
-                    "Renaming %s failed! Code: %s; Nick: %s",
+                    "Renaming %s failed! Code: %s; Nick: \"%s\"",
                     PokemonUtils.getLocalPokeName(pokemon),
                     renameResult.toString(),
                     PokeHandler.generatePokemonNickname(renamePattern, pokemon)));

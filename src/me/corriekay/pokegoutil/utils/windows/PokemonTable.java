@@ -1,21 +1,25 @@
 package me.corriekay.pokegoutil.utils.windows;
 
-import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.api.pokemon.Pokemon;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
-import me.corriekay.pokegoutil.utils.ConfigKey;
-import me.corriekay.pokegoutil.utils.ConfigNew;
-import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
-
-import javax.swing.*;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
 import javax.swing.RowSorter.SortKey;
+import javax.swing.SortOrder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.pokemon.Pokemon;
+
+import me.corriekay.pokegoutil.data.enums.PokeColumn;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 
 @SuppressWarnings("serial")
 public class PokemonTable extends JTable {

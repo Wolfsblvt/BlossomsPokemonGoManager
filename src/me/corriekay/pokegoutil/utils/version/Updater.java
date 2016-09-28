@@ -1,10 +1,8 @@
 package me.corriekay.pokegoutil.utils.version;
 
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
@@ -19,7 +17,7 @@ import me.corriekay.pokegoutil.utils.version.thirdparty.ComparableVersion;
 /**
  * An Updater which checks for a newer stable version on GitHub, of this tool.
  */
-public class Updater {
+public final class Updater {
 
     public static final String VERSION_FILENAME = "version.txt";
     public static final String LATEST_VERSION_URL = "https://raw.githubusercontent.com/wolfsblvt/BlossomsPokemonGoManager/master/src/main/resources/";
@@ -38,9 +36,9 @@ public class Updater {
      */
     private Updater() {
         // Read the local version file as version
-        ClassLoader classLoader = getClass().getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream(VERSION_FILENAME);
-        String versionString = FileHelper.readFile(inputStream);
+        final ClassLoader classLoader = getClass().getClassLoader();
+        final InputStream inputStream = classLoader.getResourceAsStream(VERSION_FILENAME);
+        final String versionString = FileHelper.readFile(inputStream);
         currentVersion = new ComparableVersion(versionString);
         System.out.println("Current version: " + versionString);
     }
@@ -107,7 +105,7 @@ public class Updater {
     public void checkForNewVersion() {
         queryLatestVersion();
         if (hasNewerVersion()) {
-            String skipVersion = config.getString(ConfigKey.SKIP_VERSION);
+            final String skipVersion = config.getString(ConfigKey.SKIP_VERSION);
             if (!latestStable.toString().equals(skipVersion)) {
                 final String versionFoundString = "New version found! Version: ";
                 System.out.println(versionFoundString + latestStable.toString());
@@ -117,7 +115,7 @@ public class Updater {
                     config.delete(ConfigKey.SKIP_VERSION);
                 }
 
-                String message = "A new version was found on GitHub." + StringLiterals.NEWLINE
+                final String message = "A new version was found on GitHub." + StringLiterals.NEWLINE
                     + "Version: " + latestStable + StringLiterals.NEWLINE
                     + StringLiterals.NEWLINE
                     + "Your current version: " + currentVersion + StringLiterals.NEWLINE
@@ -127,14 +125,14 @@ public class Updater {
                     + "Click 'Later' to be reminded on next program start." + StringLiterals.NEWLINE
                     + "Click 'Ignore' and you won't be notified again until the next version releases.";
 
-                String[] options = new String[] {"Download", "Later", "Ignore this Version"};
-                int response = JOptionPane.showOptionDialog(null, message, versionFoundString,
+                final String[] options = new String[] {"Download", "Later", "Ignore this Version"};
+                final int response = JOptionPane.showOptionDialog(null, message, versionFoundString,
                     JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                     null, options, options[0]);
 
                 switch (response) {
                     case 0: // Download
-                        String latestReleaseUrl = "https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases/latest";
+                        final String latestReleaseUrl = "https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases/latest";
                         Browser.openUrl(latestReleaseUrl);
                         System.exit(0);
                         break;
