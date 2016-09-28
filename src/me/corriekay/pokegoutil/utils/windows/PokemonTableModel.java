@@ -10,6 +10,8 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.pokemon.Pokemon;
 
+import me.corriekay.pokegoutil.data.enums.PokeColumn;
+
 @SuppressWarnings( {"serial", "rawtypes"})
 
 public class PokemonTableModel extends AbstractTableModel {
