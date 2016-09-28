@@ -53,7 +53,7 @@ public class PokeHandler {
     public static NicknamePokemonResponse.Result renameWithPattern(final String pattern, final Pokemon pokemon) {
         final PokeNick pokeNick = generatePokemonNickname(pattern, pokemon);
 
-        if (pokeNick.equals(pokemon.getNickname())) {
+        if (pokeNick.toString().equals(pokemon.getNickname())) {
             // Why renaming to the same nickname?
             return NicknamePokemonResponse.Result.UNSET; // We need to use UNSET here. No chance to extend the enum
         }
