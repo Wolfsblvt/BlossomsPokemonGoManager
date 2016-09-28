@@ -436,16 +436,16 @@ public final class AccountController {
                 config.delete(ConfigKey.LOGIN_PTC_USERNAME);
                 config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
                 break;
+            case PTC:
+                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
+                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+                break;
             case GOOGLE_AUTH:
                 config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
                 break;
             case GOOGLE_APP_PASSWORD:
                 config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
                 config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
-                break;
-            case PTC:
-                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
-                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
                 break;
             default:
         }
@@ -486,6 +486,9 @@ public final class AccountController {
         return instance.go != null ? instance.go.getPlayerProfile() : null;
     }
 
+    /**
+     * Inner class that saves the texts buttons can contain.
+     */
     private static final class ButtonText {
         private static final String CANCEL = "Cancel";
     }
