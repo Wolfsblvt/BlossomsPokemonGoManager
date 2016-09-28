@@ -256,10 +256,11 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
-            return LocationHelper.getCoordinates(cell).toString();
+            final int locationDecimals = 6;
+            return LocationHelper.getCoordinates(cell).toString(locationDecimals);
         }
     },
-    CAUGHT_LOCATION(33, "Caught Location", ColumnType.STRING) {
+    CAUGHT_LOCATION(33, "Caught Location", ColumnType.FUTURE_STRING) {
         @Override
         public Object get(final Pokemon p) {
             final S2CellId cell = new S2CellId(p.getCapturedS2CellId());

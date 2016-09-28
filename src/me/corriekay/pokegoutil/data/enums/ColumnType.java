@@ -1,11 +1,13 @@
 package me.corriekay.pokegoutil.data.enums;
 
 import java.util.Comparator;
+import java.util.concurrent.CompletableFuture;
 
 import javax.swing.table.TableCellRenderer;
 
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.windows.renderer.DefaultCellRenderer;
+import me.corriekay.pokegoutil.utils.windows.renderer.FutureCellRenderer;
 import me.corriekay.pokegoutil.utils.windows.renderer.NumberCellRenderer;
 import me.corriekay.pokegoutil.utils.windows.renderer.PercentageCellRenderer;
 
@@ -38,6 +40,11 @@ public enum ColumnType {
     STRING(
         String.class,
         Comparators.stringComparator
+    ),
+    FUTURE_STRING(
+        String.class,
+        Comparators.FUTURE_STRING,
+        CellRenderers.FUTURE
     );
 
     /**
@@ -50,6 +57,7 @@ public enum ColumnType {
         public static final Comparator<Double> doubleComparator = Double::compareTo;
         public static final Comparator<Integer> intComparator = Integer::compareTo;
         public static final Comparator<String> stringComparator = String::compareTo;
+        public static final Comparator<CompletableFuture<String>> FUTURE_STRING = (left, right) -> left.getNow("").compareTo(right.getNow(""));
         public static final Comparator<String> nullableIntComparator = (s1, s2) -> {
             if ("-".equals(s1)) {
                 s1 = "0";
@@ -68,6 +76,7 @@ public enum ColumnType {
         public static final DefaultCellRenderer defaultCellRenderer = new DefaultCellRenderer();
         public static final NumberCellRenderer numberCellRenderer = new NumberCellRenderer();
         public static final PercentageCellRenderer percentageCellRenderer = new PercentageCellRenderer();
+        public static final FutureCellRenderer FUTURE = new FutureCellRenderer();
     }
 
 

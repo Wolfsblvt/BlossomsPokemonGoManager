@@ -2,14 +2,19 @@ package me.corriekay.pokegoutil.utils.helpers;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.google.common.geometry.S2CellId;
 import com.pokegoapi.google.common.geometry.S2LatLng;
 
 import me.corriekay.pokegoutil.utils.StringLiterals;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,7 +25,7 @@ public final class LocationHelper {
     private static final Map<S2CellId, String> SAVED_LOCATIONS;
 
     static {
-        SAVED_LOCATIONS = new HashMap<>(20);
+        SAVED_LOCATIONS = new HashMap<>();
     }
 
     /** Prevent initializing this class. */
@@ -37,34 +42,52 @@ public final class LocationHelper {
         return new LatLongLocation(s2CellId);
     }
 
+    /**
+     * Returns a Future that resolves some time in the future after the location is queried from Google API.
+     * It returns a string for the location based on the cell ID.
+     *
+     * @param s2CellId The cell ID
+     * @return The location string.
+     */
+    public static CompletableFuture<String> getLocation(final S2CellId s2CellId) {
+        return CompletableFuture.supplyAsync(
+            () -> {
+                String location = "";
+                if (SAVED_LOCATIONS.containsKey(s2CellId)) {
+                    location = SAVED_LOCATIONS.get(s2CellId);
+                } else {
+                    final LatLongLocation latLng = new LatLongLocation(s2CellId);
+                    JSONObject json = null;
+                    try {
+                        json = queryJsonFromUrl(latLng.toString());
 
-    // TODO: Prep
-    public static String getLocation(final S2CellId s2CellId) {
-        String location;
-        if (SAVED_LOCATIONS.containsKey(s2CellId)) {
-            location = SAVED_LOCATIONS.get(s2CellId);
-        }
-        else {
-            final S2LatLng latLng = s2CellId.toLatLng();
-            JSONObject json = null;
-            try {
-                json = readJsonFromUrl(latLng.latDegrees(), latLng.lngDegrees());
-                location = json.getJSONArray("results").getJSONObject(0).getString("formatted_address");
-                System.out.println("Location: " + location);
-            } catch (IOException | JSONException e) {
-                System.out.println("Error. JSON: " + (json != null ? json : "null"));
-                e.printStackTrace();
-                location = "";
-            }
-            SAVED_LOCATIONS.put(s2CellId, location);
-        }
-        //cell.toString();
-        return location;
+                        final JSONArray matches = json.optJSONArray("results");
+                        if (matches != null && matches.length() > 0) {
+                            location = matches.getJSONObject(0).getString("formatted_address");
+                        } else {
+                            location = "Error: " + json.getString("status");
+                        }
+                    } catch (IOException | JSONException e) {
+                        location = "Exception: " + e.getMessage();
+                    }
+                    SAVED_LOCATIONS.put(s2CellId, location);
+                }
+                return location;
+            });
+
     }
 
-    private static JSONObject readJsonFromUrl(final double lati, final double longi) throws IOException, JSONException {
-        final String apiUrl = "http://maps.googleapis.com/maps/api/geocode/json?latlng=%s,%s&sensor=true";
-        final String formattedUrl = String.format(apiUrl, lati, longi);
+    /**
+     * Queries the JSON for location from the Google API.
+     *
+     * @param latLong A string containing lat and long, like "1.124,1.566"
+     * @return The JSON from the server.
+     * @throws IOException   io.
+     * @throws JSONException json.
+     */
+    private static JSONObject queryJsonFromUrl(final String latLong) throws IOException, JSONException {
+        final String apiUrl = "http://maps.googleapis.com/maps/api/geocode/json?latlng=%s&sensor=true";
+        final String formattedUrl = String.format(apiUrl, latLong.replace(" ", "%20"));
         try {
             final URL url = new URL(formattedUrl);
             final String apiResponse = FileHelper.readFile(url.openStream());
@@ -78,7 +101,7 @@ public final class LocationHelper {
     /**
      * Class that holds lat long coordinates.
      */
-    public static class LatLongLocation {
+    public static final class LatLongLocation {
         public final double latitude;
         public final double longitude;
 
@@ -96,6 +119,19 @@ public final class LocationHelper {
         @Override
         public String toString() {
             return this.latitude + StringLiterals.CONCAT + this.longitude;
+        }
+
+        /**
+         * Formats the long and lat rounded to given decimal places.
+         *
+         * @param decimals The number of decimal places.
+         * @return The formatted string.
+         */
+        public String toString(final int decimals) {
+            final DecimalFormat decimalFormat = new DecimalFormat("#." + StringUtils.repeat("#", decimals));
+            return decimalFormat.format(latitude).replace(',', '.')
+                + StringLiterals.CONCAT
+                + decimalFormat.format(longitude).replace(',', '.');
         }
     }
 }
