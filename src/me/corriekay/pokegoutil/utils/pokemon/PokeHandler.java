@@ -13,10 +13,10 @@ import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
+import me.corriekay.pokegoutil.data.enums.PokeColumn;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.UnicodeHelper;
-import me.corriekay.pokegoutil.utils.windows.PokeColumn;
 
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 

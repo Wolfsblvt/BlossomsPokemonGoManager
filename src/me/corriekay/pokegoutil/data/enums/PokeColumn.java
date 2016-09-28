@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.utils.windows;
+package me.corriekay.pokegoutil.data.enums;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,7 +9,6 @@ import javax.swing.table.TableCellRenderer;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.NoSuchItemException;
 
-import me.corriekay.pokegoutil.data.enums.ColumnType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
@@ -17,8 +16,8 @@ import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.CollectionHelper;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonPerformanceCache;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 /**
  * A class that holds data relevant for each column.
