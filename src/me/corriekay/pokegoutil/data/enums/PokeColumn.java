@@ -316,6 +316,6 @@ public enum PokeColumn {
      * We need an wrapper for the auto-incrementer here, so that we can access it statically.
      */
     private static class InternalAutoIncrementer {
-        static final AutoIncrementer INSTANCE = new AutoIncrementer(1);
+        static final AutoIncrementer INSTANCE = new AutoIncrementer();
     }
 }
