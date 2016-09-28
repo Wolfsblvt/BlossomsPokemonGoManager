@@ -252,7 +252,7 @@ public enum PokeColumn {
             return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonPerformanceCache.getStats(p.getPokemonId()).gymDefense.value);
         }
     },
-    CAUGHT_COORDINATES(32, "Caught Coordinates", ColumnType.STRING) {
+    CAUGHT_COORDINATES("Caught Coordinates", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
@@ -260,7 +260,7 @@ public enum PokeColumn {
             return LocationHelper.getCoordinates(cell).toString(locationDecimals);
         }
     },
-    CAUGHT_LOCATION(33, "Caught Location", ColumnType.FUTURE_STRING) {
+    CAUGHT_LOCATION("Caught Location", ColumnType.FUTURE_STRING) {
         @Override
         public Object get(final Pokemon p) {
             final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
