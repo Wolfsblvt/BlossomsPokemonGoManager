@@ -176,7 +176,7 @@ public final class AccountController {
                         + StringLiterals.NEWLINE + "If you have trouble logging in with that method, or know what you are doing,"
                         + StringLiterals.NEWLINE + "go ahead and take the App Password method.";
                     String[] options = new String[] {"Use OAuth Token", "Advanced: Use App Password"};
-                    int answer = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, message, googleAuthTitle,
+                    final int answer = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, message, googleAuthTitle,
                         JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                         null, options, options[0]);
 
@@ -195,19 +195,18 @@ public final class AccountController {
                             //We're gonna try to load the page using the users browser
                             final boolean success = Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
 
-                            if (!success) {
-                                // Okay, couldn't open it. We use the manual copy window
-                                UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
-                                if (JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
-                                    "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.",
-                                    googleAuthTitle,
-                                    JOptionPane.OK_CANCEL_OPTION,
-                                    JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION) {
-                                    final StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
-                                    Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
-                                }
-                                UIManager.put("OptionPane.cancelButtonText", "Cancel");
+                            // Okay, couldn't open it. We use the manual copy window
+                            UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
+                            if (!success && JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                                "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.",
+                                googleAuthTitle,
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION) {
+                                final StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
+                                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
                             }
+                            UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
+
                             //The user should have the auth code now. Lets get it.
                             googleAuthToken = JOptionPane.showInputDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                                 "Please provide the authentication code",
@@ -218,19 +217,19 @@ public final class AccountController {
 
                         case 1: // Advanced: Use App Password
                             //We need to get the user data, as we do not have it yet.
-                            String appPasswordMessage = "You want to login via App Password."
+                            final String appPasswordMessage = "You want to login via App Password."
                                 + StringLiterals.NEWLINE + "For that, an app password has to be created."
                                 + StringLiterals.NEWLINE + "If you already have your password, click \"Skip\"."
                                 + StringLiterals.NEWLINE
-                                + StringLiterals.NEWLINE + "Otherwise, click on \"Open Webpage\" to access the google account control page where you are able"
+                                + StringLiterals.NEWLINE + "Otherwise, click on \"Open Website\" to access the google account control page where you are able"
                                 + StringLiterals.NEWLINE + "to create an app password."
                                 + StringLiterals.NEWLINE + "Choose 'Other' as app and name it something like 'BPGM' or such. Then copy your password."
                                 + StringLiterals.NEWLINE
                                 + StringLiterals.NEWLINE + "Do note: If google tells you you can't configure your App Passwords, then go back to your"
                                 + StringLiterals.NEWLINE + "google account control page and enable 2-Step Verification. Then you will be able to.";
 
-                            String[] appPasswordOptions = new String[] {"Open Webpage", "Skip", "Ignore this Version"};
-                            int appPasswordResponse = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, appPasswordMessage, googleAuthTitle,
+                            final String[] appPasswordOptions = new String[] {"Open Website", "Skip"};
+                            final int appPasswordResponse = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, appPasswordMessage, googleAuthTitle,
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                                 null, appPasswordOptions, options[0]);
 
@@ -260,7 +259,7 @@ public final class AccountController {
                             panel2.add(googlePasswordTextField, BorderLayout.CENTER);
                             final Object[] goggleAppPasswordPanel = {panel1, panel2,};
 
-                            int googleAppLoginDetailsResult = JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                            final int googleAppLoginDetailsResult = JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                                 goggleAppPasswordPanel,
                                 googleAuthTitle,
                                 JOptionPane.OK_CANCEL_OPTION);
@@ -326,7 +325,7 @@ public final class AccountController {
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");
             UIManager.put("OptionPane.okButtonText", "Ok");
-            UIManager.put("OptionPane.cancelButtonText", "Cancel");
+            UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
 
             try {
                 if (credentialProvider != null) {
@@ -378,7 +377,7 @@ public final class AccountController {
         UIManager.put("OptionPane.noButtonText", "No");
         UIManager.put("OptionPane.yesButtonText", "Yes");
         UIManager.put("OptionPane.okButtonText", "Ok");
-        UIManager.put("OptionPane.cancelButtonText", "Cancel");
+        UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
         return JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
             "Do you wish to save the password/auth token?\nCaution: These are saved in plain-text.", "Save Authentication?",
             JOptionPane.YES_NO_OPTION,
@@ -460,7 +459,7 @@ public final class AccountController {
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");
             UIManager.put("OptionPane.okButtonText", "Ok");
-            UIManager.put("OptionPane.cancelButtonText", "Cancel");
+            UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
             return JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                 "You have saved login data for " + savedLogin.toString() + ". Want to login with that?",
                 "Use Saved Login",
@@ -485,5 +484,9 @@ public final class AccountController {
 
     public static PlayerProfile getPlayerProfile() {
         return instance.go != null ? instance.go.getPlayerProfile() : null;
+    }
+
+    private static final class ButtonText {
+        private static final String CANCEL = "Cancel";
     }
 }
