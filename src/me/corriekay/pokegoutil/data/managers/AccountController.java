@@ -142,7 +142,7 @@ public final class AccountController {
                 } catch (final Exception e) {
                     alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                     e.printStackTrace();
-                    deleteLoginData(LoginType.PTC);
+                    // deleteLoginData(LoginType.PTC);
                     continue;
                 }
 
@@ -315,8 +315,8 @@ public final class AccountController {
                 } catch (final Exception e) {
                     alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                     e.printStackTrace();
-                    deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
-                    deleteLoginData(LoginType.GOOGLE_AUTH);
+                    // deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
+                    // deleteLoginData(LoginType.GOOGLE_AUTH);
                     continue;
                 }
 
@@ -342,7 +342,7 @@ public final class AccountController {
             } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException e) {
                 alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                 e.printStackTrace();
-                deleteLoginData(LoginType.ALL);
+                // deleteLoginData(LoginType.ALL);
             }
         }
         instance.go = go;
