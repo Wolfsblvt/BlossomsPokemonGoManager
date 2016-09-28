@@ -432,22 +432,23 @@ public final class AccountController {
         switch (type) {
             case ALL:
                 config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
+                config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
                 config.delete(ConfigKey.LOGIN_PTC_USERNAME);
                 config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+                break;
+            case GOOGLE_AUTH:
+                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
                 break;
             case GOOGLE_APP_PASSWORD:
                 config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
                 config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
-            case GOOGLE_AUTH:
-                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
                 break;
             case PTC:
                 config.delete(ConfigKey.LOGIN_PTC_USERNAME);
                 config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
                 break;
             default:
-
-
         }
     }
 
