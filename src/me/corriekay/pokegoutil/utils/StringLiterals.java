@@ -12,7 +12,8 @@ public final class StringLiterals {
     public static final String NEWLINE = System.lineSeparator();
 
     // Situation specific string literals
-    public static final String CONCAT = ", ";
+    public static final String CONCAT_SEPARATOR = ", ";
+    public static final String COLON_SEPARATOR = ": ";
     public static final String NO_VALUE_SIGN = "-";
 
     // More uncommon ones

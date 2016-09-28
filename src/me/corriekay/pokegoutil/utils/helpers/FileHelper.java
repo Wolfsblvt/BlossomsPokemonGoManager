@@ -1,17 +1,26 @@
 package me.corriekay.pokegoutil.utils.helpers;
 
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
-import java.awt.*;
-import java.io.*;
+import java.awt.Image;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+
+import me.corriekay.pokegoutil.data.enums.ExceptionMessages;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 
 public final class FileHelper {
     public static final Charset CHARSET = Charset.forName("UTF-8");
+    public static final int INDENT = 4;
 
     /** Prevent initializing this class. */
     private FileHelper() {
@@ -95,8 +104,8 @@ public final class FileHelper {
             } while (l != null);
             in.close();
             return sb.toString();
-        } catch (Exception e) {
-            e.printStackTrace(); //TODO tagging for future exception handling/logging
+        } catch (IOException e) {
+            System.out.println(ExceptionMessages.COULD_NOT_READ.with(e));
         }
         return null;
     }
@@ -116,7 +125,7 @@ public final class FileHelper {
                 buf.append(str).append(StringLiterals.NEWLINE);
             }
         } catch (IOException e) {
-            System.out.println("Could not read file:" + e.toString());
+            System.out.println(ExceptionMessages.COULD_NOT_READ.with(e));
         } finally {
             try {
                 inputStream.close();
@@ -134,7 +143,6 @@ public final class FileHelper {
             out.close();
         } catch (Exception e) {
             System.out.println("Exception caught trying to save file. Path: " + file.getAbsolutePath());
-            e.printStackTrace(); //TODO tagging for future exception handling/logging
         }
     }
 }

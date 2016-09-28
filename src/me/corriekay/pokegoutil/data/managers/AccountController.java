@@ -120,7 +120,7 @@ public final class AccountController {
                 final Object[] panel = {panel1, panel2,};
 
                 response = JOptionPane.showConfirmDialog(
-                    WindowStuffHelper.alwaysOnTopParent,
+                    WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                     panel,
                     "Login",
                     JOptionPane.YES_NO_CANCEL_OPTION,
@@ -176,7 +176,7 @@ public final class AccountController {
                         + StringLiterals.NEWLINE + "If you have trouble logging in with that method, or know what you are doing,"
                         + StringLiterals.NEWLINE + "go ahead and take the App Password method.";
                     String[] options = new String[] {"Use OAuth Token", "Advanced: Use App Password"};
-                    int answer = JOptionPane.showOptionDialog(WindowStuffHelper.alwaysOnTopParent, message, googleAuthTitle,
+                    int answer = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, message, googleAuthTitle,
                         JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                         null, options, options[0]);
 
@@ -184,7 +184,7 @@ public final class AccountController {
                         case 0: // Use OAuth Token
                             //We need to get the auth code, as we do not have it yet.
                             UIManager.put("OptionPane.okButtonText", "Ok");
-                            JOptionPane.showMessageDialog(WindowStuffHelper.alwaysOnTopParent,
+                            JOptionPane.showMessageDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                                 "You will need to provide a google authentication key to log in."
                                     + StringLiterals.NEWLINE + "A webpage should open up, please allow the permissions, and then copy the code into your clipboard."
                                     + StringLiterals.NEWLINE
@@ -198,7 +198,7 @@ public final class AccountController {
                             if (!success) {
                                 // Okay, couldn't open it. We use the manual copy window
                                 UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
-                                if (JOptionPane.showConfirmDialog(WindowStuffHelper.alwaysOnTopParent,
+                                if (JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                                     "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.",
                                     googleAuthTitle,
                                     JOptionPane.OK_CANCEL_OPTION,
@@ -209,7 +209,7 @@ public final class AccountController {
                                 UIManager.put("OptionPane.cancelButtonText", "Cancel");
                             }
                             //The user should have the auth code now. Lets get it.
-                            googleAuthToken = JOptionPane.showInputDialog(WindowStuffHelper.alwaysOnTopParent,
+                            googleAuthToken = JOptionPane.showInputDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                                 "Please provide the authentication code",
                                 googleAuthTitle,
                                 JOptionPane.PLAIN_MESSAGE);
@@ -230,7 +230,7 @@ public final class AccountController {
                                 + StringLiterals.NEWLINE + "google account control page and enable 2-Step Verification. Then you will be able to.";
 
                             String[] appPasswordOptions = new String[] {"Open Webpage", "Skip", "Ignore this Version"};
-                            int appPasswordResponse = JOptionPane.showOptionDialog(WindowStuffHelper.alwaysOnTopParent, appPasswordMessage, googleAuthTitle,
+                            int appPasswordResponse = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, appPasswordMessage, googleAuthTitle,
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
                                 null, appPasswordOptions, options[0]);
 
@@ -260,7 +260,7 @@ public final class AccountController {
                             panel2.add(googlePasswordTextField, BorderLayout.CENTER);
                             final Object[] goggleAppPasswordPanel = {panel1, panel2,};
 
-                            int googleAppLoginDetailsResult = JOptionPane.showConfirmDialog(WindowStuffHelper.alwaysOnTopParent,
+                            int googleAppLoginDetailsResult = JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                                 goggleAppPasswordPanel,
                                 googleAuthTitle,
                                 JOptionPane.OK_CANCEL_OPTION);
@@ -365,7 +365,7 @@ public final class AccountController {
      */
     private static void alertFailedLogin(final String exceptionClass, final String message, final int tries) {
         System.out.println("Error: " + exceptionClass + StringLiterals.NEWLINE + message);
-        JOptionPane.showMessageDialog(WindowStuffHelper.alwaysOnTopParent,
+        JOptionPane.showMessageDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
             "Unfortunately, your login has failed. Reason: "
                 + StringLiterals.NEWLINE + exceptionClass + ": " + message
                 + StringLiterals.NEWLINE + "This is try number " + tries + "."
@@ -379,7 +379,7 @@ public final class AccountController {
         UIManager.put("OptionPane.yesButtonText", "Yes");
         UIManager.put("OptionPane.okButtonText", "Ok");
         UIManager.put("OptionPane.cancelButtonText", "Cancel");
-        return JOptionPane.showConfirmDialog(WindowStuffHelper.alwaysOnTopParent,
+        return JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
             "Do you wish to save the password/auth token?\nCaution: These are saved in plain-text.", "Save Authentication?",
             JOptionPane.YES_NO_OPTION,
             JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
@@ -460,7 +460,7 @@ public final class AccountController {
             UIManager.put("OptionPane.yesButtonText", "Yes");
             UIManager.put("OptionPane.okButtonText", "Ok");
             UIManager.put("OptionPane.cancelButtonText", "Cancel");
-            return JOptionPane.showConfirmDialog(WindowStuffHelper.alwaysOnTopParent,
+            return JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                 "You have saved login data for " + savedLogin.toString() + ". Want to login with that?",
                 "Use Saved Login",
                 JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;

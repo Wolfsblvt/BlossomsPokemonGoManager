@@ -1,19 +1,28 @@
 package me.corriekay.pokegoutil.utils.helpers;
 
+import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.google.common.geometry.S2CellId;
 import com.pokegoapi.google.common.geometry.S2LatLng;
 
+import me.corriekay.pokegoutil.data.enums.ExceptionMessages;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,10 +31,15 @@ import org.json.JSONObject;
  * Helper class that provides utility functions concerning locations.
  */
 public final class LocationHelper {
-    private static final Map<S2CellId, String> SAVED_LOCATIONS;
+    private static final Map<Long, String> SAVED_LOCATIONS;
+    private static final Gson GSON = new Gson();
+    private static final File LOCATION_FILE = new File("locations.json");
+
+    private static boolean shouldSave;
 
     static {
-        SAVED_LOCATIONS = new HashMap<>();
+        SAVED_LOCATIONS = new ConcurrentHashMap<>();
+        load();
     }
 
     /** Prevent initializing this class. */
@@ -53,8 +67,8 @@ public final class LocationHelper {
         return CompletableFuture.supplyAsync(
             () -> {
                 String location = "";
-                if (SAVED_LOCATIONS.containsKey(s2CellId)) {
-                    location = SAVED_LOCATIONS.get(s2CellId);
+                if (SAVED_LOCATIONS.containsKey(s2CellId.id())) {
+                    location = SAVED_LOCATIONS.get(s2CellId.id());
                 } else {
                     final LatLongLocation latLng = new LatLongLocation(s2CellId);
                     JSONObject json = null;
@@ -64,13 +78,14 @@ public final class LocationHelper {
                         final JSONArray matches = json.optJSONArray("results");
                         if (matches != null && matches.length() > 0) {
                             location = matches.getJSONObject(0).getString("formatted_address");
+                            SAVED_LOCATIONS.put(s2CellId.id(), location);
                         } else {
                             location = "Error: " + json.getString("status");
                         }
                     } catch (IOException | JSONException e) {
                         location = "Exception: " + e.getMessage();
                     }
-                    SAVED_LOCATIONS.put(s2CellId, location);
+                    save();
                 }
                 return location;
             });
@@ -92,9 +107,46 @@ public final class LocationHelper {
             final URL url = new URL(formattedUrl);
             final String apiResponse = FileHelper.readFile(url.openStream());
             return new JSONObject(apiResponse);
-        } catch (IOException ex) {
-            System.out.println("Could query location. Reason: " + ex.toString());
+        } catch (IOException e) {
+            System.out.println(ExceptionMessages.COULD_NOT_QUERY_LOCATION.with(e));
             return new JSONObject();
+        }
+    }
+
+    /**
+     * Saves the cached locations to location.json file.
+     */
+    private static void save() {
+        // The map gets updated really often maybe, so we delay the save to save a bulk of it
+        if (!shouldSave) {
+            final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+            service.schedule(() -> {
+                // Save the location data to the location.json
+                final JSONObject json = new JSONObject(GSON.toJson(SAVED_LOCATIONS));
+                FileHelper.saveFile(LOCATION_FILE, json.toString(FileHelper.INDENT));
+                shouldSave = false;
+            }, 2, TimeUnit.SECONDS);
+        }
+        shouldSave = true;
+    }
+
+    /**
+     * Loads saved locations from location.json file.
+     */
+    private static void load() {
+        final Type mapType = new TypeToken<ConcurrentHashMap<Long, String>>() {
+        }.getType();
+        Map<Long, String> loadedLocations;
+        try {
+            loadedLocations = GSON.fromJson(FileHelper.readFile(LOCATION_FILE), mapType);
+            System.out.println("Saved loaded locations to file.");
+        } catch (JsonSyntaxException e) {
+            loadedLocations = null;
+            System.out.println(ExceptionMessages.COULD_NOT_LOAD_LOCATIONS.with(e));
+            FileHelper.deleteFile(LOCATION_FILE, false);
+        }
+        if (loadedLocations != null) {
+            SAVED_LOCATIONS.putAll(loadedLocations);
         }
     }
 
@@ -118,7 +170,7 @@ public final class LocationHelper {
 
         @Override
         public String toString() {
-            return this.latitude + StringLiterals.CONCAT + this.longitude;
+            return this.latitude + StringLiterals.CONCAT_SEPARATOR + this.longitude;
         }
 
         /**
@@ -130,7 +182,7 @@ public final class LocationHelper {
         public String toString(final int decimals) {
             final DecimalFormat decimalFormat = new DecimalFormat("#." + StringUtils.repeat("#", decimals));
             return decimalFormat.format(latitude).replace(',', '.')
-                + StringLiterals.CONCAT
+                + StringLiterals.CONCAT_SEPARATOR
                 + decimalFormat.format(longitude).replace(',', '.');
         }
     }
