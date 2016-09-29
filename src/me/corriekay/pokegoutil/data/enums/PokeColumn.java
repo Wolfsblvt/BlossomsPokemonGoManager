@@ -249,6 +249,12 @@ public enum PokeColumn {
         public Object get(final Pokemon p) {
             return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonPerformanceCache.getStats(p.getPokemonId()).gymDefense.value);
         }
+    },
+    PID("PID", ColumnType.LONG) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getId();
+        }
     };
 
     public final int id;

@@ -24,7 +24,7 @@ public enum ColumnType {
         CellRenderers.NUMBER
     ),
     LONG(
-        Integer.class,
+        Long.class,
         Comparators.LONG,
         CellRenderers.NUMBER
     ),
