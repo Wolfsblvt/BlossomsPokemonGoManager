@@ -264,7 +264,14 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
-            return LocationHelper.getLocation(cell);
+            return LocationHelper.getLocation(cell).thenApply(location -> location.formattedLocation);
+        }
+    },
+    CAUGHT_CITY("Caught City", ColumnType.FUTURE_STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
+            return LocationHelper.getLocation(cell).thenApply(location -> location.city);
         }
     };
 
