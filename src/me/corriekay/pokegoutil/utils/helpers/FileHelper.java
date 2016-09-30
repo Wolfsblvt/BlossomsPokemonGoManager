@@ -1,13 +1,27 @@
 package me.corriekay.pokegoutil.utils.helpers;
 
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
+import java.awt.Image;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
-import java.awt.*;
-import java.io.*;
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+
+import me.corriekay.pokegoutil.data.enums.ExceptionMessages;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 
 public final class FileHelper {
+    public static final Charset CHARSET = Charset.forName("UTF-8");
+    public static final int INDENT = 4;
+
     /** Prevent initializing this class. */
     private FileHelper() {
     }
@@ -72,10 +86,6 @@ public final class FileHelper {
         }
     }
 
-    public static String readFile(String url) {
-        return readFile(new File(url));
-    }
-
     public static String readFile(File file) {
         try {
             BufferedReader in = new BufferedReader(new FileReader(file));
@@ -94,10 +104,35 @@ public final class FileHelper {
             } while (l != null);
             in.close();
             return sb.toString();
-        } catch (Exception e) {
-            e.printStackTrace(); //TODO tagging for future exception handling/logging
+        } catch (IOException e) {
+            System.out.println(ExceptionMessages.COULD_NOT_READ.with(e));
         }
         return null;
+    }
+
+    /**
+     * Read file from given input stream and returns it.
+     *
+     * @param inputStream The InputStream of the file.
+     * @return The file as string.
+     */
+    public static String readFile(final InputStream inputStream) {
+        String str;
+        final StringBuilder buf = new StringBuilder();
+        try {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, CHARSET));
+            while ((str = reader.readLine()) != null) {
+                buf.append(str).append(StringLiterals.NEWLINE);
+            }
+        } catch (IOException e) {
+            System.out.println(ExceptionMessages.COULD_NOT_READ.with(e));
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException ignore) {
+            }
+        }
+        return buf.toString().trim();
     }
 
     public static void saveFile(File file, String saveme) {
@@ -108,7 +143,6 @@ public final class FileHelper {
             out.close();
         } catch (Exception e) {
             System.out.println("Exception caught trying to save file. Path: " + file.getAbsolutePath());
-            e.printStackTrace(); //TODO tagging for future exception handling/logging
         }
     }
 }

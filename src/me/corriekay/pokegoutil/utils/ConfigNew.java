@@ -1,10 +1,5 @@
 package me.corriekay.pokegoutil.utils;
 
-import me.corriekay.pokegoutil.utils.helpers.FileHelper;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -12,6 +7,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringEscapeUtils;
+
+import me.corriekay.pokegoutil.utils.helpers.FileHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -377,7 +379,10 @@ public final class ConfigNew {
         if (currentModifiedTime != lastModified) {
             System.out.print("Modified config.json externally. Will be reloaded now.");
             // Re-read the file now
-            json = new JSONObject(FileHelper.readFile(file));
+            final String content = FileHelper.readFile(file);
+            if (content != null) {
+                json = new JSONObject(content);
+            }
             lastModified = currentModifiedTime;
         }
     }
@@ -416,8 +421,7 @@ public final class ConfigNew {
      * Save the config file.
      */
     public void saveConfig() {
-        final int indentFactor = 4;
-        FileHelper.saveFile(file, json.toString(indentFactor));
+        FileHelper.saveFile(file, json.toString(FileHelper.INDENT));
         lastModified = file.lastModified();
     }
 
