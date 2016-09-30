@@ -1,6 +1,8 @@
 package me.corriekay.pokegoutil.utils;
 
 import java.awt.Color;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +32,21 @@ public final class Utilities {
      * @param maximum The maximum of the number.
      * @return The percentage value
      */
-    public static double percentage(double number, double maximum) {
-        return Math.min(number / maximum, maximum);
+    public static double percentage(final double number, final double maximum) {
+        return number / maximum;
+    }
+
+    /**
+     * Takes to numbers and creates a decimal percentage of it (like 0.7542).
+     *
+     * @param number  The real part.
+     * @param maximum The maximum of the number.
+     * @return The percentage value
+     */
+    public static double percentage(final long number, final long maximum) {
+        final BigDecimal bigNumber = new BigDecimal(number, MathContext.DECIMAL128);
+        final BigDecimal bigMaximum = new BigDecimal(maximum, MathContext.DECIMAL128);
+        return bigNumber.divide(bigMaximum, MathContext.DECIMAL128).doubleValue();
     }
 
     /**
@@ -40,8 +55,8 @@ public final class Utilities {
      * @param decimalNumber The given decimal number.
      * @return Percentage string.
      */
-    public static String percentageWithTwoCharacters(double decimalNumber) {
-        double percentage = decimalNumber * PERCENTAGE_FACTOR;
+    public static String percentageWithTwoCharacters(final double decimalNumber) {
+        final double percentage = decimalNumber * PERCENTAGE_FACTOR;
         return (percentage < PERCENTAGE_FACTOR) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
     }
 
