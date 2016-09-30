@@ -26,6 +26,12 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
  * A class that holds data relevant for each column.
  */
 public enum PokeColumn {
+    AUTO_INCREMENT("Row", ColumnType.AUTO_INCREMENT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return null;
+        }
+    },
     POKEDEX_ID("#", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
@@ -293,7 +299,7 @@ public enum PokeColumn {
      * @param columnType The type of the column.
      */
     PokeColumn(final String name, final ColumnType columnType) {
-        this.id = InternalAutoIncrementer.INSTANCE.get();
+        this.id = Internal.AUTO_INCREMENTER.get();
         this.name = name;
         this.columnType = columnType;
         this.data = CollectionHelper.provideArrayList(columnType.clazz);
@@ -345,7 +351,7 @@ public enum PokeColumn {
     /**
      * We need an wrapper for the auto-incrementer here, so that we can access it statically.
      */
-    private static class InternalAutoIncrementer {
-        static final AutoIncrementer INSTANCE = new AutoIncrementer();
+    private static class Internal {
+        static final AutoIncrementer AUTO_INCREMENTER = new AutoIncrementer();
     }
 }

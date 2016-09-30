@@ -541,7 +541,7 @@ public class PokemonTab extends JPanel {
                                 StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()),
                                 result));
                             System.out.println(String.format(
-                                "Stat changes: (Candies: %d[%d-%d+%d]",
+                                "Stat changes: (Candies: %d[%d-%d+%d])",
                                 newCandies,
                                 candies,
                                 candiesToEvolve,

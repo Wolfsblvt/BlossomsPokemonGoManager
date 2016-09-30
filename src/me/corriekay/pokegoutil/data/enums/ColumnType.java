@@ -7,6 +7,7 @@ import javax.swing.table.TableCellRenderer;
 
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
+import me.corriekay.pokegoutil.utils.windows.renderer.AutoIncrementCellRenderer;
 import me.corriekay.pokegoutil.utils.windows.renderer.DefaultCellRenderer;
 import me.corriekay.pokegoutil.utils.windows.renderer.FutureCellRenderer;
 import me.corriekay.pokegoutil.utils.windows.renderer.NumberCellRenderer;
@@ -16,6 +17,11 @@ import me.corriekay.pokegoutil.utils.windows.renderer.PercentageCellRenderer;
  * Enum that defines all possible column types for table columns.
  */
 public enum ColumnType {
+    AUTO_INCREMENT(
+        String.class,
+        Comparators.STRING,
+        CellRenderers.AUTO_INCREMENT
+    ),
     DATE(
         String.class,
         Comparators.DATE_STRING
@@ -90,6 +96,7 @@ public enum ColumnType {
         public static final NumberCellRenderer NUMBER = new NumberCellRenderer();
         public static final PercentageCellRenderer PERCENTAGE = new PercentageCellRenderer();
         public static final FutureCellRenderer FUTURE = new FutureCellRenderer();
+        public static final AutoIncrementCellRenderer AUTO_INCREMENT = new AutoIncrementCellRenderer();
     }
 
     /**
