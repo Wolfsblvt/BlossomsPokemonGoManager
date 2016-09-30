@@ -1,12 +1,14 @@
 package me.corriekay.pokegoutil.data.enums;
 
 import java.util.Comparator;
+import java.util.concurrent.CompletableFuture;
 
 import javax.swing.table.TableCellRenderer;
 
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.windows.renderer.DefaultCellRenderer;
+import me.corriekay.pokegoutil.utils.windows.renderer.FutureCellRenderer;
 import me.corriekay.pokegoutil.utils.windows.renderer.NumberCellRenderer;
 import me.corriekay.pokegoutil.utils.windows.renderer.PercentageCellRenderer;
 
@@ -46,6 +48,11 @@ public enum ColumnType {
     STRING(
         String.class,
         Comparators.STRING
+    ),
+    FUTURE_STRING(
+        String.class,
+        Comparators.FUTURE_STRING,
+        CellRenderers.FUTURE
     );
 
     public final Class clazz;
@@ -57,13 +64,14 @@ public enum ColumnType {
      */
     private static final class Comparators {
         // The comparators.
-        private static final Comparator<String> DATE_STRING = (date1, date2) -> DateHelper.fromString(date1)
+        public static final Comparator<String> DATE_STRING = (date1, date2) -> DateHelper.fromString(date1)
             .compareTo(DateHelper.fromString(date2));
-        private static final Comparator<Double> DOUBLE = Double::compareTo;
-        private static final Comparator<Integer> INT = Integer::compareTo;
-        private static final Comparator<Long> LONG = Long::compareTo;
-        private static final Comparator<String> STRING = String::compareTo;
-        private static final Comparator<String> NULLABLE_INT = (left, right) -> {
+        public static final Comparator<Double> DOUBLE = Double::compareTo;
+        public static final Comparator<Integer> INT = Integer::compareTo;
+        public static final Comparator<Long> LONG = Long::compareTo;
+        public static final Comparator<String> STRING = String::compareTo;
+        public static final Comparator<CompletableFuture<String>> FUTURE_STRING = (left, right) -> left.getNow("").compareTo(right.getNow(""));
+        public static final Comparator<String> NULLABLE_INT = (left, right) -> {
             if (StringLiterals.NO_VALUE_SIGN.equals(left)) {
                 left = String.valueOf(0);
             }
@@ -81,6 +89,7 @@ public enum ColumnType {
         public static final DefaultCellRenderer DEFAULT = new DefaultCellRenderer();
         public static final NumberCellRenderer NUMBER = new NumberCellRenderer();
         public static final PercentageCellRenderer PERCENTAGE = new PercentageCellRenderer();
+        public static final FutureCellRenderer FUTURE = new FutureCellRenderer();
     }
 
     /**

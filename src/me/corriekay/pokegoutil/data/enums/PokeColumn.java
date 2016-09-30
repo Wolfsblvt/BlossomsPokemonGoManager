@@ -8,6 +8,7 @@ import javax.swing.table.TableCellRenderer;
 
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.NoSuchItemException;
+import com.pokegoapi.google.common.geometry.S2CellId;
 
 import me.corriekay.pokegoutil.utils.AutoIncrementer;
 import me.corriekay.pokegoutil.utils.ConfigKey;
@@ -16,6 +17,7 @@ import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.CollectionHelper;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
+import me.corriekay.pokegoutil.utils.helpers.LocationHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonPerformanceCache;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
@@ -248,6 +250,28 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonPerformanceCache.getStats(p.getPokemonId()).gymDefense.value);
+        }
+    },
+    CAUGHT_COORDINATES("Caught Coordinates", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
+            final int locationDecimals = 6;
+            return LocationHelper.getCoordinates(cell).toString(locationDecimals);
+        }
+    },
+    CAUGHT_LOCATION("Caught Location", ColumnType.FUTURE_STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
+            return LocationHelper.getLocation(cell).thenApply(location -> location.formattedLocation);
+        }
+    },
+    CAUGHT_CITY("Caught City", ColumnType.FUTURE_STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
+            return LocationHelper.getLocation(cell).thenApply(location -> location.city);
         }
     },
     PID("PID", ColumnType.LONG) {

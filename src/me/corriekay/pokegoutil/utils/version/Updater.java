@@ -1,10 +1,8 @@
 package me.corriekay.pokegoutil.utils.version;
 
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 
 import javax.swing.JOptionPane;
@@ -13,6 +11,7 @@ import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
+import me.corriekay.pokegoutil.utils.helpers.FileHelper;
 import me.corriekay.pokegoutil.utils.version.thirdparty.ComparableVersion;
 
 /**
@@ -39,7 +38,7 @@ public final class Updater {
         // Read the local version file as version
         final ClassLoader classLoader = getClass().getClassLoader();
         final InputStream inputStream = classLoader.getResourceAsStream(VERSION_FILENAME);
-        final String versionString = readVersionFile(inputStream);
+        final String versionString = FileHelper.readFile(inputStream);
         currentVersion = new ComparableVersion(versionString);
         System.out.println("Current version: " + versionString);
     }
@@ -75,7 +74,7 @@ public final class Updater {
         final String callUrl = LATEST_VERSION_URL + VERSION_FILENAME;
         try {
             final URL url = new URL(callUrl);
-            final String latestVersionString = readVersionFile(url.openStream());
+            final String latestVersionString = FileHelper.readFile(url.openStream());
             latestStable = new ComparableVersion(latestVersionString);
             System.out.println("Latest version from server: " + latestVersionString);
         } catch (IOException ex) {
@@ -152,31 +151,5 @@ public final class Updater {
                 System.out.println("Latest version " + latestStable.toString() + " found, but ignored.");
             }
         }
-    }
-
-    /**
-     * Read version file from given input stream and returns the version.
-     *
-     * @param inputStream The InputStream of the version file.
-     * @return The version string.
-     */
-    private String readVersionFile(final InputStream inputStream) {
-        String str;
-        final StringBuilder buf = new StringBuilder();
-        try {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-            while ((str = reader.readLine()) != null) {
-                buf.append(str).append("\n");
-            }
-        } catch (IOException e) {
-            System.out.println("Could not read file:" + e.toString());
-        } finally {
-            try {
-                inputStream.close();
-            } catch (IOException ignored) {
-                // If the input steam can't be closed... we don't care, sorry.
-            }
-        }
-        return buf.toString().trim();
     }
 }
