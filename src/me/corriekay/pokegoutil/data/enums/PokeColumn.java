@@ -273,6 +273,12 @@ public enum PokeColumn {
             final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
             return LocationHelper.getLocation(cell).thenApply(location -> location.city);
         }
+    },
+    PID("PID", ColumnType.LONG) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getId();
+        }
     };
 
     public final int id;
