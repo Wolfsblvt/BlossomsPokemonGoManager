@@ -185,6 +185,23 @@ public class PokeHandler {
                     + Integer.toHexString((int) PokeColumn.IV_STAMINA.get(p))).toUpperCase();
             }
         },
+        IV_SUM("Sum of the IV values (00 - 45)"){
+            @Override
+            public String get(Pokemon p){
+                Integer sum = p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina();
+                String unf = sum.toString();
+                return StringUtils.leftPad(unf, 2, '0');
+            }
+        },
+        IV_DIFF("The amount of IV missing (00-45)"){
+            @Override
+            public String get(Pokemon p){
+                int sum = p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina();
+                Integer diff = 45 - sum;
+                String unf = diff.toString();
+                return StringUtils.leftPad(unf, 2, '0');
+            }
+        },
         IV_ATT("IV Attack") {
             @Override
             public String get(final Pokemon p) {
