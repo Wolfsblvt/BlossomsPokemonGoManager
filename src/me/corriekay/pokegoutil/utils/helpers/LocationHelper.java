@@ -22,6 +22,7 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
@@ -38,7 +39,7 @@ public final class LocationHelper {
 
     // Internal needed constants
     private static final Map<Long, Location> SAVED_LOCATIONS;
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     // A switch if locations should be saved
     private static boolean shouldSave;
@@ -224,8 +225,7 @@ public final class LocationHelper {
         if (!shouldSave) {
             Executors.newSingleThreadScheduledExecutor().schedule(() -> {
                 // Save the location data to the location.json
-                final JSONObject json = new JSONObject(GSON.toJson(SAVED_LOCATIONS));
-                FileHelper.saveFile(LOCATION_FILE, json.toString(FileHelper.INDENT));
+                FileHelper.saveFile(LOCATION_FILE, GSON.toJson(SAVED_LOCATIONS));
                 System.out.println("Saved queried locations to file.");
                 shouldSave = false;
             }, SAVE_DELAY_SECONDS, TimeUnit.SECONDS);
