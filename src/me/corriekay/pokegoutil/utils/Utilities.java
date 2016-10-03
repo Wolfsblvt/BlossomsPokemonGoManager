@@ -41,7 +41,7 @@ public final class Utilities {
      * @return Percentage string.
      */
     public static String percentageWithTwoCharacters(final double decimalNumber) {
-        final double percentage = decimalNumber * PERCENTAGE_FACTOR;
+        final int percentage = (int) Math.round(decimalNumber * PERCENTAGE_FACTOR);
         return (percentage < PERCENTAGE_FACTOR) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
     }
 
