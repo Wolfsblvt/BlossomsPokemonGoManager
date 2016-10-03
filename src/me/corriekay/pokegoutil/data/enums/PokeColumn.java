@@ -266,18 +266,18 @@ public enum PokeColumn {
             return LocationHelper.getCoordinates(cell).toString(locationDecimals);
         }
     },
-    CAUGHT_LOCATION("Caught Location", ColumnType.FUTURE_STRING) {
-        @Override
-        public Object get(final Pokemon p) {
-            final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
-            return LocationHelper.getLocation(cell).thenApply(location -> location.formattedLocation);
-        }
-    },
     CAUGHT_CITY("Caught City", ColumnType.FUTURE_STRING) {
         @Override
         public Object get(final Pokemon p) {
             final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
             return LocationHelper.getLocation(cell).thenApply(location -> location.city);
+        }
+    },
+    CAUGHT_LOCATION("Caught Location", ColumnType.FUTURE_STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
+            return LocationHelper.getLocation(cell).thenApply(location -> location.formattedLocation);
         }
     },
     PID("PID", ColumnType.LONG) {

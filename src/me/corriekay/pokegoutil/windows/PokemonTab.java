@@ -45,6 +45,7 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
+import me.corriekay.pokegoutil.utils.helpers.LocationHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler.ReplacePattern;
 import me.corriekay.pokegoutil.utils.pokemon.PokeNick;
@@ -256,6 +257,19 @@ public class PokemonTab extends JPanel {
     private void changeLanguage(final String langCode) {
         config.setString(ConfigKey.LANGUAGE, langCode);
         refreshPkmn();
+
+        // Check if cached locations should be deleted, because they are language dependant
+        if (LocationHelper.locationFileExists() && JOptionPane.showConfirmDialog(null,
+            "Your language was changed."
+                + StringLiterals.NEWLINE + "The locations queried from the Google Locations Geocode API may be language-specific (eg local city and country names)."
+                + StringLiterals.NEWLINE + "If you want the cached languages to be deleted, click OK."
+                + StringLiterals.NEWLINE + "But do note that querying the locations again may take some time and may bring you over the API limit.",
+            "Local Locations may be different",
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION) {
+            // Delete the cached locations now
+            LocationHelper.deleteCachedLocations();
+        }
     }
 
     private void refreshPkmn() {

@@ -102,6 +102,24 @@ public final class LocationHelper {
     }
 
     /**
+     * Checks if the location file exists.
+     *
+     * @return Weather or not the location file exists.
+     */
+    public static boolean locationFileExists() {
+        return LOCATION_FILE.exists();
+    }
+
+    /**
+     * Deletes the cached locations, and the location file too.
+     * Cache will be started from scratch again.
+     */
+    public static void deleteCachedLocations() {
+        FileHelper.deleteFile(LOCATION_FILE);
+        SAVED_LOCATIONS.clear();
+    }
+
+    /**
      * Queries the JSON for location from the Google API.
      * It uses the user chosen language to tell Google in which language the city names should be returned.
      *
@@ -168,18 +186,31 @@ public final class LocationHelper {
      * @return The city if found, else null.
      */
     private static String cityFromGoogleMatchesList(final JSONArray array, final String node) {
-        if (array != null && array.length() > 0) {
-            // We go through all components to see if we find the one we want
-            for (int i = 0; i < array.length(); i++) {
-                final JSONObject component = array.getJSONObject(i);
+        if (array == null || array.length() == 0) {
+            return null;
+        }
 
-                // We go through the types and check if we are in the right component If so, we return the searched value
-                final JSONArray types = component.getJSONArray(GoogleKey.TYPES);
-                for (int typeIndex = 0; typeIndex < types.length(); typeIndex++) {
-                    if ("locality".equals(types.optString(typeIndex))) {
-                        return component.optString(node);
-                    }
+        // We go through all components to see if we find the one we want
+        for (int i = 0; i < array.length(); i++) {
+            final JSONObject component = array.getJSONObject(i);
+
+            // We go through the types and check if we are in the right component
+            final JSONArray types = component.getJSONArray(GoogleKey.TYPES);
+            boolean isCity = false;
+            for (int typeIndex = 0; typeIndex < types.length(); typeIndex++) {
+                final String type = types.optString(typeIndex);
+                if ("postal_code".equals(type)) {
+                    // We continue with the next component here, we do not want the postal code notation
+                    isCity = false;
+                    break;
                 }
+                if ("locality".equals(type)) {
+                    isCity = true;
+                }
+            }
+            // If so, we return the searched value
+            if (isCity) {
+                return component.optString(node);
             }
         }
         return null;

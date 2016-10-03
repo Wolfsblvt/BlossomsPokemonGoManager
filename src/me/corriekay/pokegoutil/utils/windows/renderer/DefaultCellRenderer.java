@@ -7,16 +7,15 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+import me.corriekay.pokegoutil.utils.windows.PokemonTable;
+
 /**
  * Provide custom formatting for the moveset ranking columns while allowing sorting on original values.
  */
 public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
     // Padding left and right can be overwritten by custom renderer.
-    protected final int paddingLeft = 5;
-    protected final int paddingRight = 5;
-    // Padding top and bottom can't be overwritten, cause rows should have the same height
-    private final int paddingTop = 2;
-    private final int paddingBottom = 2;
+    protected static final int PADDING_LEFT = 5;
+    protected static final int PADDING_RIGHT = 5;
 
 
     /**
@@ -43,11 +42,11 @@ public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
      * @param table      The table.
      * @param isSelected If the cell is selected.
      */
-    public void setNativeLookAndFeel(final JTable table, final boolean isSelected) {
+    protected void setNativeLookAndFeel(final JTable table, final boolean isSelected) {
         setOpaque(true);
         setDefaultSelectionColors(table, isSelected);
         setFont(table.getFont());
-        setBorder(BorderFactory.createEmptyBorder(paddingTop, paddingLeft, paddingBottom, paddingRight));
+        setBorder(BorderFactory.createEmptyBorder(PokemonTable.ROW_HEIGHT_PADDING, PADDING_LEFT, PokemonTable.ROW_HEIGHT_PADDING, PADDING_RIGHT));
     }
 
     /**
@@ -56,7 +55,7 @@ public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
      * @param table      The table.
      * @param isSelected If the cell is selected.
      */
-    private void setDefaultSelectionColors(final JTable table, final boolean isSelected) {
+    protected void setDefaultSelectionColors(final JTable table, final boolean isSelected) {
         if (isSelected) {
             this.setBackground(table.getSelectionBackground());
             this.setForeground(table.getSelectionForeground());

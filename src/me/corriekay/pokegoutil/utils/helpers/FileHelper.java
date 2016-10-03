@@ -28,9 +28,24 @@ public final class FileHelper {
 
     private static ClassLoader classLoader = FileHelper.class.getClassLoader();
 
-    public static void deleteFile(File file, boolean deleteDir) {
+    /**
+     * Deletes the file (which can't be a dir).
+     *
+     * @param file The file.
+     */
+    public static void deleteFile(final File file) {
+        deleteFile(file, false);
+    }
+
+    /**
+     * Deletes the file, or all files in the directory. Optionally the directory itself too.
+     *
+     * @param file      The file.
+     * @param deleteDir Deletes the base directory too.
+     */
+    public static void deleteFile(final File file, final boolean deleteDir) {
         if (file.isDirectory()) {
-            for (File subFile : file.listFiles()) {
+            for (final File subFile : file.listFiles()) {
                 deleteFile(subFile, true);
             }
             if (deleteDir) {
@@ -42,13 +57,14 @@ public final class FileHelper {
     }
 
     public static boolean checkFilename(String checkme, boolean warn) {
-        String[] chars = new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"};
+        final String[] chars = new String[] {"\\", "/", ":", "*", "?", "\"", "<", ">", "|"};
 
         for (String c : chars) {
 
             if (checkme.contains(c)) {
-                if (warn)
+                if (warn) {
                     JOptionPane.showMessageDialog(null, "A file name can't contain any of the following characters: \\/:*\"<>|");
+                }
                 return false;
             }
         }

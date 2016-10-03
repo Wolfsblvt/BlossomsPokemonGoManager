@@ -19,7 +19,7 @@ public class NumberCellRenderer extends DefaultCellRenderer {
     }
 
     @Override
-    public void setNativeLookAndFeel(final JTable table, final boolean isSelected) {
+    protected void setNativeLookAndFeel(final JTable table, final boolean isSelected) {
         super.setNativeLookAndFeel(table, isSelected);
         setHorizontalAlignment(JLabel.RIGHT);
     }
