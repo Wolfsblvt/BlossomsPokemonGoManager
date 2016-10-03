@@ -33,7 +33,7 @@ import org.json.JSONObject;
  */
 public final class LocationHelper {
     // General constants that are set for this file
-    private static final File LOCATION_FILE = new File("locations.json");
+    private static final File LOCATION_FILE = new File(System.getProperty("user.dir"), "locations.json");
     private static final int SAVE_DELAY_SECONDS = 5;
 
     // Internal needed constants
