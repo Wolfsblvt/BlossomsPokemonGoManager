@@ -118,31 +118,6 @@ public final class FileHelper {
     }
 
     /**
-     * Reads given file. Throws exceptions on error.
-     *
-     * @param file The file.
-     * @return The file contents.
-     * @throws IOException File IO exceptions.
-     */
-    public static String readFileWithExceptions(final File file) throws IOException {
-        final BufferedReader in = new BufferedReader(new FileReader(file));
-        final StringBuilder sb = new StringBuilder();
-
-        String content = "";
-        boolean firstline = true;
-        do {
-            sb.append(content);
-            content = in.readLine();
-            if (content != null && !firstline) {
-                sb.append(StringLiterals.NEWLINE);
-            }
-            firstline = false;
-        } while (content != null);
-        in.close();
-        return sb.toString();
-    }
-
-    /**
      * Read file from given input stream and returns it.
      *
      * @param inputStream The InputStream of the file.
@@ -165,6 +140,31 @@ public final class FileHelper {
             }
         }
         return buf.toString().trim();
+    }
+
+    /**
+     * Reads given file. Throws exceptions on error.
+     *
+     * @param file The file.
+     * @return The file contents.
+     * @throws IOException File IO exceptions.
+     */
+    public static String readFileWithExceptions(final File file) throws IOException {
+        final BufferedReader in = new BufferedReader(new FileReader(file));
+        final StringBuilder sb = new StringBuilder();
+
+        String content = "";
+        boolean firstline = true;
+        do {
+            sb.append(content);
+            content = in.readLine();
+            if (content != null && !firstline) {
+                sb.append(StringLiterals.NEWLINE);
+            }
+            firstline = false;
+        } while (content != null);
+        in.close();
+        return sb.toString();
     }
 
     public static void saveFile(File file, String saveme) {
