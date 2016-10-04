@@ -44,6 +44,12 @@ public enum PokeColumn {
             return p.getNickname();
         }
     },
+    CP("CP", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getCp();
+        }
+    },
     SPECIES("Species", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
@@ -106,16 +112,58 @@ public enum PokeColumn {
                 + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, false));
         }
     },
-    CP("CP", ColumnType.INT) {
-        @Override
-        public Object get(final Pokemon p) {
-            return p.getCp();
-        }
-    },
     HP("HP", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
             return p.getMaxStamina();
+        }
+    },
+    EVOLVABLE_COUNT("Evolvable", ColumnType.NULLABLE_INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            if (p.getCandiesToEvolve() != 0) {
+                final int candies = p.getCandy();
+                final int candiesToEvolve = p.getCandiesToEvolve();
+
+                int evolvable = (int) ((double) candies / candiesToEvolve);
+                int rest = candies % candiesToEvolve;
+                final boolean transferAfterEvolve = ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE);
+
+                // We iterate and get how many candies are added while evolving and if that can make up for some more evolves
+                int newEvolvable = evolvable;
+                do {
+                    final int candyGiven = newEvolvable + (transferAfterEvolve ? newEvolvable : 0);
+                    newEvolvable = (int) ((double) (candyGiven + rest) / candiesToEvolve);
+                    evolvable = evolvable + newEvolvable;
+                    rest = (candyGiven + rest) % candiesToEvolve;
+                } while (newEvolvable > 0);
+
+                return String.valueOf(evolvable);
+            } else {
+                return StringLiterals.NO_VALUE_SIGN;
+            }
+        }
+    },
+    CANDIES("Candies", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getCandy();
+        }
+    },
+    CANDIES_TO_EVOLVE("To Evolve", ColumnType.NULLABLE_INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            if (p.getCandiesToEvolve() != 0) {
+                return String.valueOf(p.getCandiesToEvolve());
+            } else {
+                return StringLiterals.NO_VALUE_SIGN;
+            }
+        }
+    },
+    STARDUST_TO_POWERUP("Stardust", ColumnType.INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getStardustCostsForPowerup();
         }
     },
     MAX_CP_CUR("Max CP (Cur)", ColumnType.INT) {
@@ -150,26 +198,10 @@ public enum PokeColumn {
             return p.getCpFullEvolveAndPowerup();
         }
     },
-    CANDIES("Candies", ColumnType.INT) {
+    CP_EVOLVED("CP Evolved", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getCandy();
-        }
-    },
-    CANDIES_TO_EVOLVE("To Evolve", ColumnType.NULLABLE_INT) {
-        @Override
-        public Object get(final Pokemon p) {
-            if (p.getCandiesToEvolve() != 0) {
-                return String.valueOf(p.getCandiesToEvolve());
-            } else {
-                return StringLiterals.NO_VALUE_SIGN;
-            }
-        }
-    },
-    STARDUST_TO_POWERUP("Stardust", ColumnType.INT) {
-        @Override
-        public Object get(final Pokemon p) {
-            return p.getStardustCostsForPowerup();
+            return p.getCpAfterFullEvolve();
         }
     },
     CAUGHT_WITH("Caught With", ColumnType.STRING) {
@@ -190,56 +222,6 @@ public enum PokeColumn {
             return (p.isFavorite()) ? "Yes" : "";
         }
     },
-    DUEL_ABILITY("Duel Ability", ColumnType.PERCENTAGE) {
-        @Override
-        public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonPerformanceCache.getHighestStats().duelAbility.value);
-        }
-    },
-    GYM_OFFENSE("Gym Offense", ColumnType.PERCENTAGE) {
-        @Override
-        public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonPerformanceCache.getHighestStats().gymOffense.value);
-        }
-    },
-    GYM_DEFENSE("Gym Defense", ColumnType.PERCENTAGE) {
-        @Override
-        public Object get(final Pokemon p) {
-            return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonPerformanceCache.getHighestStats().gymDefense.value);
-        }
-    },
-    CP_EVOLVED("CP Evolved", ColumnType.NULLABLE_INT) {
-        @Override
-        public Object get(final Pokemon p) {
-            return p.getCpAfterFullEvolve();
-        }
-    },
-    EVOLVABLE_COUNT("Evolvable", ColumnType.NULLABLE_INT) {
-        @Override
-        public Object get(final Pokemon p) {
-            if (p.getCandiesToEvolve() != 0) {
-                final int candies = p.getCandy();
-                final int candiesToEvolve = p.getCandiesToEvolve();
-
-                int evolvable = (int) ((double) candies / candiesToEvolve);
-                int rest = candies % candiesToEvolve;
-                final boolean transferAfterEvolve = ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE);
-
-                // We iterate and get how many candies are added while evolving and if that can make up for some more evolves
-                int newEvolvable = evolvable;
-                do {
-                    final int candyGiven = newEvolvable + (transferAfterEvolve ? newEvolvable : 0);
-                    newEvolvable = (int) ((double) (candyGiven + rest) / candiesToEvolve);
-                    evolvable = evolvable + newEvolvable;
-                    rest = (candyGiven + rest) % candiesToEvolve;
-                } while (newEvolvable > 0);
-
-                return String.valueOf(evolvable);
-            } else {
-                return StringLiterals.NO_VALUE_SIGN;
-            }
-        }
-    },
     DUEL_ABILITY_RATING("Duel Ability Rating", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
@@ -258,6 +240,24 @@ public enum PokeColumn {
             return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonPerformanceCache.getStats(p.getPokemonId()).gymDefense.value);
         }
     },
+    DUEL_ABILITY("Duel Ability", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return Utilities.percentage(PokemonCalculationUtils.duelAbility(p), PokemonPerformanceCache.getHighestStats().duelAbility.value);
+        }
+    },
+    GYM_OFFENSE("Gym Offense", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return Utilities.percentage(PokemonCalculationUtils.gymOffense(p), PokemonPerformanceCache.getHighestStats().gymOffense.value);
+        }
+    },
+    GYM_DEFENSE("Gym Defense", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonPerformanceCache.getHighestStats().gymDefense.value);
+        }
+    },
     CAUGHT_COORDINATES("Caught Coordinates", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
@@ -266,18 +266,18 @@ public enum PokeColumn {
             return LocationHelper.getCoordinates(cell).toString(locationDecimals);
         }
     },
-    CAUGHT_LOCATION("Caught Location", ColumnType.FUTURE_STRING) {
-        @Override
-        public Object get(final Pokemon p) {
-            final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
-            return LocationHelper.getLocation(cell).thenApply(location -> location.formattedLocation);
-        }
-    },
     CAUGHT_CITY("Caught City", ColumnType.FUTURE_STRING) {
         @Override
         public Object get(final Pokemon p) {
             final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
             return LocationHelper.getLocation(cell).thenApply(location -> location.city);
+        }
+    },
+    CAUGHT_LOCATION("Caught Location", ColumnType.FUTURE_STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
+            return LocationHelper.getLocation(cell).thenApply(location -> location.formattedLocation);
         }
     },
     PID("PID", ColumnType.LONG) {

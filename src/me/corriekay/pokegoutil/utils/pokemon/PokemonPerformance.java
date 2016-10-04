@@ -5,12 +5,14 @@ import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 
 /**
  * A class to save a specific performance of a given Pokémon with given moveset.
+ * @param <T> The type of the value that is saved
  */
-public final class PokemonPerformance {
-    public static final PokemonPerformance DEFAULT = new PokemonPerformance(null, 0, null, null);
+public final class PokemonPerformance<T> {
+    public static final PokemonPerformance<Long> DEFAULT_LONG = new PokemonPerformance<>(null, 0L, null, null);
+    public static final PokemonPerformance<Double> DEFAULT_DOUBLE = new PokemonPerformance<>(null, 0d, null, null);
 
     public final PokemonId pokemonId;
-    public final double value;
+    public final T value;
     public final PokemonMove move1;
     public final PokemonMove move2;
 
@@ -23,7 +25,7 @@ public final class PokemonPerformance {
      * @param move1     The Primary Move.
      * @param move2     The Secondary Move.
      */
-    PokemonPerformance(final PokemonId pokemonId, final double value, final PokemonMove move1, final PokemonMove move2) {
+    PokemonPerformance(final PokemonId pokemonId, final T value, final PokemonMove move1, final PokemonMove move2) {
         this.pokemonId = pokemonId;
         this.value = value;
         this.move1 = move1;

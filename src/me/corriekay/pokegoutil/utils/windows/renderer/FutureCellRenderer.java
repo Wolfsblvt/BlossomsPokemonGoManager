@@ -15,20 +15,21 @@ import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
  */
 public class FutureCellRenderer extends DefaultCellRenderer {
 
-    private Map<String, String> cellCache = new HashMap<>();
+    // We are caching the results of the future, so that they don't have to be computed over and over again
+    private static final Map<String, String> CELL_CACHE = new HashMap<>();
 
     @Override
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
                                                    final boolean hasFocus, final int rowIndex, final int columnIndex) {
         setNativeLookAndFeel(table, isSelected);
 
-        final String resolvedValue = cellCache.get(rowIndex + StringLiterals.CONCAT_SEPARATOR + columnIndex);
+        final String resolvedValue = CELL_CACHE.get(rowIndex + StringLiterals.CONCAT_SEPARATOR + columnIndex);
         if (resolvedValue != null) {
             setText(resolvedValue);
             setToolTipText(resolvedValue);
         } else {
-            // We set a default text. Must be this long so that the column width is set correctly
-            setText("... Loading ...                              ");
+            // We set a default text.
+            setText("... Loading ...");
 
             @SuppressWarnings("unchecked")
             final CompletableFuture<String> future = (CompletableFuture<String>) value;
@@ -45,10 +46,10 @@ public class FutureCellRenderer extends DefaultCellRenderer {
      * @param rowIndex    The row index.
      * @param columnIndex The column index.
      */
-    public void asyncSetValue(final String textValue, final JTable table, final int rowIndex, final int columnIndex) {
+    protected void asyncSetValue(final String textValue, final JTable table, final int rowIndex, final int columnIndex) {
         setText(textValue);
         setToolTipText(textValue);
-        cellCache.put(rowIndex + StringLiterals.CONCAT_SEPARATOR + columnIndex, textValue);
+        CELL_CACHE.put(rowIndex + StringLiterals.CONCAT_SEPARATOR + columnIndex, textValue);
 
         // We need the cell repainted
         WindowStuffHelper.fireCellChanged(table, rowIndex, columnIndex);

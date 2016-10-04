@@ -295,11 +295,11 @@
         <module name="InterfaceTypeParameterName"/>
         <module name="LocalFinalVariableName"/>
         <module name="LocalVariableName">
-            <property name="format" value="^(id)|(p)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
+            <property name="format" value="^(id)|(p)|(go)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
             <property name="allowOneCharVarInForLoop" value="true"/>
         </module>
         <module name="MemberName">
-            <property name="format" value="^(id)|(p)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
+            <property name="format" value="^(id)|(p)|(go)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
         </module>
         <module name="MethodName"/>
         <module name="MethodTypeParameterName"/>
@@ -308,14 +308,14 @@
                       value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
         </module>
         <module name="ParameterName">
-            <property name="format" value="^(id)|(p)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
+            <property name="format" value="^(id)|(p)|(go)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
             <property name="ignoreOverridden" value="true"/>
         </module>
         <module name="CatchParameterName">
             <property name="format" value="^(e|ex|[a-z][a-z][a-zA-Z]+)$"/>
         </module>
         <module name="StaticVariableName">
-            <property name="format" value="^(id)|(p)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
+            <property name="format" value="^(id)|(p)|(go)|([a-z][a-z0-9][a-zA-Z0-9]+)$"/>
         </module>
         <module name="TypeName"/>
 

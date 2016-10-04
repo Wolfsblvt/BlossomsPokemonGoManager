@@ -22,9 +22,9 @@ public final class PokemonPerformanceCache {
     static {
         MAP = new EnumMap<>(PokemonId.class);
 
-        PokemonPerformance globalHighestDuelAbility = PokemonPerformance.DEFAULT;
-        PokemonPerformance globalHighestGymOffense = PokemonPerformance.DEFAULT;
-        PokemonPerformance globalHighestGymDefense = PokemonPerformance.DEFAULT;
+        PokemonPerformance<Long> globalHighestDuelAbility = PokemonPerformance.DEFAULT_LONG;
+        PokemonPerformance<Double> globalHighestGymOffense = PokemonPerformance.DEFAULT_DOUBLE;
+        PokemonPerformance<Long> globalHighestGymDefense = PokemonPerformance.DEFAULT_LONG;
 
         for (final Map.Entry<PokemonId, PokemonMeta> entry : PokemonMetaRegistry.getMeta().entrySet()) {
             final PokemonId pokemonId = entry.getKey();
@@ -35,22 +35,22 @@ public final class PokemonPerformanceCache {
                 continue;
             }
 
-            PokemonPerformance highestDuelAbility = PokemonPerformance.DEFAULT;
-            PokemonPerformance highestGymOffense = PokemonPerformance.DEFAULT;
-            PokemonPerformance highestGymDefense = PokemonPerformance.DEFAULT;
+            PokemonPerformance<Long> highestDuelAbility = PokemonPerformance.DEFAULT_LONG;
+            PokemonPerformance<Double> highestGymOffense = PokemonPerformance.DEFAULT_DOUBLE;
+            PokemonPerformance<Long> highestGymDefense = PokemonPerformance.DEFAULT_LONG;
             for (final PokemonMove move1 : meta.getQuickMoves()) {
                 for (final PokemonMove move2 : meta.getCinematicMoves()) {
                     final long duelAbility = PokemonCalculationUtils.duelAbility(pokemonId, move1, move2, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV);
                     if (duelAbility > highestDuelAbility.value) {
-                        highestDuelAbility = new PokemonPerformance(pokemonId, duelAbility, move1, move2);
+                        highestDuelAbility = new PokemonPerformance<>(pokemonId, duelAbility, move1, move2);
                     }
                     final double gymOffense = PokemonCalculationUtils.gymOffense(pokemonId, move1, move2, PokemonUtils.MAX_IV);
                     if (gymOffense > highestGymOffense.value) {
-                        highestGymOffense = new PokemonPerformance(pokemonId, gymOffense, move1, move2);
+                        highestGymOffense = new PokemonPerformance<>(pokemonId, gymOffense, move1, move2);
                     }
                     final long gymDefense = PokemonCalculationUtils.gymDefense(pokemonId, move1, move2, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV);
                     if (gymDefense > highestGymDefense.value) {
-                        highestGymDefense = new PokemonPerformance(pokemonId, gymDefense, move1, move2);
+                        highestGymDefense = new PokemonPerformance<>(pokemonId, gymDefense, move1, move2);
                     }
                 }
             }

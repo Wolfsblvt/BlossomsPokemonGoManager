@@ -1,6 +1,6 @@
 package me.corriekay.pokegoutil.utils;
 
-import javax.swing.*;
+import javax.swing.SortOrder;
 
 public enum ConfigKey {
 
@@ -34,6 +34,7 @@ public enum ConfigKey {
 
     LANGUAGE("options.lang", "en", Type.STRING),
     FONT_SIZE("options.font.size", 12, Type.INTEGER),
+    ROW_PADDING("options.row.padding", 4, Type.INTEGER),
     SKIP_VERSION("options.skipversion", null, Type.STRING),
 
     DELAY_RENAME_MIN("delay.rename.min", 1000, Type.INTEGER),

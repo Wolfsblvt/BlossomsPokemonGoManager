@@ -30,8 +30,8 @@ public final class Utilities {
      * @param maximum The maximum of the number.
      * @return The percentage value
      */
-    public static double percentage(double number, double maximum) {
-        return Math.min(number / maximum, maximum);
+    public static double percentage(final double number, final double maximum) {
+        return number / maximum;
     }
 
     /**
@@ -40,8 +40,8 @@ public final class Utilities {
      * @param decimalNumber The given decimal number.
      * @return Percentage string.
      */
-    public static String percentageWithTwoCharacters(double decimalNumber) {
-        double percentage = decimalNumber * PERCENTAGE_FACTOR;
+    public static String percentageWithTwoCharacters(final double decimalNumber) {
+        final int percentage = (int) Math.round(decimalNumber * PERCENTAGE_FACTOR);
         return (percentage < PERCENTAGE_FACTOR) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
     }
 
