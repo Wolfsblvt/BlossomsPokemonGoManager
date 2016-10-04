@@ -39,7 +39,9 @@ public final class Utilities {
      *
      * @param decimalNumber The given decimal number.
      * @return Percentage string.
+     * @deprecated We don'T use this function anymore. The PokeHandler has its own function for replace patterns now.
      */
+    @Deprecated
     public static String percentageWithTwoCharacters(double decimalNumber) {
         double percentage = decimalNumber * PERCENTAGE_FACTOR;
         return (percentage < PERCENTAGE_FACTOR) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
