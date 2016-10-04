@@ -13,7 +13,6 @@ import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 
 public class BlossomsPoGoManager extends Application {
 
-    public static final String VERSION = "v0.1.2-alpha.2";
     private static Stage sPrimaryStage;
 
     /**

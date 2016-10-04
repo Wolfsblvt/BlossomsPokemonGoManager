@@ -22,7 +22,6 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.helpers.FileHelper;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.SmartScroller;
 import me.corriekay.pokegoutil.utils.version.Updater;
@@ -48,7 +47,7 @@ public class PokemonGoMainWindow extends JFrame {
     /**
      * Instantiate a PokemonGoMainWindow instance.
      *
-     * @param pkmngo PokemonGo instance
+     * @param pkmngo      PokemonGo instance
      * @param smartscroll use smart scroll
      */
     public PokemonGoMainWindow(final PokemonGo pkmngo, final boolean smartscroll) {
@@ -96,14 +95,14 @@ public class PokemonGoMainWindow extends JFrame {
         try {
             System.out.println(String.format("Successfully logged in. Welcome, %s.", pp.getPlayerData().getUsername()));
             System.out.println(String.format("Stats: Lvl %d %s player.",
-                    pp.getStats().getLevel(),
-                    PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue())));
+                pp.getStats().getLevel(),
+                PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue())));
 
             String msg = String.format("Pokédex - Types Caught: %d, ", pp.getStats().getUniquePokedexEntries());
             msg += String.format("Total Pokémon Caught: %d, ", pp.getStats().getPokemonsCaptured());
             msg += String.format("Total Current Pokémon: %d (+%d Eggs)",
-                    go.getInventories().getPokebank().getPokemons().size(),
-                    go.getInventories().getHatchery().getEggs().size());
+                go.getInventories().getPokebank().getPokemons().size(),
+                go.getInventories().getHatchery().getEggs().size());
             System.out.println(msg);
 
         } catch (final NumberFormatException e) {
@@ -153,9 +152,10 @@ public class PokemonGoMainWindow extends JFrame {
     public void refreshTitle() {
         try {
             final NumberFormat f = NumberFormat.getInstance();
-            setTitle(String.format("%s - Stardust: %s - Blossom's Pokémon Go Manager",
-                    pp.getPlayerData().getUsername(),
-                    f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
+            setTitle(String.format("%s - Pokemon: %s - Stardust: %s - Blossom's Pokémon Go Manager",
+                pp.getPlayerData().getUsername(),
+                f.format(go.getInventories().getPokebank().getPokemons().size()),
+                f.format(pp.getCurrency(PlayerProfile.Currency.STARDUST))));
         } catch (final NumberFormatException e) {
             setTitle("Blossom's Pokémon Go Manager");
         }
