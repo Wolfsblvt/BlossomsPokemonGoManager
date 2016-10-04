@@ -320,10 +320,10 @@
         <module name="TypeName"/>
 
         <!-- Regexp -->
-        <module name="RegexpSinglelineJava">
+        <!--<module name="RegexpSinglelineJava">
             <property name="format" value="[^\p{ASCII}]"/>
             <property name="ignoreComments" value="true"/>
-        </module>
+        </module>-->
 
         <!-- Size Violations -->
         <module name="AnonInnerLength"/>
