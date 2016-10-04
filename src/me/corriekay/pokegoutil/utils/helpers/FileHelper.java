@@ -102,28 +102,44 @@ public final class FileHelper {
         }
     }
 
-    public static String readFile(File file) {
+    /**
+     * Reads given file. Returns null if file can't be read.
+     *
+     * @param file The file.
+     * @return The file contents.
+     */
+    public static String readFile(final File file) {
         try {
-            BufferedReader in = new BufferedReader(new FileReader(file));
-
-            StringBuilder sb = new StringBuilder();
-
-            String l = "";
-            boolean firstline = true;
-            do {
-                sb.append(l);
-                l = in.readLine();
-                if (l != null && !firstline) {
-                    sb.append("\n");
-                }
-                firstline = false;
-            } while (l != null);
-            in.close();
-            return sb.toString();
+            return readFileWithExceptions(file);
         } catch (IOException e) {
             System.out.println(ExceptionMessages.COULD_NOT_READ.with(e));
         }
         return null;
+    }
+
+    /**
+     * Reads given file. Throws exceptions on error.
+     *
+     * @param file The file.
+     * @return The file contents.
+     * @throws IOException File IO exceptions.
+     */
+    public static String readFileWithExceptions(final File file) throws IOException {
+        final BufferedReader in = new BufferedReader(new FileReader(file));
+        final StringBuilder sb = new StringBuilder();
+
+        String content = "";
+        boolean firstline = true;
+        do {
+            sb.append(content);
+            content = in.readLine();
+            if (content != null && !firstline) {
+                sb.append(StringLiterals.NEWLINE);
+            }
+            firstline = false;
+        } while (content != null);
+        in.close();
+        return sb.toString();
     }
 
     /**
