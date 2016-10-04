@@ -22,6 +22,7 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
@@ -33,12 +34,12 @@ import org.json.JSONObject;
  */
 public final class LocationHelper {
     // General constants that are set for this file
-    private static final File LOCATION_FILE = new File("locations.json");
+    private static final File LOCATION_FILE = new File(System.getProperty("user.dir"), "locations.json");
     private static final int SAVE_DELAY_SECONDS = 5;
 
     // Internal needed constants
     private static final Map<Long, Location> SAVED_LOCATIONS;
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     // A switch if locations should be saved
     private static boolean shouldSave;
@@ -99,6 +100,24 @@ public final class LocationHelper {
                 return location;
             });
 
+    }
+
+    /**
+     * Checks if the location file exists.
+     *
+     * @return Weather or not the location file exists.
+     */
+    public static boolean locationFileExists() {
+        return LOCATION_FILE.exists();
+    }
+
+    /**
+     * Deletes the cached locations, and the location file too.
+     * Cache will be started from scratch again.
+     */
+    public static void deleteCachedLocations() {
+        FileHelper.deleteFile(LOCATION_FILE);
+        SAVED_LOCATIONS.clear();
     }
 
     /**
@@ -168,18 +187,31 @@ public final class LocationHelper {
      * @return The city if found, else null.
      */
     private static String cityFromGoogleMatchesList(final JSONArray array, final String node) {
-        if (array != null && array.length() > 0) {
-            // We go through all components to see if we find the one we want
-            for (int i = 0; i < array.length(); i++) {
-                final JSONObject component = array.getJSONObject(i);
+        if (array == null || array.length() == 0) {
+            return null;
+        }
 
-                // We go through the types and check if we are in the right component If so, we return the searched value
-                final JSONArray types = component.getJSONArray(GoogleKey.TYPES);
-                for (int typeIndex = 0; typeIndex < types.length(); typeIndex++) {
-                    if ("locality".equals(types.optString(typeIndex))) {
-                        return component.optString(node);
-                    }
+        // We go through all components to see if we find the one we want
+        for (int i = 0; i < array.length(); i++) {
+            final JSONObject component = array.getJSONObject(i);
+
+            // We go through the types and check if we are in the right component
+            final JSONArray types = component.getJSONArray(GoogleKey.TYPES);
+            boolean isCity = false;
+            for (int typeIndex = 0; typeIndex < types.length(); typeIndex++) {
+                final String type = types.optString(typeIndex);
+                if ("postal_code".equals(type)) {
+                    // We continue with the next component here, we do not want the postal code notation
+                    isCity = false;
+                    break;
                 }
+                if ("locality".equals(type)) {
+                    isCity = true;
+                }
+            }
+            // If so, we return the searched value
+            if (isCity) {
+                return component.optString(node);
             }
         }
         return null;
@@ -193,8 +225,7 @@ public final class LocationHelper {
         if (!shouldSave) {
             Executors.newSingleThreadScheduledExecutor().schedule(() -> {
                 // Save the location data to the location.json
-                final JSONObject json = new JSONObject(GSON.toJson(SAVED_LOCATIONS));
-                FileHelper.saveFile(LOCATION_FILE, json.toString(FileHelper.INDENT));
+                FileHelper.saveFile(LOCATION_FILE, GSON.toJson(SAVED_LOCATIONS));
                 System.out.println("Saved queried locations to file.");
                 shouldSave = false;
             }, SAVE_DELAY_SECONDS, TimeUnit.SECONDS);

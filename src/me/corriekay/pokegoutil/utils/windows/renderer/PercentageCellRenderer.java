@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 
 import javax.swing.JTable;
 
+import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.logging.LoggerHelper;
 
 /**
@@ -12,18 +13,16 @@ import me.corriekay.pokegoutil.utils.logging.LoggerHelper;
  */
 public class PercentageCellRenderer extends NumberCellRenderer {
 
-    private static final int PERCENTAGE_FACTOR = 100;
-
-    private final DecimalFormat decimalFormatter = new DecimalFormat("#.00");
+    private final DecimalFormat decimalFormatter = new DecimalFormat("0.00");
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                                                   boolean hasFocus, int rowIndex, int columnIndex) {
+    public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
+                                                   final boolean hasFocus, final int rowIndex, final int columnIndex) {
         setNativeLookAndFeel(table, isSelected);
 
         try {
-            double percentage = Double.valueOf(value.toString());
-            setText(decimalFormatter.format(percentage * PERCENTAGE_FACTOR));
+            final double percentage = Double.valueOf(value.toString());
+            setText(decimalFormatter.format(percentage * Utilities.PERCENTAGE_FACTOR));
             setToolTipText(String.valueOf(percentage));
         } catch (NumberFormatException e) {
             // We have a wrong number here? Strange :-/

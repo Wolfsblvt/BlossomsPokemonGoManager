@@ -7,9 +7,9 @@ import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
  */
 public final class PokemonPerformanceStats {
     public final PokemonId pokemonId;
-    public final PokemonPerformance duelAbility;
-    public final PokemonPerformance gymOffense;
-    public final PokemonPerformance gymDefense;
+    public final PokemonPerformance<Long> duelAbility;
+    public final PokemonPerformance<Double> gymOffense;
+    public final PokemonPerformance<Long> gymDefense;
 
     /**
      * Creates an instance of this performance stats object.
@@ -21,9 +21,9 @@ public final class PokemonPerformanceStats {
      * @param gymDefense  The Gym Defense Performance.
      */
     PokemonPerformanceStats(final PokemonId pokemonId,
-                            final PokemonPerformance duelAbility,
-                            final PokemonPerformance gymOffense,
-                            final PokemonPerformance gymDefense) {
+                            final PokemonPerformance<Long> duelAbility,
+                            final PokemonPerformance<Double> gymOffense,
+                            final PokemonPerformance<Long> gymDefense) {
         this.pokemonId = pokemonId;
         this.duelAbility = duelAbility;
         this.gymOffense = gymOffense;
