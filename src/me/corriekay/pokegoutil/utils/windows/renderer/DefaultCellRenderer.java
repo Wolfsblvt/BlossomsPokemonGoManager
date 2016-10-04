@@ -14,8 +14,8 @@ import me.corriekay.pokegoutil.utils.windows.PokemonTable;
  */
 public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
     // Padding left and right can be overwritten by custom renderer.
-    protected static final int PADDING_LEFT = 5;
-    protected static final int PADDING_RIGHT = 5;
+    protected static final int PADDING_LEFT = 3;
+    protected static final int PADDING_RIGHT = 3;
 
 
     /**

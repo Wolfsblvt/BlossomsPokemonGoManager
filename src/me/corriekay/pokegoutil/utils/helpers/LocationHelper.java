@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -41,8 +42,8 @@ public final class LocationHelper {
     private static final Map<Long, Location> SAVED_LOCATIONS;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    // A switch if locations should be saved
-    private static boolean shouldSave;
+    // A boolean showing if a save is currently in progress
+    private static AtomicBoolean isSaving = new AtomicBoolean(false);
 
     static {
         SAVED_LOCATIONS = new ConcurrentHashMap<>();
@@ -118,6 +119,7 @@ public final class LocationHelper {
     public static void deleteCachedLocations() {
         FileHelper.deleteFile(LOCATION_FILE);
         SAVED_LOCATIONS.clear();
+        System.out.println("Deleted cached locations.");
     }
 
     /**
@@ -222,15 +224,14 @@ public final class LocationHelper {
      */
     private static void save() {
         // The map gets updated really often maybe, so we delay the save to save a bulk of it
-        if (!shouldSave) {
+        if (isSaving.compareAndSet(false, true)) {
             Executors.newSingleThreadScheduledExecutor().schedule(() -> {
                 // Save the location data to the location.json
                 FileHelper.saveFile(LOCATION_FILE, GSON.toJson(SAVED_LOCATIONS));
                 System.out.println("Saved queried locations to file.");
-                shouldSave = false;
+                isSaving.set(false);
             }, SAVE_DELAY_SECONDS, TimeUnit.SECONDS);
         }
-        shouldSave = true;
     }
 
     /**
@@ -241,9 +242,9 @@ public final class LocationHelper {
         }.getType();
         Map<Long, Location> loadedLocations;
         try {
-            loadedLocations = GSON.fromJson(FileHelper.readFile(LOCATION_FILE), mapType);
+            loadedLocations = GSON.fromJson(FileHelper.readFileWithExceptions(LOCATION_FILE), mapType);
             System.out.println("Load saved locations from file.");
-        } catch (JsonSyntaxException e) {
+        } catch (JsonSyntaxException | IOException e) {
             loadedLocations = null;
             System.out.println(ExceptionMessages.COULD_NOT_LOAD_LOCATIONS.with(e));
             FileHelper.deleteFile(LOCATION_FILE, false);

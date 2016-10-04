@@ -27,7 +27,7 @@ import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 public class PokemonTable extends JTable {
 
     // Global statics
-    public static final int COLUMN_MARGIN = 4;
+    public static final int COLUMN_MARGIN = 3;
     public static final int ROW_HEIGHT_PADDING = ConfigNew.getConfig().getInt(ConfigKey.ROW_PADDING);
 
     private final ConfigNew config = ConfigNew.getConfig();
