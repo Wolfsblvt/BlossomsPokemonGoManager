@@ -1,6 +1,7 @@
 package me.corriekay.pokegoutil.data.managers;
 
 import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.device.DeviceInfo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
@@ -14,6 +15,7 @@ import me.corriekay.pokegoutil.data.models.LoginData;
 import me.corriekay.pokegoutil.data.models.PlayerAccount;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.CustomDeviceInfo;
 import okhttp3.OkHttpClient;
 
 /**
@@ -62,13 +64,19 @@ public final class AccountManager {
         }
 
         switch (type) {
-            case BOTH:
+            case ALL:
                 config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
+                config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
                 config.delete(ConfigKey.LOGIN_PTC_USERNAME);
                 config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
                 break;
-            case GOOGLE:
+            case GOOGLE_AUTH:
                 config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                break;
+            case GOOGLE_APP_PASSWORD:
+                config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
+                config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
                 break;
             case PTC:
                 config.delete(ConfigKey.LOGIN_PTC_USERNAME);
@@ -118,7 +126,7 @@ public final class AccountManager {
      */
     public BpmResult login(final LoginData loginData) {
         switch (loginData.getLoginType()) {
-            case GOOGLE:
+            case GOOGLE_AUTH:
                 if (loginData.isValidGoogleLogin()) {
                     return logOnGoogleAuth(loginData);
                 }
@@ -153,10 +161,11 @@ public final class AccountManager {
         }
 
         try {
-            final GoogleUserCredentialProvider provider = new GoogleUserCredentialProvider(http);
+            final GoogleUserCredentialProvider provider;
             if (shouldRefresh) {
-                provider.refreshToken(authCode);
+                provider = new GoogleUserCredentialProvider(http, authCode);
             } else {
+                provider = new GoogleUserCredentialProvider(http);
                 provider.login(authCode);
             }
 
@@ -167,11 +176,11 @@ public final class AccountManager {
             cp = provider;
             if (saveAuth && !shouldRefresh) {
                 config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
-            } else {
-                deleteLoginData(LoginType.GOOGLE);
+            } else if (!saveAuth) {
+                deleteLoginData(LoginType.GOOGLE_AUTH);
             }
         } catch (LoginFailedException | RemoteServerException e) {
-            deleteLoginData(LoginType.GOOGLE);
+            deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
             return new BpmResult(e.getMessage());
         }
 
@@ -179,7 +188,7 @@ public final class AccountManager {
             prepareLogin(cp, http);
             return new BpmResult();
         } catch (LoginFailedException | RemoteServerException e) {
-            deleteLoginData(LoginType.BOTH);
+            deleteLoginData(LoginType.ALL);
             return new BpmResult(e.getMessage());
         }
     }
@@ -216,7 +225,7 @@ public final class AccountManager {
             prepareLogin(cp, http);
             return new BpmResult();
         } catch (LoginFailedException | RemoteServerException e) {
-            deleteLoginData(LoginType.BOTH);
+            deleteLoginData(LoginType.ALL);
             return new BpmResult(e.getMessage());
         }
     }
@@ -232,6 +241,9 @@ public final class AccountManager {
     private void prepareLogin(final CredentialProvider cp, final OkHttpClient http)
             throws LoginFailedException, RemoteServerException {
         go = new PokemonGo(http);
+        if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
+            go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
+        }
         go.login(cp);
         playerAccount = new PlayerAccount(go.getPlayerProfile());
         initOtherControllers();

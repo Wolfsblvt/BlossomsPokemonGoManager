@@ -2,7 +2,6 @@ package me.corriekay.pokegoutil.data.enums;
 
 /**
  * Describes the different errors returned in the operations classes.
- *
  */
 public enum OperationError {
     IN_GYM,

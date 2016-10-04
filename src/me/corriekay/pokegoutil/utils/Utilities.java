@@ -1,49 +1,50 @@
 package me.corriekay.pokegoutil.utils;
 
-import com.google.protobuf.InvalidProtocolBufferException;
-
-import org.apache.commons.lang3.StringUtils;
-
-import java.awt.*;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
+import java.awt.Color;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.google.protobuf.InvalidProtocolBufferException;
+
 public final class Utilities {
+
+
+    public static final int PERCENTAGE_FACTOR = 100;
+
     /** Prevent initializing this class. */
     private Utilities() {
     }
 
-    private static final CharsetEncoder iso88591Encoder = Charset.forName("ISO-8859-1").newEncoder();
     private static final Random random = new Random(System.currentTimeMillis());
 
     public static boolean isEven(long i) {
         return i % 2 == 0;
     }
 
-    public static boolean isLatin(String str) {
-        return iso88591Encoder.canEncode(str);
+    /**
+     * Takes to numbers and creates a decimal percentage of it (like 0.7542).
+     *
+     * @param number  The real part.
+     * @param maximum The maximum of the number.
+     * @return The percentage value
+     */
+    public static double percentage(final double number, final double maximum) {
+        return number / maximum;
     }
 
     /**
-     * Rounds given decimal number (like 0.75345) to a percentage with two decimals (75.35)
+     * Returns the percentage with two characters, based on a given double decimal number (like 0.7531).
      *
-     * @param decimalNumber The decimal number
-     * @return The percentage value
+     * @param decimalNumber The given decimal number.
+     * @return Percentage string.
+     * @deprecated We don'T use this function anymore. The PokeHandler has its own function for replace patterns now.
      */
-    public static double percentage(double decimalNumber) {
-        return Math.round(decimalNumber * 100 * 100) / 100.0;
-    }
-
-    public static String percentageWithTwoCharacters(double number, double maximum) {
-        return percentageWithTwoCharacters(Math.min(number / maximum, maximum));
-    }
-
-    public static String percentageWithTwoCharacters(double decimalNumber) {
-        long rounded = Math.round(percentage(decimalNumber));
-        return (rounded < 100) ? StringUtils.leftPad(String.valueOf(rounded), 2, '0') : "XX";
-
+    @Deprecated
+    public static String percentageWithTwoCharacters(final double decimalNumber) {
+        final int percentage = (int) Math.round(decimalNumber * PERCENTAGE_FACTOR);
+        return (percentage < PERCENTAGE_FACTOR) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
     }
 
     public static Color randomColor() {
@@ -79,8 +80,8 @@ public final class Utilities {
         String message = e.getMessage();
         if (e instanceof InvalidProtocolBufferException || "Contents of buffer are null".equals(message)) {
             message = "Server hasn't responded in time. "
-                    + "Seems to be busy. "
-                    + "The action may have been successful though. (" + message + ")";
+                + "Seems to be busy. "
+                + "The action may have been successful though. (" + message + ")";
         }
         return message;
     }

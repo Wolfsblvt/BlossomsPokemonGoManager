@@ -15,24 +15,29 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.device.DeviceInfo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
+import com.pokegoapi.auth.GoogleAutoCredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
+import com.pokegoapi.exceptions.AsyncPokemonGoException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.CustomDeviceInfo;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
-import me.corriekay.pokegoutil.utils.ui.Console;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
+
 import okhttp3.OkHttpClient;
 
-/*this controller does the login/log off, and different account information (aka player data)
- *
+/**
+ * This controller does the login/log off, and different account information (aka player data).
  */
 @Deprecated
 public final class AccountController {
@@ -44,7 +49,6 @@ public final class AccountController {
     protected PokemonGo go = null;
     protected OkHttpClient http;
     protected CredentialProvider cp;
-    private Console console;
     private boolean logged = false;
 
     private AccountController() {
@@ -55,12 +59,13 @@ public final class AccountController {
         return instance;
     }
 
-    public static void initialize(final Console console) {
+    /**
+     * Does pre-initializiton before using of the class.
+     */
+    public static void initialize() {
         if (sIsInit) {
             return;
         }
-
-        instance.console = console;
 
         sIsInit = true;
     }
@@ -70,34 +75,36 @@ public final class AccountController {
             throw new ExceptionInInitializerError("AccountController needs to be initialized before logging on");
         }
         OkHttpClient http;
-        CredentialProvider cp;
+        CredentialProvider credentialProvider;
         PokemonGo go = null;
+        int tries = 0;
         while (!instance.logged) {
+            tries++;
             //BEGIN LOGIN WINDOW
             go = null;
-            cp = null;
+            credentialProvider = null;
             http = new OkHttpClient();
 
-            final JTextField username = new JTextField(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
-            final JTextField password = new JPasswordField(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
+            final JTextField ptcUsernameTextField = new JTextField(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
+            final JTextField ptcPasswordTextField = new JPasswordField(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
 
             final boolean directLoginWithSavedCredentials = checkForSavedCredentials();
 
             int response;
 
             if (directLoginWithSavedCredentials) {
-                if (getLoginData(LoginType.GOOGLE) != null) {
+                if (getLoginData(LoginType.GOOGLE_AUTH) != null || getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null) {
                     response = JOptionPane.NO_OPTION; // This means Google. Trust me
                 } else if (getLoginData(LoginType.PTC) != null) {
                     response = JOptionPane.YES_OPTION; // And this PTC. Yeah, really
                 } else {
                     // Something is wrong here, we delete login and start anew
-                    deleteLoginData(LoginType.BOTH);
+                    deleteLoginData(LoginType.ALL);
                     return;
                 }
             } else {
                 // We do not want to login directly, so go for the question box and delete that data before
-                deleteLoginData(LoginType.BOTH);
+                deleteLoginData(LoginType.ALL);
 
                 UIManager.put("OptionPane.noButtonText", "Use Google Auth");
                 UIManager.put("OptionPane.yesButtonText", "Use PTC Auth");
@@ -106,129 +113,240 @@ public final class AccountController {
 
                 final JPanel panel1 = new JPanel(new BorderLayout());
                 panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
-                panel1.add(username, BorderLayout.CENTER);
+                panel1.add(ptcUsernameTextField, BorderLayout.CENTER);
                 final JPanel panel2 = new JPanel(new BorderLayout());
                 panel2.add(new JLabel("PTC Password: "), BorderLayout.LINE_START);
-                panel2.add(password, BorderLayout.CENTER);
+                panel2.add(ptcPasswordTextField, BorderLayout.CENTER);
                 final Object[] panel = {panel1, panel2,};
 
                 response = JOptionPane.showConfirmDialog(
-                        WindowStuffHelper.alwaysOnTopParent,
-                        panel,
-                        "Login",
-                        JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE);
+                    WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                    panel,
+                    "Login",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE);
             }
 
             if (response == JOptionPane.CANCEL_OPTION) {
                 System.exit(0);
             } else if (response == JOptionPane.OK_OPTION) {
-                //Using PTC, remove Google infos
-                deleteLoginData(LoginType.GOOGLE, true);
                 try {
-                    cp = new PtcCredentialProvider(http, username.getText(), password.getText());
-                    config.setString(ConfigKey.LOGIN_PTC_USERNAME, username.getText());
+                    credentialProvider = new PtcCredentialProvider(http, ptcUsernameTextField.getText(), ptcPasswordTextField.getText());
+                    config.setString(ConfigKey.LOGIN_PTC_USERNAME, ptcUsernameTextField.getText());
                     if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
-                        config.setString(ConfigKey.LOGIN_PTC_PASSWORD, password.getText());
+                        config.setString(ConfigKey.LOGIN_PTC_PASSWORD, ptcPasswordTextField.getText());
                         config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
                     } else {
                         deleteLoginData(LoginType.PTC);
                     }
                 } catch (final Exception e) {
-                    alertFailedLogin(e.getMessage());
-                    deleteLoginData(LoginType.PTC);
+                    alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
+                    e.printStackTrace();
+                    // deleteLoginData(LoginType.PTC);
                     continue;
                 }
+
+                //Using PTC, remove Google infos
+                deleteLoginData(LoginType.GOOGLE_AUTH, true);
+                deleteLoginData(LoginType.GOOGLE_APP_PASSWORD, true);
+
             } else if (response == JOptionPane.NO_OPTION) {
-                //Using Google, remove PTC infos
-                String googleAuthTitle = "Google Auth";
-                deleteLoginData(LoginType.PTC, true);
-                String authCode = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, null);
-                boolean refresh = false;
-                if (authCode == null) {
-                    //We need to get the auth code, as we do not have it yet.
-                    UIManager.put("OptionPane.okButtonText", "Ok");
-                    JOptionPane.showMessageDialog(WindowStuffHelper.alwaysOnTopParent,
-                            "You will need to provide a google authentication key to log in. Press OK to continue.",
-                            googleAuthTitle,
-                            JOptionPane.PLAIN_MESSAGE);
+                final String googleAuthTitle = "Google Auth";
 
-                    //We're gonna try to load the page using the users browser
-                    JOptionPane.showMessageDialog(WindowStuffHelper.alwaysOnTopParent,
-                            "A webpage should open up, please allow the permissions, and then copy the code into your clipboard. Press OK to continue",
-                            googleAuthTitle,
-                            JOptionPane.PLAIN_MESSAGE);
-                    final boolean success = Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
+                // We to set up some vars that we may need later.
+                // Those will be overwritten if data is entered, otherwise they should contain the correct values loaded from the config.
+                String googleAuthToken = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, null);
+                String googleUsername = config.getString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME, null);
+                String googlePassword = config.getString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD, null);
+                boolean authTokenRefresh = false;
 
-                    if (!success) {
-                        // Okay, couldn't open it. We use the manual copy window
-                        UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
-                        if (JOptionPane.showConfirmDialog(WindowStuffHelper.alwaysOnTopParent,
+                LoginType usedGoogleLoginType = checkSavedConfig();
+
+                if (LoginType.isGoogle(usedGoogleLoginType)) {
+                    // We check if google login data saved and skip the input options then
+                    if (usedGoogleLoginType == LoginType.GOOGLE_AUTH) {
+                        // Sets refresh, when we use the existing token, cause it needs to be refreshed
+                        authTokenRefresh = true;
+                    }
+                } else {
+                    // Okay, user should choose which login method he wants:
+                    String message = "Choose your method to login with your Google Account."
+                        + StringLiterals.NEWLINE
+                        + StringLiterals.NEWLINE + "If you are unexperienced, just choose \"OAuth Token\"."
+                        + StringLiterals.NEWLINE + "If you have trouble logging in with that method, or know what you are doing,"
+                        + StringLiterals.NEWLINE + "go ahead and take the App Password method.";
+                    String[] options = new String[] {"Use OAuth Token", "Advanced: Use App Password"};
+                    final int answer = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, message, googleAuthTitle,
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                        null, options, options[0]);
+
+                    switch (answer) {
+                        case 0: // Use OAuth Token
+                            //We need to get the auth code, as we do not have it yet.
+                            UIManager.put("OptionPane.okButtonText", "Ok");
+                            JOptionPane.showMessageDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                                "You will need to provide a google authentication key to log in."
+                                    + StringLiterals.NEWLINE + "A webpage should open up, please allow the permissions, and then copy the code into your clipboard."
+                                    + StringLiterals.NEWLINE
+                                    + StringLiterals.NEWLINE + "Press OK to continue",
+                                googleAuthTitle,
+                                JOptionPane.PLAIN_MESSAGE);
+
+                            //We're gonna try to load the page using the users browser
+                            final boolean success = Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
+
+                            // Okay, couldn't open it. We use the manual copy window
+                            UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
+                            if (!success && JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                                 "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.",
                                 googleAuthTitle,
                                 JOptionPane.OK_CANCEL_OPTION,
                                 JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION) {
-                            final StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
-                            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
-                        }
-                        UIManager.put("OptionPane.cancelButtonText", "Cancel");
+                                final StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
+                                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+                            }
+                            UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
+
+                            //The user should have the auth code now. Lets get it.
+                            googleAuthToken = JOptionPane.showInputDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                                "Please provide the authentication code",
+                                googleAuthTitle,
+                                JOptionPane.PLAIN_MESSAGE);
+                            usedGoogleLoginType = LoginType.GOOGLE_AUTH;
+                            break;
+
+                        case 1: // Advanced: Use App Password
+                            //We need to get the user data, as we do not have it yet.
+                            final String appPasswordMessage = "You want to login via App Password."
+                                + StringLiterals.NEWLINE + "For that, an app password has to be created."
+                                + StringLiterals.NEWLINE + "If you already have your password, click \"Skip\"."
+                                + StringLiterals.NEWLINE
+                                + StringLiterals.NEWLINE + "Otherwise, click on \"Open Website\" to access the google account control page where you are able"
+                                + StringLiterals.NEWLINE + "to create an app password."
+                                + StringLiterals.NEWLINE + "Choose 'Other' as app and name it something like 'BPGM' or such. Then copy your password."
+                                + StringLiterals.NEWLINE
+                                + StringLiterals.NEWLINE + "Do note: If google tells you you can't configure your App Passwords, then go back to your"
+                                + StringLiterals.NEWLINE + "google account control page and enable 2-Step Verification. Then you will be able to.";
+
+                            final String[] appPasswordOptions = new String[] {"Open Website", "Skip"};
+                            final int appPasswordResponse = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, appPasswordMessage, googleAuthTitle,
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                                null, appPasswordOptions, options[0]);
+
+                            // Open URL if chosen
+                            switch (appPasswordResponse) {
+                                case 0: // Open Webpage
+                                    String appPasswordUrl = "https://security.google.com/settings/security/apppasswords";
+                                    Browser.openUrl(appPasswordUrl);
+                                    break;
+                                case 1: // Skip
+                                    // We do nothing here, we have skipped
+                                    break;
+                                default:
+                                    // Can't happen
+                            }
+
+                            // We ask the user to enter his login data now
+                            final int width = 15;
+                            JTextField googleUsernameTextField = new JTextField(width);
+                            JTextField googlePasswordTextField = new JTextField(width);
+
+                            final JPanel panel1 = new JPanel(new BorderLayout());
+                            panel1.add(new JLabel("Username: "), BorderLayout.LINE_START);
+                            panel1.add(googleUsernameTextField, BorderLayout.CENTER);
+                            final JPanel panel2 = new JPanel(new BorderLayout());
+                            panel2.add(new JLabel("Password: "), BorderLayout.LINE_START);
+                            panel2.add(googlePasswordTextField, BorderLayout.CENTER);
+                            final Object[] goggleAppPasswordPanel = {panel1, panel2,};
+
+                            final int googleAppLoginDetailsResult = JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                                goggleAppPasswordPanel,
+                                googleAuthTitle,
+                                JOptionPane.OK_CANCEL_OPTION);
+                            if (googleAppLoginDetailsResult == JOptionPane.OK_OPTION) {
+                                googleUsername = googleUsernameTextField.getText();
+                                googlePassword = googlePasswordTextField.getText();
+                            }
+                            usedGoogleLoginType = LoginType.GOOGLE_APP_PASSWORD;
+                            break;
+                        default:
+                            // Can't happen
                     }
-                    //The user should have the auth code now. Lets get it.
-                    authCode = JOptionPane.showInputDialog(WindowStuffHelper.alwaysOnTopParent,
-                            "Please provide the authentication code",
-                            googleAuthTitle,
-                            JOptionPane.PLAIN_MESSAGE);
-                } else {
-                    refresh = true;
                 }
+
+                // Okay, we gathered all information now, so we will decide what we do now with it
+                // and then log in.
                 try {
-                    GoogleUserCredentialProvider provider;
-                    if (refresh) {
-                        // Based on usage in https://github.com/Grover-c13/PokeGOAPI-Java
-                        provider = new GoogleUserCredentialProvider(http, authCode);
-                        provider.refreshToken(authCode);
-                    } else {
-                        provider = new GoogleUserCredentialProvider(http);
-                        provider.login(authCode);
-                    }
-                    cp = provider;
-                    if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
-                        if (!refresh) {
-                            config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
+                    GoogleUserCredentialProvider googleProvider = null;
+                    GoogleAutoCredentialProvider googleAutoProvider;
+                    if (usedGoogleLoginType == LoginType.GOOGLE_AUTH) {
+                        // We have google OAuth here, so we use the token and/or refresh it
+                        if (authTokenRefresh) {
+                            // Based on usage in https://github.com/Grover-c13/PokeGOAPI-Java
+                            googleProvider = new GoogleUserCredentialProvider(http, googleAuthToken);
+                        } else {
+                            googleProvider = new GoogleUserCredentialProvider(http);
+                            googleProvider.login(googleAuthToken);
                         }
+                        credentialProvider = googleProvider;
+                    } else if (usedGoogleLoginType == LoginType.GOOGLE_APP_PASSWORD) {
+                        // We have app password login here
+                        googleAutoProvider = new GoogleAutoCredentialProvider(http, googleUsername, googlePassword);
+                        credentialProvider = googleAutoProvider;
+                    }
+
+                    // Now check if the data should be saved in config. Asking the user.
+                    if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
+                        // We save that auth is generally saved
                         config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
+
+                        // We save the login data now
+                        if (usedGoogleLoginType == LoginType.GOOGLE_AUTH && !authTokenRefresh) {
+                            config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, googleProvider.getRefreshToken());
+                        } else if (usedGoogleLoginType == LoginType.GOOGLE_APP_PASSWORD) {
+                            config.setString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME, googleUsername);
+                            config.setString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD, googlePassword);
+                        }
                     } else {
-                        deleteLoginData(LoginType.GOOGLE);
+                        deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
+                        deleteLoginData(LoginType.GOOGLE_AUTH);
                     }
                 } catch (final Exception e) {
-                    alertFailedLogin(e.getMessage());
-                    deleteLoginData(LoginType.GOOGLE);
+                    alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
+                    e.printStackTrace();
+                    // deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
+                    // deleteLoginData(LoginType.GOOGLE_AUTH);
                     continue;
                 }
 
+                //Using Google, remove PTC infos
+                deleteLoginData(LoginType.PTC, true);
             }
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");
             UIManager.put("OptionPane.okButtonText", "Ok");
-            UIManager.put("OptionPane.cancelButtonText", "Cancel");
+            UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
 
-            if (cp != null) {
-                try {
+            try {
+                if (credentialProvider != null) {
                     go = new PokemonGo(http);
-                    go.login(cp);
-                } catch (LoginFailedException | RemoteServerException e) {
-                    alertFailedLogin(e.getMessage());
-                    deleteLoginData(LoginType.BOTH);
-                    continue;
+                    if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
+                        go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
+                    }
+                    go.login(credentialProvider);
+                } else {
+                    throw new IllegalStateException("credentialProvider is null.");
                 }
-            } else {
-                throw new IllegalStateException();
+                instance.logged = true;
+            } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException e) {
+                alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
+                e.printStackTrace();
+                // deleteLoginData(LoginType.ALL);
             }
-            instance.logged = true;
         }
         instance.go = go;
         initOtherControllers(go);
-        instance.mainWindow = new PokemonGoMainWindow(go, instance.console);
+        instance.mainWindow = new PokemonGoMainWindow(go, true);
         instance.mainWindow.start();
     }
 
@@ -237,30 +355,44 @@ public final class AccountController {
         PokemonBagManager.initialize(go);
     }
 
-    private static void alertFailedLogin(final String message) {
-        JOptionPane.showMessageDialog(WindowStuffHelper.alwaysOnTopParent,
-                "Unfortunately, your login has failed. Reason: " + message + "\nPress OK to try again.",
-                "Login Failed",
-                JOptionPane.PLAIN_MESSAGE);
+    /**
+     * Alerts a failed login with a popup showing the specific error.
+     *
+     * @param exceptionClass The class of the exception, or error type.
+     * @param message        The message that is shown.
+     * @param tries          The number of the try that this is (zero based).
+     */
+    private static void alertFailedLogin(final String exceptionClass, final String message, final int tries) {
+        System.out.println("Error: " + exceptionClass + StringLiterals.NEWLINE + message);
+        JOptionPane.showMessageDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+            "Unfortunately, your login has failed. Reason: "
+                + StringLiterals.NEWLINE + exceptionClass + ": " + message
+                + StringLiterals.NEWLINE + "This is try number " + tries + "."
+                + StringLiterals.NEWLINE + "Press OK to try again.",
+            "Login Failed",
+            JOptionPane.PLAIN_MESSAGE);
     }
 
     private static boolean checkSaveAuth() {
         UIManager.put("OptionPane.noButtonText", "No");
         UIManager.put("OptionPane.yesButtonText", "Yes");
         UIManager.put("OptionPane.okButtonText", "Ok");
-        UIManager.put("OptionPane.cancelButtonText", "Cancel");
-        return JOptionPane.showConfirmDialog(WindowStuffHelper.alwaysOnTopParent,
-                "Do you wish to save the password/auth token?\nCaution: These are saved in plain-text.", "Save Authentication?",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+        UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
+        return JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+            "Do you wish to save the password/auth token?\nCaution: These are saved in plain-text.", "Save Authentication?",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
     }
 
     private static LoginType checkSavedConfig() {
         if (!config.getBool(ConfigKey.LOGIN_SAVE_AUTH)) {
             return LoginType.NONE;
         } else {
-            if (getLoginData(LoginType.GOOGLE) != null) {
-                return LoginType.GOOGLE;
+            if (getLoginData(LoginType.GOOGLE_AUTH) != null) {
+                return LoginType.GOOGLE_AUTH;
+            }
+            if (getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null) {
+                return LoginType.GOOGLE_APP_PASSWORD;
             }
             if (getLoginData(LoginType.PTC) != null) {
                 return LoginType.PTC;
@@ -271,13 +403,17 @@ public final class AccountController {
 
     private static List<String> getLoginData(final LoginType type) {
         switch (type) {
-            case GOOGLE:
+            case GOOGLE_AUTH:
                 final String token = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
                 return (token != null) ? Collections.singletonList(token) : null;
+            case GOOGLE_APP_PASSWORD:
+                final String googleUsername = config.getString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
+                final String googlePassword = config.getString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
+                return (googleUsername != null && googlePassword != null) ? Arrays.asList(googleUsername, googlePassword) : null;
             case PTC:
-                final String username = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
-                final String password = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
-                return (username != null && password != null) ? Arrays.asList(username, password) : null;
+                final String ptcUsername = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
+                final String ptcPassword = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
+                return (ptcUsername != null && ptcPassword != null) ? Arrays.asList(ptcUsername, ptcPassword) : null;
             default:
                 return null;
         }
@@ -293,21 +429,25 @@ public final class AccountController {
             config.delete(ConfigKey.LOGIN_SAVE_AUTH);
         }
         switch (type) {
-            case BOTH:
+            case ALL:
                 config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
+                config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
                 config.delete(ConfigKey.LOGIN_PTC_USERNAME);
                 config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
-                break;
-            case GOOGLE:
-                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
                 break;
             case PTC:
                 config.delete(ConfigKey.LOGIN_PTC_USERNAME);
                 config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
                 break;
+            case GOOGLE_AUTH:
+                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                break;
+            case GOOGLE_APP_PASSWORD:
+                config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
+                config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
+                break;
             default:
-
-
         }
     }
 
@@ -319,11 +459,11 @@ public final class AccountController {
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");
             UIManager.put("OptionPane.okButtonText", "Ok");
-            UIManager.put("OptionPane.cancelButtonText", "Cancel");
-            return JOptionPane.showConfirmDialog(WindowStuffHelper.alwaysOnTopParent,
-                    "You have saved login data for " + savedLogin.toString() + ". Want to login with that?",
-                    "Use Saved Login",
-                    JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+            UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
+            return JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                "You have saved login data for " + savedLogin.toString() + ". Want to login with that?",
+                "Use Saved Login",
+                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
         }
     }
 
@@ -344,5 +484,12 @@ public final class AccountController {
 
     public static PlayerProfile getPlayerProfile() {
         return instance.go != null ? instance.go.getPlayerProfile() : null;
+    }
+
+    /**
+     * Inner class that saves the texts buttons can contain.
+     */
+    private static final class ButtonText {
+        private static final String CANCEL = "Cancel";
     }
 }

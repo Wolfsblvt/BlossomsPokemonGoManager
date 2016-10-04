@@ -1,1 +1,1 @@
-start javaw -jar BlossomsPogoManager.jar
+start javaw -Dfile.encoding=UTF-8 -jar BlossomsPogoManager.jar

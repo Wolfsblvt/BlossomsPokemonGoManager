@@ -1,22 +1,51 @@
 package me.corriekay.pokegoutil.utils.helpers;
 
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
+import java.awt.Image;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
-import java.awt.*;
-import java.io.*;
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+
+import me.corriekay.pokegoutil.data.enums.ExceptionMessages;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 
 public final class FileHelper {
+    public static final Charset CHARSET = Charset.forName("UTF-8");
+    public static final int INDENT = 4;
+
     /** Prevent initializing this class. */
     private FileHelper() {
     }
 
     private static ClassLoader classLoader = FileHelper.class.getClassLoader();
 
-    public static void deleteFile(File file, boolean deleteDir) {
+    /**
+     * Deletes the file (which can't be a dir).
+     *
+     * @param file The file.
+     */
+    public static void deleteFile(final File file) {
+        deleteFile(file, false);
+    }
+
+    /**
+     * Deletes the file, or all files in the directory. Optionally the directory itself too.
+     *
+     * @param file      The file.
+     * @param deleteDir Deletes the base directory too.
+     */
+    public static void deleteFile(final File file, final boolean deleteDir) {
         if (file.isDirectory()) {
-            for (File subFile : file.listFiles()) {
+            for (final File subFile : file.listFiles()) {
                 deleteFile(subFile, true);
             }
             if (deleteDir) {
@@ -28,13 +57,14 @@ public final class FileHelper {
     }
 
     public static boolean checkFilename(String checkme, boolean warn) {
-        String[] chars = new String[]{"\\", "/", ":", "*", "?", "\"", "<", ">", "|"};
+        final String[] chars = new String[] {"\\", "/", ":", "*", "?", "\"", "<", ">", "|"};
 
         for (String c : chars) {
 
             if (checkme.contains(c)) {
-                if (warn)
+                if (warn) {
                     JOptionPane.showMessageDialog(null, "A file name can't contain any of the following characters: \\/:*\"<>|");
+                }
                 return false;
             }
         }
@@ -72,32 +102,69 @@ public final class FileHelper {
         }
     }
 
-    public static String readFile(String url) {
-        return readFile(new File(url));
-    }
-
-    public static String readFile(File file) {
+    /**
+     * Reads given file. Returns null if file can't be read.
+     *
+     * @param file The file.
+     * @return The file contents.
+     */
+    public static String readFile(final File file) {
         try {
-            BufferedReader in = new BufferedReader(new FileReader(file));
-
-            StringBuilder sb = new StringBuilder();
-
-            String l = "";
-            boolean firstline = true;
-            do {
-                sb.append(l);
-                l = in.readLine();
-                if (l != null && !firstline) {
-                    sb.append("\n");
-                }
-                firstline = false;
-            } while (l != null);
-            in.close();
-            return sb.toString();
-        } catch (Exception e) {
-            e.printStackTrace(); //TODO tagging for future exception handling/logging
+            return readFileWithExceptions(file);
+        } catch (IOException e) {
+            System.out.println(ExceptionMessages.COULD_NOT_READ.with(e));
         }
         return null;
+    }
+
+    /**
+     * Read file from given input stream and returns it.
+     *
+     * @param inputStream The InputStream of the file.
+     * @return The file as string.
+     */
+    public static String readFile(final InputStream inputStream) {
+        String str;
+        final StringBuilder buf = new StringBuilder();
+        try {
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, CHARSET));
+            while ((str = reader.readLine()) != null) {
+                buf.append(str).append(StringLiterals.NEWLINE);
+            }
+        } catch (IOException e) {
+            System.out.println(ExceptionMessages.COULD_NOT_READ.with(e));
+        } finally {
+            try {
+                inputStream.close();
+            } catch (IOException ignore) {
+            }
+        }
+        return buf.toString().trim();
+    }
+
+    /**
+     * Reads given file. Throws exceptions on error.
+     *
+     * @param file The file.
+     * @return The file contents.
+     * @throws IOException File IO exceptions.
+     */
+    public static String readFileWithExceptions(final File file) throws IOException {
+        final BufferedReader in = new BufferedReader(new FileReader(file));
+        final StringBuilder sb = new StringBuilder();
+
+        String content = "";
+        boolean firstline = true;
+        do {
+            sb.append(content);
+            content = in.readLine();
+            if (content != null && !firstline) {
+                sb.append(StringLiterals.NEWLINE);
+            }
+            firstline = false;
+        } while (content != null);
+        in.close();
+        return sb.toString();
     }
 
     public static void saveFile(File file, String saveme) {
@@ -108,7 +175,6 @@ public final class FileHelper {
             out.close();
         } catch (Exception e) {
             System.out.println("Exception caught trying to save file. Path: " + file.getAbsolutePath());
-            e.printStackTrace(); //TODO tagging for future exception handling/logging
         }
     }
 }

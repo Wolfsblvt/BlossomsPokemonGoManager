@@ -1,15 +1,17 @@
 package me.corriekay.pokegoutil.utils;
 
-import javax.swing.*;
+import javax.swing.SortOrder;
 
 public enum ConfigKey {
 
     DEVELOPFLAG("develop", false, Type.BOOLEAN),
 
-    LOGIN_SAVE_AUTH("login.SaveAuth", false, Type.BOOLEAN),
-    LOGIN_GOOGLE_AUTH_TOKEN("login.GoogleAuthToken", null, Type.STRING),
-    LOGIN_PTC_USERNAME("login.PTCUsername", null, Type.STRING),
-    LOGIN_PTC_PASSWORD("login.PTCPassword", null, Type.STRING),
+    LOGIN_SAVE_AUTH("login.saveAuth", false, Type.BOOLEAN),
+    LOGIN_GOOGLE_AUTH_TOKEN("login.google.authToken", null, Type.STRING),
+    LOGIN_GOOGLE_APP_USERNAME("login.google.username", null, Type.STRING),
+    LOGIN_GOOGLE_APP_PASSWORD("login.google.password", null, Type.STRING),
+    LOGIN_PTC_USERNAME("login.ptc.username", null, Type.STRING),
+    LOGIN_PTC_PASSWORD("login.ptc.password", null, Type.STRING),
 
     WINDOW_WIDTH("options.window.width", 800, Type.INTEGER),
     WINDOW_HEIGHT("options.window.height", 650, Type.INTEGER),
@@ -31,7 +33,8 @@ public enum ConfigKey {
     ALTERNATIVE_IV_CALCULATION("settings.alternativeIvCalculation", false, Type.BOOLEAN),
 
     LANGUAGE("options.lang", "en", Type.STRING),
-    FONT_SIZE("options.fontsize", 0, Type.INTEGER),
+    FONT_SIZE("options.font.size", 12, Type.INTEGER),
+    ROW_PADDING("options.row.padding", 3, Type.INTEGER),
     SKIP_VERSION("options.skipversion", null, Type.STRING),
 
     DELAY_RENAME_MIN("delay.rename.min", 1000, Type.INTEGER),
@@ -43,8 +46,23 @@ public enum ConfigKey {
     DELAY_POWERUP_MIN("delay.powerUp.min", 1000, Type.INTEGER),
     DELAY_POWERUP_MAX("delay.powerUp.max", 5000, Type.INTEGER),
     DELAY_FAVORITE_MIN("delay.favorite.min", 1000, Type.INTEGER),
-    DELAY_FAVORITE_MAX("delay.favorite.max", 3000, Type.INTEGER),;
+    DELAY_FAVORITE_MAX("delay.favorite.max", 3000, Type.INTEGER),
 
+    DEVICE_INFO_USE_CUSTOM("deviceInfo.useCustom", false, Type.BOOLEAN),
+    DEVICE_INFO_CUSTOM_ANDROID_BOARD_NAME("deviceInfo.custom.android.boardName", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_ANDROID_BOOTLOADER("deviceInfo.custom.android.bootloader", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_BRAND("deviceInfo.custom.device.brand", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_ID("deviceInfo.custom.device.id", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_MODEL("deviceInfo.custom.device.model", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_MODELBOOT("deviceInfo.custom.device.modelBoot", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_DEVICE_MODELIDENTIFIER("deviceInfo.custom.device.modelIdentifier", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_BRAND("deviceInfo.custom.firmware.brand", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_FINGERPRINT("deviceInfo.custom.firmware.fingerprint", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_TAGS("deviceInfo.custom.firmware.tags", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_FIRMWARE_TYPE("deviceInfo.custom.firmware.type", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_HARDWARE_MANUFACUTER("deviceInfo.custom.hardware.manufacturer", null, Type.STRING),
+    DEVICE_INFO_CUSTOM_HARDWARE_MODEL("deviceInfo.custom.hardware.model", null, Type.STRING);
+    
     public final String keyName;
     public final Object defaultValue;
     public final Type type;

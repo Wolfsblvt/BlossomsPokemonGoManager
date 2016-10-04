@@ -25,36 +25,36 @@ public class BpmResult {
     }
 
     /**
-     * Get the error message.
+     * Get the result error message.
      *
-     * @return error message
+     * @return result error message
      */
     public String getErrorMessage() {
         return errorMessage;
     }
 
     /**
-     * Is result successful.
+     * Get if result is successful.
      *
-     * @return result state
+     * @return is result successful
      */
     public boolean isSuccess() {
         return success;
     }
 
     /**
-     * Set the error message.
+     * Set the result error message.
      *
-     * @param errorMessage error message
+     * @param errorMessage result error message
      */
     public void setErrorMessage(final String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
     /**
-     * Set the success state of result.
+     * Set if result is successful
      *
-     * @param success success state of result
+     * @param success is result successful
      */
     public void setSuccess(final boolean success) {
         this.success = success;
