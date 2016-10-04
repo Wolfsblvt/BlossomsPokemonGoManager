@@ -22,6 +22,7 @@ import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.Nicknam
 
 public class PokeHandler {
 
+    public static final int MAX_IVS = 45;
     private final ArrayList<Pokemon> mons;
 
     public PokeHandler(final Pokemon pokemon) {
@@ -183,6 +184,23 @@ public class PokeHandler {
                 return (Integer.toHexString((int) PokeColumn.IV_ATTACK.get(p))
                     + Integer.toHexString((int) PokeColumn.IV_DEFENSE.get(p))
                     + Integer.toHexString((int) PokeColumn.IV_STAMINA.get(p))).toUpperCase();
+            }
+        },
+        IV_SUM("Sum of the IV values (00 - 45)") {
+            @Override
+            public String get(Pokemon p) {
+                final Integer sum = p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina();
+                final String unf = sum.toString();
+                return StringUtils.leftPad(unf, 2, '0');
+            }
+        },
+        IV_DIFF("The amount of IV missing (00-45)") {
+            @Override
+            public String get(Pokemon p) {
+                final int sum = p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina();
+                final Integer diff = MAX_IVS - sum;
+                final String unf = diff.toString();
+                return StringUtils.leftPad(unf, 2, '0');
             }
         },
         IV_ATT("IV Attack") {
