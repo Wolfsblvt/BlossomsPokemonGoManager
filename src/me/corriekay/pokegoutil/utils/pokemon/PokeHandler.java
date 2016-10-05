@@ -382,7 +382,7 @@ public class PokeHandler {
          * @return The two-length-number.
          */
         private static String pad(final int number, final int length) {
-            final int max = 10 * length;
+            final int max = (int) Math.pow(10, length);
             return (number < max) ? StringUtils.leftPad(String.valueOf(number), length, '0') : StringUtils.repeat('X', length);
         }
 
