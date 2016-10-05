@@ -65,7 +65,7 @@ public enum PokeColumn {
     LEVEL("Lvl", ColumnType.DOUBLE) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getLevel();
+            return (double) p.getLevel();
         }
     },
     IV_ATTACK("Atk", ColumnType.INT) {
