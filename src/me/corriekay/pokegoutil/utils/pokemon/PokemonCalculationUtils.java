@@ -94,7 +94,7 @@ public final class PokemonCalculationUtils {
     }
 
     /**
-     * Rates the moveset against the best possible moveset of that species
+     * Rates the moveset against the best possible moveset of that species.
      *
      * @param p       The Pokémon.
      * @param primary If primary move should be rated, or secondary.
