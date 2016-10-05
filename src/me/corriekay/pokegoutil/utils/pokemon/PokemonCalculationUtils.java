@@ -94,6 +94,28 @@ public final class PokemonCalculationUtils {
     }
 
     /**
+     * Rates the moveset against the best possible moveset of that species
+     *
+     * @param p       The Pokémon.
+     * @param primary If primary move should be rated, or secondary.
+     * @return The percentage rating how good it is compared to the best.
+     */
+    public static double moveRating(final Pokemon p, final boolean primary) {
+        final PokemonMeta pMeta = p.getMeta();
+        double highestDps = 0;
+        final PokemonMove[] moves = primary ? pMeta.getQuickMoves() : pMeta.getCinematicMoves();
+        for (final PokemonMove move : moves) {
+            final double dps = dpsForMove(p.getPokemonId(), move, primary);
+            if (dps > highestDps) {
+                highestDps = dps;
+            }
+        }
+        // Now rate it
+        final double currentDps = dpsForMove(p, primary);
+        return Utilities.percentage(currentDps, highestDps);
+    }
+
+    /**
      * Duel Ability is Tankiness * Gym Offense. A reasonable measure if you don't often/ever dodge,
      * as then you can only attack for as long as you  can stay positive on HP.
      *
