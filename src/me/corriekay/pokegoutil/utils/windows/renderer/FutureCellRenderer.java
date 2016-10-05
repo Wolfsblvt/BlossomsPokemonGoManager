@@ -1,13 +1,10 @@
 package me.corriekay.pokegoutil.utils.windows.renderer;
 
 import java.awt.Component;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import javax.swing.JTable;
 
-import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
 
 /**
