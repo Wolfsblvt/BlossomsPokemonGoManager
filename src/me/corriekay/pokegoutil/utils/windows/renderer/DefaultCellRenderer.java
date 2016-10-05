@@ -55,7 +55,7 @@ public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
      * @param table      The table.
      * @param isSelected If the cell is selected.
      */
-    protected void setDefaultSelectionColors(final JTable table, final boolean isSelected) {
+    private void setDefaultSelectionColors(final JTable table, final boolean isSelected) {
         if (isSelected) {
             this.setBackground(table.getSelectionBackground());
             this.setForeground(table.getSelectionForeground());
