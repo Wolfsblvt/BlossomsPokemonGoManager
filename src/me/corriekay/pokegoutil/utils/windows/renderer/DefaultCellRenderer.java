@@ -29,7 +29,7 @@ public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
                                                    final boolean hasFocus, final int rowIndex, final int columnIndex) {
-        setNativeLookAndFeel(table, isSelected);
+        setNativeLookAndFeel(table, value, isSelected);
         setText(value.toString());
         return this;
     }
@@ -40,9 +40,10 @@ public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
      * or should be overwritten and called then.
      *
      * @param table      The table.
+     * @param value      The value.
      * @param isSelected If the cell is selected.
      */
-    protected void setNativeLookAndFeel(final JTable table, final boolean isSelected) {
+    protected void setNativeLookAndFeel(final JTable table, final Object value, final boolean isSelected) {
         setOpaque(true);
         setDefaultSelectionColors(table, isSelected);
         setFont(table.getFont());

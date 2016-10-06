@@ -21,7 +21,7 @@ public class FutureCellRenderer extends DefaultCellRenderer {
     @Override
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
                                                    final boolean hasFocus, final int rowIndex, final int columnIndex) {
-        setNativeLookAndFeel(table, isSelected);
+        setNativeLookAndFeel(table, value, isSelected);
 
         final String resolvedValue = CELL_CACHE.get(rowIndex + StringLiterals.CONCAT_SEPARATOR + columnIndex);
         if (resolvedValue != null) {
