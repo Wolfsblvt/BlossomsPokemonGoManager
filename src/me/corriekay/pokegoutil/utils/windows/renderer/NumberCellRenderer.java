@@ -17,8 +17,8 @@ import me.corriekay.pokegoutil.utils.ui.ColorTransitioner;
 public class NumberCellRenderer<T extends NumberCellRenderer<T>> extends DefaultCellRenderer {
     protected static final ColorTransitioner.ColorPoint[] RATING_COLORS = {
         new ColorTransitioner.ColorPoint(0, Color.RED),
-        new ColorTransitioner.ColorPoint(0.2, Color.RED),
-        new ColorTransitioner.ColorPoint(0.6, Color.YELLOW),
+        new ColorTransitioner.ColorPoint(0.33333, Color.RED),
+        new ColorTransitioner.ColorPoint(0.66666, Color.YELLOW),
         new ColorTransitioner.ColorPoint(1, Color.GREEN),
     };
 
@@ -27,13 +27,14 @@ public class NumberCellRenderer<T extends NumberCellRenderer<T>> extends Default
     private double maxValue;
 
     /**
-     * Creates an instance of the NumberCellRenderer with a rating between two values.
+     * Sets the rating colors for this cell renderer, based on a min and a max value.
      *
      * @param min The minimum value.
      * @param max The maximum value.
+     * @return The cell renderer itself.
      */
     public T withRatingColors(final double min, final double max) {
-        if (minValue >= maxValue) {
+        if (min >= max) {
             throw new IllegalArgumentException("Rating limits wrong. min has to be lower than max.");
         }
 
@@ -60,7 +61,7 @@ public class NumberCellRenderer<T extends NumberCellRenderer<T>> extends Default
         setHorizontalAlignment(JLabel.RIGHT);
 
         if (withColors) {
-            final double realValue = (double) value;
+            final double realValue = Double.valueOf(value.toString());
             final double percentage = (realValue - minValue) * (1 / (maxValue - minValue));
             setRatingColor(percentage);
         }

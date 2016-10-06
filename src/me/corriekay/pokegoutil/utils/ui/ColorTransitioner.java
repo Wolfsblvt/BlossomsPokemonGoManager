@@ -61,10 +61,10 @@ public class ColorTransitioner {
             lower = colorPoint;
         }
 
-        // We calculate the real percentage in the span
+        // We calculate the real percentage within the span
         final double spanned = (transitionPoint - lower.point) * (1 / (higher.point - lower.point));
 
-        // Now we calculate the correct middle where we
+        // Now we calculate the middle between the two given colors
         return new Color(
             (int) Math.round(lower.color.getRed() * (1 - spanned) + higher.color.getRed() * spanned),
             (int) Math.round(lower.color.getGreen() * (1 - spanned) + higher.color.getGreen() * spanned),

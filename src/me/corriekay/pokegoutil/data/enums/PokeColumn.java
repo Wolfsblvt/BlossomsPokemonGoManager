@@ -69,19 +69,19 @@ public enum PokeColumn {
             return p.getLevel();
         }
     },
-    IV_ATTACK("Atk", ColumnType.INT, CellRendererHelper.numberCellRendererWith(0, 15)) {
+    IV_ATTACK("Atk", ColumnType.INT, CellRendererHelper.IV) {
         @Override
         public Object get(final Pokemon p) {
             return p.getIndividualAttack();
         }
     },
-    IV_DEFENSE("Def", ColumnType.INT, CellRendererHelper.numberCellRendererWith(0, 15)) {
+    IV_DEFENSE("Def", ColumnType.INT, CellRendererHelper.IV) {
         @Override
         public Object get(final Pokemon p) {
             return p.getIndividualDefense();
         }
     },
-    IV_STAMINA("Stam", ColumnType.INT, CellRendererHelper.numberCellRendererWith(0, 15)) {
+    IV_STAMINA("Stam", ColumnType.INT, CellRendererHelper.IV) {
         @Override
         public Object get(final Pokemon p) {
             return p.getIndividualStamina();
