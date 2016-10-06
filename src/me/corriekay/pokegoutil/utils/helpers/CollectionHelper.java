@@ -1,9 +1,6 @@
 package me.corriekay.pokegoutil.utils.helpers;
 
 import java.util.ArrayList;
-import java.util.Set;
-
-import jdk.nashorn.internal.ir.annotations.Ignore;
 
 /**
  * A class that provides some usability functions for collections.
@@ -20,7 +17,7 @@ public final class CollectionHelper {
      * @param ignored The class type.
      * @return The list.
      */
-    public static <T> ArrayList<T> provideArrayList(Class<T> ignored) {
+    public static <T> ArrayList<T> provideArrayList(final Class<T> ignored) {
         return new ArrayList<>();
     }
 }

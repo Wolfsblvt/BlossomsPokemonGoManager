@@ -15,7 +15,7 @@ public class FutureCellRenderer extends DefaultCellRenderer {
     @Override
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
                                                    final boolean hasFocus, final int rowIndex, final int columnIndex) {
-        setNativeLookAndFeel(table, isSelected);
+        setNativeLookAndFeel(table, value, isSelected);
 
         @SuppressWarnings("unchecked")
         final CompletableFuture<String> future = (CompletableFuture<String>) value;

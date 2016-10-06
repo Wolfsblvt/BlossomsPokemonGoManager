@@ -7,11 +7,7 @@ import javax.swing.table.TableCellRenderer;
 
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
-import me.corriekay.pokegoutil.utils.windows.renderer.AutoIncrementCellRenderer;
-import me.corriekay.pokegoutil.utils.windows.renderer.DefaultCellRenderer;
-import me.corriekay.pokegoutil.utils.windows.renderer.FutureCellRenderer;
-import me.corriekay.pokegoutil.utils.windows.renderer.NumberCellRenderer;
-import me.corriekay.pokegoutil.utils.windows.renderer.PercentageCellRenderer;
+import me.corriekay.pokegoutil.utils.windows.renderer.CellRendererHelper;
 
 /**
  * Enum that defines all possible column types for table columns.
@@ -20,7 +16,7 @@ public enum ColumnType {
     AUTO_INCREMENT(
         String.class,
         Comparators.STRING,
-        CellRenderers.AUTO_INCREMENT
+        CellRendererHelper.AUTO_INCREMENT
     ),
     DATE(
         String.class,
@@ -29,27 +25,27 @@ public enum ColumnType {
     INT(
         Integer.class,
         Comparators.INT,
-        CellRenderers.NUMBER
+        CellRendererHelper.NUMBER
     ),
     LONG(
         Long.class,
         Comparators.LONG,
-        CellRenderers.NUMBER
+        CellRendererHelper.NUMBER
     ),
     DOUBLE(
         Double.class,
         Comparators.DOUBLE,
-        CellRenderers.NUMBER
+        CellRendererHelper.NUMBER
     ),
     NULLABLE_INT(
         String.class,
         Comparators.NULLABLE_INT,
-        CellRenderers.NUMBER
+        CellRendererHelper.NUMBER
     ),
     PERCENTAGE(
         Double.class,
         Comparators.DOUBLE,
-        CellRenderers.PERCENTAGE
+        CellRendererHelper.PERCENTAGE
     ),
     STRING(
         String.class,
@@ -58,7 +54,7 @@ public enum ColumnType {
     FUTURE_STRING(
         String.class,
         Comparators.FUTURE_STRING,
-        CellRenderers.FUTURE
+        CellRendererHelper.FUTURE
     );
 
     public final Class clazz;
@@ -89,24 +85,13 @@ public enum ColumnType {
     }
 
     /**
-     * This private class is needed to create the cell renderers that are used in this enum.
-     */
-    private static final class CellRenderers {
-        public static final DefaultCellRenderer DEFAULT = new DefaultCellRenderer();
-        public static final NumberCellRenderer NUMBER = new NumberCellRenderer();
-        public static final PercentageCellRenderer PERCENTAGE = new PercentageCellRenderer();
-        public static final FutureCellRenderer FUTURE = new FutureCellRenderer();
-        public static final AutoIncrementCellRenderer AUTO_INCREMENT = new AutoIncrementCellRenderer();
-    }
-
-    /**
      * Constructor to create a column type enum field.
      *
      * @param clazz      The class type of the column, what the data is.
      * @param comparator The comparator for that column.
      */
     ColumnType(final Class clazz, final Comparator comparator) {
-        this(clazz, comparator, CellRenderers.DEFAULT);
+        this(clazz, comparator, CellRendererHelper.DEFAULT);
     }
 
     /**

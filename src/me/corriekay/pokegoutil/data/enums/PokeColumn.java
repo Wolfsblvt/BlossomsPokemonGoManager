@@ -21,6 +21,7 @@ import me.corriekay.pokegoutil.utils.helpers.LocationHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonPerformanceCache;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import me.corriekay.pokegoutil.utils.windows.renderer.CellRendererHelper;
 
 /**
  * A class that holds data relevant for each column.
@@ -68,19 +69,19 @@ public enum PokeColumn {
             return (double) p.getLevel();
         }
     },
-    IV_ATTACK("Atk", ColumnType.INT) {
+    IV_ATTACK("Atk", ColumnType.INT, CellRendererHelper.IV) {
         @Override
         public Object get(final Pokemon p) {
             return p.getIndividualAttack();
         }
     },
-    IV_DEFENSE("Def", ColumnType.INT) {
+    IV_DEFENSE("Def", ColumnType.INT, CellRendererHelper.IV) {
         @Override
         public Object get(final Pokemon p) {
             return p.getIndividualDefense();
         }
     },
-    IV_STAMINA("Stam", ColumnType.INT) {
+    IV_STAMINA("Stam", ColumnType.INT, CellRendererHelper.IV) {
         @Override
         public Object get(final Pokemon p) {
             return p.getIndividualStamina();
@@ -304,6 +305,8 @@ public enum PokeColumn {
     public final ColumnType columnType;
     public final ArrayList data;
 
+    private TableCellRenderer customCellRenderer;
+
     /**
      * Constructor to create the enum entries.
      *
@@ -315,6 +318,18 @@ public enum PokeColumn {
         this.name = name;
         this.columnType = columnType;
         this.data = CollectionHelper.provideArrayList(columnType.clazz);
+    }
+
+    /**
+     * Constructor to create an enum entry with a custom cell renderer.
+     *
+     * @param name               The name of the column.
+     * @param columnType         The type of the column.
+     * @param customCellRenderer The custom cell renderer.
+     */
+    PokeColumn(final String name, final ColumnType columnType, final TableCellRenderer customCellRenderer) {
+        this(name, columnType);
+        this.customCellRenderer = customCellRenderer;
     }
 
     /**
@@ -348,7 +363,7 @@ public enum PokeColumn {
      * @return The cell renderer.
      */
     public TableCellRenderer getCellRenderer() {
-        return columnType.tableCellRenderer;
+        return customCellRenderer != null ? customCellRenderer : columnType.tableCellRenderer;
     }
 
     /**

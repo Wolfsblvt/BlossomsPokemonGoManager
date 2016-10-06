@@ -12,7 +12,7 @@ public class AutoIncrementCellRenderer extends NumberCellRenderer {
     @Override
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
                                                    final boolean hasFocus, final int rowIndex, final int columnIndex) {
-        setNativeLookAndFeel(table, isSelected);
+        setNativeLookAndFeel(table, value, isSelected);
 
         // The row number, one-based
         final int rowNumber = rowIndex + 1;
