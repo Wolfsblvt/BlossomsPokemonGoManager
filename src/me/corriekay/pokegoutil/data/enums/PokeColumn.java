@@ -66,7 +66,7 @@ public enum PokeColumn {
     LEVEL("Lvl", ColumnType.DOUBLE) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getLevel();
+            return (double) p.getLevel();
         }
     },
     IV_ATTACK("Atk", ColumnType.INT, CellRendererHelper.IV) {
@@ -257,6 +257,18 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             return Utilities.percentage(PokemonCalculationUtils.gymDefense(p), PokemonPerformanceCache.getHighestStats().gymDefense.value);
+        }
+    },
+    MOVE_1_RATING("Move 1 Rating", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return PokemonCalculationUtils.moveRating(p, true);
+        }
+    },
+    MOVE_2_RATING("Move 2 Rating", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return PokemonCalculationUtils.moveRating(p, false);
         }
     },
     CAUGHT_COORDINATES("Caught Coordinates", ColumnType.STRING) {

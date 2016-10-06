@@ -113,65 +113,65 @@ public class PokeHandler {
         NICK("Nickname") {
             @Override
             public String get(final Pokemon p) {
-                return String.valueOf(PokeColumn.NICKNAME.get(p));
+                return PokeColumn.NICKNAME.get(p).toString();
             }
         },
         NAME("Pokémon Name") {
             @Override
             public String get(final Pokemon p) {
-                return String.valueOf(PokeColumn.SPECIES.get(p));
+                return PokeColumn.SPECIES.get(p).toString();
             }
         },
         NAME_2("Pokémon Name (First two letters) [2]") {
             @Override
             public String get(final Pokemon p) {
                 final int length = 2;
-                return String.valueOf(PokeColumn.SPECIES.get(p)).substring(0, length);
+                return StringUtils.substring(PokeColumn.SPECIES.get(p).toString(), 0, length);
             }
         },
         NAME_4("Pokémon Name (First four letters) [4]") {
             @Override
             public String get(final Pokemon p) {
                 final int length = 4;
-                return String.valueOf(PokeColumn.SPECIES.get(p)).substring(0, length);
+                return StringUtils.substring(PokeColumn.SPECIES.get(p).toString(), 0, length);
             }
         },
         NAME_6("Pokémon Name (First six letters) [6]") {
             @Override
             public String get(final Pokemon p) {
                 final int length = 6;
-                return String.valueOf(PokeColumn.SPECIES.get(p)).substring(0, length);
+                return StringUtils.substring(PokeColumn.SPECIES.get(p).toString(), 0, length);
             }
         },
         NAME_8("Pokémon Name (First eight letters) [8]") {
             @Override
             public String get(final Pokemon p) {
                 final int length = 8;
-                return String.valueOf(PokeColumn.SPECIES.get(p)).substring(0, length);
+                return StringUtils.substring(PokeColumn.SPECIES.get(p).toString(), 0, length);
             }
         },
         CP("Combat Points") {
             @Override
             public String get(final Pokemon p) {
-                return String.valueOf(PokeColumn.CP.get(p));
+                return PokeColumn.CP.get(p).toString();
             }
         },
         CP_EVOLVED("CP if pokemon was fully evolved (equals %cp% for highest species in the family)") {
             @Override
             public String get(final Pokemon p) {
-                return String.valueOf(PokeColumn.CP_EVOLVED.get(p));
+                return PokeColumn.CP_EVOLVED.get(p).toString();
             }
         },
         HP("Hit Points") {
             @Override
             public String get(final Pokemon p) {
-                return String.valueOf(PokeColumn.HP.get(p));
+                return PokeColumn.HP.get(p).toString();
             }
         },
         LEVEL("Pokémon Level") {
             @Override
             public String get(final Pokemon p) {
-                return String.valueOf(PokeColumn.LEVEL.get(p));
+                return PokeColumn.LEVEL.get(p).toString();
             }
         },
         IV_RATING("IV Rating in two digits (XX for 100%) [2]") {
@@ -209,19 +209,19 @@ public class PokeHandler {
         IV_ATT_UNI("IV Attack Unicode (⓯  for 15) [1]") {
             @Override
             public String get(final Pokemon p) {
-                return UnicodeHelper.get(String.valueOf(PokeColumn.IV_ATTACK.get(p)));
+                return UnicodeHelper.get(PokeColumn.IV_ATTACK.get(p).toString());
             }
         },
         IV_DEF_UNI("IV Defense Unicode (⓯  for 15) [1]") {
             @Override
             public String get(final Pokemon p) {
-                return UnicodeHelper.get(String.valueOf(PokeColumn.IV_DEFENSE.get(p)));
+                return UnicodeHelper.get(PokeColumn.IV_DEFENSE.get(p).toString());
             }
         },
         IV_STAM_UNI("IV Stamina Unicode (⓯  for 15) {1]") {
             @Override
             public String get(final Pokemon p) {
-                return UnicodeHelper.get(String.valueOf(PokeColumn.IV_STAMINA.get(p)));
+                return UnicodeHelper.get(PokeColumn.IV_STAMINA.get(p).toString());
             }
         },
         DUEL_ABILITY("Duel Ability in two digits (XX for 100%) [2]") {
@@ -263,7 +263,7 @@ public class PokeHandler {
         MAX_CP("Maximum possible CP (with Trainer Level 40)") {
             @Override
             public String get(final Pokemon p) {
-                return String.valueOf(PokeColumn.MAX_CP_40.get(p));
+                return PokeColumn.MAX_CP_40.get(p).toString();
             }
         },
         MOVE_TYPE_1("Move 1 abbreviated (Ghost = Gh) [2]") {
@@ -306,6 +306,18 @@ public class PokeHandler {
             @Override
             public String get(final Pokemon p) {
                 return String.valueOf(Math.round(PokemonCalculationUtils.dpsForMove(p, false)));
+            }
+        },
+        MOVE_1_RATING("Rating for Move 1 (Percentage of max possible) in two digits (XX for 100%)") {
+            @Override
+            public String get(final Pokemon p) {
+                return padPercentage((double) PokeColumn.MOVE_1_RATING.get(p));
+            }
+        },
+        MOVE_2_RATING("Rating for Move 2 (Percentage of max possible) in two digits (XX for 100%)") {
+            @Override
+            public String get(final Pokemon p) {
+                return padPercentage((double) PokeColumn.MOVE_2_RATING.get(p));
             }
         },
         TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh) [2]") {
@@ -382,7 +394,7 @@ public class PokeHandler {
          * @return The two-length-number.
          */
         private static String pad(final int number, final int length) {
-            final int max = 10 * length;
+            final int max = (int) Math.pow(10, length);
             return (number < max) ? StringUtils.leftPad(String.valueOf(number), length, '0') : StringUtils.repeat('X', length);
         }
 
