@@ -308,6 +308,18 @@ public class PokeHandler {
                 return String.valueOf(Math.round(PokemonCalculationUtils.dpsForMove(p, false)));
             }
         },
+        MOVE_1_RATING("Rating for Move 1 (Percentage of max possible) in two digits (XX for 100%)") {
+            @Override
+            public String get(final Pokemon p) {
+                return padPercentage((double) PokeColumn.MOVE_1_RATING.get(p));
+            }
+        },
+        MOVE_2_RATING("Rating for Move 2 (Percentage of max possible) in two digits (XX for 100%)") {
+            @Override
+            public String get(final Pokemon p) {
+                return padPercentage((double) PokeColumn.MOVE_2_RATING.get(p));
+            }
+        },
         TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
