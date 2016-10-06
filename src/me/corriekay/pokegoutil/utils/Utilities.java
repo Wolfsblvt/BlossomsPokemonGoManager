@@ -33,7 +33,7 @@ public final class Utilities {
      * @return The value between those limits.
      */
     @SuppressWarnings("unchecked")
-    public static <T extends Comparable> T limit(T min, T value, T max) {
+    public static <T extends Comparable> T limit(final T min, final T value, final T max) {
         if (value.compareTo(min) < 0) {
             return min;
         }

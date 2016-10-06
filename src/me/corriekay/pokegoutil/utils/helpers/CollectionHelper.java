@@ -1,10 +1,6 @@
 package me.corriekay.pokegoutil.utils.helpers;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.Function;
 
 /**
  * A class that provides some usability functions for collections.
