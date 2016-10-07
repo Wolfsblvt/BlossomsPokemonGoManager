@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 import me.corriekay.pokegoutil.data.enums.ExceptionMessages;
 import me.corriekay.pokegoutil.utils.StringLiterals;
