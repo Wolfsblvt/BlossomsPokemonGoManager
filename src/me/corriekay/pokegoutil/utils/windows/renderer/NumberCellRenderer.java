@@ -35,7 +35,7 @@ public class NumberCellRenderer<T extends NumberCellRenderer<T>> extends Default
      */
     public T withRatingColors(final double min, final double max) {
         if (min >= max) {
-            throw new IllegalArgumentException("Rating limits wrong. min has to be lower than max.");
+            throw new IllegalArgumentException(String.format("Rating limits wrong. min (%s) has to be lower than max (%s).", min, max));
         }
 
         this.withColors = true;

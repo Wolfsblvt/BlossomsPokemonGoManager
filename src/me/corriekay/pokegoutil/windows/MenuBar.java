@@ -101,7 +101,7 @@ public class MenuBar extends JMenuBar {
                 JOptionPane.showMessageDialog(null,
                     "No new updates where found. Current version '" + updater.currentVersion + "' is the latest.",
                     checkUpdates.getText(),
-                    JOptionPane.PLAIN_MESSAGE);
+                    JOptionPane.INFORMATION_MESSAGE);
             }
         });
         help.add(checkUpdates);

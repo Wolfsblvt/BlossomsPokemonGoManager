@@ -370,7 +370,7 @@ public final class AccountController {
                 + StringLiterals.NEWLINE + "This is try number " + tries + "."
                 + StringLiterals.NEWLINE + "Press OK to try again.",
             "Login Failed",
-            JOptionPane.PLAIN_MESSAGE);
+            JOptionPane.ERROR_MESSAGE);
     }
 
     private static boolean checkSaveAuth() {
