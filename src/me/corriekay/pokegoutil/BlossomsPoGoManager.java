@@ -1,15 +1,22 @@
 package me.corriekay.pokegoutil;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
 import me.corriekay.pokegoutil.data.managers.AccountController;
 import me.corriekay.pokegoutil.data.managers.GlobalSettingsController;
 import me.corriekay.pokegoutil.gui.controller.ChooseGuiWindowController;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
+import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
+
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 public class BlossomsPoGoManager extends Application {
 
@@ -48,6 +55,7 @@ public class BlossomsPoGoManager extends Application {
 
     @Override
     public void start(final Stage primaryStage) {
+        setupGlobalExceptionHandling();
 
         if (ConfigNew.getConfig().getBool(ConfigKey.DEVELOPFLAG)) {
             new ChooseGuiWindowController();
@@ -57,14 +65,41 @@ public class BlossomsPoGoManager extends Application {
         }
     }
 
-    private void openOldGui() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                UIHelper.setNativeLookAndFeel();
-                AccountController.initialize();
-                AccountController.logOn();
+    /**
+     * Sets up the global exception handler.
+     */
+    private static void setupGlobalExceptionHandling() {
+        Thread.setDefaultUncaughtExceptionHandler((thread, exception) -> {
+            exception.printStackTrace();
+
+            // Gather exception messages
+            final List<String> result = new ArrayList<>();
+            Throwable current = exception;
+            while (current != null) {
+                result.add(current.getClass().getSimpleName() + StringLiterals.COLON_SEPARATOR + current.getLocalizedMessage());
+                current = current.getCause();
             }
+
+            JOptionPane.showMessageDialog(
+                WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                String.join(StringLiterals.NEWLINE, result)
+                    + StringLiterals.NEWLINE
+                    + StringLiterals.NEWLINE + "Application shuts down now."
+                    + StringLiterals.NEWLINE + "You can report the error on GitHub or Discord.",
+                "General Unhandled Error",
+                JOptionPane.ERROR_MESSAGE);
+            System.exit(-1);
+        });
+    }
+
+    /**
+     * Opens the old GUI.
+     */
+    private void openOldGui() {
+        SwingUtilities.invokeLater(() -> {
+            UIHelper.setNativeLookAndFeel();
+            AccountController.initialize();
+            AccountController.logOn();
         });
     }
 }

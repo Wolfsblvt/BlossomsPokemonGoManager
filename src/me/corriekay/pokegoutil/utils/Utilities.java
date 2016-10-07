@@ -24,6 +24,26 @@ public final class Utilities {
     }
 
     /**
+     * Limits given value between two other values if it is comparable.
+     *
+     * @param min   The minimum value.
+     * @param value The value.
+     * @param max   The maximum value.
+     * @param <T>   The type of the value.
+     * @return The value between those limits.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Comparable> T limit(final T min, final T value, final T max) {
+        if (value.compareTo(min) < 0) {
+            return min;
+        }
+        if (value.compareTo(max) > 0) {
+            return max;
+        }
+        return value;
+    }
+
+    /**
      * Takes to numbers and creates a decimal percentage of it (like 0.7542).
      *
      * @param number  The real part.

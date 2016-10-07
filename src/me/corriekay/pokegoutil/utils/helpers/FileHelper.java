@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 import me.corriekay.pokegoutil.data.enums.ExceptionMessages;
 import me.corriekay.pokegoutil.utils.StringLiterals;
@@ -54,29 +53,6 @@ public final class FileHelper {
         } else {
             file.delete();
         }
-    }
-
-    public static boolean checkFilename(String checkme, boolean warn) {
-        final String[] chars = new String[] {"\\", "/", ":", "*", "?", "\"", "<", ">", "|"};
-
-        for (String c : chars) {
-
-            if (checkme.contains(c)) {
-                if (warn) {
-                    JOptionPane.showMessageDialog(null, "A file name can't contain any of the following characters: \\/:*\"<>|");
-                }
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean checkFileExists(File file) {
-        if (file.exists()) {
-            JOptionPane.showMessageDialog(null, "This file already exists. Please choose another file name.");
-            return true;
-        }
-        return false;
     }
 
     public static Image loadImage(String filename) {
