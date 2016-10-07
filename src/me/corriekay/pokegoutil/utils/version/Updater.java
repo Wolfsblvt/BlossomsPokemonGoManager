@@ -127,7 +127,7 @@ public final class Updater {
 
                 final String[] options = new String[] {"Download", "Later", "Ignore this Version"};
                 final int response = JOptionPane.showOptionDialog(null, message, versionFoundString,
-                    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
                     null, options, options[0]);
 
                 switch (response) {

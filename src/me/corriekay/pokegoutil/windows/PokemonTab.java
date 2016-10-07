@@ -291,7 +291,7 @@ public class PokemonTab extends JPanel {
             + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : "");
 
         if (config.getBool(ConfigKey.SHOW_BULK_POPUP)) {
-            JOptionPane.showMessageDialog(null, finishText);
+            JOptionPane.showMessageDialog(null, finishText, "Finished Operation", JOptionPane.INFORMATION_MESSAGE);
         } else {
             System.out.println(finishText);
         }
