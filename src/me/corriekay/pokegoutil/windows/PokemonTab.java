@@ -816,7 +816,8 @@ public class PokemonTab extends JPanel {
         System.out.println("Selecting Pokemon with IV less than: " + ivTransfer.getText());
 
         for (int i = 0; i < pt.getRowCount(); i++) {
-            final double pIv = Double.parseDouble((String) pt.getValueAt(i, 3));
+            final double pIv = (double) pt.getValueAt(i, 5) * 100;
+            //final double pIv = Double.parseDouble((String) pt.getValueAt(i, 3));
             if (pIv < ivLessThan) {
                 pt.getSelectionModel().addSelectionInterval(i, i);
             }
