@@ -27,9 +27,11 @@ public class PercentageCellRenderer extends NumberCellRenderer<PercentageCellRen
                                                    final boolean hasFocus, final int rowIndex, final int columnIndex) {
         setNativeLookAndFeel(table, value, isSelected);
 
-        final double percentage = Double.valueOf(value.toString());
-        setText(decimalFormatter.format(percentage * Utilities.PERCENTAGE_FACTOR));
-        setToolTipText(String.valueOf(percentage));
+        if (value != null) {
+            final double percentage = Double.valueOf(value.toString());
+            setText(decimalFormatter.format(percentage * Utilities.PERCENTAGE_FACTOR));
+            setToolTipText(String.valueOf(percentage));
+        }
 
         return this;
     }

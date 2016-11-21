@@ -30,7 +30,7 @@ public class DefaultCellRenderer extends JLabel implements TableCellRenderer {
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
                                                    final boolean hasFocus, final int rowIndex, final int columnIndex) {
         setNativeLookAndFeel(table, value, isSelected);
-        setText(value.toString());
+        setText(String.valueOf(value));
         return this;
     }
 
