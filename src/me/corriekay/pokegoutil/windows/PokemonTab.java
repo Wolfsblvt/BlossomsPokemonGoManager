@@ -40,6 +40,7 @@ import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.Pokemon;
 
 import me.corriekay.pokegoutil.data.enums.BatchOperation;
+import me.corriekay.pokegoutil.data.enums.PokeColumn;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
@@ -816,7 +817,8 @@ public class PokemonTab extends JPanel {
         System.out.println("Selecting Pokemon with IV less than: " + ivTransfer.getText());
 
         for (int i = 0; i < pt.getRowCount(); i++) {
-            final double pIv = Double.parseDouble((String) pt.getValueAt(i, 3));
+            final double pIv = (double) pt.getValueAt(i, PokeColumn.IV_RATING.id) * 100;
+            //final double pIv = Double.parseDouble((String) pt.getValueAt(i, 3));
             if (pIv < ivLessThan) {
                 pt.getSelectionModel().addSelectionInterval(i, i);
             }
