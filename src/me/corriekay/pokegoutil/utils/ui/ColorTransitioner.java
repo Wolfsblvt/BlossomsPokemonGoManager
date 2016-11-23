@@ -45,7 +45,7 @@ public class ColorTransitioner {
      * @return The transitioned color.
      */
     public Color getColor(final double percentage) {
-        final double transitionPoint = Utilities.limit(0d, percentage, 1d);
+        final double transitionPoint = Utilities.limit(0.0, percentage, 1.0);
         if (colors.size() == 1) {
             return colors.get(0).color;
         }
