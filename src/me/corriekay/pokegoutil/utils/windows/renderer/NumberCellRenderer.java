@@ -50,7 +50,7 @@ public class NumberCellRenderer<T extends NumberCellRenderer<T>> extends Default
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
                                                    final boolean hasFocus, final int rowIndex, final int columnIndex) {
         setNativeLookAndFeel(table, value, isSelected);
-        setText(value.toString());
+        setText(String.valueOf(value));
 
         return this;
     }
@@ -60,7 +60,7 @@ public class NumberCellRenderer<T extends NumberCellRenderer<T>> extends Default
         super.setNativeLookAndFeel(table, value, isSelected);
         setHorizontalAlignment(JLabel.RIGHT);
 
-        if (withColors) {
+        if (withColors && value != null) {
             final double realValue = Double.valueOf(value.toString());
             final double percentage = (realValue - minValue) * (1 / (maxValue - minValue));
             setRatingColor(percentage);

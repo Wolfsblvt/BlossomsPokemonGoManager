@@ -17,18 +17,20 @@ public class FutureCellRenderer extends DefaultCellRenderer {
                                                    final boolean hasFocus, final int rowIndex, final int columnIndex) {
         setNativeLookAndFeel(table, value, isSelected);
 
-        @SuppressWarnings("unchecked")
-        final CompletableFuture<String> future = (CompletableFuture<String>) value;
+        if (value != null) {
+            @SuppressWarnings("unchecked")
+            final CompletableFuture<String> future = (CompletableFuture<String>) value;
 
-        if (future.isDone()) {
-            final String resolvedValue = future.getNow("Failed.");
-            setText(resolvedValue);
-            setToolTipText(resolvedValue);
-        } else {
-            // We set a default text.
-            setText("... Loading ...");
+            if (future.isDone()) {
+                final String resolvedValue = future.getNow("Failed.");
+                setText(resolvedValue);
+                setToolTipText(resolvedValue);
+            } else {
+                // We set a default text.
+                setText("... Loading ...");
 
-            future.thenAcceptAsync((String text) -> asyncSetValue(text, table, rowIndex, columnIndex));
+                future.thenAcceptAsync((String text) -> asyncSetValue(text, table, rowIndex, columnIndex));
+            }
         }
         return this;
     }
