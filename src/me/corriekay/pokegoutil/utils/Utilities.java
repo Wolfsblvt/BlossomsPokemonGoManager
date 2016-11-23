@@ -45,13 +45,14 @@ public final class Utilities {
 
     /**
      * Takes to numbers and creates a decimal percentage of it (like 0.7542).
+     * If the maximum is zero, then the percentage returned is 1.0, so highest possible.
      *
      * @param number  The real part.
      * @param maximum The maximum of the number.
      * @return The percentage value
      */
     public static double percentage(final double number, final double maximum) {
-        return number / maximum;
+        return (maximum != 0.0) ? number / maximum : 1.0;
     }
 
     /**

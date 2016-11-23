@@ -30,11 +30,6 @@ public final class PokemonPerformanceCache {
             final PokemonId pokemonId = entry.getKey();
             final PokemonMeta meta = entry.getValue();
 
-            // We skip Pokémon that are currently not available
-            if (PokemonUtils.NOT_EXISTING_POKEMON_LIST.contains(pokemonId)) {
-                continue;
-            }
-
             PokemonPerformance<Long> highestDuelAbility = PokemonPerformance.DEFAULT_LONG;
             PokemonPerformance<Double> highestGymOffense = PokemonPerformance.DEFAULT_DOUBLE;
             PokemonPerformance<Long> highestGymDefense = PokemonPerformance.DEFAULT_LONG;
@@ -57,6 +52,11 @@ public final class PokemonPerformanceCache {
             final PokemonPerformanceStats stats = new PokemonPerformanceStats(pokemonId, highestDuelAbility, highestGymOffense, highestGymDefense);
 
             MAP.put(pokemonId, stats);
+
+            // We skip Pokémon that are currently not available for the global highest value collection
+            if (PokemonUtils.NOT_EXISTING_POKEMON_LIST.contains(pokemonId)) {
+                continue;
+            }
 
             // Save if the stats are highest until now
             if (stats.duelAbility.value > globalHighestDuelAbility.value) {
