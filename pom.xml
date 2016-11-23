@@ -107,7 +107,7 @@
         <dependency>
             <groupId>com.github.Wolfsblvt</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
-            <version>0.4-changed_base</version>
+            <version>251ab09691fbf754e887fcac186b9f38b59c95b8</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
