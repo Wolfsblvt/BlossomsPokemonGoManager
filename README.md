@@ -1,15 +1,3 @@
-# Important Note on Using this Tool
-Niantic forced the apps to update to latest 0.39 version. All old official apps will not start anymore. That means they will only have new API calls from smartphones, making it very likely to get flagged if you use the old API with unofficial tool, like ours too.
-
-**IMPORTANT: Chances are high for getting flagged and banned if you continue using this tool at the moment!**
-
-Devs are already working on a new API version so that tools can continue to exist, we hope.
-Use BlossomsPokemonGoManager at your own risk. It's more likely than ever to get banned for it.
-(No reported bans so far though)
-
-<hr />
-
-
 [![Travis Build Badge](https://img.shields.io/travis/Wolfsblvt/BlossomsPokemonGoManager.svg)](https://travis-ci.org/Wolfsblvt/BlossomsPokemonGoManager)
 [![Codacy](https://img.shields.io/codacy/grade/14b05062286f448fb5b59708c4936e42.svg)](https://www.codacy.com/app/wolfsblvt/BlossomsPokemonGoManager?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Wolfsblvt/BlossomsPokemonGoManager&amp;utm_campaign=Badge_Grade)
 [![Codacy Coverage](https://img.shields.io/codacy/coverage/14b05062286f448fb5b59708c4936e42.svg)](https://www.codacy.com/app/wolfsblvt/BlossomsPokemonGoManager?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Wolfsblvt/BlossomsPokemonGoManager&amp;utm_campaign=Badge_Grade)
