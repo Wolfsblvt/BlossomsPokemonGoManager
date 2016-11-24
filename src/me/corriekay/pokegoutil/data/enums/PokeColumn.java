@@ -202,7 +202,12 @@ public enum PokeColumn {
     CP_EVOLVED("CP Evolved", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getCpAfterFullEvolve();
+            final int cpAfterFullyEvolve = p.getCpAfterFullEvolve();
+            if (cpAfterFullyEvolve != p.getCp()) {
+                return String.valueOf(cpAfterFullyEvolve);
+            } else {
+                return StringLiterals.NO_VALUE_SIGN;
+            }
         }
     },
     CAUGHT_WITH("Caught With", ColumnType.STRING) {

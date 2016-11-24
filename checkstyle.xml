@@ -274,7 +274,7 @@
             <property name="format" value="^((\s*)|(\s*case(.*?):\s*))$"/>
         </module>
         <module name="UncommentedMain">
-            <property name="excludedClasses" value="\.Main$"/>
+            <property name="excludedClasses" value="\.BlossomsPoGoManager$"/>
         </module>
         <module name="UpperEll"/>
 

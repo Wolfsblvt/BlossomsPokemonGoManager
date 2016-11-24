@@ -6,12 +6,12 @@ import java.util.List;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.helpers.ColorHelper;
 
 /**
  * A Transitioner that is initialized with a list of colors and points to make a color transition for a percentage value.
  */
 public class ColorTransitioner {
-    public static final int MAX_COLOR = 255;
 
     public final List<ColorPoint> colors;
 
@@ -45,7 +45,7 @@ public class ColorTransitioner {
      * @return The transitioned color.
      */
     public Color getColor(final double percentage) {
-        final double transitionPoint = Utilities.limit(0d, percentage, 1d);
+        final double transitionPoint = Utilities.limit(0.0, percentage, 1.0);
         if (colors.size() == 1) {
             return colors.get(0).color;
         }
@@ -69,7 +69,7 @@ public class ColorTransitioner {
             (int) Math.round(lower.color.getRed() * (1 - spanned) + higher.color.getRed() * spanned),
             (int) Math.round(lower.color.getGreen() * (1 - spanned) + higher.color.getGreen() * spanned),
             (int) Math.round(lower.color.getBlue() * (1 - spanned) + higher.color.getBlue() * spanned),
-            Utilities.limit(0, ConfigNew.getConfig().getInt(ConfigKey.COLOR_ALPHA), MAX_COLOR)
+            Utilities.limit(0, ConfigNew.getConfig().getInt(ConfigKey.COLOR_ALPHA), ColorHelper.MAX_COLOR)
         );
     }
 

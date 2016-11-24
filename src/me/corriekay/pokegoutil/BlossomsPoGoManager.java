@@ -18,6 +18,9 @@ import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+/**
+ * The main project class. Contains the runtime stuff.
+ */
 public class BlossomsPoGoManager extends Application {
 
     private static Stage sPrimaryStage;
@@ -80,15 +83,24 @@ public class BlossomsPoGoManager extends Application {
                 current = current.getCause();
             }
 
-            JOptionPane.showMessageDialog(
+            final String[] options = new String[] {"Continue anyway", "Exit"};
+            final int continueChoice = JOptionPane.showOptionDialog(
                 WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                 String.join(StringLiterals.NEWLINE, result)
                     + StringLiterals.NEWLINE
-                    + StringLiterals.NEWLINE + "Application shuts down now."
-                    + StringLiterals.NEWLINE + "You can report the error on GitHub or Discord.",
+                    + StringLiterals.NEWLINE + "Application got a critical error."
+                    + StringLiterals.NEWLINE + "You can report the error on GitHub or Discord."
+                    + StringLiterals.NEWLINE
+                    + StringLiterals.NEWLINE + "It is possible to continue here, but do note that the application might not work as expected."
+                    + StringLiterals.NEWLINE + "Close and restart if that's the case.",
                 "General Unhandled Error",
-                JOptionPane.ERROR_MESSAGE);
-            System.exit(-1);
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.ERROR_MESSAGE,
+                null, options, options[0]);
+            if (continueChoice == 1) {
+                // If exit is chosen, we exit here.
+                System.exit(-1);
+            }
         });
     }
 

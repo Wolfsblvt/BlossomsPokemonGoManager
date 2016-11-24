@@ -22,7 +22,7 @@ public class NumberCellRenderer<T extends NumberCellRenderer<T>> extends Default
         new ColorTransitioner.ColorPoint(1, Color.GREEN),
     };
 
-    private boolean withColors;
+    private boolean isWithColors;
     private double minValue;
     private double maxValue;
 
@@ -38,7 +38,7 @@ public class NumberCellRenderer<T extends NumberCellRenderer<T>> extends Default
             throw new IllegalArgumentException(String.format("Rating limits wrong. min (%s) has to be lower than max (%s).", min, max));
         }
 
-        this.withColors = true;
+        this.isWithColors = true;
         this.minValue = min;
         this.maxValue = max;
 
@@ -50,7 +50,7 @@ public class NumberCellRenderer<T extends NumberCellRenderer<T>> extends Default
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
                                                    final boolean hasFocus, final int rowIndex, final int columnIndex) {
         setNativeLookAndFeel(table, value, isSelected);
-        setText(value.toString());
+        setText(String.valueOf(value));
 
         return this;
     }
@@ -60,22 +60,27 @@ public class NumberCellRenderer<T extends NumberCellRenderer<T>> extends Default
         super.setNativeLookAndFeel(table, value, isSelected);
         setHorizontalAlignment(JLabel.RIGHT);
 
-        if (withColors) {
+        if (isWithColors && value != null) {
             final double realValue = Double.valueOf(value.toString());
             final double percentage = (realValue - minValue) * (1 / (maxValue - minValue));
-            setRatingColor(percentage);
+            setRatingColor(percentage, isSelected);
         }
     }
 
     /**
      * Set the color for the cell based on the rating.
      *
-     * @param rating The rating, from 0 to 1.
+     * @param rating     The rating, from 0 to 1.
+     * @param isSelected If the cell is selected.
      */
-    private void setRatingColor(final double rating) {
+    private void setRatingColor(final double rating, final boolean isSelected) {
         final ColorTransitioner transitioner = new ColorTransitioner(Arrays.asList(RATING_COLORS));
-
         final Color background = transitioner.getColor(rating);
-        this.setBackground(background);
+
+        if (isSelected) {
+            this.setBackground(background.darker().darker());
+        } else {
+            this.setBackground(background);
+        }
     }
 }
