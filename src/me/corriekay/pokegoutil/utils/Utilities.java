@@ -1,12 +1,9 @@
 package me.corriekay.pokegoutil.utils;
 
-import java.awt.Color;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
-
-import me.corriekay.pokegoutil.utils.ui.ColorTransitioner;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -20,11 +17,10 @@ import com.google.protobuf.InvalidProtocolBufferException;
  */
 public final class Utilities {
 
-
     public static final int PERCENTAGE_FACTOR = 100;
     public static final int CALCULATION_FACTOR_1000 = 1000;
 
-    private static final Random RANDOM = new Random(System.currentTimeMillis());
+    public static final Random RANDOM = new Random(System.currentTimeMillis());
 
     /** Prevent initializing this class. */
     private Utilities() {
@@ -84,18 +80,6 @@ public final class Utilities {
     public static String percentageWithTwoCharacters(final double decimalNumber) {
         final int percentage = (int) Math.round(decimalNumber * PERCENTAGE_FACTOR);
         return (percentage < PERCENTAGE_FACTOR) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
-    }
-
-    /**
-     * Gets a random color.
-     * Notes to Developers: If there will be more color functions in the future, please extract them to a ColorHelper.
-     *
-     * @return A random color.
-     */
-    public static Color randomColor() {
-        final int maxColor = ColorTransitioner.MAX_COLOR;
-        final Color color = new Color(RANDOM.nextInt(maxColor), RANDOM.nextInt(maxColor), RANDOM.nextInt(maxColor), maxColor);
-        return color;
     }
 
     /**
