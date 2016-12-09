@@ -128,7 +128,7 @@ public class MenuBar extends JMenuBar {
                 + StringLiterals.NEWLINE + "Thanks to Grover for providing"
                 + StringLiterals.NEWLINE + "such a great API."
                 + StringLiterals.NEWLINE
-                + StringLiterals.NEWLINE + "Thanks for Draseart for"
+                + StringLiterals.NEWLINE + "Thanks to Draseart for "
                 + "the icon art.",
             "About Blossom's Pokémon Go Manager", JOptionPane.PLAIN_MESSAGE));
         help.add(about);
