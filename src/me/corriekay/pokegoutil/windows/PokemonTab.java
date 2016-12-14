@@ -277,6 +277,7 @@ public class PokemonTab extends JPanel {
     private void refreshPkmn() {
         try {
             go.getInventories().updateInventories(true);
+            PokemonGoMainWindow.getInstance().refreshTitle();
         } catch (final Exception e) {
             e.printStackTrace();
         }
