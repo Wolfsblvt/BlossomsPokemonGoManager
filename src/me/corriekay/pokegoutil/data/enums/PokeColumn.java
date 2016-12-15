@@ -2,14 +2,17 @@ package me.corriekay.pokegoutil.data.enums;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.swing.table.TableCellRenderer;
 
+import com.pokegoapi.api.pokemon.Evolutions;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.NoSuchItemException;
 import com.pokegoapi.google.common.geometry.S2CellId;
 
+import POGOProtos.Enums.PokemonIdOuterClass;
 import me.corriekay.pokegoutil.utils.AutoIncrementer;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
@@ -190,19 +193,32 @@ public enum PokeColumn {
     MAX_CP_EVOLVED_CUR("Max CP Evolved (Cur)", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getMaxCpFullEvolveAndPowerupForPlayer();
+            List<PokemonIdOuterClass.PokemonId> highest = Evolutions.getHighest(p.getPokemonId());
+            PokemonIdOuterClass.PokemonId highestUpgradedFamily = highest.get(0);
+            return p.getMaxCpFullEvolveAndPowerupForPlayer(highestUpgradedFamily);
         }
     },
     MAX_CP_EVOLVED_40("Max CP Evolved (40)", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getCpFullEvolveAndPowerup();
+            List<PokemonIdOuterClass.PokemonId> highest = Evolutions.getHighest(p.getPokemonId());
+            PokemonIdOuterClass.PokemonId highestUpgradedFamily = highest.get(0);
+            return p.getCpFullEvolveAndPowerup(highestUpgradedFamily);
         }
     },
     CP_EVOLVED("CP Evolved", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
-            final int cpAfterFullyEvolve = p.getCpAfterFullEvolve();
+            List<PokemonIdOuterClass.PokemonId> highest = Evolutions.getHighest(p.getPokemonId());
+            PokemonIdOuterClass.PokemonId highestUpgradedFamily = highest.get(0);
+            final int cpAfterFullyEvolve;
+            if (highest.contains(p.getPokemonId())) {     
+                cpAfterFullyEvolve = p.getCp();     
+            }
+            else {
+                cpAfterFullyEvolve = p.getCpAfterFullEvolve(highestUpgradedFamily);
+            }
+            
             if (cpAfterFullyEvolve != p.getCp()) {
                 return String.valueOf(cpAfterFullyEvolve);
             } else {

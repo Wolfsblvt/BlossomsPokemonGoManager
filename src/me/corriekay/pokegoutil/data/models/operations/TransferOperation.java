@@ -1,17 +1,17 @@
 package me.corriekay.pokegoutil.data.models.operations;
 
 import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
+import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result;
 import me.corriekay.pokegoutil.data.enums.OperationError;
 import me.corriekay.pokegoutil.data.models.BpmOperationResult;
 import me.corriekay.pokegoutil.data.models.PokemonModel;
 import me.corriekay.pokegoutil.gui.enums.OperationId;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
-
-import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result;
 
 public class TransferOperation extends Operation {
 
@@ -37,8 +37,19 @@ public class TransferOperation extends Operation {
 
         final Pokemon poke = pokemon.getPokemon();
         final int candies = poke.getCandy();
-        final Result transferResult = poke.transferPokemon();
 
+        final Result transferResult;
+        try {
+            transferResult = poke.transferPokemon();
+        } catch (CaptchaActiveException e) {
+            e.printStackTrace();
+            return new BpmOperationResult(String.format(
+                    "Error transferring %s, result: %s",
+                    PokemonUtils.getLocalPokeName(poke),
+                    "Captcha active in account"),
+                    OperationError.EVOLVE_FAIL);
+        }
+        
         if (transferResult != Result.SUCCESS) {
             return new BpmOperationResult(String.format(
                 "Error transferring %s, result: %s",

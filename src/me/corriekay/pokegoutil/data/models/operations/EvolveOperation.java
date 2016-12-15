@@ -2,6 +2,7 @@ package me.corriekay.pokegoutil.data.models.operations;
 
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
@@ -32,8 +33,19 @@ public class EvolveOperation extends Operation {
     }
 
     @Override
-    protected BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException {
-        final EvolutionResult evolutionResult = pokemon.getPokemon().evolve();
+    protected BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException  {
+        
+        EvolutionResult evolutionResult;
+        try {
+            evolutionResult = pokemon.getPokemon().evolve();
+        } catch (CaptchaActiveException e) {
+            e.printStackTrace();
+            return new BpmOperationResult(String.format(
+                    "Error evolving %s, result: %s",
+                    pokemon.getSpecies(),
+                    "Captcha active in account"),
+                    OperationError.EVOLVE_FAIL);
+        }
 
         if (!evolutionResult.isSuccessful()) {
             return new BpmOperationResult(String.format(

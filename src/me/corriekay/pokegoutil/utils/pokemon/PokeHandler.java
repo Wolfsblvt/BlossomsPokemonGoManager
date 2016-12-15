@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
+import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
@@ -61,7 +62,7 @@ public class PokeHandler {
         try {
             final NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick.toString());
             return result;
-        } catch (LoginFailedException | RemoteServerException e) {
+        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException e) {
             System.out.println("Error while renaming "
                 + PokemonUtils.getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
                 + Utilities.getRealExceptionMessage(e));

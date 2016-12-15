@@ -507,7 +507,7 @@ public class PokemonTab extends JPanel {
                 }
 
                 // Check if pokemon is already highest evolution, otherwise we don't need to call server
-                if (poke.getEvolutionForm().isFullyEvolved()) {
+                if (poke.canEvolve()==false) {
                     skipped.increment();
                     System.out.println(String.format(
                         "Skipped evolving %s. Is already highest evolution.",
@@ -1007,37 +1007,41 @@ public class PokemonTab extends JPanel {
         final String[] terms = search.split(";");
         try {
             go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-                final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
-                String familyName = "";
-                if (useFamilyName) {
-                    // Try translating family name
-                    try {
-                        final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
-                        familyName = PokemonUtils.getLocalPokeName(familyPokemonId.getNumber());
-                    } catch (final IllegalArgumentException e) {
-                        familyName = poke.getPokemonFamily().toString();
+                try {
+                    final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
+                    String familyName = "";
+                    if (useFamilyName) {
+                        // Try translating family name
+                        try {
+                            final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
+                            familyName = PokemonUtils.getLocalPokeName(familyPokemonId.getNumber());
+                        } catch (final IllegalArgumentException e) {
+                            familyName = poke.getPokemonFamily().toString();
+                        }
                     }
-                }
 
-                String searchme = Utilities.concatString(',',
-                    PokemonUtils.getLocalPokeName(poke),
-                    ((useFamilyName) ? familyName : ""),
-                    poke.getNickname(),
-                    poke.getMeta().getType1().toString(),
-                    poke.getMeta().getType2().toString(),
-                    poke.getMove1().toString(),
-                    poke.getMove2().toString(),
-                    poke.getPokeball().toString());
-                searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
-                    .replaceAll("ITEM_", "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll(StringLiterals.SPACE, "").toLowerCase();
+                    String searchme = Utilities.concatString(',',
+                            PokemonUtils.getLocalPokeName(poke),
+                            ((useFamilyName) ? familyName : ""),
+                            poke.getNickname(),
+                            poke.getMeta().getType1().toString(),
+                            poke.getMeta().getType2().toString(),
+                            poke.getMove1().toString(),
+                            poke.getMove2().toString(),
+                            poke.getPokeball().toString());
+                    searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
+                            .replaceAll("ITEM_", "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll(StringLiterals.SPACE, "").toLowerCase();
 
-                for (final String s : terms) {
-                    if (searchme.contains(s)) {
-                        pokes.add(poke);
-                        // Break, so that a Pokémon isn't added twice even if it
-                        // matches more than one criteria
-                        break;
+                    for (final String s : terms) {
+                        if (searchme.contains(s)) {
+                            pokes.add(poke);
+                            // Break, so that a Pokémon isn't added twice even if it
+                            // matches more than one criteria
+                            break;
+                        }
                     }
+                } catch (Exception e) {
+                   e.printStackTrace();
                 }
             });
             pt.constructNewTableModel(("".equals(search) || "searchpokémon...".equals(search)

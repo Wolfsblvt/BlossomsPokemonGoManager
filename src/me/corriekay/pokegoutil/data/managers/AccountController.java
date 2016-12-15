@@ -22,6 +22,7 @@ import com.pokegoapi.auth.GoogleAutoCredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.AsyncPokemonGoException;
+import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 
@@ -338,7 +339,7 @@ public final class AccountController {
                     throw new IllegalStateException("credentialProvider is null.");
                 }
                 instance.logged = true;
-            } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException e) {
+            } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
                 alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                 e.printStackTrace();
                 // deleteLoginData(LoginType.ALL);
