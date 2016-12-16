@@ -99,6 +99,11 @@
         </repository>
     </repositories>
     <dependencies>
+        <!--<dependency>-->
+            <!--<groupId>com.pokegoapi</groupId>-->
+            <!--<artifactId>PokeGOAPI-library</artifactId>-->
+            <!--<version>0.4.1</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.github.Grover-c13</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
