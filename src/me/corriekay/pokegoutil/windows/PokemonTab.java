@@ -1007,8 +1007,8 @@ public class PokemonTab extends JPanel {
         final String[] terms = search.split(";");
         try {
             go.getInventories().getPokebank().getPokemons()
-            .stream().filter((p -> p.getPokemonId().getNumber()<=PokemonId.MEW_VALUE))
-            .forEach(poke -> {
+                .stream().filter(p -> p.getPokemonId().getNumber() <= PokemonId.MEW_VALUE)
+                .forEach(poke -> {
                 final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
                 String familyName = "";
                 if (useFamilyName) {

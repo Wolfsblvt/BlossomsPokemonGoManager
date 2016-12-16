@@ -36,7 +36,7 @@ public class EvolveOperation extends Operation {
     protected BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException {
         
         final EvolutionResult evolutionResult;
-        String erroEvolvingString = "Error evolving %s, result: %s";
+        final String erroEvolvingString = "Error evolving %s, result: %s";
         try {
             evolutionResult = pokemon.getPokemon().evolve();
         } catch (CaptchaActiveException e) {

@@ -39,7 +39,7 @@ public class TransferOperation extends Operation {
         final int candies = poke.getCandy();
 
         final Result transferResult;
-        String errorTransferingString = "Error transferring %s, result: %s";
+        final String errorTransferingString = "Error transferring %s, result: %s";
         try {
             transferResult = poke.transferPokemon();
         } catch (CaptchaActiveException e) {

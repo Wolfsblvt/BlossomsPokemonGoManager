@@ -241,7 +241,7 @@ public final class AccountManager {
      * @throws CaptchaActiveException captcha active error
      */
     private void prepareLogin(final CredentialProvider cp, final OkHttpClient http)
-            throws LoginFailedException, RemoteServerException, CaptchaActiveException  {
+            throws LoginFailedException, RemoteServerException, CaptchaActiveException {
         go = new PokemonGo(http);
         if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
             go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
