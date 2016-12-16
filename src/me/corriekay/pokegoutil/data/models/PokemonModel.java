@@ -3,20 +3,15 @@ package me.corriekay.pokegoutil.data.models;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
+import com.pokegoapi.api.pokemon.Evolutions;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.api.pokemon.PokemonMeta;
 import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
-
-import me.corriekay.pokegoutil.data.managers.AccountManager;
-import me.corriekay.pokegoutil.utils.Utilities;
-import me.corriekay.pokegoutil.utils.helpers.DateHelper;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 import POGOProtos.Enums.PokemonFamilyIdOuterClass;
 import POGOProtos.Enums.PokemonIdOuterClass;
@@ -30,6 +25,12 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import me.corriekay.pokegoutil.data.managers.AccountManager;
+import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.helpers.DateHelper;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonCpUtils;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 public class PokemonModel {
     private static final String UNDERSCORE = "_";
@@ -326,8 +327,9 @@ public class PokemonModel {
         setMaxCpCurrent(maxCpCurrent);
 
         // Max CP calculation for highest evolution of current PokemonModel
+        final List<PokemonIdOuterClass.PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
+        PokemonIdOuterClass.PokemonId highestFamilyId = highest.get(0);
         final PokemonFamilyIdOuterClass.PokemonFamilyId familyId = pokemon.getPokemonFamily();
-        PokemonIdOuterClass.PokemonId highestFamilyId = PokemonMetaRegistry.getHighestForFamily(familyId);
 
         // Eeveelutions exception handling
         if (familyId.getNumber() == PokemonFamilyIdOuterClass.PokemonFamilyId.FAMILY_EEVEE.getNumber()) {

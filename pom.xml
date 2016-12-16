@@ -105,10 +105,14 @@
             <!--<version>0.4.1</version>-->
         <!--</dependency>-->
         <dependency>
-            <groupId>com.github.Wolfsblvt</groupId>
+            <groupId>com.github.Grover-c13</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
-            <version>f75f306df7b399adb3a3d258551f0cb3e5d2a377</version>
+            <version>7317a049fe3cbb38e219e0056c21b29505133db4</version>
         </dependency>
+<!--         <dependency> -->
+<!--             <groupId>com.github.Wolfsblvt</groupId> -->
+<!--             <artifactId>PokeGOAPI-Java</artifactId> -->
+<!--         </dependency> -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
