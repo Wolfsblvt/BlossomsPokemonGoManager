@@ -327,7 +327,7 @@ public class PokemonModel {
         setMaxCpCurrent(maxCpCurrent);
 
         // Max CP calculation for highest evolution of current PokemonModel
-        List<PokemonIdOuterClass.PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
+        final List<PokemonIdOuterClass.PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
         PokemonIdOuterClass.PokemonId highestFamilyId = highest.get(0);
         final PokemonFamilyIdOuterClass.PokemonFamilyId familyId = pokemon.getPokemonFamily();
 

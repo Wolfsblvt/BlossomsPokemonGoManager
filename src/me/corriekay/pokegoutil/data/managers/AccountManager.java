@@ -180,7 +180,7 @@ public final class AccountManager {
             } else if (!saveAuth) {
                 deleteLoginData(LoginType.GOOGLE_AUTH);
             }
-        } catch (LoginFailedException | RemoteServerException  | CaptchaActiveException e) {
+        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException e) {
             deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
             return new BpmResult(e.getMessage());
         }
@@ -217,7 +217,7 @@ public final class AccountManager {
             } else {
                 deleteLoginData(LoginType.PTC);
             }
-        } catch (LoginFailedException | RemoteServerException  | CaptchaActiveException e) {
+        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException e) {
             deleteLoginData(LoginType.PTC);
             return new BpmResult(e.getMessage());
         }
@@ -238,9 +238,10 @@ public final class AccountManager {
      * @param http http client
      * @throws LoginFailedException  login failed
      * @throws RemoteServerException server error
+     * @throws CaptchaActiveException captcha active error
      */
     private void prepareLogin(final CredentialProvider cp, final OkHttpClient http)
-            throws LoginFailedException, RemoteServerException,  CaptchaActiveException  {
+            throws LoginFailedException, RemoteServerException, CaptchaActiveException  {
         go = new PokemonGo(http);
         if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
             go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));

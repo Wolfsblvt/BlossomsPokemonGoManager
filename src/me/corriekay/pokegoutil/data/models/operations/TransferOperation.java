@@ -39,12 +39,13 @@ public class TransferOperation extends Operation {
         final int candies = poke.getCandy();
 
         final Result transferResult;
+        String errorTransferingString = "Error transferring %s, result: %s";
         try {
             transferResult = poke.transferPokemon();
         } catch (CaptchaActiveException e) {
             e.printStackTrace();
             return new BpmOperationResult(String.format(
-                    "Error transferring %s, result: %s",
+                    errorTransferingString,
                     PokemonUtils.getLocalPokeName(poke),
                     "Captcha active in account"),
                     OperationError.EVOLVE_FAIL);
@@ -52,7 +53,7 @@ public class TransferOperation extends Operation {
         
         if (transferResult != Result.SUCCESS) {
             return new BpmOperationResult(String.format(
-                "Error transferring %s, result: %s",
+                errorTransferingString,
                 PokemonUtils.getLocalPokeName(poke),
                 transferResult.toString()),
                 OperationError.TRANSFER_FAIL);

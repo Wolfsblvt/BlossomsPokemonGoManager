@@ -33,15 +33,16 @@ public class EvolveOperation extends Operation {
     }
 
     @Override
-    protected BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException  {
+    protected BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException {
         
-        EvolutionResult evolutionResult;
+        final EvolutionResult evolutionResult;
+        String erroEvolvingString = "Error evolving %s, result: %s";
         try {
             evolutionResult = pokemon.getPokemon().evolve();
         } catch (CaptchaActiveException e) {
             e.printStackTrace();
             return new BpmOperationResult(String.format(
-                    "Error evolving %s, result: %s",
+                    erroEvolvingString,
                     pokemon.getSpecies(),
                     "Captcha active in account"),
                     OperationError.EVOLVE_FAIL);
@@ -49,7 +50,7 @@ public class EvolveOperation extends Operation {
 
         if (!evolutionResult.isSuccessful()) {
             return new BpmOperationResult(String.format(
-                    "Error evolving %s, result: %s",
+                    erroEvolvingString,
                     pokemon.getSpecies(),
                     evolutionResult.getResult().toString()),
                     OperationError.EVOLVE_FAIL);
