@@ -10,6 +10,7 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.pokemon.Pokemon;
 
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
 
 @SuppressWarnings( {"serial", "rawtypes"})
@@ -40,16 +41,18 @@ public class PokemonTableModel extends AbstractTableModel {
 
         final MutableInt i = new MutableInt();
 
-        pokes.forEach(p -> {
-            pokeCol.add(i.getValue(), p);
+        pokes.stream()
+            .filter(p -> p.getPokemonId().getNumber() <= PokemonId.MEW_VALUE)
+            .forEach(p -> {
+                pokeCol.add(i.getValue(), p);
 
-            for (final PokeColumn column : PokeColumn.values()) {
-                // Now lets add the value for that column
-                column.data.add(i.getValue(), column.get(p));
-            }
+                for (final PokeColumn column : PokeColumn.values()) {
+                    // Now lets add the value for that column
+                    column.data.add(i.getValue(), column.get(p));
+                }
 
-            i.increment();
-        });
+                i.increment();
+            });
 
         fireTableDataChanged();
     }
