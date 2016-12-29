@@ -9,6 +9,8 @@ import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.util.hash.legacy.LegacyHashProvider;
+import com.pokegoapi.util.hash.pokehash.PokeHashProvider;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.data.models.BpmResult;
@@ -246,7 +248,13 @@ public final class AccountManager {
         if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
             go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
         }
-        go.login(cp);
+        String pokeHashKey = config.getString(ConfigKey.LOGIN_POKEHASHKEY);
+        if (pokeHashKey!=null) {
+            go.login(cp, new PokeHashProvider(pokeHashKey));
+        }
+        else {
+            go.login(cp, new LegacyHashProvider());
+        }
         playerAccount = new PlayerAccount(go.getPlayerProfile());
         initOtherControllers();
     }

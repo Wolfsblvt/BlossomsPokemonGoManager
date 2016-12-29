@@ -4,9 +4,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>PokeGoBot</groupId>
-    <artifactId>PokeGoBot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>BPGM</groupId>
+    <artifactId>BPGM</artifactId>
+    <version>0.1.7-alpha2</version>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
@@ -67,6 +67,8 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <finalName>${project.name}_v${project.version}</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
                     <!-- MainClass in mainfest make a executable jar -->
                     <archive>
                         <manifest>
@@ -99,15 +101,10 @@
         </repository>
     </repositories>
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>com.pokegoapi</groupId>-->
-            <!--<artifactId>PokeGOAPI-library</artifactId>-->
-            <!--<version>0.4.1</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>com.github.Grover-c13</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
-            <version>7317a049fe3cbb38e219e0056c21b29505133db4</version>
+            <version>b2c9f2af7d2c60a2d8a4ae5721a254ae35f720a4</version>
         </dependency>
 <!--         <dependency> -->
 <!--             <groupId>com.github.Wolfsblvt</groupId> -->
