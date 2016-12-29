@@ -6,6 +6,7 @@ import java.awt.datatransfer.StringSelection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,6 +26,9 @@ import com.pokegoapi.exceptions.AsyncPokemonGoException;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.hash.HashException;
+import com.pokegoapi.util.hash.legacy.LegacyHashProvider;
+import com.pokegoapi.util.hash.pokehash.PokeHashProvider;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
@@ -89,11 +93,14 @@ public final class AccountController {
             final JTextField ptcUsernameTextField = new JTextField(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
             final JTextField ptcPasswordTextField = new JPasswordField(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
 
-            final boolean directLoginWithSavedCredentials = checkForSavedCredentials();
+            final int directLoginWithSavedCredentials = checkForSavedCredentials();
 
             int response;
-
-            if (directLoginWithSavedCredentials) {
+            
+            if (directLoginWithSavedCredentials == JOptionPane.CANCEL_OPTION) {
+                System.exit(0);
+                return;
+            } else if (directLoginWithSavedCredentials == JOptionPane.YES_OPTION) {
                 if (getLoginData(LoginType.GOOGLE_AUTH) != null || getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null) {
                     response = JOptionPane.NO_OPTION; // This means Google. Trust me
                 } else if (getLoginData(LoginType.PTC) != null) {
@@ -334,13 +341,26 @@ public final class AccountController {
                     if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
                         go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
                     }
-                    go.login(credentialProvider);
+                    String pokeHashKey = config.getString(ConfigKey.LOGIN_POKEHASHKEY);
+                    if (pokeHashKey!=null) {
+                        go.login(credentialProvider, new PokeHashProvider(pokeHashKey));
+                    }
+                    else {
+                        go.login(credentialProvider, new LegacyHashProvider());
+                    }
                 } else {
                     throw new IllegalStateException("credentialProvider is null.");
                 }
                 instance.logged = true;
             } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
-                alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
+                if(e instanceof AsyncPokemonGoException && e.getCause() instanceof ExecutionException && e.getCause().getCause() instanceof HashException)
+                {
+                    alertFailedLogin(e.getCause().getCause().getClass().getSimpleName(), e.getCause().getCause().getMessage(), tries);
+                }
+                else
+                {
+                    alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
+                }
                 e.printStackTrace();
                 // deleteLoginData(LoginType.ALL);
             }
@@ -452,19 +472,19 @@ public final class AccountController {
         }
     }
 
-    private static boolean checkForSavedCredentials() {
+    private static int checkForSavedCredentials() {
         final LoginType savedLogin = checkSavedConfig();
         if (savedLogin == LoginType.NONE) {
-            return false;
+            return JOptionPane.NO_OPTION;
         } else {
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");
             UIManager.put("OptionPane.okButtonText", "Ok");
-            UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
+            UIManager.put("OptionPane.cancelButtonText", "Exit");
             return JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                 "You have saved login data for " + savedLogin.toString() + ". Want to login with that?",
                 "Use Saved Login",
-                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         }
     }
 

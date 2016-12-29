@@ -12,6 +12,7 @@ public enum ConfigKey {
     LOGIN_GOOGLE_APP_PASSWORD("login.google.password", null, Type.STRING),
     LOGIN_PTC_USERNAME("login.ptc.username", null, Type.STRING),
     LOGIN_PTC_PASSWORD("login.ptc.password", null, Type.STRING),
+    LOGIN_POKEHASHKEY("login.pokehash.key", null, Type.STRING),
 
     WINDOW_WIDTH("options.window.width", 800, Type.INTEGER),
     WINDOW_HEIGHT("options.window.height", 650, Type.INTEGER),
