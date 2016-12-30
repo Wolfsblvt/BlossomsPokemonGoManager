@@ -78,7 +78,7 @@ public class PokeHandler {
      * @param pattern         The pattern to use for renaming
      * @param perPokeCallback Will be called for each PokÃ©mon that has been (tried) to
      *                        rename.
-     * @return A <c>LinkedHashMap</c> with each PokÃ©mon as key and the result as
+     * @return A <c>LinkedHashMap</c> with each Pokémon as key and the result as
      * value.
      */
     public LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> bulkRenameWithPattern(final String pattern,

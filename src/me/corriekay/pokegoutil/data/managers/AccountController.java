@@ -344,8 +344,7 @@ public final class AccountController {
                     String pokeHashKey = config.getString(ConfigKey.LOGIN_POKEHASHKEY);
                     if (pokeHashKey!=null) {
                         go.login(credentialProvider, new PokeHashProvider(pokeHashKey));
-                    }
-                    else {
+                    } else {
                         go.login(credentialProvider, new LegacyHashProvider());
                     }
                 } else {
@@ -353,12 +352,9 @@ public final class AccountController {
                 }
                 instance.logged = true;
             } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
-                if(e instanceof AsyncPokemonGoException && e.getCause() instanceof ExecutionException && e.getCause().getCause() instanceof HashException)
-                {
+                if(e instanceof AsyncPokemonGoException && e.getCause() instanceof ExecutionException && e.getCause().getCause() instanceof HashException) {
                     alertFailedLogin(e.getCause().getCause().getClass().getSimpleName(), e.getCause().getCause().getMessage(), tries);
-                }
-                else
-                {
+                } else {
                     alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                 }
                 e.printStackTrace();
@@ -472,6 +468,10 @@ public final class AccountController {
         }
     }
 
+    /**
+     * Check if there is any login saved and ask for user to use it or not
+     * @return JOptionPane.NO_OPTION, JOptionPane.YES_OPTION, JOptionPane.CANCEL_OPTION
+     */
     private static int checkForSavedCredentials() {
         final LoginType savedLogin = checkSavedConfig();
         if (savedLogin == LoginType.NONE) {

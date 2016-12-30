@@ -414,8 +414,8 @@ public class PokemonTab extends JPanel {
                 return;
             }
 
-            if (go.getPlayerProfile().getBuddy()!=null && 
-                    poke.getId() == go.getPlayerProfile().getBuddy().getPokemon().getId()) {
+            if (go.getPlayerProfile().getBuddy()!=null 
+                    && poke.getId() == go.getPlayerProfile().getBuddy().getPokemon().getId()) {
                 System.out.println(String.format(
                         "%s with %d CP is buddy, skipping.",
                         PokemonUtils.getLocalPokeName(poke),
@@ -426,8 +426,7 @@ public class PokemonTab extends JPanel {
             finalSelection.add(poke);
         });
         
-        if(finalSelection.size()>0)
-        {
+        if(finalSelection.size()>0) {
             System.out.println(String.format("Multi-Transfering %d pokemons, %d skipped", finalSelection.size(), skipped.intValue()));
             try {
                 Map<PokemonFamilyId, Integer> transferResult = go.getInventories().getPokebank().releasePokemon(finalSelection.toArray(new Pokemon[1]));
@@ -996,46 +995,46 @@ public class PokemonTab extends JPanel {
     public void refreshList() {
         final List<Pokemon> pokes = new ArrayList<>();
         final String search = searchBar.getText().replaceAll(StringLiterals.SPACE, "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll("snek", "ekans")
-            .toLowerCase();
+                .toLowerCase();
         final String[] terms = search.split(";");
         try {
             go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-                    final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
-                    String familyName = "";
-                    if (useFamilyName) {
-                        // Try translating family name
-                        try {
-                            final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
-                            familyName = PokemonUtils.getLocalPokeName(familyPokemonId.getNumber());
-                        } catch (final IllegalArgumentException e) {
-                            familyName = poke.getPokemonFamily().toString();
-                        }
+                final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
+                String familyName = "";
+                if (useFamilyName) {
+                    // Try translating family name
+                    try {
+                        final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
+                        familyName = PokemonUtils.getLocalPokeName(familyPokemonId.getNumber());
+                    } catch (final IllegalArgumentException e) {
+                        familyName = poke.getPokemonFamily().toString();
                     }
+                }
 
-                    String searchme = Utilities.concatString(',',
-                            PokemonUtils.getLocalPokeName(poke),
-                            ((useFamilyName) ? familyName : ""),
-                            poke.getNickname(),
-                            poke.getSettings().getType().toString(),
-                            poke.getSettings().getType2().toString(),
-                            poke.getMove1().toString(),
-                            poke.getMove2().toString(),
-                            poke.getPokeball().toString());
-                    searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
-                            .replaceAll("ITEM_", "").replaceAll(StringLiterals.POKEMON_TYPE_PREFIX, "").replaceAll(StringLiterals.UNDERSCORE, "")
-                            .replaceAll(StringLiterals.SPACE, "").toLowerCase();
-                    
-                    for (final String s : terms) {
-                        if (searchme.contains(s)) {
-                            pokes.add(poke);
-                            // Break, so that a Pokémon isn't added twice even if it
-                            // matches more than one criteria
-                            break;
-                        }
+                String searchme = Utilities.concatString(',',
+                        PokemonUtils.getLocalPokeName(poke),
+                        ((useFamilyName) ? familyName : ""),
+                        poke.getNickname(),
+                        poke.getSettings().getType().toString(),
+                        poke.getSettings().getType2().toString(),
+                        poke.getMove1().toString(),
+                        poke.getMove2().toString(),
+                        poke.getPokeball().toString());
+                searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
+                        .replaceAll("ITEM_", "").replaceAll(StringLiterals.POKEMON_TYPE_PREFIX, "").replaceAll(StringLiterals.UNDERSCORE, "")
+                        .replaceAll(StringLiterals.SPACE, "").toLowerCase();
+
+                for (final String s : terms) {
+                    if (searchme.contains(s)) {
+                        pokes.add(poke);
+                        // Break, so that a Pokémon isn't added twice even if it
+                        // matches more than one criteria
+                        break;
                     }
-                });
+                }
+            });
             pt.constructNewTableModel("".equals(search) || "searchpokémon...".equals(search)
-                ? go.getInventories().getPokebank().getPokemons() : pokes);
+                    ? go.getInventories().getPokebank().getPokemons() : pokes);
 
         } catch (final Exception e) {
             e.printStackTrace();

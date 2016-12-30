@@ -251,8 +251,7 @@ public final class AccountManager {
         String pokeHashKey = config.getString(ConfigKey.LOGIN_POKEHASHKEY);
         if (pokeHashKey!=null) {
             go.login(cp, new PokeHashProvider(pokeHashKey));
-        }
-        else {
+        } else {
             go.login(cp, new LegacyHashProvider());
         }
         playerAccount = new PlayerAccount(go.getPlayerProfile());
