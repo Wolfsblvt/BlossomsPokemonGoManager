@@ -41,9 +41,7 @@ public class PokemonTableModel extends AbstractTableModel {
 
         final MutableInt i = new MutableInt();
 
-        pokes.stream()
-            .filter(p -> p.getPokemonId().getNumber() <= PokemonId.MEW_VALUE)
-            .forEach(p -> {
+        pokes.forEach(p -> {
                 pokeCol.add(i.getValue(), p);
 
                 for (final PokeColumn column : PokeColumn.values()) {
