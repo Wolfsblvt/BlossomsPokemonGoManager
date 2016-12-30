@@ -280,7 +280,7 @@ public class PokemonTab extends JPanel {
 
     private void refreshPkmn() {
         try {
-            go.getInventories().updateInventories(true);
+            go.getInventories().updateInventories();
             PokemonGoMainWindow.getInstance().refreshTitle();
         } catch (final Exception e) {
             e.printStackTrace();
@@ -370,11 +370,11 @@ public class PokemonTab extends JPanel {
 
         handler.bulkRenameWithPattern(renamePattern, perPokeCallback);
 
-        try {
-            go.getInventories().updateInventories(true);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            go.getInventories().updateInventories(true);
+//        } catch (final Exception e) {
+//            e.printStackTrace();
+//        }
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText("Pokémon batch rename complete!", selection.size(), success, skipped, err);
     }
@@ -598,11 +598,11 @@ public class PokemonTab extends JPanel {
                     Utilities.getRealExceptionMessage(e)));
             }
         });
-        try {
-            go.getInventories().updateInventories(true);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            go.getInventories().updateInventories(true);
+//        } catch (final Exception e) {
+//            e.printStackTrace();
+//        }
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText(String.format(
                 "Pokémon batch evolve%s complete!",
@@ -1022,8 +1022,9 @@ public class PokemonTab extends JPanel {
                             poke.getMove2().toString(),
                             poke.getPokeball().toString());
                     searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
-                            .replaceAll("ITEM_", "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll(StringLiterals.SPACE, "").toLowerCase();
-
+                            .replaceAll("ITEM_", "").replaceAll(StringLiterals.POKEMON_TYPE_PREFIX, "").replaceAll(StringLiterals.UNDERSCORE, "")
+                            .replaceAll(StringLiterals.SPACE, "").toLowerCase();
+                    
                     for (final String s : terms) {
                         if (searchme.contains(s)) {
                             pokes.add(poke);
@@ -1033,8 +1034,8 @@ public class PokemonTab extends JPanel {
                         }
                     }
                 });
-            pt.constructNewTableModel(("".equals(search) || "searchpokémon...".equals(search)
-                ? go.getInventories().getPokebank().getPokemons() : pokes));
+            pt.constructNewTableModel("".equals(search) || "searchpokémon...".equals(search)
+                ? go.getInventories().getPokebank().getPokemons() : pokes);
 
         } catch (final Exception e) {
             e.printStackTrace();
