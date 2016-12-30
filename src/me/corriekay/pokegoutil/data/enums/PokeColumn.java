@@ -93,13 +93,13 @@ public enum PokeColumn {
     TYPE_1("Type 1", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return PokemonUtils.formatType(p.getMeta().getType1());
+            return PokemonUtils.formatType(p.getSettings().getType());
         }
     },
     TYPE_2("Type 2", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return PokemonUtils.formatType(p.getMeta().getType2());
+            return PokemonUtils.formatType(p.getSettings().getType2());
         }
     },
     MOVE_1("Move 1", ColumnType.STRING) {
