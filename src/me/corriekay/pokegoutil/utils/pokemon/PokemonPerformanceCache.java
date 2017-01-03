@@ -9,7 +9,7 @@ import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 import POGOProtos.Settings.Master.PokemonSettingsOuterClass.PokemonSettings;
 
 /**
- * A Cache class which calculates and saves several values for PokÃ©mon to make them easily available.
+ * A Cache class which calculates and saves several values for Pokémon to make them easily available.
  */
 public final class PokemonPerformanceCache {
     private static final EnumMap<PokemonId, PokemonPerformanceStats> MAP;
@@ -89,9 +89,9 @@ public final class PokemonPerformanceCache {
     }
 
     /**
-     * Gets the highest stats for given PokÃ©mon.
+     * Gets the highest stats for given Pokémon.
      *
-     * @param pokemonId The PokÃ©mon ID.
+     * @param pokemonId The Pokémon ID.
      * @return The performance stats.
      */
     public static PokemonPerformanceStats getStats(final PokemonId pokemonId) {
