@@ -282,7 +282,7 @@ public class PokemonModel {
     }
 
     private void initialze() {
-        final PokemonSettings settings = pokemon.getSettings(); //TODO verificar quando Settings Ã© nullo
+        final PokemonSettings settings = pokemon.getSettings();
 
         setNumId(settings.getPokemonIdValue());
         setNickname(pokemon.getNickname());
