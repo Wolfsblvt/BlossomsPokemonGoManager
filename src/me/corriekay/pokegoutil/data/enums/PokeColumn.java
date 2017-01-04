@@ -243,6 +243,12 @@ public enum PokeColumn {
             return (p.isFavorite()) ? "Yes" : "";
         }
     },
+    GYM("Gym", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return (p.isDeployed()) ? "Yes" : "";
+        }
+    },
     DUEL_ABILITY_RATING("Duel Ability Rating", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
@@ -311,6 +317,33 @@ public enum PokeColumn {
         public Object get(final Pokemon p) {
             final S2CellId cell = new S2CellId(p.getCapturedS2CellId());
             return LocationHelper.getLocation(cell).thenApply(location -> location.formattedLocation);
+        }
+    },
+    COSTUME("Costume", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            try {
+                return p.getPokemonDisplay().getCostume().toString();
+            } catch (NullPointerException e) { }
+            return "";
+        }
+    },
+    GENDER("Gender", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            try {
+                return p.getPokemonDisplay().getGender().toString();
+            } catch (NullPointerException e) { }
+            return "";
+        }
+    },
+    SHINY("Shiny", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            try {
+                return p.getPokemonDisplay().getShiny();
+            } catch (NullPointerException e) { }
+            return "";
         }
     },
     PID("PID", ColumnType.LONG) {
