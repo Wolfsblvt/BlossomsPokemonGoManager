@@ -9,7 +9,6 @@ import java.util.function.BiConsumer;
 import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.api.pokemon.PokemonType;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
@@ -36,7 +35,7 @@ public class PokeHandler {
         mons = new ArrayList<>(pokemon);
     }
 
-    // region Static helper methods to handle PokÃ©mon
+    // region Static helper methods to handle Pokémon
 
     public static PokeNick generatePokemonNickname(final String pattern, final Pokemon pokemon) {
         final PokeNick nick = new PokeNick(pattern, pokemon);
@@ -58,7 +57,7 @@ public class PokeHandler {
             return NicknamePokemonResponse.Result.UNSET; // We need to use UNSET here. No chance to extend the enum
         }
 
-        // Actually renaming the PokÃ©mon with the calculated nickname
+        // Actually renaming the Pokémon with the calculated nickname
         try {
             final NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick.toString());
             return result;
@@ -76,7 +75,7 @@ public class PokeHandler {
      * Rename a bunch of Pokemon based on a pattern
      *
      * @param pattern         The pattern to use for renaming
-     * @param perPokeCallback Will be called for each PokÃ©mon that has been (tried) to
+     * @param perPokeCallback Will be called for each Pokémon that has been (tried) to
      *                        rename.
      * @return A <c>LinkedHashMap</c> with each Pokémon as key and the result as
      * value.
@@ -101,7 +100,7 @@ public class PokeHandler {
     }
 
     /**
-     * This enum represents the definition of placeholder strings for PokÃ©mon
+     * This enum represents the definition of placeholder strings for Pokémon
      * renaming. To add a new placeholder rule, add a new enum constant, pass a
      * friendly Name as constructor parameter and override the <c>get</c> method
      * to return what should be the replacement for the enum. The enum constant
@@ -117,34 +116,34 @@ public class PokeHandler {
                 return PokeColumn.NICKNAME.get(p).toString();
             }
         },
-        NAME("PokÃ©mon Name") {
+        NAME("Pokémon Name") {
             @Override
             public String get(final Pokemon p) {
                 return PokeColumn.SPECIES.get(p).toString();
             }
         },
-        NAME_2("PokÃ©mon Name (First two letters) [2]") {
+        NAME_2("Pokémon Name (First two letters) [2]") {
             @Override
             public String get(final Pokemon p) {
                 final int length = 2;
                 return StringUtils.substring(PokeColumn.SPECIES.get(p).toString(), 0, length);
             }
         },
-        NAME_4("PokÃ©mon Name (First four letters) [4]") {
+        NAME_4("Pokémon Name (First four letters) [4]") {
             @Override
             public String get(final Pokemon p) {
                 final int length = 4;
                 return StringUtils.substring(PokeColumn.SPECIES.get(p).toString(), 0, length);
             }
         },
-        NAME_6("PokÃ©mon Name (First six letters) [6]") {
+        NAME_6("Pokémon Name (First six letters) [6]") {
             @Override
             public String get(final Pokemon p) {
                 final int length = 6;
                 return StringUtils.substring(PokeColumn.SPECIES.get(p).toString(), 0, length);
             }
         },
-        NAME_8("PokÃ©mon Name (First eight letters) [8]") {
+        NAME_8("Pokémon Name (First eight letters) [8]") {
             @Override
             public String get(final Pokemon p) {
                 final int length = 8;
@@ -169,7 +168,7 @@ public class PokeHandler {
                 return PokeColumn.HP.get(p).toString();
             }
         },
-        LEVEL("PokÃ©mon Level") {
+        LEVEL("Pokémon Level") {
             @Override
             public String get(final Pokemon p) {
                 return PokeColumn.LEVEL.get(p).toString();
@@ -207,19 +206,19 @@ public class PokeHandler {
                 return pad((int) PokeColumn.IV_STAMINA.get(p), 2);
             }
         },
-        IV_ATT_UNI("IV Attack Unicode (â“¯  for 15) [1]") {
+        IV_ATT_UNI("IV Attack Unicode (⓯  for 15) [1]") {
             @Override
             public String get(final Pokemon p) {
                 return UnicodeHelper.get(PokeColumn.IV_ATTACK.get(p).toString());
             }
         },
-        IV_DEF_UNI("IV Defense Unicode (â“¯  for 15) [1]") {
+        IV_DEF_UNI("IV Defense Unicode (⓯  for 15) [1]") {
             @Override
             public String get(final Pokemon p) {
                 return UnicodeHelper.get(PokeColumn.IV_DEFENSE.get(p).toString());
             }
         },
-        IV_STAM_UNI("IV Stamina Unicode (â“¯  for 15) {1]") {
+        IV_STAM_UNI("IV Stamina Unicode (⓯  for 15) {1]") {
             @Override
             public String get(final Pokemon p) {
                 return UnicodeHelper.get(PokeColumn.IV_STAMINA.get(p).toString());
@@ -281,14 +280,14 @@ public class PokeHandler {
                 return PokemonUtils.hasStab(p.getPokemonId(), p.getMove2()) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
-        MOVE_TYPE_1_UNI("Move 1 abbreviated (Eletric = âš¡) [1]") {
+        MOVE_TYPE_1_UNI("Move 1 abbreviated (Eletric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = PokemonMeta.getMoveSettings(p.getMove1()).getPokemonType().toString();
                 return UnicodeHelper.get(type);
             }
         },
-        MOVE_TYPE_2_UNI("Move 2 abbreviated (Eletric = âš¡) [1]") {
+        MOVE_TYPE_2_UNI("Move 2 abbreviated (Eletric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = PokemonMeta.getMoveSettings(p.getMove2()).getPokemonType().toString();
@@ -319,47 +318,47 @@ public class PokeHandler {
                 return padPercentage((double) PokeColumn.MOVE_2_RATING.get(p));
             }
         },
-        TYPE_1("PokÃ©mon Type 1 abbreviated (Ghost = Gh) [2]") {
+        TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = p.getSettings().getType().toString();
                 return abbreviateType(type);
             }
         },
-        TYPE_2("PokÃ©mon Type 2 abbreviated (Ghost = Gh) [2]") {
+        TYPE_2("Pokémon Type 2 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = p.getSettings().getType2().toString();
                 return abbreviateType(type);
             }
         },
-        TYPE_1_UNI("PokÃ©mon Type 1 Unicode (Eletric = âš¡) [1]") {
+        TYPE_1_UNI("Pokémon Type 1 Unicode (Eletric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = p.getSettings().getType().toString();
                 return UnicodeHelper.get(type);
             }
         },
-        TYPE_2_UNI("PokÃ©mon Type 2 Unicode (Eletric = âš¡) [1]") {
+        TYPE_2_UNI("Pokémon Type 2 Unicode (Eletric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = p.getSettings().getType2().toString();
                 return UnicodeHelper.get(type);
             }
         },
-        SWORD_UNICODE("Sword in Unicode symbol âš”  to represent the best offensive moveset [1]") {
+        SWORD_UNICODE("Sword in Unicode symbol ⚔  to represent the best offensive moveset [1]") {
             @Override
             public String get(final Pokemon p) {
                 return UnicodeHelper.get("sword");
             }
         },
-        SHIELD_UNICODE("Shield in Unicode symbol â›¨  to represent the best defensive moveset [1]") {
+        SHIELD_UNICODE("Shield in Unicode symbol ⛨  to represent the best defensive moveset [1]") {
             @Override
             public String get(final Pokemon p) {
                 return UnicodeHelper.get("shield");
             }
         },
-        ID("PokÃ©dex Id [3]") {
+        ID("Pokédex Id [3]") {
             @Override
             public String get(final Pokemon p) {
                 final int length = 3;
@@ -368,7 +367,7 @@ public class PokeHandler {
         };
 
         /**
-         * Abbreviate Movement/PokÃ©mon type, to two character.
+         * Abbreviate Movement/Pokémon type, to two character.
          * "Gr" is Grass, so we make Ground "Gd". "Fi" is Fire, so we make Fighting "Fg".
          *
          * @param type The type.
@@ -427,7 +426,7 @@ public class PokeHandler {
          * This method must be overwritten and should return what should be the
          * replacement.
          *
-         * @param p The PokÃ©mon that receives the new nick name.
+         * @param p The Pokémon that receives the new nick name.
          * @return The value that the placeholder should be replaced with
          */
         public abstract String get(final Pokemon p);
