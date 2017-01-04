@@ -30,7 +30,7 @@ public final class PokemonPerformanceCache {
             if (PokemonUtils.NOT_EXISTING_POKEMON_LIST.contains(pokemonId)) {
                 continue;
             }
-            
+
             final PokemonSettings settings = PokemonMeta.getPokemonSettings(pokemonId);
 
             PokemonPerformance<Long> highestDuelAbility = PokemonPerformance.DEFAULT_LONG;
