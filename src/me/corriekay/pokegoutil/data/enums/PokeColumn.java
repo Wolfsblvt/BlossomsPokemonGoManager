@@ -125,7 +125,7 @@ public enum PokeColumn {
     EVOLVABLE_COUNT("Evolvable", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
-            if (p.getCandiesToEvolve() != 0) {
+            if (p.getCandiesToEvolve() > 1) {
                 final int candies = p.getCandy();
                 final int candiesToEvolve = p.getCandiesToEvolve();
 
