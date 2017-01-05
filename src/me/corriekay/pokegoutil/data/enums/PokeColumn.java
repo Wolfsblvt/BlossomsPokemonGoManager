@@ -341,7 +341,7 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             try {
-                return p.getPokemonDisplay().getShiny();
+                return p.getPokemonDisplay().getShiny() ? "Yes" : "";
             } catch (NullPointerException e) { }
             return "";
         }

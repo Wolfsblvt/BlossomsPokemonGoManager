@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>BPGM</groupId>
     <artifactId>BPGM</artifactId>
-    <version>0.1.7-alpha5</version>
+    <version>0.1.7-alpha7</version>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
