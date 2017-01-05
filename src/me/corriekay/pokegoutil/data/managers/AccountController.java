@@ -17,6 +17,7 @@ import javax.swing.UIManager;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.device.DeviceInfo;
+import com.pokegoapi.api.listener.LoginListener;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleAutoCredentialProvider;
@@ -34,6 +35,7 @@ import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.CustomDeviceInfo;
+import me.corriekay.pokegoutil.utils.SolveCaptcha;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
@@ -338,11 +340,33 @@ public final class AccountController {
             try {
                 if (credentialProvider != null) {
                     go = new PokemonGo(http);
+
+                    //Add listener to listen for the captcha URL
+                    go.addListener(new LoginListener() {
+                        @Override
+                        public void onLogin(PokemonGo api) {
+//                            System.out.println("Successfully logged in with SolveCaptcha!");
+
+                            instance.logged = true;
+                            instance.go = api;
+                            initOtherControllers(api);
+                            instance.mainWindow = new PokemonGoMainWindow(api, true);
+                            instance.mainWindow.start();
+                        }
+
+                        @Override
+                        public void onChallenge(PokemonGo api, String challengeURL) {
+                            System.out.println("Captcha received! URL: " + challengeURL);
+                            SolveCaptcha captcha = new SolveCaptcha(api, challengeURL);
+                            captcha.setVisible(true);
+                        }
+                    });
                     if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
                         go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
                     }
                     String pokeHashKey = config.getString(ConfigKey.LOGIN_POKEHASHKEY);
                     if (pokeHashKey!=null) {
+                        PokeHashProvider.HASH_ENDPOINT = "http://pokehash.buddyauth.com/api/v122/hash";
                         go.login(credentialProvider, new PokeHashProvider(pokeHashKey));
                     } else {
                         go.login(credentialProvider, new LegacyHashProvider());
@@ -350,7 +374,6 @@ public final class AccountController {
                 } else {
                     throw new IllegalStateException("credentialProvider is null.");
                 }
-                instance.logged = true;
             } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
                 if(e instanceof AsyncPokemonGoException && e.getCause() instanceof ExecutionException && e.getCause().getCause() instanceof HashException) {
                     alertFailedLogin(e.getCause().getCause().getClass().getSimpleName(), e.getCause().getCause().getMessage(), tries);
@@ -361,10 +384,6 @@ public final class AccountController {
                 // deleteLoginData(LoginType.ALL);
             }
         }
-        instance.go = go;
-        initOtherControllers(go);
-        instance.mainWindow = new PokemonGoMainWindow(go, true);
-        instance.mainWindow.start();
     }
 
     private static void initOtherControllers(final PokemonGo go) {
@@ -468,8 +487,7 @@ public final class AccountController {
         }
     }
 
-    /**
-     * Check if there is any login saved and ask for user to use it or not
+    /** Check if there is any login saved and ask for user to use it or not
      * @return JOptionPane.NO_OPTION, JOptionPane.YES_OPTION, JOptionPane.CANCEL_OPTION
      */
     private static int checkForSavedCredentials() {
