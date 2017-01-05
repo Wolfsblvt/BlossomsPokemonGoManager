@@ -566,7 +566,7 @@ public class PokemonTab extends JPanel {
                             newCp, (newCp - cp),
                             newHp, (newHp - hp)));
                     }
-                    go.getInventories().updateInventories(true);
+//                    go.getInventories().updateInventories(true);
                     success.increment();
                 } else {
                     err.increment();
@@ -685,7 +685,7 @@ public class PokemonTab extends JPanel {
                             + "(Candies : %d[%d-%d], "
                             + "CP: %d[+%d], "
                             + "HP: %d[+%d], "
-                            + "Stardust used %d[remainding: %d])",
+                            + "Stardust used %d[remaining: %d])",
                         newCandies, candies, candiesToPowerUp,
                         newCp, (newCp - cp),
                         newHp, (newHp - hp),
@@ -716,7 +716,7 @@ public class PokemonTab extends JPanel {
             }
         });
         try {
-            go.getInventories().updateInventories(true);
+            go.getInventories().updateInventories();
             PokemonGoMainWindow.getInstance().refreshTitle();
         } catch (final Exception e) {
             e.printStackTrace();
