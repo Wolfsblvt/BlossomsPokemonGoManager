@@ -56,6 +56,9 @@ public class BlossomsPoGoManager {
     }
 
     //    @Override
+    /** 
+     * Legacy start method from JavaFX nature. 
+     */
     public void start(Stage primaryStage) {
         setupGlobalExceptionHandling();
 

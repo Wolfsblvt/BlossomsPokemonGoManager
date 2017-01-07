@@ -487,7 +487,8 @@ public final class AccountController {
         }
     }
 
-    /** Check if there is any login saved and ask for user to use it or not
+    /** 
+     * Check if there is any login saved and ask for user to use it or not.
      * @return JOptionPane.NO_OPTION, JOptionPane.YES_OPTION, JOptionPane.CANCEL_OPTION
      */
     private static int checkForSavedCredentials() {

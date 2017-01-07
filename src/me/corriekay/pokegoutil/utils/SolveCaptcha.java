@@ -13,21 +13,6 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package me.corriekay.pokegoutil.utils;
 
 import java.awt.event.WindowAdapter;
@@ -47,9 +32,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
 /**
- * Opens a window for captcha solving if needed
- *
- * @param args args
+ * Opens a window for captcha solving if needed.
  */
 public class SolveCaptcha extends JFrame {
 
@@ -57,6 +40,11 @@ public class SolveCaptcha extends JFrame {
     private final JFXPanel jfxPanel = new JFXPanel();
     private WebEngine engine;
 
+    /**
+     * Default constructor that creates the components and listeners.
+     * @param api
+     * @param challengeURL
+     */
     public SolveCaptcha(final PokemonGo api, final String challengeURL) {
         super("Solve Captcha");
         initComponents(challengeURL);
@@ -101,6 +89,10 @@ public class SolveCaptcha extends JFrame {
         });
     }
 
+    /**
+     * Initialize the components after they are created.
+     * @param challengeURL
+     */
     private void initComponents(String challengeURL) {
         Platform.runLater(new Runnable() {
             @Override

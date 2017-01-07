@@ -109,7 +109,7 @@
         <dependency>
             <groupId>com.github.FernandoTBarros</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
-            <version>01e805608fec175394fcc0483ca6e2f839f68eea</version>
+            <version>changeEndpoint-SNAPSHOT</version>
         </dependency>
 <!--         <dependency> -->
 <!--             <groupId>com.github.Wolfsblvt</groupId> -->
