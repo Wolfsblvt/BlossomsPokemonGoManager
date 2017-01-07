@@ -240,13 +240,13 @@ public enum PokeColumn {
     FAVORITE("Favorite", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return (p.isFavorite()) ? "Yes" : "";
+            return (p.isFavorite()) ? YES : "";
         }
     },
     GYM("Gym", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return (p.isDeployed()) ? "Yes" : "";
+            return (p.isDeployed()) ? YES : "";
         }
     },
     DUEL_ABILITY_RATING("Duel Ability Rating", ColumnType.PERCENTAGE) {
@@ -322,28 +322,21 @@ public enum PokeColumn {
     COSTUME("Costume", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            try {
-                return p.getPokemonDisplay().getCostume().toString();
-            } catch (NullPointerException e) { }
-            return "";
+            return p.getPokemonDisplay() != null ?  p.getPokemonDisplay().getCostume().toString() : "";
         }
     },
     GENDER("Gender", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            try {
-                return p.getPokemonDisplay().getGender().toString();
-            } catch (NullPointerException e) { }
-            return "";
+            return p.getPokemonDisplay() != null ?  p.getPokemonDisplay().getGender().toString() : "";
         }
     },
     SHINY("Shiny", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            try {
-                return p.getPokemonDisplay().getShiny() ? "Yes" : "";
-            } catch (NullPointerException e) { }
-            return "";
+            return p.getPokemonDisplay() != null ? 
+                    (p.getPokemonDisplay().getShiny() ? YES : "")
+                    : "";
         }
     },
     PID("PID", ColumnType.LONG) {
@@ -353,6 +346,7 @@ public enum PokeColumn {
         }
     };
 
+    private static final String YES = "Yes";
     public final int id;
     public final String name;
     public final ColumnType columnType;

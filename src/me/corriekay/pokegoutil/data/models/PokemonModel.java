@@ -21,11 +21,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import me.corriekay.pokegoutil.data.enums.PokeColumn;
 import me.corriekay.pokegoutil.data.managers.AccountManager;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
-import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
@@ -312,57 +310,29 @@ public class PokemonModel {
         setHp(pokemon.getMaxStamina());
 
         // Max CP calculation for current PokemonModel
-        int maxCpCurrent=0;
-        int maxCp=0;
+        int maxCpCurrentVar = 0;
+        int maxCpVar = 0;
         try {
-            maxCpCurrent = pokemon.getMaxCpForPlayer();
-            maxCp = pokemon.getMaxCp();
-        } catch (NoSuchItemException e1) {
-            System.out.println(e1.getMessage());
+            maxCpCurrentVar = pokemon.getMaxCpForPlayer();
+            maxCpVar = pokemon.getMaxCp();
+        } catch (NoSuchItemException e) {
+            System.out.println(e.getMessage());
         }
-        setMaxCp(maxCp);
-        setMaxCpCurrent(maxCpCurrent);
+        setMaxCp(maxCpVar);
+        setMaxCpCurrent(maxCpCurrentVar);
 
         // Max CP calculation for highest evolution of current PokemonModel
         final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
-        int maxEvolvedCp=0;
-        int maxEvolvedCpCurrent=0;
+        int maxEvolvedCpVar = 0;
+        int maxEvolvedCpCurrentVar = 0;
         //If Eeveelutions, Evolutions.getHighest return all evolutions in list, otherwise return just 1 element with the top evolution
-        for (PokemonId pokemonId : highest) {
-            maxEvolvedCp = Math.max(maxEvolvedCp, pokemon.getCpFullEvolveAndPowerup(pokemonId));
-            maxEvolvedCpCurrent = Math.max(maxEvolvedCpCurrent, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
+        for (final PokemonId pokemonId : highest) {
+            maxEvolvedCpVar = Math.max(maxEvolvedCpVar, pokemon.getCpFullEvolveAndPowerup(pokemonId));
+            maxEvolvedCpCurrentVar = Math.max(maxEvolvedCpCurrentVar, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
         }
 
-        setMaxEvolvedCp(maxEvolvedCp);
-        setMaxEvolvedCpCurrent(maxEvolvedCpCurrent);
-
-//        // Eeveelutions exception handling
-//        if (familyId.equals(PokemonFamilyIdOuterClass.PokemonFamilyId.FAMILY_EEVEE)) {
-//            if (pokemon.getPokemonId().equals(PokemonIdOuterClass.PokemonId.EEVEE)) {
-//                final PokemonSettings vap = PokemonMeta.getPokemonSettings(PokemonIdOuterClass.PokemonId.VAPOREON);
-//                final PokemonSettings fla = PokemonMeta.getPokemonSettings(PokemonIdOuterClass.PokemonId.FLAREON);
-//                final PokemonSettings jol = PokemonMeta.getPokemonSettings(PokemonIdOuterClass.PokemonId.JOLTEON);
-//                if (vap != null && fla != null && jol != null) {
-//                    final Comparator<PokemonSettings> cMeta = (m1, m2) -> {
-//                        final int comb1 = PokemonCpUtils.getMaxCp(
-//                            m1.getStats().getBaseAttack(),
-//                            m1.getStats().getBaseDefense(),
-//                            m1.getStats().getBaseStamina());
-//                        final int comb2 = PokemonCpUtils.getMaxCp(
-//                            m2.getStats().getBaseAttack(),
-//                            m2.getStats().getBaseDefense(),
-//                            m2.getStats().getBaseStamina());
-//                        return comb1 - comb2;
-//                    };
-//                    highestFamilyId = PokemonIdOuterClass.PokemonId.forNumber(
-//                        Collections.max(Arrays.asList(vap, fla, jol), cMeta).getPokemonIdValue());
-//                }
-//            } else {
-//                // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
-//                // We correct that here
-//                highestFamilyId = pokemon.getPokemonId();
-//            }
-//        }
+        setMaxEvolvedCp(maxEvolvedCpVar);
+        setMaxEvolvedCpCurrent(maxEvolvedCpCurrentVar);
 
         int pokemonCandies = pokemon.getCandy();
 

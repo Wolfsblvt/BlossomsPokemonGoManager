@@ -47,7 +47,7 @@ public final class PokemonCalculationUtils {
      */
     public static double ivRating(final Pokemon p) {
         if (ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION)) {
-            StatsAttributes statsAttributes = p.getSettings().getStats();
+            final StatsAttributes statsAttributes = p.getSettings().getStats();
             final double cpMax = (statsAttributes.getBaseAttack() + PokemonUtils.MAX_IV)
                 * Math.pow(statsAttributes.getBaseDefense() + PokemonUtils.MAX_IV, 0.5)
                 * Math.pow(statsAttributes.getBaseStamina() + PokemonUtils.MAX_IV, 0.5);
@@ -85,7 +85,7 @@ public final class PokemonCalculationUtils {
      * @return The clean dps.
      */
     private static double dpsForMove(final PokemonId pokemonId, final PokemonMove move, final boolean primary) {
-        final MoveSettings moveMeta =  PokemonMeta.getMoveSettings(move);
+        final MoveSettings moveMeta = PokemonMeta.getMoveSettings(move);
         final int moveDelay = primary ? 0 : MOVE2_CHARGE_DELAY_MS;
         double dps = (double) moveMeta.getPower() / (double) (moveMeta.getDurationMs() + moveDelay) * MILLISECONDS_FACTOR;
         if (PokemonUtils.hasStab(pokemonId, move)) {

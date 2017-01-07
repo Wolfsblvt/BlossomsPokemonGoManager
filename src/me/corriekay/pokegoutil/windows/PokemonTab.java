@@ -370,11 +370,6 @@ public class PokemonTab extends JPanel {
 
         handler.bulkRenameWithPattern(renamePattern, perPokeCallback);
 
-//        try {
-//            go.getInventories().updateInventories(true);
-//        } catch (final Exception e) {
-//            e.printStackTrace();
-//        }
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText("Pokémon batch rename complete!", selection.size(), success, skipped, err);
     }
@@ -414,7 +409,7 @@ public class PokemonTab extends JPanel {
                 return;
             }
 
-            if (go.getPlayerProfile().getBuddy()!=null 
+            if (go.getPlayerProfile().getBuddy() != null 
                     && poke.getId() == go.getPlayerProfile().getBuddy().getPokemon().getId()) {
                 System.out.println(String.format(
                         "%s with %d CP is buddy, skipping.",
@@ -426,11 +421,11 @@ public class PokemonTab extends JPanel {
             finalSelection.add(poke);
         });
         
-        if(finalSelection.size()>0) {
+        if (finalSelection.size() > 0) {
             System.out.println(String.format("Multi-Transfering %d pokemons, %d skipped", finalSelection.size(), skipped.intValue()));
             try {
-                Map<PokemonFamilyId, Integer> transferResult = go.getInventories().getPokebank().releasePokemon(finalSelection.toArray(new Pokemon[1]));
-                transferResult.forEach((pokeFamilyID, candies) ->  {
+                final Map<PokemonFamilyId, Integer> transferResult = go.getInventories().getPokebank().releasePokemon(finalSelection.toArray(new Pokemon[1]));
+                transferResult.forEach((pokeFamilyID, candies) -> {
                     System.out.println(String.format(
                             "Transferred %s (Family): Candies : %d[+%d]",
                             StringUtils.capitalize(pokeFamilyID.toString().toLowerCase().replace("family_", "")),
@@ -566,7 +561,6 @@ public class PokemonTab extends JPanel {
                             newCp, (newCp - cp),
                             newHp, (newHp - hp)));
                     }
-//                    go.getInventories().updateInventories(true);
                     success.increment();
                 } else {
                     err.increment();
@@ -597,11 +591,6 @@ public class PokemonTab extends JPanel {
                     Utilities.getRealExceptionMessage(e)));
             }
         });
-//        try {
-//            go.getInventories().updateInventories(true);
-//        } catch (final Exception e) {
-//            e.printStackTrace();
-//        }
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText(String.format(
                 "Pokémon batch evolve%s complete!",

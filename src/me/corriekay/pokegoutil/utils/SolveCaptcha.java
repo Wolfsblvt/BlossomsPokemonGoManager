@@ -21,9 +21,12 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.exceptions.CaptchaActiveException;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.util.CaptchaSolveHelper;
-import com.pokegoapi.util.Log;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
@@ -42,48 +45,24 @@ public class SolveCaptcha extends JFrame {
 
     /**
      * Default constructor that creates the components and listeners.
-     * @param api
-     * @param challengeURL
+     * @param api the pokemonGo api instance
+     * @param challengeURL url obtained by listening to login
      */
     public SolveCaptcha(final PokemonGo api, final String challengeURL) {
         super("Solve Captcha");
         initComponents(challengeURL);
         //Register listener to receive the token when the captcha has been solved from inside the WebView.
-        CaptchaSolveHelper.Listener listener = new CaptchaSolveHelper.Listener() {
-            @Override
-            public void onTokenReceived(String token) {
-                System.out.println("Token received: " + token + "!");
-                //Remove this listener as we no longer need to listen for tokens, the captcha has been solved.
-                CaptchaSolveHelper.removeListener(this);
-                try {
-                    //Close this window, it not valid anymore.
-                    SolveCaptcha.this.setVisible(false);
-                    SolveCaptcha.this.dispose();
-
-                    if (api.verifyChallenge(token)) {
-                        System.out.println("Captcha was correctly solved!");
-                    } else {
-                        System.out.println("Captcha was incorrectly solved! Please try again.");
-                        /*
-                                    Ask for a new challenge url, don't need to check the result,
-                                    because the LoginListener will be called when this completed.
-                         */
-                        api.checkChallenge();
-                    }
-                } catch (Exception e) {
-                    Log.e("Main", "Error while solving captcha!", e);
-                }
-            }
-        };
+        final CaptchaSolveHelper.Listener listener = new DefaultCaptchaSolveListener(api);
         CaptchaSolveHelper.registerListener(listener);
 
         getContentPane().add(jfxPanel);
-        setSize(500, 500);
+        final int panelSize = 500;
+        setSize(panelSize, panelSize);
         //Don't allow this window to be closed
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(final WindowEvent e) {
                 System.out.println("Please solve the captcha before closing the window!");
             }
         });
@@ -91,13 +70,13 @@ public class SolveCaptcha extends JFrame {
 
     /**
      * Initialize the components after they are created.
-     * @param challengeURL
+     * @param challengeURL the URL to be opened by solver
      */
     private void initComponents(String challengeURL) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                WebView view = new WebView();
+                final WebView view = new WebView();
                 engine = view.getEngine();
                 //Set UserAgent so the captcha shows correctly in the WebView.
                 engine.setUserAgent(CaptchaSolveHelper.USER_AGENT);
@@ -106,4 +85,38 @@ public class SolveCaptcha extends JFrame {
             }
         });
     }
+    /**
+     * Nested class as Codeclimate doesn't allow extensive inner class.
+     */
+    private final class DefaultCaptchaSolveListener implements CaptchaSolveHelper.Listener {
+        private final PokemonGo api;
+        private DefaultCaptchaSolveListener(PokemonGo api) {
+            this.api = api;
+        }
+        @Override
+        public void onTokenReceived(final String token) {
+            System.out.println("Token received: " + token + "!");
+            //Remove this listener as we no longer need to listen for tokens, the captcha has been solved.
+            CaptchaSolveHelper.removeListener(this);
+            //Close this window, it not valid anymore.
+            SolveCaptcha.this.setVisible(false);
+            SolveCaptcha.this.dispose();
+
+            try {
+                if (api.verifyChallenge(token)) {
+                    System.out.println("Captcha was correctly solved!");
+                } else {
+                    System.out.println("Captcha was incorrectly solved! Please try again.");
+                    /*
+                                    Ask for a new challenge url, don't need to check the result,
+                                    because the LoginListener will be called when this completed.
+                     */
+                    api.checkChallenge();
+                }
+            } catch (InvalidProtocolBufferException | RemoteServerException | CaptchaActiveException | LoginFailedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
