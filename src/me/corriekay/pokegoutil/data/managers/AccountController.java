@@ -16,8 +16,6 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.api.device.DeviceInfo;
-import com.pokegoapi.api.listener.LoginListener;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleAutoCredentialProvider;
@@ -28,19 +26,15 @@ import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.exceptions.hash.HashException;
-import com.pokegoapi.util.hash.legacy.LegacyHashProvider;
-import com.pokegoapi.util.hash.pokehash.PokeHashProvider;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
-import me.corriekay.pokegoutil.utils.CustomDeviceInfo;
-import me.corriekay.pokegoutil.utils.SolveCaptcha;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
+import me.corriekay.pokegoutil.utils.helpers.LoginHelper;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
-
 import okhttp3.OkHttpClient;
 
 /**
@@ -339,43 +333,20 @@ public final class AccountController {
 
             try {
                 if (credentialProvider != null) {
+
                     go = new PokemonGo(http);
-
-                    //Add listener to listen for the captcha URL
-                    go.addListener(new LoginListener() {
-                        @Override
-                        public void onLogin(PokemonGo api) {
-//                            System.out.println("Successfully logged in with SolveCaptcha!");
-
-                            instance.logged = true;
-                            instance.go = api;
-                            initOtherControllers(api);
-                            instance.mainWindow = new PokemonGoMainWindow(api, true);
-                            instance.mainWindow.start();
-                        }
-
-                        @Override
-                        public void onChallenge(PokemonGo api, String challengeURL) {
-                            System.out.println("Captcha received! URL: " + challengeURL);
-                            SolveCaptcha captcha = new SolveCaptcha(api, challengeURL);
-                            captcha.setVisible(true);
-                        }
-                    });
-                    if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
-                        go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
-                    }
-                    String pokeHashKey = config.getString(ConfigKey.LOGIN_POKEHASHKEY);
-                    if (pokeHashKey!=null) {
-                        PokeHashProvider.HASH_ENDPOINT = "http://pokehash.buddyauth.com/api/v122/hash";
-                        go.login(credentialProvider, new PokeHashProvider(pokeHashKey));
-                    } else {
-                        go.login(credentialProvider, new LegacyHashProvider());
-                    }
+                    LoginHelper.login(go, credentialProvider, (api -> {
+                        instance.logged = true;
+                        instance.go = api;
+                        initOtherControllers(api);
+                        instance.mainWindow = new PokemonGoMainWindow(api, true);
+                        instance.mainWindow.start();
+                    }));
                 } else {
                     throw new IllegalStateException("credentialProvider is null.");
                 }
             } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
-                if(e instanceof AsyncPokemonGoException && e.getCause() instanceof ExecutionException && e.getCause().getCause() instanceof HashException) {
+                if (e instanceof AsyncPokemonGoException && e.getCause() instanceof ExecutionException && e.getCause().getCause() instanceof HashException) {
                     alertFailedLogin(e.getCause().getCause().getClass().getSimpleName(), e.getCause().getCause().getMessage(), tries);
                 } else {
                     alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);

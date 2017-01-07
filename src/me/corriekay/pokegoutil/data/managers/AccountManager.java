@@ -1,7 +1,6 @@
 package me.corriekay.pokegoutil.data.managers;
 
 import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.api.device.DeviceInfo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
@@ -9,8 +8,6 @@ import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
-import com.pokegoapi.util.hash.legacy.LegacyHashProvider;
-import com.pokegoapi.util.hash.pokehash.PokeHashProvider;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.data.models.BpmResult;
@@ -18,7 +15,7 @@ import me.corriekay.pokegoutil.data.models.LoginData;
 import me.corriekay.pokegoutil.data.models.PlayerAccount;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
-import me.corriekay.pokegoutil.utils.CustomDeviceInfo;
+import me.corriekay.pokegoutil.utils.helpers.LoginHelper;
 import okhttp3.OkHttpClient;
 
 /**
@@ -245,17 +242,10 @@ public final class AccountManager {
     private void prepareLogin(final CredentialProvider cp, final OkHttpClient http)
             throws LoginFailedException, RemoteServerException, CaptchaActiveException {
         go = new PokemonGo(http);
-        if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
-            go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
-        }
-        String pokeHashKey = config.getString(ConfigKey.LOGIN_POKEHASHKEY);
-        if (pokeHashKey!=null) {
-            go.login(cp, new PokeHashProvider(pokeHashKey));
-        } else {
-            go.login(cp, new LegacyHashProvider());
-        }
-        playerAccount = new PlayerAccount(go.getPlayerProfile());
-        initOtherControllers();
+        LoginHelper.login(go, cp, (api -> {
+            playerAccount = new PlayerAccount(go.getPlayerProfile());
+            initOtherControllers();
+        }));
     }
 
     /**
