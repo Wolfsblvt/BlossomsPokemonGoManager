@@ -18,6 +18,7 @@ public final class StringLiterals {
 
     // More uncommon ones
     public static final String FAMILY_PREFIX = "FAMILY_";
+    public static final String POKEMON_TYPE_PREFIX = "POKEMON_TYPE_";
 
     /** The Default constructor. Private to prevent initialization. */
     private StringLiterals() {

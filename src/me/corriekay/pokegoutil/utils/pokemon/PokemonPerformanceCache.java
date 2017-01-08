@@ -1,13 +1,12 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
 import java.util.EnumMap;
-import java.util.Map;
 
-import com.pokegoapi.api.pokemon.PokemonMeta;
-import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import com.pokegoapi.main.PokemonMeta;
 
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
+import POGOProtos.Settings.Master.PokemonSettingsOuterClass.PokemonSettings;
 
 /**
  * A Cache class which calculates and saves several values for Pokémon to make them easily available.
@@ -26,15 +25,19 @@ public final class PokemonPerformanceCache {
         PokemonPerformance<Double> globalHighestGymOffense = PokemonPerformance.DEFAULT_DOUBLE;
         PokemonPerformance<Long> globalHighestGymDefense = PokemonPerformance.DEFAULT_LONG;
 
-        for (final Map.Entry<PokemonId, PokemonMeta> entry : PokemonMetaRegistry.getMeta().entrySet()) {
-            final PokemonId pokemonId = entry.getKey();
-            final PokemonMeta meta = entry.getValue();
+        for (final PokemonId pokemonId : PokemonId.values()) {
+            // We skip Pokemon that are currently not available for the global highest value collection
+            if (PokemonUtils.NOT_EXISTING_POKEMON_LIST.contains(pokemonId)) {
+                continue;
+            }
+
+            final PokemonSettings settings = PokemonMeta.getPokemonSettings(pokemonId);
 
             PokemonPerformance<Long> highestDuelAbility = PokemonPerformance.DEFAULT_LONG;
             PokemonPerformance<Double> highestGymOffense = PokemonPerformance.DEFAULT_DOUBLE;
             PokemonPerformance<Long> highestGymDefense = PokemonPerformance.DEFAULT_LONG;
-            for (final PokemonMove move1 : meta.getQuickMoves()) {
-                for (final PokemonMove move2 : meta.getCinematicMoves()) {
+            for (final PokemonMove move1 : settings.getQuickMovesList()) {
+                for (final PokemonMove move2 : settings.getCinematicMovesList()) {
                     final long duelAbility = PokemonCalculationUtils.duelAbility(pokemonId, move1, move2, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV);
                     if (duelAbility > highestDuelAbility.value) {
                         highestDuelAbility = new PokemonPerformance<>(pokemonId, duelAbility, move1, move2);
@@ -52,11 +55,6 @@ public final class PokemonPerformanceCache {
             final PokemonPerformanceStats stats = new PokemonPerformanceStats(pokemonId, highestDuelAbility, highestGymOffense, highestGymDefense);
 
             MAP.put(pokemonId, stats);
-
-            // We skip Pokémon that are currently not available for the global highest value collection
-            if (PokemonUtils.NOT_EXISTING_POKEMON_LIST.contains(pokemonId)) {
-                continue;
-            }
 
             // Save if the stats are highest until now
             if (stats.duelAbility.value > globalHighestDuelAbility.value) {

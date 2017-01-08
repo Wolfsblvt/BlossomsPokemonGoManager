@@ -93,13 +93,13 @@ public enum PokeColumn {
     TYPE_1("Type 1", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return PokemonUtils.formatType(p.getMeta().getType1());
+            return PokemonUtils.formatType(p.getSettings().getType());
         }
     },
     TYPE_2("Type 2", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return PokemonUtils.formatType(p.getMeta().getType2());
+            return PokemonUtils.formatType(p.getSettings().getType2());
         }
     },
     MOVE_1("Move 1", ColumnType.STRING) {
@@ -125,7 +125,7 @@ public enum PokeColumn {
     EVOLVABLE_COUNT("Evolvable", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
-            if (p.getCandiesToEvolve() != 0) {
+            if (p.getCandiesToEvolve() > 1) {
                 final int candies = p.getCandy();
                 final int candiesToEvolve = p.getCandiesToEvolve();
 
@@ -240,7 +240,13 @@ public enum PokeColumn {
     FAVORITE("Favorite", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return (p.isFavorite()) ? "Yes" : "";
+            return (p.isFavorite()) ? YES : "";
+        }
+    },
+    GYM("Gym", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return (p.isDeployed()) ? YES : "";
         }
     },
     DUEL_ABILITY_RATING("Duel Ability Rating", ColumnType.PERCENTAGE) {
@@ -313,6 +319,25 @@ public enum PokeColumn {
             return LocationHelper.getLocation(cell).thenApply(location -> location.formattedLocation);
         }
     },
+    COSTUME("Costume", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getPokemonDisplay() != null ? p.getPokemonDisplay().getCostume().toString() : "";
+        }
+    },
+    GENDER("Gender", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getPokemonDisplay() != null ? p.getPokemonDisplay().getGender().toString() : "";
+        }
+    },
+    SHINY("Shiny", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getPokemonDisplay() != null ? (p.getPokemonDisplay().getShiny() ? YES : "")
+                    : "";
+        }
+    },
     PID("PID", ColumnType.LONG) {
         @Override
         public Object get(final Pokemon p) {
@@ -320,6 +345,7 @@ public enum PokeColumn {
         }
     };
 
+    private static final String YES = "Yes";
     public final int id;
     public final String name;
     public final ColumnType columnType;
