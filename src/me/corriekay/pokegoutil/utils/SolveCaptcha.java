@@ -45,20 +45,21 @@ public class SolveCaptcha extends JFrame {
 
     /**
      * Default constructor that creates the components and listeners.
+     * 
      * @param api the pokemonGo api instance
      * @param challengeURL url obtained by listening to login
      */
     public SolveCaptcha(final PokemonGo api, final String challengeURL) {
         super("Solve Captcha");
         initComponents(challengeURL);
-        //Register listener to receive the token when the captcha has been solved from inside the WebView.
+        // Register listener to receive the token when the captcha has been solved from inside the WebView.
         final CaptchaSolveHelper.Listener listener = new DefaultCaptchaSolveListener(api);
         CaptchaSolveHelper.registerListener(listener);
 
         getContentPane().add(jfxPanel);
         final int panelSize = 500;
         setSize(panelSize, panelSize);
-        //Don't allow this window to be closed
+        // Don't allow this window to be closed
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             @Override
@@ -70,35 +71,44 @@ public class SolveCaptcha extends JFrame {
 
     /**
      * Initialize the components after they are created.
+     * 
      * @param challengeURL the URL to be opened by solver
      */
-    private void initComponents(String challengeURL) {
+    private void initComponents(final String challengeURL) {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 final WebView view = new WebView();
                 engine = view.getEngine();
-                //Set UserAgent so the captcha shows correctly in the WebView.
+                // Set UserAgent so the captcha shows correctly in the WebView.
                 engine.setUserAgent(CaptchaSolveHelper.USER_AGENT);
                 engine.load(challengeURL);
                 jfxPanel.setScene(new Scene(view));
             }
         });
     }
+
     /**
      * Nested class as Codeclimate doesn't allow extensive inner class.
      */
     private final class DefaultCaptchaSolveListener implements CaptchaSolveHelper.Listener {
         private final PokemonGo api;
-        private DefaultCaptchaSolveListener(PokemonGo api) {
+
+        /**
+         * Default constructor.
+         * 
+         * @param api PokemonGo api
+         */
+        private DefaultCaptchaSolveListener(final PokemonGo api) {
             this.api = api;
         }
+
         @Override
         public void onTokenReceived(final String token) {
             System.out.println("Token received: " + token + "!");
-            //Remove this listener as we no longer need to listen for tokens, the captcha has been solved.
+            // Remove this listener as we no longer need to listen for tokens, the captcha has been solved.
             CaptchaSolveHelper.removeListener(this);
-            //Close this window, it not valid anymore.
+            // Close this window, it not valid anymore.
             SolveCaptcha.this.setVisible(false);
             SolveCaptcha.this.dispose();
 
@@ -107,10 +117,7 @@ public class SolveCaptcha extends JFrame {
                     System.out.println("Captcha was correctly solved!");
                 } else {
                     System.out.println("Captcha was incorrectly solved! Please try again.");
-                    /*
-                                    Ask for a new challenge url, don't need to check the result,
-                                    because the LoginListener will be called when this completed.
-                     */
+                    /* Ask for a new challenge url, don't need to check the result, because the LoginListener will be called when this completed. */
                     api.checkChallenge();
                 }
             } catch (InvalidProtocolBufferException | RemoteServerException | CaptchaActiveException | LoginFailedException e) {

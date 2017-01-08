@@ -322,20 +322,19 @@ public enum PokeColumn {
     COSTUME("Costume", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getPokemonDisplay() != null ?  p.getPokemonDisplay().getCostume().toString() : "";
+            return p.getPokemonDisplay() != null ? p.getPokemonDisplay().getCostume().toString() : "";
         }
     },
     GENDER("Gender", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getPokemonDisplay() != null ?  p.getPokemonDisplay().getGender().toString() : "";
+            return p.getPokemonDisplay() != null ? p.getPokemonDisplay().getGender().toString() : "";
         }
     },
     SHINY("Shiny", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getPokemonDisplay() != null ? 
-                    (p.getPokemonDisplay().getShiny() ? YES : "")
+            return p.getPokemonDisplay() != null ? (p.getPokemonDisplay().getShiny() ? YES : "")
                     : "";
         }
     },

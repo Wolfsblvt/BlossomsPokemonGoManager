@@ -242,10 +242,10 @@ public final class AccountManager {
     private void prepareLogin(final CredentialProvider cp, final OkHttpClient http)
             throws LoginFailedException, RemoteServerException, CaptchaActiveException {
         go = new PokemonGo(http);
-        LoginHelper.login(go, cp, (api -> {
+        LoginHelper.login(go, cp, api -> {
             playerAccount = new PlayerAccount(go.getPlayerProfile());
             initOtherControllers();
-        }));
+        });
     }
 
     /**

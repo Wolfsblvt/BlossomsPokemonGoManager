@@ -594,7 +594,7 @@ public class PokemonTab extends JPanel {
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText(String.format(
                 "Pokémon batch evolve%s complete!",
-                (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : "")),
+                config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : ""),
             selection.size(), success, skipped, err);
     }
 
@@ -676,8 +676,8 @@ public class PokemonTab extends JPanel {
                             + "HP: %d[+%d], "
                             + "Stardust used %d[remaining: %d])",
                         newCandies, candies, candiesToPowerUp,
-                        newCp, (newCp - cp),
-                        newHp, (newHp - hp),
+                        newCp, newCp - cp,
+                        newHp, newHp - hp,
                         stardustToPowerUp,
                         go.getPlayerProfile().getCurrency(Currency.STARDUST)));
 
@@ -707,7 +707,7 @@ public class PokemonTab extends JPanel {
         try {
             go.getInventories().updateInventories();
             PokemonGoMainWindow.getInstance().refreshTitle();
-        } catch (final Exception e) {
+        } catch (final RemoteServerException | LoginFailedException | CaptchaActiveException e) {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);

@@ -17,10 +17,26 @@ import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.CustomDeviceInfo;
 import me.corriekay.pokegoutil.utils.SolveCaptcha;
 
-public class LoginHelper {
+/**
+ * Class to concentrate login method to be used in both interfaces: Swing and JavaFX.
+ */
+public final class LoginHelper {
 
-    public static void login(final PokemonGo go, final CredentialProvider credentialProvider, Consumer<PokemonGo> loginFunction) throws LoginFailedException, CaptchaActiveException, RemoteServerException
-    {
+    /** Prevent initializing this class. */
+    private LoginHelper() {
+    }
+    
+    /**
+     * Main login method.
+     * @param go PokemonGo api
+     * @param credentialProvider CredentialProvider (Google or PTC)
+     * @param loginFunction Consumer function that will receive API after successful login
+     * @throws LoginFailedException if Login fail
+     * @throws CaptchaActiveException if a Captcha is active
+     * @throws RemoteServerException if server fail
+     */
+    public static void login(final PokemonGo go, final CredentialProvider credentialProvider, final Consumer<PokemonGo> loginFunction) 
+            throws LoginFailedException, CaptchaActiveException {
         //Add listener to listen for the captcha URL
         go.addListener(new LoginListener() {
             @Override
@@ -39,11 +55,15 @@ public class LoginHelper {
             go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
         }
         final String pokeHashKey = ConfigNew.getConfig().getString(ConfigKey.LOGIN_POKEHASHKEY);
-        if (pokeHashKey != null) {
-            PokeHashProvider.HASH_ENDPOINT = "http://pokehash.buddyauth.com/api/v121_2/hash";
-            go.login(credentialProvider, new PokeHashProvider(pokeHashKey));
-        } else {
-            go.login(credentialProvider, new LegacyHashProvider());
+        try {
+            if (pokeHashKey != null) {
+                PokeHashProvider.HASH_ENDPOINT = "http://pokehash.buddyauth.com/api/v121_2/hash";
+                go.login(credentialProvider, new PokeHashProvider(pokeHashKey));
+            } else {
+                go.login(credentialProvider, new LegacyHashProvider());
+            }
+        } catch (RemoteServerException e) {
+            e.printStackTrace();
         }
     }
 }

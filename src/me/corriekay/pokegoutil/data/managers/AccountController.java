@@ -24,7 +24,6 @@ import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.AsyncPokemonGoException;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.exceptions.hash.HashException;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
@@ -121,7 +120,7 @@ public final class AccountController {
                 final JPanel panel2 = new JPanel(new BorderLayout());
                 panel2.add(new JLabel("PTC Password: "), BorderLayout.LINE_START);
                 panel2.add(ptcPasswordTextField, BorderLayout.CENTER);
-                final Object[] panel = {panel1, panel2,};
+                final Object[] panel = {panel1, panel2};
 
                 response = JOptionPane.showConfirmDialog(
                     WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
@@ -261,7 +260,7 @@ public final class AccountController {
                             final JPanel panel2 = new JPanel(new BorderLayout());
                             panel2.add(new JLabel("Password: "), BorderLayout.LINE_START);
                             panel2.add(googlePasswordTextField, BorderLayout.CENTER);
-                            final Object[] goggleAppPasswordPanel = {panel1, panel2,};
+                            final Object[] goggleAppPasswordPanel = {panel1, panel2};
 
                             final int googleAppLoginDetailsResult = JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                                 goggleAppPasswordPanel,
@@ -335,17 +334,17 @@ public final class AccountController {
                 if (credentialProvider != null) {
 
                     go = new PokemonGo(http);
-                    LoginHelper.login(go, credentialProvider, (api -> {
+                    LoginHelper.login(go, credentialProvider, api -> {
                         instance.logged = true;
                         instance.go = api;
                         initOtherControllers(api);
                         instance.mainWindow = new PokemonGoMainWindow(api, true);
                         instance.mainWindow.start();
-                    }));
+                    });
                 } else {
                     throw new IllegalStateException("credentialProvider is null.");
                 }
-            } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
+            } catch (LoginFailedException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
                 if (e instanceof AsyncPokemonGoException && e.getCause() instanceof ExecutionException && e.getCause().getCause() instanceof HashException) {
                     alertFailedLogin(e.getCause().getCause().getClass().getSimpleName(), e.getCause().getCause().getMessage(), tries);
                 } else {
