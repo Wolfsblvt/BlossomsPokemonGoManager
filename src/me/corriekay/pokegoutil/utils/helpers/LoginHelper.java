@@ -33,7 +33,6 @@ public final class LoginHelper {
      * @param loginFunction Consumer function that will receive API after successful login
      * @throws LoginFailedException if Login fail
      * @throws CaptchaActiveException if a Captcha is active
-     * @throws RemoteServerException if server fail
      */
     public static void login(final PokemonGo go, final CredentialProvider credentialProvider, final Consumer<PokemonGo> loginFunction) 
             throws LoginFailedException, CaptchaActiveException {
