@@ -101,20 +101,11 @@
         </repository>
     </repositories>
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>com.pokegoapi</groupId>-->
-            <!--<artifactId>PokeGOAPI-library</artifactId>-->
-            <!--<version>0.4.1</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>com.github.FernandoTBarros</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
-            <version>changeEndpoint-SNAPSHOT</version>
+            <version>6584b455355ef1790984c666a83f39d39f1c94f3</version>
         </dependency>
-<!--         <dependency> -->
-<!--             <groupId>com.github.Wolfsblvt</groupId> -->
-<!--             <artifactId>PokeGOAPI-Java</artifactId> -->
-<!--         </dependency> -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
