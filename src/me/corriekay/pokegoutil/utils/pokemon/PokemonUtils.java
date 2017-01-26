@@ -9,20 +9,17 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import com.pokegoapi.api.player.Team;
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.api.pokemon.PokemonMeta;
-import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
-import com.pokegoapi.api.pokemon.PokemonMoveMeta;
-import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
-import com.pokegoapi.api.pokemon.PokemonType;
+import com.pokegoapi.main.PokemonMeta;
 import com.pokegoapi.util.PokeDictionary;
-
-import me.corriekay.pokegoutil.utils.ConfigKey;
-import me.corriekay.pokegoutil.utils.ConfigNew;
-import me.corriekay.pokegoutil.utils.StringLiterals;
 
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 import POGOProtos.Inventory.Item.ItemIdOuterClass.ItemId;
+import POGOProtos.Settings.Master.MoveSettingsOuterClass.MoveSettings;
+import POGOProtos.Settings.Master.PokemonSettingsOuterClass.PokemonSettings;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 
 /**
  * General Pokemon helper functions.
@@ -39,7 +36,8 @@ public final class PokemonUtils {
         PokemonId.MOLTRES,
         PokemonId.MEWTWO,
         PokemonId.MEW,
-        PokemonId.UNRECOGNIZED
+        PokemonId.UNRECOGNIZED,
+        PokemonId.MISSINGNO
     );
 
     /** Prevent initializing this class. */
@@ -99,8 +97,8 @@ public final class PokemonUtils {
      * @param pokemonType The Pokémon Type.
      * @return Pokémon Type String.
      */
-    public static String formatType(final PokemonType pokemonType) {
-        return StringUtils.capitalize(pokemonType.toString().toLowerCase().replaceAll("none", ""));
+    public static String formatType(final POGOProtos.Enums.PokemonTypeOuterClass.PokemonType pokemonType) {
+        return StringUtils.capitalize(pokemonType.toString().toLowerCase().replace("none", "").replace("pokemon_type_", ""));
     }
 
     /**
@@ -152,9 +150,9 @@ public final class PokemonUtils {
      * @return Weather or not the Pokémon has STAB.
      */
     public static boolean hasStab(final PokemonId pokemonId, final PokemonMove move) {
-        final PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
-        final PokemonMoveMeta moveMeta = PokemonMoveMetaRegistry.getMeta(move);
-        return meta.getType1().equals(moveMeta.getType()) || meta.getType2().equals(moveMeta.getType());
+        final PokemonSettings settings = PokemonMeta.getPokemonSettings(pokemonId);
+        final MoveSettings moveSettings = PokemonMeta.getMoveSettings(move);
+        return settings.getType().equals(moveSettings.getPokemonType()) || settings.getType2().equals(moveSettings.getPokemonType());
     }
 }
 

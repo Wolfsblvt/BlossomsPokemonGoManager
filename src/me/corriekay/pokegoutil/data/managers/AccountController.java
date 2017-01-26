@@ -6,6 +6,7 @@ import java.awt.datatransfer.StringSelection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -15,7 +16,6 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 
 import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.api.device.DeviceInfo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleAutoCredentialProvider;
@@ -24,17 +24,16 @@ import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.AsyncPokemonGoException;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.hash.HashException;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
-import me.corriekay.pokegoutil.utils.CustomDeviceInfo;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.Browser;
+import me.corriekay.pokegoutil.utils.helpers.LoginHelper;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
-
 import okhttp3.OkHttpClient;
 
 /**
@@ -89,11 +88,14 @@ public final class AccountController {
             final JTextField ptcUsernameTextField = new JTextField(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
             final JTextField ptcPasswordTextField = new JPasswordField(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
 
-            final boolean directLoginWithSavedCredentials = checkForSavedCredentials();
+            final int directLoginWithSavedCredentials = checkForSavedCredentials();
 
             int response;
-
-            if (directLoginWithSavedCredentials) {
+            
+            if (directLoginWithSavedCredentials == JOptionPane.CANCEL_OPTION) {
+                System.exit(0);
+                return;
+            } else if (directLoginWithSavedCredentials == JOptionPane.YES_OPTION) {
                 if (getLoginData(LoginType.GOOGLE_AUTH) != null || getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null) {
                     response = JOptionPane.NO_OPTION; // This means Google. Trust me
                 } else if (getLoginData(LoginType.PTC) != null) {
@@ -118,7 +120,7 @@ public final class AccountController {
                 final JPanel panel2 = new JPanel(new BorderLayout());
                 panel2.add(new JLabel("PTC Password: "), BorderLayout.LINE_START);
                 panel2.add(ptcPasswordTextField, BorderLayout.CENTER);
-                final Object[] panel = {panel1, panel2,};
+                final Object[] panel = {panel1, panel2};
 
                 response = JOptionPane.showConfirmDialog(
                     WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
@@ -258,7 +260,7 @@ public final class AccountController {
                             final JPanel panel2 = new JPanel(new BorderLayout());
                             panel2.add(new JLabel("Password: "), BorderLayout.LINE_START);
                             panel2.add(googlePasswordTextField, BorderLayout.CENTER);
-                            final Object[] goggleAppPasswordPanel = {panel1, panel2,};
+                            final Object[] goggleAppPasswordPanel = {panel1, panel2};
 
                             final int googleAppLoginDetailsResult = JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                                 goggleAppPasswordPanel,
@@ -330,25 +332,28 @@ public final class AccountController {
 
             try {
                 if (credentialProvider != null) {
+
                     go = new PokemonGo(http);
-                    if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
-                        go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
-                    }
-                    go.login(credentialProvider);
+                    LoginHelper.login(go, credentialProvider, api -> {
+                        instance.logged = true;
+                        instance.go = api;
+                        initOtherControllers(api);
+                        instance.mainWindow = new PokemonGoMainWindow(api, true);
+                        instance.mainWindow.start();
+                    });
                 } else {
                     throw new IllegalStateException("credentialProvider is null.");
                 }
-                instance.logged = true;
-            } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
-                alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
+            } catch (LoginFailedException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
+                if (e instanceof AsyncPokemonGoException && e.getCause() instanceof ExecutionException && e.getCause().getCause() instanceof HashException) {
+                    alertFailedLogin(e.getCause().getCause().getClass().getSimpleName(), e.getCause().getCause().getMessage(), tries);
+                } else {
+                    alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
+                }
                 e.printStackTrace();
                 // deleteLoginData(LoginType.ALL);
             }
         }
-        instance.go = go;
-        initOtherControllers(go);
-        instance.mainWindow = new PokemonGoMainWindow(go, true);
-        instance.mainWindow.start();
     }
 
     private static void initOtherControllers(final PokemonGo go) {
@@ -452,19 +457,23 @@ public final class AccountController {
         }
     }
 
-    private static boolean checkForSavedCredentials() {
+    /** 
+     * Check if there is any login saved and ask for user to use it or not.
+     * @return JOptionPane.NO_OPTION, JOptionPane.YES_OPTION, JOptionPane.CANCEL_OPTION
+     */
+    private static int checkForSavedCredentials() {
         final LoginType savedLogin = checkSavedConfig();
         if (savedLogin == LoginType.NONE) {
-            return false;
+            return JOptionPane.NO_OPTION;
         } else {
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");
             UIManager.put("OptionPane.okButtonText", "Ok");
-            UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
+            UIManager.put("OptionPane.cancelButtonText", "Exit");
             return JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                 "You have saved login data for " + savedLogin.toString() + ". Want to login with that?",
                 "Use Saved Login",
-                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION;
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
         }
     }
 

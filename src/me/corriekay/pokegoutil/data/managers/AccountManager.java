@@ -1,7 +1,6 @@
 package me.corriekay.pokegoutil.data.managers;
 
 import com.pokegoapi.api.PokemonGo;
-import com.pokegoapi.api.device.DeviceInfo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
@@ -16,7 +15,7 @@ import me.corriekay.pokegoutil.data.models.LoginData;
 import me.corriekay.pokegoutil.data.models.PlayerAccount;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
-import me.corriekay.pokegoutil.utils.CustomDeviceInfo;
+import me.corriekay.pokegoutil.utils.helpers.LoginHelper;
 import okhttp3.OkHttpClient;
 
 /**
@@ -243,12 +242,10 @@ public final class AccountManager {
     private void prepareLogin(final CredentialProvider cp, final OkHttpClient http)
             throws LoginFailedException, RemoteServerException, CaptchaActiveException {
         go = new PokemonGo(http);
-        if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
-            go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
-        }
-        go.login(cp);
-        playerAccount = new PlayerAccount(go.getPlayerProfile());
-        initOtherControllers();
+        LoginHelper.login(go, cp, api -> {
+            playerAccount = new PlayerAccount(go.getPlayerProfile());
+            initOtherControllers();
+        });
     }
 
     /**

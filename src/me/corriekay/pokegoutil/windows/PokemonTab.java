@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.swing.BoxLayout;
@@ -38,6 +39,9 @@ import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.exceptions.CaptchaActiveException;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.data.enums.BatchOperation;
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
@@ -55,7 +59,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import me.corriekay.pokegoutil.utils.windows.PokemonTable;
 import me.corriekay.pokegoutil.utils.windows.PokemonTableModel;
-
+import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse;
@@ -377,6 +381,7 @@ public class PokemonTab extends JPanel {
 
     private void transferSelected() {
         final ArrayList<Pokemon> selection = getSelectedPokemon();
+        final ArrayList<Pokemon> finalSelection = new ArrayList<Pokemon>();
         if (selection.isEmpty()) {
             return;
         }
@@ -388,11 +393,9 @@ public class PokemonTab extends JPanel {
         final MutableInt err = new MutableInt(),
             skipped = new MutableInt(),
             success = new MutableInt(),
-            total = new MutableInt(1);
+            total = new MutableInt(selection.size());
 
         selection.forEach(poke -> {
-            System.out.println(String.format("Doing Transfer %d of %d", total.getValue(), selection.size()));
-            total.increment();
             if (poke.isFavorite()) {
                 System.out.println(String.format(
                     "%s with %d CP is favorite, skipping.",
@@ -402,7 +405,7 @@ public class PokemonTab extends JPanel {
                 return;
             }
 
-            if (!poke.getDeployedFortId().isEmpty()) {
+            if (poke.isDeployed()) {
                 System.out.println(String.format(
                     GYM_SKIPPED_MESSAGE_UNFORMATTED,
                     PokemonUtils.getLocalPokeName(poke),
@@ -411,50 +414,39 @@ public class PokemonTab extends JPanel {
                 return;
             }
 
-            try {
-                final int candies = poke.getCandy();
-                final ReleasePokemonResponse.Result transferResult = poke.transferPokemon();
-
-                if (transferResult == ReleasePokemonResponse.Result.SUCCESS) {
-                    final int newCandies = poke.getCandy();
-                    System.out.println(String.format(
-                        "Transferring %s, Result: Success!",
-                        PokemonUtils.getLocalPokeName(poke)));
-                    System.out.println(String.format(
-                        "Stat changes: (Candies : %d[+%d])",
-                        newCandies,
-                        newCandies - candies));
-                    success.increment();
-                } else {
-                    System.out.println(String.format(
-                        "Error transferring %s, result: %s",
-                        PokemonUtils.getLocalPokeName(poke),
-                        transferResult.toString()));
-                    err.increment();
-                }
-
-                // If not last element, sleep until the next one
-                if (!selection.get(selection.size() - 1).equals(poke)) {
-                    final int sleepMin = config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
-                    final int sleepMax = config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
-                    Utilities.sleepRandom(sleepMin, sleepMax);
-                }
-            } catch (final Exception e) {
-                err.increment();
+            if (go.getPlayerProfile().getBuddy() != null 
+                    && poke.getId() == go.getPlayerProfile().getBuddy().getPokemon().getId()) {
                 System.out.println(String.format(
-                    "Error transferring %s! %s",
-                    PokemonUtils.getLocalPokeName(poke),
-                    Utilities.getRealExceptionMessage(e)));
+                        "%s with %d CP is buddy, skipping.",
+                        PokemonUtils.getLocalPokeName(poke),
+                        poke.getCp()));
+                skipped.increment();
+                return;
             }
+            finalSelection.add(poke);
         });
-        try {
-            go.getInventories().updateInventories(true);
-        } catch (final Exception e) {
-            e.printStackTrace();
+        
+        if (finalSelection.size() > 0) {
+            System.out.println(String.format("Multi-Transfering %d pokemons, %d skipped", finalSelection.size(), skipped.intValue()));
+            try {
+                final Map<PokemonFamilyId, Integer> transferResult = go.getInventories().getPokebank().releasePokemon(finalSelection.toArray(new Pokemon[1]));
+                transferResult.forEach((pokeFamilyID, candies) -> {
+                    System.out.println(String.format(
+                            "Transferred %s (Family): Candies : %d[+%d]",
+                            StringUtils.capitalize(pokeFamilyID.toString().toLowerCase().replace("family_", "")),
+                            go.getInventories().getCandyjar().getCandies(pokeFamilyID),
+                            candies));
+                });
+                success.add(finalSelection.size());
+            } catch (CaptchaActiveException | LoginFailedException | RemoteServerException e) {
+                err.add(finalSelection.size());
+                System.out.println(String.format(
+                        "Error transferring pokemons! %s",
+                        Utilities.getRealExceptionMessage(e)));
+            }
         }
         SwingUtilities.invokeLater(this::refreshList);
-        showFinishedText("Pokémon batch transfer complete!", selection.size(), success, skipped, err);
-
+        showFinishedText("Pokémon multi-transfer complete!", total.intValue(), success, skipped, err);
     }
 
     private void evolveSelected() {
@@ -605,6 +597,7 @@ public class PokemonTab extends JPanel {
                     Utilities.getRealExceptionMessage(e)));
             }
         });
+
         try {
             go.getInventories().updateInventories(true);
         } catch (final Exception e) {
@@ -613,7 +606,7 @@ public class PokemonTab extends JPanel {
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText(String.format(
                 "Pokémon batch evolve%s complete!",
-                (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : "")),
+                config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : ""),
             selection.size(), success, skipped, err);
     }
 
@@ -693,10 +686,10 @@ public class PokemonTab extends JPanel {
                             + "(Candies : %d[%d-%d], "
                             + "CP: %d[+%d], "
                             + "HP: %d[+%d], "
-                            + "Stardust used %d[remainding: %d])",
+                            + "Stardust used %d[remaining: %d])",
                         newCandies, candies, candiesToPowerUp,
-                        newCp, (newCp - cp),
-                        newHp, (newHp - hp),
+                        newCp, newCp - cp,
+                        newHp, newHp - hp,
                         stardustToPowerUp,
                         go.getPlayerProfile().getCurrency(Currency.STARDUST)));
 
@@ -726,7 +719,7 @@ public class PokemonTab extends JPanel {
         try {
             go.getInventories().updateInventories(true);
             PokemonGoMainWindow.getInstance().refreshTitle();
-        } catch (final Exception e) {
+        } catch (final RemoteServerException | LoginFailedException | CaptchaActiveException e) {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);
@@ -1003,12 +996,11 @@ public class PokemonTab extends JPanel {
     public void refreshList() {
         final List<Pokemon> pokes = new ArrayList<>();
         final String search = searchBar.getText().replaceAll(StringLiterals.SPACE, "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll("snek", "ekans")
-            .toLowerCase();
+                .toLowerCase();
         final String[] terms = search.split(";");
         try {
-            go.getInventories().getPokebank().getPokemons()
-                .stream().filter(p -> p.getPokemonId().getNumber() <= PokemonId.MEW_VALUE)
-                .forEach(poke -> {
+            synchronized (go.getInventories().getPokebank().getLock()) {
+                go.getInventories().getPokebank().getPokemons().forEach(poke -> {
                     final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
                     String familyName = "";
                     if (useFamilyName) {
@@ -1025,13 +1017,14 @@ public class PokemonTab extends JPanel {
                             PokemonUtils.getLocalPokeName(poke),
                             ((useFamilyName) ? familyName : ""),
                             poke.getNickname(),
-                            poke.getMeta().getType1().toString(),
-                            poke.getMeta().getType2().toString(),
+                            poke.getSettings().getType().toString(),
+                            poke.getSettings().getType2().toString(),
                             poke.getMove1().toString(),
                             poke.getMove2().toString(),
                             poke.getPokeball().toString());
                     searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
-                            .replaceAll("ITEM_", "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll(StringLiterals.SPACE, "").toLowerCase();
+                            .replaceAll("ITEM_", "").replaceAll(StringLiterals.POKEMON_TYPE_PREFIX, "").replaceAll(StringLiterals.UNDERSCORE, "")
+                            .replaceAll(StringLiterals.SPACE, "").toLowerCase();
 
                     for (final String s : terms) {
                         if (searchme.contains(s)) {
@@ -1042,8 +1035,11 @@ public class PokemonTab extends JPanel {
                         }
                     }
                 });
-            pt.constructNewTableModel(("".equals(search) || "searchpokémon...".equals(search)
-                ? go.getInventories().getPokebank().getPokemons() : pokes));
+            }
+            if ("".equals(search) || "searchpokémon...".equals(search)) {
+                pokes.addAll(go.getInventories().getPokebank().getPokemons());
+            }
+            pt.constructNewTableModel(pokes);
 
         } catch (final Exception e) {
             e.printStackTrace();

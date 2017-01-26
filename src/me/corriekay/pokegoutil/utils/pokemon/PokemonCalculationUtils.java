@@ -1,17 +1,18 @@
 package me.corriekay.pokegoutil.utils.pokemon;
 
-import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.api.pokemon.PokemonMeta;
-import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
-import com.pokegoapi.api.pokemon.PokemonMoveMeta;
-import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
+import java.util.List;
 
-import me.corriekay.pokegoutil.utils.ConfigKey;
-import me.corriekay.pokegoutil.utils.ConfigNew;
-import me.corriekay.pokegoutil.utils.Utilities;
+import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.main.PokemonMeta;
 
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
+import POGOProtos.Settings.Master.MoveSettingsOuterClass.MoveSettings;
+import POGOProtos.Settings.Master.PokemonSettingsOuterClass.PokemonSettings;
+import POGOProtos.Settings.Master.Pokemon.StatsAttributesOuterClass.StatsAttributes;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.Utilities;
 
 /**
  * A Utility class providing several methods to calculate stats and values of Pokémon.
@@ -46,16 +47,16 @@ public final class PokemonCalculationUtils {
      */
     public static double ivRating(final Pokemon p) {
         if (ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION)) {
-            final PokemonMeta meta = p.getMeta();
-            final double cpMax = (meta.getBaseAttack() + PokemonUtils.MAX_IV)
-                * Math.pow(meta.getBaseDefense() + PokemonUtils.MAX_IV, 0.5)
-                * Math.pow(meta.getBaseStamina() + PokemonUtils.MAX_IV, 0.5);
-            final double cpMin = meta.getBaseAttack()
-                * Math.pow(meta.getBaseDefense(), 0.5)
-                * Math.pow(meta.getBaseStamina(), 0.5);
-            final double cpIv = (meta.getBaseAttack() + p.getIndividualAttack())
-                * Math.pow(meta.getBaseDefense() + p.getIndividualDefense(), 0.5)
-                * Math.pow(meta.getBaseStamina() + p.getIndividualStamina(), 0.5);
+            final StatsAttributes statsAttributes = p.getSettings().getStats();
+            final double cpMax = (statsAttributes.getBaseAttack() + PokemonUtils.MAX_IV)
+                * Math.pow(statsAttributes.getBaseDefense() + PokemonUtils.MAX_IV, 0.5)
+                * Math.pow(statsAttributes.getBaseStamina() + PokemonUtils.MAX_IV, 0.5);
+            final double cpMin = statsAttributes.getBaseAttack()
+                * Math.pow(statsAttributes.getBaseDefense(), 0.5)
+                * Math.pow(statsAttributes.getBaseStamina(), 0.5);
+            final double cpIv = (statsAttributes.getBaseAttack() + p.getIndividualAttack())
+                * Math.pow(statsAttributes.getBaseDefense() + p.getIndividualDefense(), 0.5)
+                * Math.pow(statsAttributes.getBaseStamina() + p.getIndividualStamina(), 0.5);
             return (cpIv - cpMin) / (cpMax - cpMin);
         } else {
             return Utilities.percentage(p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina(),
@@ -84,10 +85,10 @@ public final class PokemonCalculationUtils {
      * @return The clean dps.
      */
     private static double dpsForMove(final PokemonId pokemonId, final PokemonMove move, final boolean primary) {
-        final PokemonMoveMeta moveMeta = PokemonMoveMetaRegistry.getMeta(move);
+        final MoveSettings moveMeta = PokemonMeta.getMoveSettings(move);
         final int moveDelay = primary ? 0 : MOVE2_CHARGE_DELAY_MS;
-        double dps = (double) moveMeta.getPower() / (double) (moveMeta.getTime() + moveDelay) * MILLISECONDS_FACTOR;
-        if (PokemonUtils.hasStab(pokemonId, moveMeta.getMove())) {
+        double dps = (double) moveMeta.getPower() / (double) (moveMeta.getDurationMs() + moveDelay) * MILLISECONDS_FACTOR;
+        if (PokemonUtils.hasStab(pokemonId, move)) {
             dps = dps * STAB_MULTIPLIER;
         }
         return dps;
@@ -101,9 +102,9 @@ public final class PokemonCalculationUtils {
      * @return The percentage rating how good it is compared to the best.
      */
     public static double moveRating(final Pokemon p, final boolean primary) {
-        final PokemonMeta pMeta = p.getMeta();
+        final PokemonSettings pMeta = PokemonMeta.getPokemonSettings(p.getPokemonId());
         double highestDps = 0;
-        final PokemonMove[] moves = primary ? pMeta.getQuickMoves() : pMeta.getCinematicMoves();
+        final List<PokemonMove> moves = primary ? pMeta.getQuickMovesList() : pMeta.getCinematicMovesList();
         for (final PokemonMove move : moves) {
             final double dps = dpsForMove(p.getPokemonId(), move, primary);
             if (dps > highestDps) {
@@ -176,11 +177,11 @@ public final class PokemonCalculationUtils {
      * @link i607ch00
      */
     public static double gymOffense(final PokemonId pokemonId, final PokemonMove move1, final PokemonMove move2, final int attackIV) {
-        final PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
+        final PokemonSettings meta = PokemonMeta.getPokemonSettings(pokemonId);
         return Math.max(
             PokemonCalculationUtils.dpsForMove(pokemonId, move1, true) * WEAVE_LENGTH_SECONDS,
             PokemonCalculationUtils.weaveDps(pokemonId, move1, move2, 0)
-        ) * (meta.getBaseAttack() + attackIV);
+        ) * (meta.getStats().getBaseAttack() + attackIV);
     }
 
     /**
@@ -213,9 +214,8 @@ public final class PokemonCalculationUtils {
     public static long gymDefense(final PokemonId pokemonId,
                                   final PokemonMove move1, final PokemonMove move2,
                                   final int attackIV, final int defenseIV, final int staminaIV) {
-        final PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
         final double gymDefense = PokemonCalculationUtils.weaveDps(pokemonId, move1, move2, MOVE_2_ADDITIONAL_DELAY)
-            * (meta.getBaseAttack() + attackIV)
+            * (PokemonMeta.getPokemonSettings(pokemonId).getStats().getBaseAttack() + attackIV)
             * PokemonCalculationUtils.tankiness(pokemonId, defenseIV, staminaIV);
         return Math.round(gymDefense);
     }
@@ -249,8 +249,8 @@ public final class PokemonCalculationUtils {
      * @link i607ch00
      */
     public static long tankiness(final PokemonId pokemonId, final int defenseIV, final int staminaIV) {
-        final PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
-        return (meta.getBaseStamina() + staminaIV) * (meta.getBaseDefense() + defenseIV);
+        final PokemonSettings meta = PokemonMeta.getPokemonSettings(pokemonId);
+        return (meta.getStats().getBaseStamina() + staminaIV) * (meta.getStats().getBaseDefense() + defenseIV);
     }
 
     /**
@@ -284,8 +284,8 @@ public final class PokemonCalculationUtils {
      * @link i607ch00
      */
     public static double weaveDps(final PokemonId pokemonId, final PokemonMove move1, final PokemonMove move2, final int additionalDelay) {
-        final PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(move1);
-        final PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(move2);
+        final MoveSettings pm1 = PokemonMeta.getMoveSettings(move1);
+        final MoveSettings pm2 = PokemonMeta.getMoveSettings(move2);
         final double moveOneStab = PokemonUtils.hasStab(pokemonId, move1) ? STAB_MULTIPLIER : NORMAL_MULTIPLIER;
         final double moveTwoStab = PokemonUtils.hasStab(pokemonId, move2) ? STAB_MULTIPLIER : NORMAL_MULTIPLIER;
 
@@ -308,17 +308,17 @@ public final class PokemonCalculationUtils {
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)
         final double weaveEnergyUsageRatio;
 
-        if (Math.abs(pm2.getEnergy()) == MAX_MOVE_ENERGY) {
-            weaveEnergyUsageRatio = Math.ceil((double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy());
+        if (Math.abs(pm2.getEnergyDelta()) == MAX_MOVE_ENERGY) {
+            weaveEnergyUsageRatio = Math.ceil((double) Math.abs(pm2.getEnergyDelta()) / (double) pm1.getEnergyDelta());
         } else {
-            weaveEnergyUsageRatio = (double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy();
+            weaveEnergyUsageRatio = (double) Math.abs(pm2.getEnergyDelta()) / (double) pm1.getEnergyDelta();
         }
 
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*T2+(AA2+$AL$1)
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*(T2+2000)+(AA2+$AL$1)
         final double weaveCycleLength = weaveEnergyUsageRatio
-            * (pm1.getTime() + additionalDelay)
-            + pm2.getTime() + PokemonCalculationUtils.MOVE2_CHARGE_DELAY_MS;
+            * (pm1.getDurationMs() + additionalDelay)
+            + pm2.getDurationMs() + PokemonCalculationUtils.MOVE2_CHARGE_DELAY_MS;
 
         //=FLOOR(100000/AD2)
         //*(X2*(1+Y2*0.25) * (1+($AJ$1*Z2/100)))
@@ -330,15 +330,15 @@ public final class PokemonCalculationUtils {
         //  +FLOOR((100000-(FLOOR(100000/AF2)*(AA2+$AL$1)+CEILING(FLOOR(100000/AF2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*(T2+2000)))/(T2+2000))*(R2*(1+(S2*0.25)))
         final double floorThingyCalculation = (
             WEAVE_NUMBER - (
-                Math.floor(WEAVE_NUMBER / weaveCycleLength) * (pm2.getTime()
+                Math.floor(WEAVE_NUMBER / weaveCycleLength) * (pm2.getDurationMs()
                     + PokemonCalculationUtils.MOVE2_CHARGE_DELAY_MS)
-                    + Math.ceil(Math.floor(WEAVE_NUMBER / weaveCycleLength) * weaveEnergyUsageRatio) * (pm1.getTime() + additionalDelay)
+                    + Math.ceil(Math.floor(WEAVE_NUMBER / weaveCycleLength) * weaveEnergyUsageRatio) * (pm1.getDurationMs() + additionalDelay)
             )
-        ) / (pm1.getTime() + additionalDelay);
+        ) / (pm1.getDurationMs() + additionalDelay);
 
         //noinspection UnnecessaryLocalVariable
         final double weaveDPS = Math.floor(WEAVE_NUMBER / weaveCycleLength)
-            * (pm2.getPower() * moveTwoStab * (1 + (PokemonCalculationUtils.CRIT_DAMAGE_BONUS * pm2.getCritChance())))
+            * (pm2.getPower() * moveTwoStab * (1 + (PokemonCalculationUtils.CRIT_DAMAGE_BONUS * pm2.getCriticalChance())))
             + Math.ceil(Math.floor(WEAVE_NUMBER / weaveCycleLength) * weaveEnergyUsageRatio)
             * (pm1.getPower() * moveOneStab)
             + Math.floor(floorThingyCalculation)
