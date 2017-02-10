@@ -9,7 +9,9 @@ import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.hash.HashException;
 import com.pokegoapi.util.hash.legacy.LegacyHashProvider;
+import com.pokegoapi.util.hash.pokehash.PokeHashKey;
 import com.pokegoapi.util.hash.pokehash.PokeHashProvider;
 
 import me.corriekay.pokegoutil.utils.ConfigKey;
@@ -33,9 +35,10 @@ public final class LoginHelper {
      * @param loginFunction Consumer function that will receive API after successful login
      * @throws LoginFailedException if Login fail
      * @throws CaptchaActiveException if a Captcha is active
+     * @throws HashException 
      */
     public static void login(final PokemonGo go, final CredentialProvider credentialProvider, final Consumer<PokemonGo> loginFunction) 
-            throws LoginFailedException, CaptchaActiveException {
+            throws LoginFailedException, CaptchaActiveException, HashException {
         //Add listener to listen for the captcha URL
         go.addListener(new LoginListener() {
             @Override
@@ -56,8 +59,8 @@ public final class LoginHelper {
         final String pokeHashKey = ConfigNew.getConfig().getString(ConfigKey.LOGIN_POKEHASHKEY);
         try {
             if (pokeHashKey != null) {
-                final PokeHashProvider pokeHashProvider = new PokeHashProvider(pokeHashKey);
-                pokeHashProvider.setEndpoint("http://pokehash.buddyauth.com/api/v123_1/hash");
+                final PokeHashProvider pokeHashProvider = new PokeHashProvider(PokeHashKey.from(pokeHashKey), true);
+                pokeHashProvider.setEndpoint("http://pokehash.buddyauth.com/api/v125/hash");
                 go.login(credentialProvider, pokeHashProvider);
             } else {
                 go.login(credentialProvider, new LegacyHashProvider());

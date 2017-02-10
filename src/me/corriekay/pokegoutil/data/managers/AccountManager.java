@@ -8,6 +8,7 @@ import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.hash.HashException;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.data.models.BpmResult;
@@ -187,7 +188,7 @@ public final class AccountManager {
         try {
             prepareLogin(cp, http);
             return new BpmResult();
-        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException e) {
+        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
             deleteLoginData(LoginType.ALL);
             return new BpmResult(e.getMessage());
         }
@@ -224,7 +225,7 @@ public final class AccountManager {
         try {
             prepareLogin(cp, http);
             return new BpmResult();
-        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException e) {
+        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
             deleteLoginData(LoginType.ALL);
             return new BpmResult(e.getMessage());
         }
@@ -238,9 +239,10 @@ public final class AccountManager {
      * @throws LoginFailedException  login failed
      * @throws RemoteServerException server error
      * @throws CaptchaActiveException captcha active error
+     * @throws HashException 
      */
     private void prepareLogin(final CredentialProvider cp, final OkHttpClient http)
-            throws LoginFailedException, RemoteServerException, CaptchaActiveException {
+            throws LoginFailedException, RemoteServerException, CaptchaActiveException, HashException {
         go = new PokemonGo(http);
         LoginHelper.login(go, cp, api -> {
             playerAccount = new PlayerAccount(go.getPlayerProfile());

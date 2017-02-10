@@ -344,7 +344,7 @@ public final class AccountController {
                 } else {
                     throw new IllegalStateException("credentialProvider is null.");
                 }
-            } catch (LoginFailedException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
+            } catch (LoginFailedException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException | HashException e) {
                 if (e instanceof AsyncPokemonGoException && e.getCause() instanceof ExecutionException && e.getCause().getCause() instanceof HashException) {
                     alertFailedLogin(e.getCause().getCause().getClass().getSimpleName(), e.getCause().getCause().getMessage(), tries);
                 } else {

@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>BPGM</groupId>
     <artifactId>BPGM</artifactId>
-    <version>0.1.7-alpha8</version>
+    <version>0.1.7-beta55</version>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
@@ -102,9 +102,9 @@
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>com.github.FernandoTBarros</groupId>
+            <groupId>com.github.gegy1000</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
-            <version>6584b455355ef1790984c666a83f39d39f1c94f3</version>
+            <version>df29472bb01e25546ed5ad7cb1c2bdc615fb0763</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>

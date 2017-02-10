@@ -26,6 +26,7 @@ import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.hash.HashException;
 import com.pokegoapi.util.CaptchaSolveHelper;
 
 import javafx.application.Platform;
@@ -120,7 +121,7 @@ public class SolveCaptcha extends JFrame {
                     /* Ask for a new challenge url, don't need to check the result, because the LoginListener will be called when this completed. */
                     api.checkChallenge();
                 }
-            } catch (InvalidProtocolBufferException | RemoteServerException | CaptchaActiveException | LoginFailedException e) {
+            } catch (InvalidProtocolBufferException | RemoteServerException | CaptchaActiveException | LoginFailedException | HashException e) {
                 e.printStackTrace();
             }
         }
