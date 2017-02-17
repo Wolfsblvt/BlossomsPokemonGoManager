@@ -3,11 +3,11 @@ package me.corriekay.pokegoutil.utils.pokemon;
 import java.util.EnumMap;
 import java.util.Map;
 
-import com.pokegoapi.api.pokemon.PokemonMeta;
-import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
+import com.pokegoapi.main.PokemonMeta;
 
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
+import POGOProtos.Settings.Master.PokemonSettingsOuterClass;
 
 /**
  * A Cache class which calculates and saves several values for Pokémon to make them easily available.
@@ -26,15 +26,15 @@ public final class PokemonPerformanceCache {
         PokemonPerformance<Double> globalHighestGymOffense = PokemonPerformance.DEFAULT_DOUBLE;
         PokemonPerformance<Long> globalHighestGymDefense = PokemonPerformance.DEFAULT_LONG;
 
-        for (final Map.Entry<PokemonId, PokemonMeta> entry : PokemonMetaRegistry.getMeta().entrySet()) {
+        for (final Map.Entry<PokemonId, PokemonSettingsOuterClass.PokemonSettings> entry : PokemonMeta.pokemonSettings.entrySet()) {
             final PokemonId pokemonId = entry.getKey();
-            final PokemonMeta meta = entry.getValue();
+            final PokemonSettingsOuterClass.PokemonSettings settings = entry.getValue();
 
             PokemonPerformance<Long> highestDuelAbility = PokemonPerformance.DEFAULT_LONG;
             PokemonPerformance<Double> highestGymOffense = PokemonPerformance.DEFAULT_DOUBLE;
             PokemonPerformance<Long> highestGymDefense = PokemonPerformance.DEFAULT_LONG;
-            for (final PokemonMove move1 : meta.getQuickMoves()) {
-                for (final PokemonMove move2 : meta.getCinematicMoves()) {
+            for (final PokemonMove move1 : settings.getQuickMovesList()) {
+                for (final PokemonMove move2 : settings.getCinematicMovesList()) {
                     final long duelAbility = PokemonCalculationUtils.duelAbility(pokemonId, move1, move2, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV, PokemonUtils.MAX_IV);
                     if (duelAbility > highestDuelAbility.value) {
                         highestDuelAbility = new PokemonPerformance<>(pokemonId, duelAbility, move1, move2);

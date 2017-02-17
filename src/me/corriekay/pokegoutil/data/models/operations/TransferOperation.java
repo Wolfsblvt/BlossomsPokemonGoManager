@@ -4,6 +4,7 @@ import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.hash.HashException;
 
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result;
 import me.corriekay.pokegoutil.data.enums.OperationError;
@@ -42,7 +43,7 @@ public class TransferOperation extends Operation {
         final String errorTransferingString = "Error transferring %s, result: %s";
         try {
             transferResult = poke.transferPokemon();
-        } catch (CaptchaActiveException e) {
+        } catch (HashException | CaptchaActiveException e) {
             e.printStackTrace();
             return new BpmOperationResult(String.format(
                     errorTransferingString,

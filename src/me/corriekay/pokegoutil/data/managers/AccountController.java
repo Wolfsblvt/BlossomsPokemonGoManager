@@ -25,6 +25,8 @@ import com.pokegoapi.exceptions.AsyncPokemonGoException;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.hash.HashException;
+import com.pokegoapi.util.hash.legacy.LegacyHashProvider;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
@@ -334,12 +336,12 @@ public final class AccountController {
                     if (config.getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
                         go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
                     }
-                    go.login(credentialProvider);
+                    go.login(credentialProvider, new LegacyHashProvider());
                 } else {
                     throw new IllegalStateException("credentialProvider is null.");
                 }
                 instance.logged = true;
-            } catch (LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
+            } catch (HashException | LoginFailedException | RemoteServerException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException e) {
                 alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                 e.printStackTrace();
                 // deleteLoginData(LoginType.ALL);

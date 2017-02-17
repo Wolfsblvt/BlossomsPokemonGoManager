@@ -107,7 +107,7 @@
         <dependency>
             <groupId>com.github.Grover-c13</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
-            <version>7317a049fe3cbb38e219e0056c21b29505133db4</version>
+            <version>37b88d41dda745e06319b79a211dbd8492f165e3</version>
         </dependency>
 <!--         <dependency> -->
 <!--             <groupId>com.github.Wolfsblvt</groupId> -->
