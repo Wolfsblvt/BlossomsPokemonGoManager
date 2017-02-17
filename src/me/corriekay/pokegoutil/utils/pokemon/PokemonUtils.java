@@ -152,9 +152,14 @@ public final class PokemonUtils {
      * @return Weather or not the Pokémon has STAB.
      */
     public static boolean hasStab(final PokemonId pokemonId, final PokemonMove move) {
+        boolean hasStab = false;
         final PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
-        final PokemonMoveMeta moveMeta = PokemonMoveMetaRegistry.getMeta(move);
-        return meta.getType1().equals(moveMeta.getType()) || meta.getType2().equals(moveMeta.getType());
+        if (meta != null) {
+            final PokemonMoveMeta moveMeta = PokemonMoveMetaRegistry.getMeta(move);
+            if (moveMeta != null) {
+                hasStab = meta.getType1().equals(moveMeta.getType()) || meta.getType2().equals(moveMeta.getType());
+            }
+        }
+        return hasStab;
     }
 }
-

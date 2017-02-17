@@ -72,7 +72,11 @@ public final class PokemonCalculationUtils {
      */
     public static double dpsForMove(final Pokemon p, final boolean primary) {
         final PokemonMove move = primary ? p.getMove1() : p.getMove2();
-        return dpsForMove(p.getPokemonId(), move, primary);
+        double dps = 0.0;
+        if (move != null) {
+            dps = dpsForMove(p.getPokemonId(), move, primary);
+        }
+        return dps;
     }
 
     /**
@@ -86,9 +90,13 @@ public final class PokemonCalculationUtils {
     private static double dpsForMove(final PokemonId pokemonId, final PokemonMove move, final boolean primary) {
         final PokemonMoveMeta moveMeta = PokemonMoveMetaRegistry.getMeta(move);
         final int moveDelay = primary ? 0 : MOVE2_CHARGE_DELAY_MS;
-        double dps = (double) moveMeta.getPower() / (double) (moveMeta.getTime() + moveDelay) * MILLISECONDS_FACTOR;
-        if (PokemonUtils.hasStab(pokemonId, moveMeta.getMove())) {
-            dps = dps * STAB_MULTIPLIER;
+        double dps = 0.0;
+
+        if (moveMeta != null) {
+            dps = (double) moveMeta.getPower() / (double) (moveMeta.getTime() + moveDelay) * MILLISECONDS_FACTOR;
+            if (PokemonUtils.hasStab(pokemonId, moveMeta.getMove())) {
+                dps = dps * STAB_MULTIPLIER;
+            }
         }
         return dps;
     }
@@ -177,10 +185,14 @@ public final class PokemonCalculationUtils {
      */
     public static double gymOffense(final PokemonId pokemonId, final PokemonMove move1, final PokemonMove move2, final int attackIV) {
         final PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
-        return Math.max(
-            PokemonCalculationUtils.dpsForMove(pokemonId, move1, true) * WEAVE_LENGTH_SECONDS,
-            PokemonCalculationUtils.weaveDps(pokemonId, move1, move2, 0)
-        ) * (meta.getBaseAttack() + attackIV);
+        double gymOffense = 0.0;
+        if (meta != null) {
+            gymOffense = Math.max(
+                    PokemonCalculationUtils.dpsForMove(pokemonId, move1, true) * WEAVE_LENGTH_SECONDS,
+                    PokemonCalculationUtils.weaveDps(pokemonId, move1, move2, 0)
+            ) * (meta.getBaseAttack() + attackIV);
+        }
+        return gymOffense;
     }
 
     /**
@@ -211,12 +223,15 @@ public final class PokemonCalculationUtils {
      * @link i607ch00
      */
     public static long gymDefense(final PokemonId pokemonId,
-                                  final PokemonMove move1, final PokemonMove move2,
-                                  final int attackIV, final int defenseIV, final int staminaIV) {
+            final PokemonMove move1, final PokemonMove move2,
+            final int attackIV, final int defenseIV, final int staminaIV) {
         final PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
-        final double gymDefense = PokemonCalculationUtils.weaveDps(pokemonId, move1, move2, MOVE_2_ADDITIONAL_DELAY)
-            * (meta.getBaseAttack() + attackIV)
-            * PokemonCalculationUtils.tankiness(pokemonId, defenseIV, staminaIV);
+        double gymDefense = 0.0;
+        if (meta != null) {
+            gymDefense = PokemonCalculationUtils.weaveDps(pokemonId, move1, move2, MOVE_2_ADDITIONAL_DELAY)
+                    * (meta.getBaseAttack() + attackIV)
+                    * PokemonCalculationUtils.tankiness(pokemonId, defenseIV, staminaIV);
+        }
         return Math.round(gymDefense);
     }
 
@@ -284,6 +299,7 @@ public final class PokemonCalculationUtils {
      * @link i607ch00
      */
     public static double weaveDps(final PokemonId pokemonId, final PokemonMove move1, final PokemonMove move2, final int additionalDelay) {
+        double weaveDPS = 0.0;
         final PokemonMoveMeta pm1 = PokemonMoveMetaRegistry.getMeta(move1);
         final PokemonMoveMeta pm2 = PokemonMoveMetaRegistry.getMeta(move2);
         final double moveOneStab = PokemonUtils.hasStab(pokemonId, move1) ? STAB_MULTIPLIER : NORMAL_MULTIPLIER;
@@ -308,41 +324,43 @@ public final class PokemonCalculationUtils {
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)
         final double weaveEnergyUsageRatio;
 
-        if (Math.abs(pm2.getEnergy()) == MAX_MOVE_ENERGY) {
-            weaveEnergyUsageRatio = Math.ceil((double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy());
-        } else {
-            weaveEnergyUsageRatio = (double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy();
-        }
+        if (pm1 != null && pm2 != null) {
+            if (Math.abs(pm2.getEnergy()) == MAX_MOVE_ENERGY) {
+                weaveEnergyUsageRatio = Math.ceil((double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy());
+            } else {
+                weaveEnergyUsageRatio = (double) Math.abs(pm2.getEnergy()) / (double) pm1.getEnergy();
+            }
 
-        //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*T2+(AA2+$AL$1)
-        //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*(T2+2000)+(AA2+$AL$1)
-        final double weaveCycleLength = weaveEnergyUsageRatio
-            * (pm1.getTime() + additionalDelay)
-            + pm2.getTime() + PokemonCalculationUtils.MOVE2_CHARGE_DELAY_MS;
+            //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*T2+(AA2+$AL$1)
+            //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*(T2+2000)+(AA2+$AL$1)
+            final double weaveCycleLength = weaveEnergyUsageRatio
+                * (pm1.getTime() + additionalDelay)
+                + pm2.getTime() + PokemonCalculationUtils.MOVE2_CHARGE_DELAY_MS;
 
-        //=FLOOR(100000/AD2)
-        //*(X2*(1+Y2*0.25) * (1+($AJ$1*Z2/100)))
-        //+CEILING(FLOOR(100000/AD2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))
-        //*(R2*(1+(S2*0.25)))
-        //+FLOOR((100000-(FLOOR(100000/AD2)*(AA2+$AL$1)+CEILING(FLOOR(100000/AD2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*T2))/T2)
-        //*(R2*(1+(S2*0.25)))
-        //=FLOOR(100000/AF2)*(X2*(1+Y2*0.25)*(1+($AJ$1*Z2/100)))+CEILING(FLOOR(100000/AF2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*(R2*(1+(S2*0.25)))
-        //  +FLOOR((100000-(FLOOR(100000/AF2)*(AA2+$AL$1)+CEILING(FLOOR(100000/AF2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*(T2+2000)))/(T2+2000))*(R2*(1+(S2*0.25)))
-        final double floorThingyCalculation = (
-            WEAVE_NUMBER - (
-                Math.floor(WEAVE_NUMBER / weaveCycleLength) * (pm2.getTime()
-                    + PokemonCalculationUtils.MOVE2_CHARGE_DELAY_MS)
-                    + Math.ceil(Math.floor(WEAVE_NUMBER / weaveCycleLength) * weaveEnergyUsageRatio) * (pm1.getTime() + additionalDelay)
-            )
-        ) / (pm1.getTime() + additionalDelay);
+            //=FLOOR(100000/AD2)
+            //*(X2*(1+Y2*0.25) * (1+($AJ$1*Z2/100)))
+            //+CEILING(FLOOR(100000/AD2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))
+            //*(R2*(1+(S2*0.25)))
+            //+FLOOR((100000-(FLOOR(100000/AD2)*(AA2+$AL$1)+CEILING(FLOOR(100000/AD2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*T2))/T2)
+            //*(R2*(1+(S2*0.25)))
+            //=FLOOR(100000/AF2)*(X2*(1+Y2*0.25)*(1+($AJ$1*Z2/100)))+CEILING(FLOOR(100000/AF2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*(R2*(1+(S2*0.25)))
+            //  +FLOOR((100000-(FLOOR(100000/AF2)*(AA2+$AL$1)+CEILING(FLOOR(100000/AF2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*(T2+2000)))/(T2+2000))*(R2*(1+(S2*0.25)))
+            final double floorThingyCalculation = (
+                WEAVE_NUMBER - (
+                    Math.floor(WEAVE_NUMBER / weaveCycleLength) * (pm2.getTime()
+                        + PokemonCalculationUtils.MOVE2_CHARGE_DELAY_MS)
+                        + Math.ceil(Math.floor(WEAVE_NUMBER / weaveCycleLength) * weaveEnergyUsageRatio) * (pm1.getTime() + additionalDelay)
+                )
+            ) / (pm1.getTime() + additionalDelay);
 
-        //noinspection UnnecessaryLocalVariable
-        final double weaveDPS = Math.floor(WEAVE_NUMBER / weaveCycleLength)
-            * (pm2.getPower() * moveTwoStab * (1 + (PokemonCalculationUtils.CRIT_DAMAGE_BONUS * pm2.getCritChance())))
-            + Math.ceil(Math.floor(WEAVE_NUMBER / weaveCycleLength) * weaveEnergyUsageRatio)
-            * (pm1.getPower() * moveOneStab)
-            + Math.floor(floorThingyCalculation)
-            * (pm1.getPower() * moveOneStab);
+            //noinspection UnnecessaryLocalVariable
+            weaveDPS = Math.floor(WEAVE_NUMBER / weaveCycleLength)
+                * (pm2.getPower() * moveTwoStab * (1 + (PokemonCalculationUtils.CRIT_DAMAGE_BONUS * pm2.getCritChance())))
+                + Math.ceil(Math.floor(WEAVE_NUMBER / weaveCycleLength) * weaveEnergyUsageRatio)
+                * (pm1.getPower() * moveOneStab)
+                + Math.floor(floorThingyCalculation)
+                * (pm1.getPower() * moveOneStab);
+            }
 
         return weaveDPS;
     }
