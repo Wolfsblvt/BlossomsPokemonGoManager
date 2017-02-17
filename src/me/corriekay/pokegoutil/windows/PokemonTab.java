@@ -38,6 +38,10 @@ import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.Pokemon;
+import com.pokegoapi.exceptions.CaptchaActiveException;
+import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.hash.HashException;
 
 import me.corriekay.pokegoutil.data.enums.BatchOperation;
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
@@ -255,6 +259,17 @@ public class PokemonTab extends JPanel {
         add(sp, BorderLayout.CENTER);
     }
 
+    private void updateInventories() throws RemoteServerException, HashException, CaptchaActiveException, LoginFailedException {
+        go.getInventories().updateInventories(true);
+        // TODO: I'm not sure why we're running into some async issues, but it appears that the invokeLater method is not waiting for the
+        // async updateInventories call to complete before executing. Adding a sleep as a temporary hack
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+
+        }
+    }
+
     private void changeLanguage(final String langCode) {
         config.setString(ConfigKey.LANGUAGE, langCode);
 
@@ -276,7 +291,7 @@ public class PokemonTab extends JPanel {
 
     private void refreshPkmn() {
         try {
-            go.getInventories().updateInventories(true);
+            updateInventories();
             PokemonGoMainWindow.getInstance().refreshTitle();
         } catch (final Exception e) {
             e.printStackTrace();
@@ -367,7 +382,7 @@ public class PokemonTab extends JPanel {
         handler.bulkRenameWithPattern(renamePattern, perPokeCallback);
 
         try {
-            go.getInventories().updateInventories(true);
+            updateInventories();
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -448,7 +463,7 @@ public class PokemonTab extends JPanel {
             }
         });
         try {
-            go.getInventories().updateInventories(true);
+            updateInventories();
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -574,7 +589,7 @@ public class PokemonTab extends JPanel {
                             newCp, (newCp - cp),
                             newHp, (newHp - hp)));
                     }
-                    go.getInventories().updateInventories(true);
+                    updateInventories();
                     success.increment();
                 } else {
                     err.increment();
@@ -606,14 +621,14 @@ public class PokemonTab extends JPanel {
             }
         });
         try {
-            go.getInventories().updateInventories(true);
+            updateInventories();
         } catch (final Exception e) {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText(String.format(
-                "Pokémon batch evolve%s complete!",
-                (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : "")),
+            "Pokémon batch evolve%s complete!",
+            (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : "")),
             selection.size(), success, skipped, err);
     }
 
@@ -724,7 +739,7 @@ public class PokemonTab extends JPanel {
             }
         });
         try {
-            go.getInventories().updateInventories(true);
+            updateInventories();
             PokemonGoMainWindow.getInstance().refreshTitle();
         } catch (final Exception e) {
             e.printStackTrace();
@@ -1007,7 +1022,6 @@ public class PokemonTab extends JPanel {
         final String[] terms = search.split(";");
         try {
             go.getInventories().getPokebank().getPokemons()
-                .stream().filter(p -> p.getPokemonId().getNumber() <= PokemonId.MEW_VALUE)
                 .forEach(poke -> {
                     final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
                     String familyName = "";
@@ -1022,16 +1036,16 @@ public class PokemonTab extends JPanel {
                     }
 
                     String searchme = Utilities.concatString(',',
-                            PokemonUtils.getLocalPokeName(poke),
-                            ((useFamilyName) ? familyName : ""),
-                            poke.getNickname(),
-                            poke.getMeta().getType1().toString(),
-                            poke.getMeta().getType2().toString(),
-                            poke.getMove1().toString(),
-                            poke.getMove2().toString(),
-                            poke.getPokeball().toString());
+                        PokemonUtils.getLocalPokeName(poke),
+                        ((useFamilyName) ? familyName : ""),
+                        poke.getNickname(),
+                        PokemonUtils.getSettings(poke).getType().toString(),
+                        PokemonUtils.getSettings(poke).getType2().toString(),
+                        poke.getMove1().toString(),
+                        poke.getMove2().toString(),
+                        poke.getPokeball().toString());
                     searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
-                            .replaceAll("ITEM_", "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll(StringLiterals.SPACE, "").toLowerCase();
+                        .replaceAll("ITEM_", "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll(StringLiterals.SPACE, "").toLowerCase();
 
                     for (final String s : terms) {
                         if (searchme.contains(s)) {

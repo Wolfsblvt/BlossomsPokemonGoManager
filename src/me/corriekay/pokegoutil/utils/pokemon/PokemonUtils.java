@@ -9,20 +9,20 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import com.pokegoapi.api.player.Team;
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.api.pokemon.PokemonMeta;
-import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
-import com.pokegoapi.api.pokemon.PokemonMoveMeta;
-import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
-import com.pokegoapi.api.pokemon.PokemonType;
+import com.pokegoapi.main.PokemonMeta;
 import com.pokegoapi.util.PokeDictionary;
 
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 
+import POGOProtos.Enums.PokemonIdOuterClass;
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
+import POGOProtos.Enums.PokemonTypeOuterClass;
 import POGOProtos.Inventory.Item.ItemIdOuterClass.ItemId;
+import POGOProtos.Settings.Master.MoveSettingsOuterClass;
+import POGOProtos.Settings.Master.PokemonSettingsOuterClass;
 
 /**
  * General Pokemon helper functions.
@@ -99,7 +99,7 @@ public final class PokemonUtils {
      * @param pokemonType The Pokémon Type.
      * @return Pokémon Type String.
      */
-    public static String formatType(final PokemonType pokemonType) {
+    public static String formatType(final PokemonTypeOuterClass.PokemonType pokemonType) {
         return StringUtils.capitalize(pokemonType.toString().toLowerCase().replaceAll("none", ""));
     }
 
@@ -152,9 +152,21 @@ public final class PokemonUtils {
      * @return Weather or not the Pokémon has STAB.
      */
     public static boolean hasStab(final PokemonId pokemonId, final PokemonMove move) {
-        final PokemonMeta meta = PokemonMetaRegistry.getMeta(pokemonId);
-        final PokemonMoveMeta moveMeta = PokemonMoveMetaRegistry.getMeta(move);
-        return meta.getType1().equals(moveMeta.getType()) || meta.getType2().equals(moveMeta.getType());
+        final PokemonSettingsOuterClass.PokemonSettings settings = getSettings(pokemonId);
+        final MoveSettingsOuterClass.MoveSettings moveSettings = getMoveSettings(move);
+        return settings.getType().equals(moveSettings.getPokemonType()) || settings.getType2().equals(moveSettings.getPokemonType());
+    }
+
+    public static PokemonSettingsOuterClass.PokemonSettings getSettings(Pokemon pokemon) {
+        return getSettings(pokemon.getPokemonId());
+    }
+
+    public static PokemonSettingsOuterClass.PokemonSettings getSettings(PokemonIdOuterClass.PokemonId pokemonId) {
+        return PokemonMeta.getPokemonSettings(pokemonId);
+    }
+
+    public static MoveSettingsOuterClass.MoveSettings getMoveSettings(PokemonMove pokemonMove) {
+        return PokemonMeta.getMoveSettings(pokemonMove);
     }
 }
 

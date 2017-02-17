@@ -5,6 +5,7 @@ import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.hash.HashException;
 
 import me.corriekay.pokegoutil.data.enums.OperationError;
 import me.corriekay.pokegoutil.data.models.BpmOperationResult;
@@ -39,7 +40,7 @@ public class EvolveOperation extends Operation {
         final String erroEvolvingString = "Error evolving %s, result: %s";
         try {
             evolutionResult = pokemon.getPokemon().evolve();
-        } catch (CaptchaActiveException e) {
+        } catch (HashException | CaptchaActiveException e) {
             e.printStackTrace();
             return new BpmOperationResult(String.format(
                     erroEvolvingString,

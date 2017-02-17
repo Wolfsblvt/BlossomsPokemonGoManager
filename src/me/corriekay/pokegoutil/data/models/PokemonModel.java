@@ -10,11 +10,10 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import com.pokegoapi.api.pokemon.Evolutions;
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.api.pokemon.PokemonMeta;
-import com.pokegoapi.api.pokemon.PokemonMetaRegistry;
 
 import POGOProtos.Enums.PokemonFamilyIdOuterClass;
 import POGOProtos.Enums.PokemonIdOuterClass;
+import POGOProtos.Settings.Master.PokemonSettingsOuterClass;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -285,9 +284,9 @@ public class PokemonModel {
     }
 
     private void initialze() {
-        final PokemonMeta meta = pokemon.getMeta() != null ? pokemon.getMeta() : new PokemonMeta();
+        final PokemonSettingsOuterClass.PokemonSettings settings = PokemonUtils.getSettings(pokemon.getPokemonId());
 
-        setNumId(meta.getNumber());
+        setNumId(settings.getPokemonId().getNumber());
         setNickname(pokemon.getNickname());
         setSpecies(PokemonUtils.getLocalPokeName(pokemon));
         setLevel(pokemon.getLevel());
@@ -295,8 +294,8 @@ public class PokemonModel {
         setAtk(pokemon.getIndividualAttack());
         setDef(pokemon.getIndividualDefense());
         setStam(pokemon.getIndividualStamina());
-        setType1(StringUtils.capitalize(meta.getType1().toString().toLowerCase()));
-        setType2(StringUtils.capitalize(meta.getType2().toString().toLowerCase()));
+        setType1(StringUtils.capitalize(settings.getType().toString().toLowerCase()));
+        setType2(StringUtils.capitalize(settings.getType2().toString().toLowerCase()));
 
         final Double dps1 = PokemonCalculationUtils.dpsForMove(pokemon, true);
         final Double dps2 = PokemonCalculationUtils.dpsForMove(pokemon, false);
@@ -318,9 +317,9 @@ public class PokemonModel {
 
         // Max CP calculation for current PokemonModel
 
-        int attack = pokemon.getIndividualAttack() + meta.getBaseAttack();
-        int defense = pokemon.getIndividualDefense() + meta.getBaseDefense();
-        int stamina = pokemon.getIndividualStamina() + meta.getBaseStamina();
+        int attack = pokemon.getIndividualAttack() + settings.getStats().getBaseAttack();
+        int defense = pokemon.getIndividualDefense() + settings.getStats().getBaseDefense();
+        int stamina = pokemon.getIndividualStamina() + settings.getStats().getBaseStamina();
         final int maxCpCurrent = PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel);
         final int maxCp = PokemonCpUtils.getMaxCp(attack, defense, stamina);
         setMaxCp(maxCp);
@@ -334,23 +333,22 @@ public class PokemonModel {
         // Eeveelutions exception handling
         if (familyId.getNumber() == PokemonFamilyIdOuterClass.PokemonFamilyId.FAMILY_EEVEE.getNumber()) {
             if (pokemon.getPokemonId().getNumber() == PokemonIdOuterClass.PokemonId.EEVEE.getNumber()) {
-                final PokemonMeta vap = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.VAPOREON);
-                final PokemonMeta fla = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.FLAREON);
-                final PokemonMeta jol = PokemonMetaRegistry.getMeta(PokemonIdOuterClass.PokemonId.JOLTEON);
+                final PokemonSettingsOuterClass.PokemonSettings vap = PokemonUtils.getSettings(PokemonIdOuterClass.PokemonId.VAPOREON);
+                final PokemonSettingsOuterClass.PokemonSettings fla = PokemonUtils.getSettings(PokemonIdOuterClass.PokemonId.FLAREON);
+                final PokemonSettingsOuterClass.PokemonSettings jol = PokemonUtils.getSettings(PokemonIdOuterClass.PokemonId.JOLTEON);
                 if (vap != null && fla != null && jol != null) {
-                    final Comparator<PokemonMeta> cMeta = (m1, m2) -> {
+                    final Comparator<PokemonSettingsOuterClass.PokemonSettings> cSetting = (s1, s2) -> {
                         final int comb1 = PokemonCpUtils.getMaxCp(
-                            m1.getBaseAttack(),
-                            m1.getBaseDefense(),
-                            m1.getBaseStamina());
+                            s1.getStats().getBaseAttack(),
+                            s1.getStats().getBaseDefense(),
+                            s1.getStats().getBaseStamina());
                         final int comb2 = PokemonCpUtils.getMaxCp(
-                            m2.getBaseAttack(),
-                            m2.getBaseDefense(),
-                            m2.getBaseStamina());
+                            s2.getStats().getBaseAttack(),
+                            s2.getStats().getBaseDefense(),
+                            s2.getStats().getBaseStamina());
                         return comb1 - comb2;
                     };
-                    highestFamilyId = PokemonIdOuterClass.PokemonId.forNumber(
-                        Collections.max(Arrays.asList(vap, fla, jol), cMeta).getNumber());
+                    highestFamilyId = Collections.max(Arrays.asList(vap, fla, jol), cSetting).getPokemonId();
                 }
             } else {
                 // This is one of the eeveelutions, so PokemonMetaRegistry.getHightestForFamily() returns Eevee.
@@ -359,18 +357,18 @@ public class PokemonModel {
             }
         }
 
-        final PokemonMeta highestFamilyMeta = PokemonMetaRegistry.getMeta(highestFamilyId);
-        if (highestFamilyMeta == null) {
-            System.out.println("Error: Cannot find meta data for " + highestFamilyId.name());
+        final PokemonSettingsOuterClass.PokemonSettings highestFamilySetting = PokemonUtils.getSettings(highestFamilyId);
+        if (highestFamilySetting == null) {
+            System.out.println("Error: Cannot find setting data for " + highestFamilyId.name());
         } else {
             if (highestFamilyId == pokemon.getPokemonId()) {
                 setMaxEvolvedCpCurrent(maxCpCurrent);
                 setMaxEvolvedCp(maxCp);
                 setCpEvolved("-");
             } else {
-                attack = highestFamilyMeta.getBaseAttack() + pokemon.getIndividualAttack();
-                defense = highestFamilyMeta.getBaseDefense() + pokemon.getIndividualDefense();
-                stamina = highestFamilyMeta.getBaseStamina() + pokemon.getIndividualStamina();
+                attack = highestFamilySetting.getStats().getBaseAttack() + pokemon.getIndividualAttack();
+                defense = highestFamilySetting.getStats().getBaseDefense() + pokemon.getIndividualDefense();
+                stamina = highestFamilySetting.getStats().getBaseStamina() + pokemon.getIndividualStamina();
                 setMaxEvolvedCpCurrent(PokemonCpUtils.getMaxCpForTrainerLevel(attack, defense, stamina, trainerLevel));
                 setMaxEvolvedCp(PokemonCpUtils.getMaxCp(attack, defense, stamina));
                 setCpEvolved(String.valueOf(

@@ -9,10 +9,10 @@ import java.util.function.BiConsumer;
 import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.api.pokemon.PokemonMoveMetaRegistry;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.hash.HashException;
 
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
 import me.corriekay.pokegoutil.utils.Utilities;
@@ -62,7 +62,7 @@ public class PokeHandler {
         try {
             final NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick.toString());
             return result;
-        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException e) {
+        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e ) {
             System.out.println("Error while renaming "
                 + PokemonUtils.getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
                 + Utilities.getRealExceptionMessage(e));
@@ -134,6 +134,13 @@ public class PokeHandler {
             @Override
             public String get(final Pokemon p) {
                 final int length = 4;
+                return StringUtils.substring(PokeColumn.SPECIES.get(p).toString(), 0, length);
+            }
+        },
+        NAME_5("Pokémon Name (First five letters) [5]") {
+            @Override
+            public String get(final Pokemon p) {
+                final int length = 5;
                 return StringUtils.substring(PokeColumn.SPECIES.get(p).toString(), 0, length);
             }
         },
@@ -270,30 +277,30 @@ public class PokeHandler {
         MOVE_TYPE_1("Move 1 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
-                final boolean hasStab = type.equals(p.getMeta().getType1().toString()) || type.equals(p.getMeta().getType2().toString());
+                final String type = PokemonUtils.getMoveSettings(p.getMove1()).getPokemonType().toString();
+                final boolean hasStab = type.equals(PokemonUtils.getSettings(p).getType().toString()) || type.equals(PokemonUtils.getSettings(p).getType2().toString());
                 return hasStab ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
         MOVE_TYPE_2("Move 2 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonMoveMetaRegistry.getMeta(p.getMove2()).getType().toString();
-                final boolean hasStab = type.equals(p.getMeta().getType1().toString()) || type.equals(p.getMeta().getType2().toString());
+                final String type = PokemonUtils.getMoveSettings(p.getMove2()).getPokemonType().toString();
+                final boolean hasStab = type.equals(PokemonUtils.getSettings(p).getType().toString()) || type.equals(PokemonUtils.getSettings(p).getType2().toString());
                 return hasStab ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
         MOVE_TYPE_1_UNI("Move 1 abbreviated (Eletric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonMoveMetaRegistry.getMeta(p.getMove1()).getType().toString();
+                final String type = PokemonUtils.getMoveSettings(p.getMove1()).getPokemonType().toString();
                 return UnicodeHelper.get(type);
             }
         },
         MOVE_TYPE_2_UNI("Move 2 abbreviated (Eletric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonMoveMetaRegistry.getMeta(p.getMove2()).getType().toString();
+                final String type = PokemonUtils.getMoveSettings(p.getMove2()).getPokemonType().toString();
                 return UnicodeHelper.get(type);
             }
         },
@@ -324,28 +331,28 @@ public class PokeHandler {
         TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = p.getMeta().getType1().toString();
+                final String type = PokemonUtils.getMoveSettings(p.getMove1()).getPokemonType().toString();
                 return abbreviateType(type);
             }
         },
         TYPE_2("Pokémon Type 2 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = p.getMeta().getType2().toString();
+                final String type = PokemonUtils.getMoveSettings(p.getMove2()).getPokemonType().toString();
                 return abbreviateType(type);
             }
         },
         TYPE_1_UNI("Pokémon Type 1 Unicode (Eletric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = p.getMeta().getType1().toString();
+                final String type = PokemonUtils.getMoveSettings(p.getMove1()).getPokemonType().toString();
                 return UnicodeHelper.get(type);
             }
         },
         TYPE_2_UNI("Pokémon Type 2 Unicode (Eletric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = p.getMeta().getType2().toString();
+                final String type = PokemonUtils.getMoveSettings(p.getMove2()).getPokemonType().toString();
                 return UnicodeHelper.get(type);
             }
         },
