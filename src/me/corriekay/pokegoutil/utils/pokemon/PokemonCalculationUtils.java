@@ -360,7 +360,7 @@ public final class PokemonCalculationUtils {
                 * (pm1.getPower() * moveOneStab)
                 + Math.floor(floorThingyCalculation)
                 * (pm1.getPower() * moveOneStab);
-            }
+        }
 
         return weaveDPS;
     }
