@@ -345,8 +345,8 @@ public final class AccountController {
                     throw new IllegalStateException("credentialProvider is null.");
                 }
             } catch (LoginFailedException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException | HashException e) {
-                if (e instanceof AsyncPokemonGoException && e.getCause() instanceof ExecutionException && e.getCause().getCause() instanceof HashException) {
-                    alertFailedLogin(e.getCause().getCause().getClass().getSimpleName(), e.getCause().getCause().getMessage(), tries);
+                if (e instanceof AsyncPokemonGoException && e.getCause() instanceof RuntimeException && e.getCause().getCause() instanceof ExecutionException && e.getCause().getCause().getCause() instanceof HashException) {
+                    alertFailedLogin(e.getCause().getCause().getCause().getClass().getSimpleName(), e.getCause().getCause().getCause().getMessage(), tries);
                 } else {
                     alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                 }

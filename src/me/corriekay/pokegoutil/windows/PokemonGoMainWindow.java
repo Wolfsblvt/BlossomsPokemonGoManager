@@ -94,7 +94,7 @@ public class PokemonGoMainWindow extends JFrame {
 
         try {
             System.out.println(String.format("Successfully logged in. Welcome, %s.", pp.getPlayerData().getUsername()));
-            System.out.println(String.format("Hash Version: %s", Integer.toString(go.getHashProvider().getHashVersion()).replaceAll("(\\d\\d)(\\d)(\\d)", "0.$1.$2")));
+            System.out.println(String.format("Hash Version: %s", Integer.toString(go.getHashProvider().getHashVersion()).replaceAll("(\\d\\d)(\\d)(\\d)", "0.$1.$2$3")));
             System.out.println(String.format("Stats: Lvl %d %s player.",
                 pp.getStats().getLevel(),
                 PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue())));
