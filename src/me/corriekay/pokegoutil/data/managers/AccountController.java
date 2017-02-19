@@ -79,6 +79,8 @@ public final class AccountController {
         CredentialProvider credentialProvider;
         PokemonGo go = null;
         int tries = 0;
+
+        loginLoop:
         while (!instance.logged) {
             tries++;
             //BEGIN LOGIN WINDOW
@@ -128,7 +130,7 @@ public final class AccountController {
                     JOptionPane.PLAIN_MESSAGE);
             }
 
-            if (response == JOptionPane.CANCEL_OPTION) {
+            if (response == JOptionPane.CANCEL_OPTION || response == JOptionPane.CLOSED_OPTION) {
                 System.exit(0);
             } else if (response == JOptionPane.OK_OPTION) {
                 try {
@@ -182,6 +184,8 @@ public final class AccountController {
                         null, options, options[0]);
 
                     switch (answer) {
+                        case -1: // Cancel Google login
+                            continue loginLoop;
                         case 0: // Use OAuth Token
                             //We need to get the auth code, as we do not have it yet.
                             UIManager.put("OptionPane.okButtonText", "Ok");
