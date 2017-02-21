@@ -72,7 +72,7 @@ public class PokemonTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(final int columnIndex) {
-        return PokeColumn.getForId(columnIndex).name;
+        return PokeColumn.getForId(columnIndex).heading;
     }
 
     @Override
