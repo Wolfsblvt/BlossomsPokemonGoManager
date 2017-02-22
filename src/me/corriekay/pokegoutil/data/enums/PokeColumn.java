@@ -11,8 +11,12 @@ import com.pokegoapi.api.pokemon.Evolutions;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.NoSuchItemException;
 import com.pokegoapi.google.common.geometry.S2CellId;
+import com.pokegoapi.main.PokemonMeta;
 
 import POGOProtos.Enums.PokemonIdOuterClass;
+import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
+import POGOProtos.Enums.PokemonTypeOuterClass.PokemonType;
+import POGOProtos.Settings.Master.MoveSettingsOuterClass.MoveSettings;
 import me.corriekay.pokegoutil.utils.AutoIncrementer;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
@@ -116,6 +120,34 @@ public enum PokeColumn {
         public Object get(final Pokemon p) {
             return PokemonUtils.formatMove(p.getMove2())
                 + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, false));
+        }
+    },
+    DPS_1("DPS 1", ColumnType.DPS1VALUE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return Math.round(10.0 * PokemonCalculationUtils.dpsForMove(p, true)) / 10.0;
+        }
+    },
+    DPS_2("DPS 2", ColumnType.DPS2VALUE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return Math.round(10.0 * PokemonCalculationUtils.dpsForMove(p, false)) / 10.0;
+        }
+    },
+    MOVETYPE_1("Movetype 1", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final PokemonMove move = p.getMove1();
+            PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
+            return PokemonUtils.formatType(type);
+        }
+    },
+    MOVETYPE_2("Movetype 2", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final PokemonMove move = p.getMove2();
+            PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
+            return PokemonUtils.formatType(type);
         }
     },
     HP("HP", ColumnType.INT) {
