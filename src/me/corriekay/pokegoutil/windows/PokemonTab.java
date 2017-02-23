@@ -1081,4 +1081,12 @@ public class PokemonTab extends JPanel {
             return this;
         }
     }
+
+    public List<String> getColumnErrors() {
+        return pt.getColumnErrors();
+    }
+
+    public void saveColumnOrder() {
+        pt.saveColumnOrderToConfig();
+    }
 }

@@ -18,10 +18,12 @@ import javax.swing.*;
 public class MenuBar extends JMenuBar {
 
     private final PokemonGo go;
+    private final PokemonTab pokemonTab;
     private ConfigNew config = ConfigNew.getConfig();
 
     public MenuBar(PokemonGo go, PokemonTab pokemonTab) {
         this.go = go;
+        this.pokemonTab = pokemonTab;
 
         JMenu file, settings, help;
 
@@ -87,6 +89,15 @@ public class MenuBar extends JMenuBar {
                 SwingUtilities.invokeLater(pokemonTab::refreshList);
             });
         settings.add(alternativeIVCalculation);
+        JMenuItem saveColumnOrder = new JMenuItem("Save Column Order");
+        saveColumnOrder.addActionListener(al -> {
+            try {
+                pokemonTab.saveColumnOrder();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        settings.add(saveColumnOrder);
 
         add(settings);
 
