@@ -78,6 +78,7 @@ public final class AccountController {
         CredentialProvider credentialProvider;
         PokemonGo go = null;
         int tries = 0;
+
         while (!instance.logged) {
             tries++;
             //BEGIN LOGIN WINDOW
@@ -130,7 +131,7 @@ public final class AccountController {
                     JOptionPane.PLAIN_MESSAGE);
             }
 
-            if (response == JOptionPane.CANCEL_OPTION) {
+            if (response == JOptionPane.CANCEL_OPTION || response == JOptionPane.CLOSED_OPTION) {
                 System.exit(0);
             } else if (response == JOptionPane.OK_OPTION) {
                 try {
