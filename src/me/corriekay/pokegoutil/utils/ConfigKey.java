@@ -12,6 +12,7 @@ public enum ConfigKey {
     LOGIN_GOOGLE_APP_PASSWORD("login.google.password", null, Type.STRING),
     LOGIN_PTC_USERNAME("login.ptc.username", null, Type.STRING),
     LOGIN_PTC_PASSWORD("login.ptc.password", null, Type.STRING),
+    LOGIN_POKEHASHKEY("login.pokehash.key", null, Type.STRING),
 
     WINDOW_WIDTH("options.window.width", 800, Type.INTEGER),
     WINDOW_HEIGHT("options.window.height", 650, Type.INTEGER),
@@ -25,7 +26,10 @@ public enum ConfigKey {
 
     RENAME_PATTERN("options.pattern.rename", "", Type.STRING),
 
+    // used by PokemonTableController, FXML stuff... is that actually used?
     COLUMN_ORDER_POKEMON_TABLE("options.column.pokemontable", null, Type.STRING),
+    // used by the methods in PokemonTable.java itself (poor man's solution)
+    POKEMONTABLE_COLUMNORDER("options.pokemontable.columnorder", null, Type.STRING),
 
     TRANSFER_AFTER_EVOLVE("settings.transferAfterEvolve", false, Type.BOOLEAN),
     SHOW_BULK_POPUP("settings.popupAfterBulk", true, Type.BOOLEAN),

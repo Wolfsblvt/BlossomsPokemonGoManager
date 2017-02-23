@@ -6,8 +6,10 @@ import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.text.NumberFormat;
+import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
@@ -19,6 +21,7 @@ import com.pokegoapi.api.player.PlayerProfile;
 import me.corriekay.pokegoutil.data.managers.GlobalSettingsController;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.FileHelper;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
@@ -94,6 +97,7 @@ public class PokemonGoMainWindow extends JFrame {
 
         try {
             System.out.println(String.format("Successfully logged in. Welcome, %s.", pp.getPlayerData().getUsername()));
+            System.out.println(String.format("Hash Version: %s", Integer.toString(go.getHashProvider().getHashVersion()).replaceAll("(\\d\\d)(\\d)(\\d)", "0.$1.$2$3")));
             System.out.println(String.format("Stats: Lvl %d %s player.",
                 pp.getStats().getLevel(),
                 PokemonUtils.convertTeamColorToName(pp.getPlayerData().getTeamValue())));
@@ -114,6 +118,21 @@ public class PokemonGoMainWindow extends JFrame {
         // Check for new version
         final Updater updater = Updater.getUpdater();
         updater.checkForNewVersion();
+
+        List<String> errors = pokemonTab.getColumnErrors();
+        if (!errors.isEmpty()) {
+            System.out.println("WARNING: Some column names from config could not be recognized!");
+            String configString = ConfigNew.getConfig().getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
+            System.out.println("Config string is: '" + configString + "'");
+            for (String wrongColumn : errors) {
+                System.out.println("  Name not recognized: '" + wrongColumn+"'");
+            }
+            System.out.println("Existing columns for which no match in configuation was found will appear at the end of the table.");
+            JOptionPane.showMessageDialog(this, "Some columns from configuration file (column order) were not recognized."
+                    + StringLiterals.NEWLINE + "See console log for details!" + StringLiterals.NEWLINE
+                    + "(The main window will appear after you close this dialog box.)",
+                    "Configuration problem", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     /**
