@@ -1,12 +1,18 @@
 package me.corriekay.pokegoutil.utils.windows;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
@@ -33,6 +39,8 @@ public class PokemonTable extends JTable {
     private final ConfigNew config = ConfigNew.getConfig();
 
     private PokemonTableModel ptm;
+
+    private List columnErrors = new LinkedList<String>();
 
     /**
      * Constructs the PokemonTable, sets the model and defines all preset stuff.
@@ -96,6 +104,70 @@ public class PokemonTable extends JTable {
         for (final PokeColumn column : PokeColumn.values()) {
             columnModel.getColumn(column.id).setCellRenderer(column.getCellRenderer());
         }
+        try {
+            rearrangeColumnOrder();
+        }
+        catch(Exception exc) {
+            System.out.println("Oooops, something went wrong with table order rearranging!");
+            System.out.println(exc.toString());
+        }
+    }
+
+    private void rearrangeColumnOrder()
+    {
+        List<String> myColumnEnumNames = new LinkedList<String>();
+        String config = ConfigNew.getConfig().getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
+        if (config != null && ! config.isEmpty()) {
+            myColumnEnumNames.addAll(Arrays.asList(config.split(",")));
+        }
+        else {
+            myColumnEnumNames.addAll(Stream.of(PokeColumn.values())
+                    .map(Enum::toString).collect(Collectors.toList()));
+        }
+
+        int newIndex = 0;
+        for (String enumName : myColumnEnumNames) {
+            try {
+                PokeColumn pokeColumn = PokeColumn.valueOf(enumName);
+                TableColumn c = this.getColumn(pokeColumn.heading);
+                if (c != null) {
+                    int currentIndex = this.convertColumnIndexToView(c.getModelIndex());
+                    if (currentIndex != newIndex) {
+                        this.getColumnModel().moveColumn(currentIndex, newIndex);
+                    }
+                    newIndex++;
+                }
+            }
+            catch(IllegalArgumentException exc) {
+                columnErrors.add(enumName);
+            }
+        }
+    }
+
+    public void saveColumnOrderToConfig() {
+        List<String> enumNames = new LinkedList<String>();
+        Enumeration<TableColumn> e = this.getColumnModel().getColumns();
+        while(e.hasMoreElements()) {
+            String columnHeading = e.nextElement().getHeaderValue().toString();
+            try {
+                enumNames.add(PokeColumn.getForHeading(columnHeading).toString());
+            }
+            catch (IllegalArgumentException exc)
+            {
+                // can this happen in production use?
+            }
+        }
+        String columnOrderEnums = String.join(",", enumNames);
+        ConfigNew.getConfig().setString(ConfigKey.POKEMONTABLE_COLUMNORDER, columnOrderEnums);
+    }
+
+    /**
+     *
+     * @return Returns the list of columns which were requested in columns order
+     *         in configuration file, but not found.
+     */
+    public List<String> getColumnErrors() {
+        return columnErrors;
     }
 
     /**

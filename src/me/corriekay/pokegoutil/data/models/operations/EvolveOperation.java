@@ -5,6 +5,7 @@ import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.hash.HashException;
 
 import me.corriekay.pokegoutil.data.enums.OperationError;
 import me.corriekay.pokegoutil.data.models.BpmOperationResult;
@@ -45,6 +46,12 @@ public class EvolveOperation extends Operation {
                     erroEvolvingString,
                     pokemon.getSpecies(),
                     "Captcha active in account"),
+                    OperationError.EVOLVE_FAIL);
+        } catch (HashException e) {
+            return new BpmOperationResult(String.format(
+                    erroEvolvingString,
+                    pokemon.getSpecies(),
+                    "Error with Hash: " + e.getMessage()),
                     OperationError.EVOLVE_FAIL);
         }
 

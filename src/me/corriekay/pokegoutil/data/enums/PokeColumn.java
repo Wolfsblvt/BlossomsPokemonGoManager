@@ -11,8 +11,12 @@ import com.pokegoapi.api.pokemon.Evolutions;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.NoSuchItemException;
 import com.pokegoapi.google.common.geometry.S2CellId;
+import com.pokegoapi.main.PokemonMeta;
 
 import POGOProtos.Enums.PokemonIdOuterClass;
+import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
+import POGOProtos.Enums.PokemonTypeOuterClass.PokemonType;
+import POGOProtos.Settings.Master.MoveSettingsOuterClass.MoveSettings;
 import me.corriekay.pokegoutil.utils.AutoIncrementer;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
@@ -28,6 +32,8 @@ import me.corriekay.pokegoutil.utils.windows.renderer.CellRendererHelper;
 
 /**
  * A class that holds data relevant for each column.
+ * Cleka 19.2.2017: renamed "name" to "heading",
+ * otherwise .name returns something different than .name()!
  */
 public enum PokeColumn {
     AUTO_INCREMENT("Row", ColumnType.AUTO_INCREMENT) {
@@ -93,13 +99,13 @@ public enum PokeColumn {
     TYPE_1("Type 1", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return PokemonUtils.formatType(p.getMeta().getType1());
+            return PokemonUtils.formatType(p.getSettings().getType());
         }
     },
     TYPE_2("Type 2", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return PokemonUtils.formatType(p.getMeta().getType2());
+            return PokemonUtils.formatType(p.getSettings().getType2());
         }
     },
     MOVE_1("Move 1", ColumnType.STRING) {
@@ -116,6 +122,34 @@ public enum PokeColumn {
                 + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, false));
         }
     },
+    DPS_1("DPS 1", ColumnType.DPS1VALUE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return Math.round(10.0 * PokemonCalculationUtils.dpsForMove(p, true)) / 10.0;
+        }
+    },
+    DPS_2("DPS 2", ColumnType.DPS2VALUE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return Math.round(10.0 * PokemonCalculationUtils.dpsForMove(p, false)) / 10.0;
+        }
+    },
+    MOVETYPE_1("Movetype 1", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final PokemonMove move = p.getMove1();
+            PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
+            return PokemonUtils.formatType(type);
+        }
+    },
+    MOVETYPE_2("Movetype 2", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            final PokemonMove move = p.getMove2();
+            PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
+            return PokemonUtils.formatType(type);
+        }
+    },
     HP("HP", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
@@ -125,7 +159,7 @@ public enum PokeColumn {
     EVOLVABLE_COUNT("Evolvable", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
-            if (p.getCandiesToEvolve() != 0) {
+            if (p.getCandiesToEvolve() > 1) {
                 final int candies = p.getCandy();
                 final int candiesToEvolve = p.getCandiesToEvolve();
 
@@ -240,7 +274,13 @@ public enum PokeColumn {
     FAVORITE("Favorite", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return (p.isFavorite()) ? "Yes" : "";
+            return (p.isFavorite()) ? YES : "";
+        }
+    },
+    GYM("Gym", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return (p.isDeployed()) ? YES : "";
         }
     },
     DUEL_ABILITY_RATING("Duel Ability Rating", ColumnType.PERCENTAGE) {
@@ -313,6 +353,25 @@ public enum PokeColumn {
             return LocationHelper.getLocation(cell).thenApply(location -> location.formattedLocation);
         }
     },
+    COSTUME("Costume", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getPokemonDisplay() != null ? p.getPokemonDisplay().getCostume().toString() : "";
+        }
+    },
+    GENDER("Gender", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getPokemonDisplay() != null ? p.getPokemonDisplay().getGender().toString() : "";
+        }
+    },
+    SHINY("Shiny", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getPokemonDisplay() != null ? (p.getPokemonDisplay().getShiny() ? YES : "")
+                    : "";
+        }
+    },
     PID("PID", ColumnType.LONG) {
         @Override
         public Object get(final Pokemon p) {
@@ -320,8 +379,9 @@ public enum PokeColumn {
         }
     };
 
+    private static final String YES = "Yes";
     public final int id;
-    public final String name;
+    public final String heading;
     public final ColumnType columnType;
     public final ArrayList data;
 
@@ -330,12 +390,12 @@ public enum PokeColumn {
     /**
      * Constructor to create the enum entries.
      *
-     * @param name       The name of the column.
+     * @param heading    The name of the column.
      * @param columnType The type of the column.
      */
-    PokeColumn(final String name, final ColumnType columnType) {
+    PokeColumn(final String heading, final ColumnType columnType) {
         this.id = Internal.AUTO_INCREMENTER.get();
-        this.name = name;
+        this.heading = heading;
         this.columnType = columnType;
         this.data = CollectionHelper.provideArrayList(columnType.clazz);
     }
@@ -343,17 +403,17 @@ public enum PokeColumn {
     /**
      * Constructor to create an enum entry with a custom cell renderer.
      *
-     * @param name               The name of the column.
+     * @param heading            The name of the column.
      * @param columnType         The type of the column.
      * @param customCellRenderer The custom cell renderer.
      */
-    PokeColumn(final String name, final ColumnType columnType, final TableCellRenderer customCellRenderer) {
-        this(name, columnType);
+    PokeColumn(final String heading, final ColumnType columnType, final TableCellRenderer customCellRenderer) {
+        this(heading, columnType);
         this.customCellRenderer = customCellRenderer;
     }
 
     /**
-     * Gets the column for given id.
+     * Gets the PokeColumn enum for given id.
      *
      * @param id The id.
      * @return The column.
@@ -366,6 +426,22 @@ public enum PokeColumn {
         }
         // If not found, we throw an exception
         throw new NoSuchElementException("There is no column with id " + id);
+    }
+
+    /**
+     * Gets the PokeColumn enum for given heading.
+     *
+     * @param heading The heading.
+     * @return The column.
+     */
+    public static PokeColumn getForHeading(final String heading) {
+        for (final PokeColumn column : PokeColumn.values()) {
+            if (column.heading.equals(heading)) {
+                return column;
+            }
+        }
+        // If not found, we throw an exception
+        throw new NoSuchElementException("There is no column with heading " + heading);
     }
 
     /**

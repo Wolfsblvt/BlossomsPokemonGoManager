@@ -10,6 +10,8 @@ public final class CellRendererHelper {
     public static final DefaultCellRenderer DEFAULT = new DefaultCellRenderer();
     public static final NumberCellRenderer NUMBER = new NumberCellRenderer();
     public static final PercentageCellRenderer PERCENTAGE = new PercentageCellRenderer();
+    public static final DpsCellRenderer DPS1VALUE = new DpsCellRenderer().withRatingColors(0, 17);
+    public static final DpsCellRenderer DPS2VALUE = new DpsCellRenderer().withRatingColors(0, 45);
     public static final FutureCellRenderer FUTURE = new FutureCellRenderer();
     public static final AutoIncrementCellRenderer AUTO_INCREMENT = new AutoIncrementCellRenderer();
 
