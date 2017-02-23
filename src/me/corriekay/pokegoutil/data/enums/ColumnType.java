@@ -47,6 +47,16 @@ public enum ColumnType {
         Comparators.DOUBLE,
         CellRendererHelper.PERCENTAGE
     ),
+    DPS1VALUE(
+        Double.class,
+        Comparators.DOUBLE,
+        CellRendererHelper.DPS1VALUE
+    ),
+    DPS2VALUE(
+        Double.class,
+        Comparators.DOUBLE,
+        CellRendererHelper.DPS2VALUE
+    ),
     STRING(
         String.class,
         Comparators.STRING
