@@ -11,7 +11,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.github.Grover-c13:PokeGOAPI-Java:7317a049fe3cbb38e219e0056c21b29505133db4" level="project" />
+    <orderEntry type="library" name="Maven: com.github.gegy1000:PokeGOAPI-Java:fb759f0b51461d0e047ecf04bb33b12829b3e8fe" level="project" />
     <orderEntry type="library" name="Maven: svarzee.gps:gpsoauth:0.3" level="project" />
     <orderEntry type="library" name="Maven: net.iharder:base64:2.3.9" level="project" />
     <orderEntry type="library" name="Maven: com.squareup.okio:okio:1.9.0" level="project" />
