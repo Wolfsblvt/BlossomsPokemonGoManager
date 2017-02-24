@@ -198,10 +198,15 @@ public enum PokeColumn {
             }
         }
     },
-    STARDUST_TO_POWERUP("Stardust", ColumnType.INT) {
+    STARDUST_TO_POWERUP("Stardust", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getStardustCostsForPowerup();
+            int startdust = p.getStardustCostsForPowerup();
+            if (startdust != 0) {
+                return String.valueOf(startdust);
+            } else {
+                return StringLiterals.NO_VALUE_SIGN;
+            }
         }
     },
     MAX_CP_CUR("Max CP (Cur)", ColumnType.INT) {
