@@ -125,7 +125,7 @@ public class ComparableVersion
      */
     private static class StringItem
             implements Item {
-        private static final String[] QUALIFIERS = {"alpha", "beta", "milestone", "rc", "snapshot", "", "sp"};
+        private static final String[] QUALIFIERS = {"develop", "alpha", "beta", "milestone", "rc", "snapshot", "", "sp", "hotfix"};
 
         private static final List<String> _QUALIFIERS = Arrays.asList(QUALIFIERS);
 
