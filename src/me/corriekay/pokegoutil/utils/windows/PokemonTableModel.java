@@ -12,7 +12,7 @@ import com.pokegoapi.api.pokemon.Pokemon;
 
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
 
-@SuppressWarnings( {"serial", "rawtypes"})
+@SuppressWarnings( {"serial"})
 
 public class PokemonTableModel extends AbstractTableModel {
 
@@ -44,8 +44,12 @@ public class PokemonTableModel extends AbstractTableModel {
             pokeCol.add(i.getValue(), p);
 
             for (final PokeColumn column : PokeColumn.values()) {
-                // Now lets add the value for that column
-                column.data.add(i.getValue(), column.get(p));
+                try {
+                    column.data.add(i.getValue(), column.get(p));
+                } catch (NullPointerException e) {
+                    System.out.println("Error getting data for column: " + column.heading);
+                    e.printStackTrace();
+                }
             }
 
             i.increment();
