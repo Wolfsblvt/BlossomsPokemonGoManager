@@ -16,7 +16,8 @@ import com.pokegoapi.main.PokemonMeta;
 import POGOProtos.Enums.PokemonIdOuterClass;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 import POGOProtos.Enums.PokemonTypeOuterClass.PokemonType;
-import POGOProtos.Settings.Master.MoveSettingsOuterClass.MoveSettings;
+import POGOProtos.Inventory.Item.ItemIdOuterClass.ItemId;
+import POGOProtos.Settings.Master.Pokemon.EvolutionBranchOuterClass.EvolutionBranch;
 import me.corriekay.pokegoutil.utils.AutoIncrementer;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
@@ -196,6 +197,22 @@ public enum PokeColumn {
             } else {
                 return StringLiterals.NO_VALUE_SIGN;
             }
+        }
+    },
+    ITEM_TO_EVOLVE("Item To Evolve", ColumnType.STRING) {
+        @Override
+        public Object get(final Pokemon p) {
+            List<EvolutionBranch> evolutionBranch = p.getEvolutionBranch();
+            if (evolutionBranch != null && evolutionBranch.size()>0) {
+                for (EvolutionBranch evoBranch : evolutionBranch) {
+                    if(evoBranch.getEvolutionItemRequirement()!=null && 
+                            evoBranch.getEvolutionItemRequirement()!=ItemId.UNRECOGNIZED && 
+                            evoBranch.getEvolutionItemRequirement()!=ItemId.ITEM_UNKNOWN) {
+                        return PokemonUtils.formatItem(evoBranch.getEvolutionItemRequirement()) + " (" + PokemonUtils.getLocalPokeName(evoBranch.getEvolution().getNumber()) + ")";
+                    }
+                }
+            }
+            return "";
         }
     },
     STARDUST_TO_POWERUP("Stardust", ColumnType.INT) {
