@@ -88,7 +88,10 @@ We use discord to organize our development and answer questions. We also post im
 - **A:** No. We'll include lucky egg support for evolving, but that's it. We are not just another botting tool. We want to keep the use of our tool as fair as possible and just make managing Pokémon easier.
 
 #### Q: Can you include feature XY?
-- **A:** Maybe yes! Submit an issue explaing your suggestion as detailed as possible. We will look over it and see if we will include it and when (:
+- **A:** Maybe, yes! Submit an issue explaing your suggestion as detailed as possible. We will look over it and see if we will include it and when (:
+
+#### Q: What's those `RunOnXXXXXX` bat and sh files for?
+- **A:** Uh, glad that you asked. Yeah, you can run the tool simply by executing the jar itself, but you should use the bat file for Windows systems and sh for Mac and Unix/Linux. The scripts set file encoding, so that special characters are displayed correctly in the tool.
 
 
 ### Troubleshooting
@@ -120,3 +123,14 @@ We use discord to organize our development and answer questions. We also post im
 
 #### Q: Those Gym Offense, Gym Defense and Duel Ability columns. I don't understand them. What's that?
 - **A:** Oh man. Those are complicated calculations, but really helpful. Gym Offense means how good your Pokémon is to attack, Gym Defense how good it can defend one. Duel Ability just means plain attack power. Now the important thing is that those columns with the "Rating" suffix compare your current moveset and stats to the best possible version of that Species you can achieve. Like how good is your Vaporeon compared to a 100% one with Hydro Pump. The other three columns compare to the best possible that exists. Which one that is, that's printed in the console when you start the tool. For more information behind the calculations You can [look here](https://www.reddit.com/r/TheSilphRoad/comments/4vx729/pokemon_rankings_cheat_sheets_gym_offense_gym/) or google how Professor_Kukui's formulas are.
+
+#### Q: I heard I can use the Paid Hash Key service with your tool so that I have the latest cracked API. How?
+- **A:** At the moment, you have to add the key manually to you `config.json` file. Open it, search for the "login" node and add it like below. Important is the "pokehash" node. The rest are your current login informations and can be overwritten.
+```
+"login": {
+	"pokehash": {"key": "YOUR_KEY_HERE"},
+	"saveAuth": false,
+	"google": {},
+	"ptc": {}
+},
+```
