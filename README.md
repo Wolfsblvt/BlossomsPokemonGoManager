@@ -80,27 +80,43 @@ We use discord to organize our development and answer questions. We also post im
 [Our discord can be found here](https://discord.gg/APceUzU)
 
 ## FAQ
-
+### General Questions
 #### Q: Can I get banned for using this tool?
 - **A:** Yes. No. Maybe. It's possible, but no one can really answer that exactly right now. Read the Disclaimer a few lines above this FAQ.
-
-#### Q: The app doesn't start. It tells me `Could not find or load main class ...`?
-- **A:** Java 8 is not installed (correctly). Download and install [the latest Java JRE release](https://www.java.com/download/).
-
-#### Q: After login no window shows up. No error is displayed
-- **A:** It's a small bug with the current config. Go to your folder where the `.jar` file is and delete the `config.json`.
-
-#### Q: Java 8 is not available for my linux system. What do I do?
-- **A:** Read up [Install Oracle Java 8 (JDK8 and JRE8) in Ubuntu or Linux Mint](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html) on how you exactly do it.
-
-#### Q: Is the IV calculated somehow? Is it the correct value or maybe wrong? My IV calculator says something different.
-- **A:** The IV isn't calculated, it is directly taken from the API response. It's the exact value like the game has it.
-
-#### Q: What is this alternative IV calculation mode? What does it do?
-- **A:** Usual IV rating weighs every three values the same, so 1/3. The alterative mode takes in mind that attack is more important when calculating things like CP of the Pokémon. For a detailed information and a real-life example see the issue about it: [#165](/../../issues/165)
 
 #### Q: Can you add catching of Pokémon and using PokéStops?
 - **A:** No. We'll include lucky egg support for evolving, but that's it. We are not just another botting tool. We want to keep the use of our tool as fair as possible and just make managing Pokémon easier.
 
 #### Q: Can you include feature XY?
 - **A:** Maybe yes! Submit an issue explaing your suggestion as detailed as possible. We will look over it and see if we will include it and when (:
+
+
+### Troubleshooting
+#### Q: The app doesn't start. It tells me `Could not find or load main class ...`?
+- **A:** Java 8 is not installed (correctly). Download and install [the latest Java JRE release](https://www.java.com/download/).
+
+#### Q: After login no window shows up, or the window is empty. No error is displayed.
+- **A:** It's a small bug with the current config. Go to your folder where the `.jar` file is and delete the `config.json`.
+
+#### Q: When I try to login it shows an error with `AsyncPokemonGoException` and that I should try again. What should I do?
+- **A:** At first, try again. No joke. Clicking OK and logging in again works most of the time. That's why I made the retry possible. If it does not work after several tries, there could be another issues. In nearly all of the cases the issue is caused by a VPN, Proxy or Firewall you use. Try deactivating them.
+
+#### Q: On startup it shows `NullPointerException` and in the stacktrace there is something about writing files or such. What's happening?
+- **A:** The tool needs rights to write in the folder where it is in. That means it does not work under `C:\Program Files` or such. Put the tool in a place where you surely have rights to write. For example the Desktop.
+
+#### Q: Java 8 is not available for my linux system. What do I do?
+- **A:** Read up [Install Oracle Java 8 (JDK8 and JRE8) in Ubuntu or Linux Mint](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html) on how you exactly do it.
+
+#### Q: Google OAuth Token does not work. How do I use the App password thing?
+- **A:** You have to activate 2-Step-Verification and then generate a password for the app on your Google Account: [Read how that works on the Google Help Page](https://support.google.com/accounts/answer/185833?hl=en).
+
+
+### Questions about functions
+#### Q: Is the IV calculated somehow? Is it the correct value or maybe wrong? My IV calculator says something different.
+- **A:** The IV isn't calculated, it is directly taken from the API response. It's the exact value like the game has it.
+
+#### Q: What is this alternative IV calculation mode? What does it do?
+- **A:** Usual IV rating weighs every three values the same, so 1/3. The alterative mode takes in mind that attack is more important when calculating things like CP of the Pokémon. For a detailed information and a real-life example see the issue about it: [#165](/../../issues/165)
+
+#### Q: Those Gym Offense, Gym Defense and Duel Ability columns. I don't understand them. What's that?
+- **A:** Oh man. Those are complicated calculations, but really helpful. Gym Offense means how good your Pokémon is to attack, Gym Defense how good it can defend one. Duel Ability just means plain attack power. Now the important thing is that those columns with the "Rating" suffix compare your current moveset and stats to the best possible version of that Species you can achieve. Like how good is your Vaporeon compared to a 100% one with Hydro Pump. The other three columns compare to the best possible that exists. Which one that is, that's printed in the console when you start the tool. For more information behind the calculations You can [look here](https://www.reddit.com/r/TheSilphRoad/comments/4vx729/pokemon_rankings_cheat_sheets_gym_offense_gym/) or google how Professor_Kukui's formulas are.
