@@ -2,9 +2,12 @@ package me.corriekay.pokegoutil.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Point;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -63,9 +66,25 @@ public class PokemonGoMainWindow extends JFrame {
         setLayout(new BorderLayout());
         setIconImage(FileHelper.loadImage("icon/PokeBall-icon.png"));
         setBounds(0, 0, config.getInt(ConfigKey.WINDOW_WIDTH), config.getInt(ConfigKey.WINDOW_HEIGHT));
+        if (config.getBool(ConfigKey.WINDOW_MAXIMIZE)) {
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
 
         // add EventHandler to save new window size and position to
         // config for the app to remember over restarts
+        this.addWindowStateListener(new WindowStateListener() {
+            
+            @Override
+            public void windowStateChanged(WindowEvent e) {
+                if ((e.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH){
+                    config.setBool(ConfigKey.WINDOW_MAXIMIZE, true);
+                 }
+                else {
+                    config.setBool(ConfigKey.WINDOW_MAXIMIZE, false);
+                }
+                
+            }
+        });
         this.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(final ComponentEvent e) {
