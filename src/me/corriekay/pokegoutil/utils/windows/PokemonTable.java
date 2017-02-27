@@ -105,7 +105,7 @@ public class PokemonTable extends JTable {
             columnModel.getColumn(column.id).setCellRenderer(column.getCellRenderer());
         }
         try {
-            rearrangeColumnOrder();
+            restoreColumnOrder();
         }
         catch(Exception exc) {
             System.out.println("Oooops, something went wrong with table order rearranging!");
@@ -113,12 +113,11 @@ public class PokemonTable extends JTable {
         }
     }
 
-    private void rearrangeColumnOrder()
-    {
+    private void restoreColumnOrder() {
         List<String> myColumnEnumNames = new LinkedList<String>();
-        String config = ConfigNew.getConfig().getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
-        if (config != null && ! config.isEmpty()) {
-            myColumnEnumNames.addAll(Arrays.asList(config.split(",")));
+        String columnOrder = config.getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
+        if (columnOrder != null && ! columnOrder.isEmpty()) {
+            myColumnEnumNames.addAll(Arrays.asList(columnOrder.split(",")));
         }
         else {
             myColumnEnumNames.addAll(Stream.of(PokeColumn.values())
