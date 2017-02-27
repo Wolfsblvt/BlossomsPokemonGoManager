@@ -10,19 +10,22 @@ import java.util.stream.Stream;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowFilter;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.pokemon.Pokemon;
 
+import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.StringLiterals;
+import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
+import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 /**
  * The Pokémon Table. Extended JTable which displays all Pokémon and does the needed
@@ -30,6 +33,7 @@ import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
  * <p>
  * Added things are row sorter, column comparators, listener and the cell renderers.
  */
+@SuppressWarnings("serial")
 public class PokemonTable extends JTable {
 
     // Global statics
@@ -40,19 +44,18 @@ public class PokemonTable extends JTable {
 
     private PokemonTableModel ptm;
 
-    private List columnErrors = new LinkedList<String>();
+    private List<String> columnErrors = new LinkedList<String>();
+    private TableRowSorter<PokemonTableModel> trs;
 
     /**
      * Constructs the PokemonTable, sets the model and defines all preset stuff.
-     *
-     * @param go The go instance of the Pogo API
      */
-    public PokemonTable(final PokemonGo go) {
+    public PokemonTable() {
         setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         setAutoResizeMode(AUTO_RESIZE_OFF);
         setRowHeight(getRowHeight() + ROW_HEIGHT_PADDING * 2);
 
-        ptm = new PokemonTableModel(go, new ArrayList<>(), this);
+        ptm = new PokemonTableModel(new ArrayList<>(), this);
         setModel(ptm);
 
         // Load sort configs
@@ -69,7 +72,7 @@ public class PokemonTable extends JTable {
             sortOrder2 = SortOrder.ASCENDING;
         }
 
-        final TableRowSorter<TableModel> trs = new TableRowSorter<>(ptm);
+        trs = new TableRowSorter<>(ptm);
 
         // Set the comparator for each column that is defined.
         for (final PokeColumn column : PokeColumn.values()) {
@@ -103,6 +106,9 @@ public class PokemonTable extends JTable {
         // Add cell renderers
         for (final PokeColumn column : PokeColumn.values()) {
             columnModel.getColumn(column.id).setCellRenderer(column.getCellRenderer());
+            if (column.getCellEditor() != null) {
+                columnModel.getColumn(column.id).setCellEditor(column.getCellEditor());
+            }
         }
         try {
             rearrangeColumnOrder();
@@ -188,5 +194,57 @@ public class PokemonTable extends JTable {
         for (int i = 0; i < ptm.getColumnCount(); i++) {
             JTableColumnPacker.packColumn(this, i, COLUMN_MARGIN);
         }
+    }
+
+    /**
+     * Function for filtering the table using the proper RowFilter of Java
+     * @param filterText the text to be filtered
+     */
+    public void filterTable(String filterText) {
+        RowFilter<PokemonTableModel, Integer> rowFilter = null;
+        if (filterText != null && filterText != "") {
+            rowFilter = new RowFilter<PokemonTableModel, Integer>() {
+                @Override
+                public boolean include(javax.swing.RowFilter.Entry<? extends PokemonTableModel, ? extends Integer> entry) {
+                    Pokemon poke = entry.getModel().getPokemonByIndexNotConverting(entry.getIdentifier());
+                    if(poke != null) {
+                        final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
+                        String familyName = "";
+                        if (useFamilyName) {
+                            // Try translating family name
+                            try {
+                                final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
+                                familyName = PokemonUtils.getLocalPokeName(familyPokemonId.getNumber());
+                            } catch (final IllegalArgumentException e) {
+                                familyName = poke.getPokemonFamily().toString();
+                            }
+                        }
+
+                        String searchme = Utilities.concatString(',',
+                                PokemonUtils.getLocalPokeName(poke),
+                                ((useFamilyName) ? familyName : ""),
+                                poke.getNickname(),
+                                poke.getSettings().getType().toString(),
+                                poke.getSettings().getType2().toString(),
+                                poke.getMove1().toString(),
+                                poke.getMove2().toString(),
+                                poke.getPokeball().toString());
+                        searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
+                                .replaceAll("ITEM_", "").replaceAll(StringLiterals.POKEMON_TYPE_PREFIX, "").replaceAll(StringLiterals.UNDERSCORE, "")
+                                .replaceAll(StringLiterals.SPACE, "").toLowerCase();
+
+                        final String[] terms = filterText.split(";");
+                        for (final String s : terms) {
+                            if (searchme.contains(s)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+            };
+        }
+        trs.setRowFilter(rowFilter);
     }
 }

@@ -14,9 +14,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -36,6 +39,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.inventory.ItemBag;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.Pokemon;
@@ -44,12 +48,18 @@ import com.pokegoapi.exceptions.LoginFailedException;
 import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.exceptions.hash.HashException;
 
+import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
+import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
+import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse;
+import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse;
+import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass.UpgradePokemonResponse;
 import me.corriekay.pokegoutil.data.enums.BatchOperation;
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.helpers.EvolveHelper;
 import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
 import me.corriekay.pokegoutil.utils.helpers.LocationHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
@@ -60,12 +70,6 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.ui.GhostText;
 import me.corriekay.pokegoutil.utils.windows.PokemonTable;
 import me.corriekay.pokegoutil.utils.windows.PokemonTableModel;
-import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
-import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
-import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse;
-import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse;
-import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass.UpgradePokemonResponse;
 
 /**
  * The main PokemonTab.
@@ -73,11 +77,12 @@ import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass.UpgradeP
 @SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
 
-    private final PokemonGo go;
+    private static PokemonGo go;
     private final PokemonTable pt;
     private static final JTextField searchBar = new JTextField("");
     private static final JTextField ivTransfer = new JTextField("", 20);
     private static final ConfigNew config = ConfigNew.getConfig();
+    public static final HashMap<Long, EvolveHelper> mapPokemonItem = new HashMap<Long, EvolveHelper>();
 
     // Used constants
     private static final int WHEN_TO_SHOW_SELECTION_TITLE = 2;
@@ -85,18 +90,19 @@ public class PokemonTab extends JPanel {
     private static final int POPUP_WIDTH = 500;
     private static final int POPUP_HEIGHT = 400;
     private static final int MIN_FONT_SIZE = 2;
+    private List<Integer> selectedRows;
 
     /**
      * Creates an instance of the PokemonTab.
      *
      * @param go The go api class.
      */
-    public PokemonTab(final PokemonGo go) {
+    public PokemonTab(final PokemonGo goInstance) {
         super();
 
         setLayout(new BorderLayout());
-        this.go = go;
-        pt = new PokemonTable(go);
+        go = goInstance;
+        pt = new PokemonTable();
         final JPanel topPanel = new JPanel(new GridBagLayout());
         final JButton refreshPkmn = new JButton("Refresh List"),
             renameSelected = new JButton(BatchOperation.RENAME.toString()),
@@ -111,6 +117,9 @@ public class PokemonTab extends JPanel {
                 return;
             }
             if (event.getSource() == pt.getSelectionModel() && pt.getRowSelectionAllowed()) {
+                if(pt.getSelectionModel().getAnchorSelectionIndex() > -1 && pt.getSelectionModel().getLeadSelectionIndex() > -1) {
+                    selectedRows = Arrays.stream(pt.getSelectedRows()).boxed().collect(Collectors.toList());
+                }
                 final int selectedRows = pt.getSelectedRowCount();
                 if (selectedRows >= WHEN_TO_SHOW_SELECTION_TITLE) {
                     PokemonGoMainWindow.getInstance().setTitle(selectedRows + " Pokémon selected");
@@ -251,15 +260,24 @@ public class PokemonTab extends JPanel {
         }.execute());
         topPanel.add(fontSize);
 
-        LDocumentListener.addChangeListener(searchBar, e -> refreshList());
+        LDocumentListener.addChangeListener(searchBar, e -> {
+            String search = searchBar.getText().replaceAll(StringLiterals.SPACE, "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll("snek", "ekans")
+                    .toLowerCase();
+            if ("searchpokémon...".equals(search)) {
+                search = "";
+            }
+            pt.filterTable(search);
+        });
         new GhostText(searchBar, "Search Pokémon...");
 
         add(topPanel, BorderLayout.NORTH);
         final JScrollPane sp = new JScrollPane(pt);
         sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(sp, BorderLayout.CENTER);
+        
+        pt.constructNewTableModel(go.getInventories().getPokebank().getPokemons());
     }
-
+    
     private void changeLanguage(final String langCode) {
         config.setString(ConfigKey.LANGUAGE, langCode);
 
@@ -281,7 +299,7 @@ public class PokemonTab extends JPanel {
 
     private void refreshPkmn() {
         try {
-            go.getInventories().updateInventories();
+            go.getInventories().updateInventories(true);
             PokemonGoMainWindow.getInstance().refreshTitle();
         } catch (final Exception e) {
             e.printStackTrace();
@@ -372,7 +390,7 @@ public class PokemonTab extends JPanel {
         handler.bulkRenameWithPattern(renamePattern, perPokeCallback);
 
         try {
-            go.getInventories().updateInventories();
+            go.getInventories().updateInventories(true);
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -424,6 +442,7 @@ public class PokemonTab extends JPanel {
                 skipped.increment();
                 return;
             }
+            removeSelection(poke);
             finalSelection.add(poke);
         });
         
@@ -508,7 +527,14 @@ public class PokemonTab extends JPanel {
                     return;
                 }
 
-                final EvolutionResult evolutionResultWrapper = poke.evolve();
+                final EvolutionResult evolutionResultWrapper;
+                EvolveHelper evolve = mapPokemonItem.get(poke.getId());
+                if (evolve != null && evolve.isEvolveWithItem()) {
+                    evolutionResultWrapper = poke.evolve(evolve.getItemToEvolveId());
+                }
+                else {
+                    evolutionResultWrapper = poke.evolve();
+                }
                 if (evolutionResultWrapper.isSuccessful()) {
                     final Pokemon newPoke = evolutionResultWrapper.getEvolvedPokemon();
                     int newCandies = newPoke.getCandy();
@@ -546,6 +572,7 @@ public class PokemonTab extends JPanel {
                                 newCandies = newPoke.getCandy();
                                 candyRefund++;
                             }
+                            removeSelection(poke);
                             System.out.println(String.format(
                                 "Transferring %s, Result: %s",
                                 StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()),
@@ -567,7 +594,6 @@ public class PokemonTab extends JPanel {
                             newCp, (newCp - cp),
                             newHp, (newHp - hp)));
                     }
-                    go.getInventories().updateInventories();
                     success.increment();
                 } else {
                     err.increment();
@@ -718,7 +744,7 @@ public class PokemonTab extends JPanel {
             }
         });
         try {
-            go.getInventories().updateInventories();
+            go.getInventories().updateInventories(true);
             PokemonGoMainWindow.getInstance().refreshTitle();
         } catch (final RemoteServerException | LoginFailedException | CaptchaActiveException | HashException e) {
             e.printStackTrace();
@@ -911,6 +937,12 @@ public class PokemonTab extends JPanel {
                 case EVOLVE:
                     str += " Cost: " + p.getCandiesToEvolve();
                     str += p.getCandiesToEvolve() > 1 ? " Candies" : " Candy";
+                    if (mapPokemonItem.containsKey(p.getId())) {
+                        EvolveHelper evolve = mapPokemonItem.get(p.getId());
+                        if (evolve.isEvolveWithItem()) {
+                            str += " Evolving to " + evolve.getPokemonToEvolve() + " using " + evolve.getItemToEvolve();
+                        }
+                    }
                     break;
                 case POWER_UP:
                     str += " Cost: " + p.getCandyCostsForPowerup();
@@ -993,63 +1025,28 @@ public class PokemonTab extends JPanel {
         }
         return pokes;
     }
+    
+    public void removeSelection(Pokemon p) {
+        final PokemonTableModel model = (PokemonTableModel) pt.getModel();
+        int index = model.getIndexByPokemon(p);
+        if (index > 0) {
+            selectedRows.remove(index);
+        }
+    }
 
     public void refreshList() {
-        final List<Pokemon> pokes = new ArrayList<>();
-        final String search = searchBar.getText().replaceAll(StringLiterals.SPACE, "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll("snek", "ekans")
-                .toLowerCase();
-        final String[] terms = search.split(";");
         try {
-            if ("".equals(search) || "searchpokémon...".equals(search)) {
-                pokes.addAll(go.getInventories().getPokebank().getPokemons());
-            }
-            else
-            {
-                synchronized (go.getInventories().getPokebank().getLock()) {
-                    go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-                        final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
-                        String familyName = "";
-                        if (useFamilyName) {
-                            // Try translating family name
-                            try {
-                                final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
-                                familyName = PokemonUtils.getLocalPokeName(familyPokemonId.getNumber());
-                            } catch (final IllegalArgumentException e) {
-                                familyName = poke.getPokemonFamily().toString();
-                            }
-                        }
-
-                        String searchme = Utilities.concatString(',',
-                                PokemonUtils.getLocalPokeName(poke),
-                                ((useFamilyName) ? familyName : ""),
-                                poke.getNickname(),
-                                poke.getSettings().getType().toString(),
-                                poke.getSettings().getType2().toString(),
-                                poke.getMove1().toString(),
-                                poke.getMove2().toString(),
-                                poke.getPokeball().toString());
-                        searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
-                                .replaceAll("ITEM_", "").replaceAll(StringLiterals.POKEMON_TYPE_PREFIX, "").replaceAll(StringLiterals.UNDERSCORE, "")
-                                .replaceAll(StringLiterals.SPACE, "").toLowerCase();
-
-                        for (final String s : terms) {
-                            if (searchme.contains(s)) {
-                                pokes.add(poke);
-                                // Break, so that a Pokémon isn't added twice even if it
-                                // matches more than one criteria
-                                break;
-                            }
-                        }
-                    });
+            pt.constructNewTableModel(go.getInventories().getPokebank().getPokemons());
+            if (selectedRows != null) {
+                for (Integer index : selectedRows) {
+                    pt.addRowSelectionInterval(index, index);
                 }
             }
-            pt.constructNewTableModel(pokes);
-
         } catch (final Exception e) {
             e.printStackTrace();
         }
     }
-
+    
     /**
      * Provide custom formatting for the list of patterns.
      */
@@ -1088,5 +1085,10 @@ public class PokemonTab extends JPanel {
 
     public void saveColumnOrder() {
         pt.saveColumnOrderToConfig();
+    }
+
+    public static ItemBag getPlayerItems()
+    {
+        return go.getInventories().getItemBag();
     }
 }

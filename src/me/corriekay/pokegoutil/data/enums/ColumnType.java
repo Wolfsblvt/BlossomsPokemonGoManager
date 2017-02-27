@@ -3,10 +3,13 @@ package me.corriekay.pokegoutil.data.enums;
 import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 
+import javax.swing.DefaultCellEditor;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
+import me.corriekay.pokegoutil.utils.helpers.EvolveHelper;
 import me.corriekay.pokegoutil.utils.windows.renderer.CellRendererHelper;
 
 /**
@@ -65,11 +68,18 @@ public enum ColumnType {
         String.class,
         Comparators.FUTURE_STRING,
         CellRendererHelper.FUTURE
+    ),
+    EVOLVE_CHECK_BOX(
+        EvolveHelper.class,
+        Comparators.EVOLVE,
+        CellRendererHelper.CHECK_BOX,
+        CellRendererHelper.CHECK_BOX_EDITOR
     );
 
     public final Class clazz;
     public final Comparator comparator;
     public final TableCellRenderer tableCellRenderer;
+    public final TableCellEditor tableCellEditor;
 
     /**
      * This private class is needed to create the comparators that are used in this enum.
@@ -82,6 +92,7 @@ public enum ColumnType {
         public static final Comparator<Integer> INT = Integer::compareTo;
         public static final Comparator<Long> LONG = Long::compareTo;
         public static final Comparator<String> STRING = String::compareTo;
+        public static final Comparator<EvolveHelper> EVOLVE = EvolveHelper::compareTo;
         public static final Comparator<CompletableFuture<String>> FUTURE_STRING = (left, right) -> left.getNow("").compareTo(right.getNow(""));
         public static final Comparator<String> NULLABLE_INT = (left, right) -> {
             if (StringLiterals.NO_VALUE_SIGN.equals(left)) {
@@ -115,5 +126,20 @@ public enum ColumnType {
         this.clazz = clazz;
         this.comparator = comparator;
         this.tableCellRenderer = tableCellRenderer;
+        this.tableCellEditor = null;
+    }
+    
+    /**
+     * Constructor to create a column type enum field.
+     *
+     * @param clazz             The class type of the column, what the data is.
+     * @param comparator        The comparator for that column.
+     * @param tableCellRenderer The table cell renderer.
+     */
+    ColumnType(final Class clazz, final Comparator comparator, final TableCellRenderer tableCellRenderer, final TableCellEditor tableCellEditor) {
+        this.clazz = clazz;
+        this.comparator = comparator;
+        this.tableCellRenderer = tableCellRenderer;
+        this.tableCellEditor = tableCellEditor;
     }
 }
