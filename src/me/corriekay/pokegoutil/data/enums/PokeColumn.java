@@ -204,8 +204,8 @@ public enum PokeColumn {
     ITEM_TO_EVOLVE("Item To Evolve", ColumnType.EVOLVE_CHECK_BOX) {
         @Override
         public Object get(final Pokemon p) {
-            if (PokemonTab.mapPokemonItem.containsKey(p.getId())) {
-                return PokemonTab.mapPokemonItem.get(p.getId());
+            if (PokemonTab.MAP_POKEMON_ITEM.containsKey(p.getId())) {
+                return PokemonTab.MAP_POKEMON_ITEM.get(p.getId());
             }
             final List<EvolutionBranch> evolutionBranch = p.getEvolutionBranch();
             if (evolutionBranch != null && evolutionBranch.size() > 0) {
@@ -214,7 +214,7 @@ public enum PokeColumn {
                             && evoBranch.getEvolutionItemRequirement() != ItemId.UNRECOGNIZED 
                             && evoBranch.getEvolutionItemRequirement() != ItemId.ITEM_UNKNOWN) {
                         final EvolveHelper evolve = new EvolveHelper(evoBranch.getEvolution(), evoBranch.getEvolutionItemRequirement());
-                        PokemonTab.mapPokemonItem.put(p.getId(), evolve);
+                        PokemonTab.MAP_POKEMON_ITEM.put(p.getId(), evolve);
                         return evolve;
                     }
                 }

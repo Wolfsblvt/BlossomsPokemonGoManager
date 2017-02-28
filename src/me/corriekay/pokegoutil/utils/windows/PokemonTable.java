@@ -18,14 +18,10 @@ import javax.swing.table.TableRowSorter;
 
 import com.pokegoapi.api.pokemon.Pokemon;
 
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
-import me.corriekay.pokegoutil.utils.StringLiterals;
-import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
-import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 /**
  * The Pokémon Table. Extended JTable which displays all Pokémon and does the needed

@@ -74,28 +74,28 @@ import me.corriekay.pokegoutil.utils.windows.PokemonTableModel;
 /**
  * The main PokemonTab.
  */
-@SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
 
+    public static final Map<Long, EvolveHelper> MAP_POKEMON_ITEM = new HashMap<Long, EvolveHelper>();
+    private static final long serialVersionUID = -3356302801659055820L;
     private static PokemonGo go;
-    private final PokemonTable pt;
-    private static final JTextField searchBar = new JTextField("");
-    private static final JTextField ivTransfer = new JTextField("", 20);
-    private static final ConfigNew config = ConfigNew.getConfig();
-    public static final HashMap<Long, EvolveHelper> mapPokemonItem = new HashMap<Long, EvolveHelper>();
-
+    
     // Used constants
     private static final int WHEN_TO_SHOW_SELECTION_TITLE = 2;
     private static final String GYM_SKIPPED_MESSAGE_UNFORMATTED = "%s with %d CP is in gym, skipping.";
     private static final int POPUP_WIDTH = 500;
     private static final int POPUP_HEIGHT = 400;
     private static final int MIN_FONT_SIZE = 2;
-    private List<Integer> selectedRows;
+
+    private final PokemonTable pt;
+    private List<Integer> selectedRowsList;
+    private final JTextField searchBar = new JTextField("");
+    private final JTextField ivTransfer = new JTextField("", 20);
+    private final ConfigNew config = ConfigNew.getConfig();
 
     /**
      * Creates an instance of the PokemonTab.
-     *
-     * @param go The go api class.
+     * @param goInstance The go api class.
      */
     public PokemonTab(final PokemonGo goInstance) {
         super();
@@ -117,8 +117,8 @@ public class PokemonTab extends JPanel {
                 return;
             }
             if (event.getSource() == pt.getSelectionModel() && pt.getRowSelectionAllowed()) {
-                if(pt.getSelectionModel().getAnchorSelectionIndex() > -1 && pt.getSelectionModel().getLeadSelectionIndex() > -1) {
-                    selectedRows = Arrays.stream(pt.getSelectedRows()).boxed().collect(Collectors.toList());
+                if (pt.getSelectionModel().getAnchorSelectionIndex() > -1 && pt.getSelectionModel().getLeadSelectionIndex() > -1) {
+                    selectedRowsList = Arrays.stream(pt.getSelectedRows()).boxed().collect(Collectors.toList());
                 }
                 final int selectedRows = pt.getSelectedRowCount();
                 if (selectedRows >= WHEN_TO_SHOW_SELECTION_TITLE) {
@@ -528,11 +528,10 @@ public class PokemonTab extends JPanel {
                 }
 
                 final EvolutionResult evolutionResultWrapper;
-                EvolveHelper evolve = mapPokemonItem.get(poke.getId());
+                final EvolveHelper evolve = MAP_POKEMON_ITEM.get(poke.getId());
                 if (evolve != null && evolve.isEvolveWithItem()) {
                     evolutionResultWrapper = poke.evolve(evolve.getItemToEvolveId());
-                }
-                else {
+                } else {
                     evolutionResultWrapper = poke.evolve();
                 }
                 if (evolutionResultWrapper.isSuccessful()) {
@@ -937,8 +936,8 @@ public class PokemonTab extends JPanel {
                 case EVOLVE:
                     str += " Cost: " + p.getCandiesToEvolve();
                     str += p.getCandiesToEvolve() > 1 ? " Candies" : " Candy";
-                    if (mapPokemonItem.containsKey(p.getId())) {
-                        EvolveHelper evolve = mapPokemonItem.get(p.getId());
+                    if (MAP_POKEMON_ITEM.containsKey(p.getId())) {
+                        final EvolveHelper evolve = MAP_POKEMON_ITEM.get(p.getId());
                         if (evolve.isEvolveWithItem()) {
                             str += " Evolving to " + evolve.getPokemonToEvolve() + " using " + evolve.getItemToEvolve();
                         }
@@ -1026,19 +1025,23 @@ public class PokemonTab extends JPanel {
         return pokes;
     }
     
-    public void removeSelection(Pokemon p) {
+    /**
+     * Helper method to remove the pokemon from the selectedRowsList.
+     * @param p pokemon that will be removed from the list
+     */
+    public void removeSelection(final Pokemon p) {
         final PokemonTableModel model = (PokemonTableModel) pt.getModel();
-        int index = model.getIndexByPokemon(p);
+        final int index = model.getIndexByPokemon(p);
         if (index > 0) {
-            selectedRows.remove(index);
+            selectedRowsList.remove(index);
         }
     }
 
     public void refreshList() {
         try {
             pt.constructNewTableModel(go.getInventories().getPokebank().getPokemons());
-            if (selectedRows != null) {
-                for (Integer index : selectedRows) {
+            if (selectedRowsList != null) {
+                for (Integer index : selectedRowsList) {
                     pt.addRowSelectionInterval(index, index);
                 }
             }
@@ -1046,11 +1049,26 @@ public class PokemonTab extends JPanel {
             e.printStackTrace();
         }
     }
+
+    public static ItemBag getPlayerItems() {
+        return go.getInventories().getItemBag();
+    }
+
+    public List<String> getColumnErrors() {
+        return pt.getColumnErrors();
+    }
+
+    public void saveColumnOrder() {
+        pt.saveColumnOrderToConfig();
+    }
     
     /**
      * Provide custom formatting for the list of patterns.
      */
     private class ReplacePatternRenderer extends JLabel implements ListCellRenderer<ReplacePattern> {
+
+        private static final long serialVersionUID = -7057892212235868835L;
+
         /**
          * Constructor to create a ReplacePatternRenderer.
          */
@@ -1077,18 +1095,5 @@ public class PokemonTab extends JPanel {
 
             return this;
         }
-    }
-
-    public List<String> getColumnErrors() {
-        return pt.getColumnErrors();
-    }
-
-    public void saveColumnOrder() {
-        pt.saveColumnOrderToConfig();
-    }
-
-    public static ItemBag getPlayerItems()
-    {
-        return go.getInventories().getItemBag();
     }
 }
