@@ -18,10 +18,11 @@ public enum ConfigKey {
     WINDOW_HEIGHT("options.window.height", 650, Type.INTEGER),
     WINDOW_POS_X("options.window.posx", 0, Type.INTEGER),
     WINDOW_POS_Y("options.window.posy", 0, Type.INTEGER),
+    WINDOW_MAXIMIZE("options.window.maximize", false, Type.BOOLEAN),
 
-    SORT_COLINDEX_1("options.sort.1.colIndex", 0, Type.INTEGER),
+    SORT_ENUM_1("options.sort.1.column", null, Type.STRING),
     SORT_ORDER_1("options.sort.1.order", SortOrder.ASCENDING.toString(), Type.STRING),
-    SORT_COLINDEX_2("options.sort.2.colIndex", 12, Type.INTEGER),
+    SORT_ENUM_2("options.sort.2.column", null, Type.STRING),
     SORT_ORDER_2("options.sort.2.order", SortOrder.DESCENDING.toString(), Type.STRING),
 
     RENAME_PATTERN("options.pattern.rename", "", Type.STRING),
