@@ -3,7 +3,6 @@ package me.corriekay.pokegoutil.data.enums;
 import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 
-import javax.swing.DefaultCellEditor;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
@@ -135,6 +134,7 @@ public enum ColumnType {
      * @param clazz             The class type of the column, what the data is.
      * @param comparator        The comparator for that column.
      * @param tableCellRenderer The table cell renderer.
+     * @param tableCellEditor   The table cell editor.
      */
     ColumnType(final Class clazz, final Comparator comparator, final TableCellRenderer tableCellRenderer, final TableCellEditor tableCellEditor) {
         this.clazz = clazz;

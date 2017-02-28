@@ -17,14 +17,18 @@ import me.corriekay.pokegoutil.windows.PokemonTab;
 /**
  * Provide custom formatting for the moveset ranking columns while allowing sorting on original values.
  */
-@SuppressWarnings("serial")
 public class CheckBoxCellRenderer extends JPanel implements TableCellRenderer {
+
     // Padding left and right can be overwritten by custom renderer.
     protected static final int PADDING_LEFT = 3;
     protected static final int PADDING_RIGHT = 3;
+    private static final long serialVersionUID = 1340158676852621702L;
 
     private JCheckBox checkBox;
 
+    /**
+     * Default constructor for creating the component properly.
+     */
     public CheckBoxCellRenderer() {
         super(new FlowLayout(FlowLayout.LEADING, 0, 0));
         checkBox = new JCheckBox();
@@ -33,23 +37,21 @@ public class CheckBoxCellRenderer extends JPanel implements TableCellRenderer {
         add(checkBox);
     }
 
-
     @Override
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,
                                                    final boolean hasFocus, final int rowIndex, final int columnIndex) {
         if (value != null) {
-            EvolveHelper evolve = (EvolveHelper) value;
+            final EvolveHelper evolve = (EvolveHelper) value;
             checkBox.setVisible(true);
             checkBox.setSelected(evolve.isEvolveWithItem());
-            int itemCount = PokemonTab.getPlayerItems().getItem(evolve.getItemToEvolveId()).getCount();
+            final int itemCount = PokemonTab.getPlayerItems().getItem(evolve.getItemToEvolveId()).getCount();
             checkBox.setText(evolve.toString() + " [" + itemCount + "]");
             checkBox.setEnabled(true);
             if (itemCount <= 0) {
                 checkBox.setEnabled(false);
                 checkBox.setOpaque(false);
             }
-        }
-        else {
+        } else {
             checkBox.setEnabled(true);
             checkBox.setText("");
             checkBox.setVisible(false);
@@ -91,6 +93,10 @@ public class CheckBoxCellRenderer extends JPanel implements TableCellRenderer {
         }
     }
     
+    /**
+     * Return the checkBox component.
+     * @return checkBox component 
+     */
     public JCheckBox getCheckBox() {
         return checkBox;
     }

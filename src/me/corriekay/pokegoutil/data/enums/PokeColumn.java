@@ -141,7 +141,7 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             final PokemonMove move = p.getMove1();
-            PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
+            final PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
             return PokemonUtils.formatType(type);
         }
     },
@@ -149,7 +149,7 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             final PokemonMove move = p.getMove2();
-            PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
+            final PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
             return PokemonUtils.formatType(type);
         }
     },
@@ -207,13 +207,13 @@ public enum PokeColumn {
             if (PokemonTab.mapPokemonItem.containsKey(p.getId())) {
                 return PokemonTab.mapPokemonItem.get(p.getId());
             }
-            List<EvolutionBranch> evolutionBranch = p.getEvolutionBranch();
-            if (evolutionBranch != null && evolutionBranch.size()>0) {
-                for (EvolutionBranch evoBranch : evolutionBranch) {
-                    if(evoBranch.getEvolutionItemRequirement()!=null && 
-                            evoBranch.getEvolutionItemRequirement()!=ItemId.UNRECOGNIZED && 
-                            evoBranch.getEvolutionItemRequirement()!=ItemId.ITEM_UNKNOWN) {
-                        EvolveHelper evolve = new EvolveHelper(evoBranch.getEvolution(), evoBranch.getEvolutionItemRequirement());
+            final List<EvolutionBranch> evolutionBranch = p.getEvolutionBranch();
+            if (evolutionBranch != null && evolutionBranch.size() > 0) {
+                for (final EvolutionBranch evoBranch : evolutionBranch) {
+                    if (evoBranch.getEvolutionItemRequirement() != null 
+                            && evoBranch.getEvolutionItemRequirement() != ItemId.UNRECOGNIZED 
+                            && evoBranch.getEvolutionItemRequirement() != ItemId.ITEM_UNKNOWN) {
+                        final EvolveHelper evolve = new EvolveHelper(evoBranch.getEvolution(), evoBranch.getEvolutionItemRequirement());
                         PokemonTab.mapPokemonItem.put(p.getId(), evolve);
                         return evolve;
                     }
@@ -225,7 +225,7 @@ public enum PokeColumn {
     STARDUST_TO_POWERUP("Stardust", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
-            int startdust = p.getStardustCostsForPowerup();
+            final int startdust = p.getStardustCostsForPowerup();
             if (startdust != 0) {
                 return String.valueOf(startdust);
             } else {

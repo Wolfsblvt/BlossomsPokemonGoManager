@@ -11,28 +11,31 @@ import javax.swing.table.TableCellEditor;
 import me.corriekay.pokegoutil.utils.helpers.EvolveHelper;
 
 /**
- * Provide custom formatting for the moveset ranking columns while allowing sorting on original values.
+ * Provide a checkbox editor for clicking in the checkBox renderer and editing the content.
  */
-@SuppressWarnings("serial")
 class CheckBoxCellEditor extends AbstractCellEditor implements TableCellEditor, ItemListener {
 
-    private CheckBoxCellRenderer vr = new CheckBoxCellRenderer();
+    private static final long serialVersionUID = 7138280995796928980L;
+    private CheckBoxCellRenderer checkBoxCellRenderer = new CheckBoxCellRenderer();
     private EvolveHelper evolve;
 
-    public CheckBoxCellEditor() {
-        vr.getCheckBox().addItemListener(this);
+    /**
+     * Default constructor to add a listener in the checkBox renderer.
+     */
+    CheckBoxCellEditor() {
+        checkBoxCellRenderer.getCheckBox().addItemListener(this);
     }
 
     @Override
     public Object getCellEditorValue() {
-        return vr.getCheckBox().isSelected();
+        return checkBoxCellRenderer.getCheckBox().isSelected();
     }
 
     @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int col) {
+    public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int col) {
         if (value != null) {
-            CheckBoxCellRenderer chcr = (CheckBoxCellRenderer) vr.getTableCellRendererComponent(table, value, isSelected, true, row, col);
-            if(chcr.getCheckBox().isEnabled()) {
+            final CheckBoxCellRenderer chcr = (CheckBoxCellRenderer) checkBoxCellRenderer.getTableCellRendererComponent(table, value, isSelected, true, row, col);
+            if (chcr.getCheckBox().isEnabled()) {
                 evolve = (EvolveHelper) value;
                 return chcr;
             }
@@ -41,7 +44,7 @@ class CheckBoxCellEditor extends AbstractCellEditor implements TableCellEditor, 
     }
 
     @Override
-    public void itemStateChanged(ItemEvent e) {
+    public void itemStateChanged(final ItemEvent e) {
         if (evolve != null) {
             evolve.setEvolveWithItem(e.getStateChange() == ItemEvent.SELECTED);
             evolve = null;

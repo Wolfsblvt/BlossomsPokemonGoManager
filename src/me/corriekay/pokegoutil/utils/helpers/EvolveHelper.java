@@ -5,7 +5,7 @@ import POGOProtos.Inventory.Item.ItemIdOuterClass.ItemId;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 /**
- * Helper class for evolving with itens
+ * Helper class for evolving with itens.
  */
 public final class EvolveHelper implements Comparable<EvolveHelper> {
 
@@ -13,7 +13,12 @@ public final class EvolveHelper implements Comparable<EvolveHelper> {
     private ItemId itemToEvolve;
     private boolean evolveWithItem;
     
-    public EvolveHelper(PokemonId pokemon, ItemId item) {
+    /**
+     * Default constructor.
+     * @param pokemon the pokemon that require item to evolve
+     * @param item required to evolve to pokemon
+     */
+    public EvolveHelper(final PokemonId pokemon, final ItemId item) {
         this.pokemonToEvolve = pokemon;
         this.itemToEvolve = item;
         this.evolveWithItem = false;
@@ -36,7 +41,7 @@ public final class EvolveHelper implements Comparable<EvolveHelper> {
         return this.itemToEvolve;
     }
 
-    public void setItemToEvolve(ItemId itemToEvolve) {
+    public void setItemToEvolve(final ItemId itemToEvolve) {
         this.itemToEvolve = itemToEvolve;
     }
 
@@ -44,12 +49,12 @@ public final class EvolveHelper implements Comparable<EvolveHelper> {
         return evolveWithItem;
     }
 
-    public void setEvolveWithItem(boolean evolveWithItem) {
+    public void setEvolveWithItem(final boolean evolveWithItem) {
         this.evolveWithItem = evolveWithItem;
     }
 
     @Override
-    public int compareTo(EvolveHelper o) {
+    public int compareTo(final EvolveHelper o) {
         return this.toString().compareTo(o.toString());
     }
 }

@@ -197,53 +197,13 @@ public class PokemonTable extends JTable {
     }
 
     /**
-     * Function for filtering the table using the proper RowFilter of Java
+     * Function for filtering the table using the proper RowFilter of Java.
      * @param filterText the text to be filtered
      */
-    public void filterTable(String filterText) {
+    public void filterTable(final String filterText) {
         RowFilter<PokemonTableModel, Integer> rowFilter = null;
-        if (filterText != null && filterText != "") {
-            rowFilter = new RowFilter<PokemonTableModel, Integer>() {
-                @Override
-                public boolean include(javax.swing.RowFilter.Entry<? extends PokemonTableModel, ? extends Integer> entry) {
-                    Pokemon poke = entry.getModel().getPokemonByIndexNotConverting(entry.getIdentifier());
-                    if(poke != null) {
-                        final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
-                        String familyName = "";
-                        if (useFamilyName) {
-                            // Try translating family name
-                            try {
-                                final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
-                                familyName = PokemonUtils.getLocalPokeName(familyPokemonId.getNumber());
-                            } catch (final IllegalArgumentException e) {
-                                familyName = poke.getPokemonFamily().toString();
-                            }
-                        }
-
-                        String searchme = Utilities.concatString(',',
-                                PokemonUtils.getLocalPokeName(poke),
-                                ((useFamilyName) ? familyName : ""),
-                                poke.getNickname(),
-                                poke.getSettings().getType().toString(),
-                                poke.getSettings().getType2().toString(),
-                                poke.getMove1().toString(),
-                                poke.getMove2().toString(),
-                                poke.getPokeball().toString());
-                        searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
-                                .replaceAll("ITEM_", "").replaceAll(StringLiterals.POKEMON_TYPE_PREFIX, "").replaceAll(StringLiterals.UNDERSCORE, "")
-                                .replaceAll(StringLiterals.SPACE, "").toLowerCase();
-
-                        final String[] terms = filterText.split(";");
-                        for (final String s : terms) {
-                            if (searchme.contains(s)) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                    return true;
-                }
-            };
+        if (filterText != null && !"".equals(filterText)) {
+            rowFilter = new PokemonRowFilter(filterText);
         }
         trs.setRowFilter(rowFilter);
     }

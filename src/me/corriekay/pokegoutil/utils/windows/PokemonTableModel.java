@@ -10,15 +10,24 @@ import org.apache.commons.lang3.mutable.MutableInt;
 import com.pokegoapi.api.pokemon.Pokemon;
 
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
+import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
 
-@SuppressWarnings( {"serial"})
-
+/**
+ * Extended from AbstractTableModel to provide useful methos to PokemonTabel.
+ */
 public class PokemonTableModel extends AbstractTableModel {
 
-    PokemonTable pt;
+    private static final long serialVersionUID = -1942850053142414172L;
+
+    private PokemonTable pt;
 
     private final ArrayList<Pokemon> pokeCol = new ArrayList<>();
 
+    /**
+     * Default constructor.
+     * @param pokes list of pokemons to display
+     * @param pt the pokemonTabel instance
+     */
     PokemonTableModel(final List<Pokemon> pokes, final PokemonTable pt) {
         this.pt = pt;
 
@@ -39,11 +48,13 @@ public class PokemonTableModel extends AbstractTableModel {
             pokeCol.add(i.getValue(), p);
 
             for (final PokeColumn column : PokeColumn.values()) {
+                // Reason: To avoid future problems inside whatever columns
+                // noinspection CheckStyle
                 try {
                     column.data.add(i.getValue(), column.get(p));
                 } catch (NullPointerException e) {
-                    System.out.println("Error getting data for column: " + column.heading);
-                    e.printStackTrace();
+                    System.out.println("Error getting data for column: " + column.heading + " and value: " + i.getValue());
+                    ConsolePrintStream.printException(e);
                 }
             }
 
@@ -60,29 +71,37 @@ public class PokemonTableModel extends AbstractTableModel {
         }
     }
 
+    /**
+     * Return the Index of the pokemon in the list.
+     * @param p pokemon that should have the index returned
+     * @return index of the pokemon p
+     */
     public int getIndexByPokemon(final Pokemon p) {
-        try {
-            return pokeCol.indexOf(p);
-        } catch (final Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
+        return pokeCol.indexOf(p);
     }
     
-    public Pokemon getPokemonByIndex(final int i) {
+    /**
+     * Return the pokemon by the index after converted by "convertRowIndexToModel".
+     * @param index index of the pokemon that should be returned
+     * @return the pokemon in the index i
+     */
+    public Pokemon getPokemonByIndex(final int index) {
         try {
-            return pokeCol.get(pt.convertRowIndexToModel(i));
-        } catch (final Exception e) {
-            e.printStackTrace();
+            return pokeCol.get(pt.convertRowIndexToModel(index));
+        } catch (final IndexOutOfBoundsException e) {
             return null;
         }
     }
-    
-    public Pokemon getPokemonByIndexNotConverting(final int i) {
+
+    /**
+     * Return the pokemon by the index without converting by "convertRowIndexToModel".
+     * @param index index of the pokemon that should be returned
+     * @return the pokemon in the index i
+     */
+    public Pokemon getPokemonByIndexNotConverting(final int index) {
         try {
-            return pokeCol.get(i);
-        } catch (final Exception e) {
-            e.printStackTrace();
+            return pokeCol.get(index);
+        } catch (final IndexOutOfBoundsException e) {
             return null;
         }
     }
