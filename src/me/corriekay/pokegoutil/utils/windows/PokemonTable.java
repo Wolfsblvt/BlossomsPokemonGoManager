@@ -36,6 +36,8 @@ public class PokemonTable extends JTable {
     public static final int COLUMN_MARGIN = 3;
     public static final int ROW_HEIGHT_PADDING = ConfigNew.getConfig().getInt(ConfigKey.ROW_PADDING);
 
+    private static final String COLUMN_SEPARATOR = ",";
+
     private final ConfigNew config = ConfigNew.getConfig();
 
     private PokemonTableModel ptm;
@@ -55,20 +57,6 @@ public class PokemonTable extends JTable {
         ptm = new PokemonTableModel(go, new ArrayList<>(), this);
         setModel(ptm);
 
-        // Load sort configs
-        final int sortColIndex1 = config.getInt(ConfigKey.SORT_COLINDEX_1);
-        final int sortColIndex2 = config.getInt(ConfigKey.SORT_COLINDEX_2);
-        SortOrder sortOrder1;
-        SortOrder sortOrder2;
-        try {
-            sortOrder1 = SortOrder.valueOf(config.getString(ConfigKey.SORT_ORDER_1));
-            sortOrder2 = SortOrder.valueOf(config.getString(ConfigKey.SORT_ORDER_2));
-        } catch (final IllegalArgumentException e) {
-            e.printStackTrace();
-            sortOrder1 = SortOrder.ASCENDING;
-            sortOrder2 = SortOrder.ASCENDING;
-        }
-
         final TableRowSorter<TableModel> trs = new TableRowSorter<>(ptm);
 
         // Set the comparator for each column that is defined.
@@ -78,9 +66,10 @@ public class PokemonTable extends JTable {
 
         setRowSorter(trs);
 
+        // Load/restore sort order from config
         final List<SortKey> sortKeys = new ArrayList<>();
-        sortKeys.add(new SortKey(sortColIndex1, sortOrder1));
-        sortKeys.add(new SortKey(sortColIndex2, sortOrder2));
+        recreateSortKeyFromConfig(sortKeys, ConfigKey.SORT_ENUM_1, ConfigKey.SORT_ORDER_1);
+        recreateSortKeyFromConfig(sortKeys, ConfigKey.SORT_ENUM_2, ConfigKey.SORT_ORDER_2);
         trs.setSortKeys(sortKeys);
 
         // Add listener to save those sorting values
@@ -91,12 +80,14 @@ public class PokemonTable extends JTable {
                 if (keys.size() > 0) {
                     final SortKey prim = keys.get(0);
                     config.setString(ConfigKey.SORT_ORDER_1, prim.getSortOrder().toString());
-                    config.setInt(ConfigKey.SORT_COLINDEX_1, prim.getColumn());
+                    final String sortEnum = PokeColumn.getForHeading(ptm.getColumnName(prim.getColumn())).name();
+                    config.setString(ConfigKey.SORT_ENUM_1, sortEnum);
                 }
                 if (keys.size() > 1) {
                     final SortKey sec = keys.get(1);
                     config.setString(ConfigKey.SORT_ORDER_2, sec.getSortOrder().toString());
-                    config.setInt(ConfigKey.SORT_COLINDEX_2, sec.getColumn());
+                    final String sortEnum = PokeColumn.getForHeading(ptm.getColumnName(sec.getColumn())).name();
+                    config.setString(ConfigKey.SORT_ENUM_2, sortEnum);
                 }
             });
 
@@ -105,7 +96,7 @@ public class PokemonTable extends JTable {
             columnModel.getColumn(column.id).setCellRenderer(column.getCellRenderer());
         }
         try {
-            rearrangeColumnOrder();
+            restoreColumnOrder();
         }
         catch(Exception exc) {
             System.out.println("Oooops, something went wrong with table order rearranging!");
@@ -113,14 +104,15 @@ public class PokemonTable extends JTable {
         }
     }
 
-    private void rearrangeColumnOrder()
-    {
+    /**
+     * Loads the column order settings from configuration and applies them to the table.
+     */
+    private void restoreColumnOrder() {
         List<String> myColumnEnumNames = new LinkedList<String>();
-        String config = ConfigNew.getConfig().getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
-        if (config != null && ! config.isEmpty()) {
-            myColumnEnumNames.addAll(Arrays.asList(config.split(",")));
-        }
-        else {
+        final String columnOrder = config.getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
+        if (columnOrder != null && !columnOrder.isEmpty()) {
+            myColumnEnumNames.addAll(Arrays.asList(columnOrder.split(COLUMN_SEPARATOR)));
+        } else {
             myColumnEnumNames.addAll(Stream.of(PokeColumn.values())
                     .map(Enum::toString).collect(Collectors.toList()));
         }
@@ -144,6 +136,10 @@ public class PokemonTable extends JTable {
         }
     }
 
+    /**
+     * Stores the column order to configuration file, as a list of ENUM names
+     * globbed together separated by COLUMN_SEPARATOR.
+     */
     public void saveColumnOrderToConfig() {
         List<String> enumNames = new LinkedList<String>();
         Enumeration<TableColumn> e = this.getColumnModel().getColumns();
@@ -157,7 +153,7 @@ public class PokemonTable extends JTable {
                 // can this happen in production use?
             }
         }
-        String columnOrderEnums = String.join(",", enumNames);
+        final String columnOrderEnums = String.join(COLUMN_SEPARATOR, enumNames);
         ConfigNew.getConfig().setString(ConfigKey.POKEMONTABLE_COLUMNORDER, columnOrderEnums);
     }
 
@@ -168,6 +164,52 @@ public class PokemonTable extends JTable {
      */
     public List<String> getColumnErrors() {
         return columnErrors;
+    }
+
+    /**
+     * Reads a sort column and order from config, creates a sortkey from that and adds
+     * it to the given sortkey list. In case of problems with reading key info or converting
+     * that into Table index etc., no key is created/added.
+     *
+     * @param sortKeys         The list into which to add the created sort key
+     * @param sortcolumnCfgKey The config key to look up the sort column (Enum)
+     * @param sortorderCfgKey  The config key to look up the sort order  (ASC/DESC)
+     */
+    private void recreateSortKeyFromConfig(final List<SortKey> sortKeys,
+            final ConfigKey sortcolumnCfgKey, final ConfigKey sortorderCfgKey) {
+
+        final String sortColumnEnumName = config.getString(sortcolumnCfgKey);
+        final String sortOrderConfigValue = config.getString(sortorderCfgKey);
+        if (sortColumnEnumName != null && sortOrderConfigValue != null) {
+            try {
+                // resolving Column's enum name to it's heading,
+                // and then ask from the table for the index nr of that heading
+                final PokeColumn sortColumn = PokeColumn.valueOf(sortColumnEnumName);
+                final int sortColIndex = getIndexForColumnEnum(sortColumn);
+                // ASCENDING or DESCENDING
+                final SortOrder sortOrder = SortOrder.valueOf(sortOrderConfigValue);
+                sortKeys.add(new SortKey(sortColIndex, sortOrder));
+            } catch (final IllegalArgumentException e) {
+                System.out.println("Error when restoring sort keys. Enum='"
+                        + sortColumnEnumName + "', sort order='" + sortOrderConfigValue + "'");
+                System.out.println("This sort key will not be restored.");
+            }
+        }
+    }
+
+    /**
+     * Queries from the JTable/table model the index of a column for which
+     * we know only the enum name.
+     *
+     * @param column The PokeColum enum instance
+     * @return the wanted index
+     */
+    private int getIndexForColumnEnum(final PokeColumn column) {
+        final TableColumn tableColumn = this.getColumn(column.heading);
+        if (tableColumn != null) {
+            return this.convertColumnIndexToView(tableColumn.getModelIndex());
+        }
+        throw new IllegalArgumentException("No TableColumn found for PokeColumn '" + column.name());
     }
 
     /**

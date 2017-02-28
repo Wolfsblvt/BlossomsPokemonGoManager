@@ -99,9 +99,9 @@ public class PokemonGoMainWindow extends JFrame {
         if (!errors.isEmpty()) {
             System.out.println("WARNING: Some column names from config could not be recognized!");
             String configString = ConfigNew.getConfig().getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
-            System.out.println("Config string is: '" + configString + "'");
+            System.out.printf("Config string is: '%s'\n", configString);
             for (String wrongColumn : errors) {
-                System.out.println("  Name not recognized: '" + wrongColumn+"'");
+                System.out.printf("  Name not recognized: '%s'\n", wrongColumn);
             }
             System.out.println("Existing columns for which no match in configuation was found will appear at the end of the table.");
             JOptionPane.showMessageDialog(this, "Some columns from configuration file (column order) were not recognized."
