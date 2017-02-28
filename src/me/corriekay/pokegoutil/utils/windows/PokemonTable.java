@@ -153,7 +153,7 @@ public class PokemonTable extends JTable {
                 // can this happen in production use?
             }
         }
-        String columnOrderEnums = String.join(COLUMN_SEPARATOR, enumNames);
+        final String columnOrderEnums = String.join(COLUMN_SEPARATOR, enumNames);
         ConfigNew.getConfig().setString(ConfigKey.POKEMONTABLE_COLUMNORDER, columnOrderEnums);
     }
 
@@ -185,9 +185,9 @@ public class PokemonTable extends JTable {
                 // resolving Column's enum name to it's heading,
                 // and then ask from the table for the index nr of that heading
                 final PokeColumn sortColumn = PokeColumn.valueOf(sortColumnEnumName);
-                int sortColIndex = getIndexForColumnEnum(sortColumn);
+                final int sortColIndex = getIndexForColumnEnum(sortColumn);
                 // ASCENDING or DESCENDING
-                SortOrder sortOrder = SortOrder.valueOf(sortOrderConfigValue);
+                final SortOrder sortOrder = SortOrder.valueOf(sortOrderConfigValue);
                 sortKeys.add(new SortKey(sortColIndex, sortOrder));
             } catch (final IllegalArgumentException e) {
                 System.out.println("Error when restoring sort keys. Enum='"
@@ -204,8 +204,8 @@ public class PokemonTable extends JTable {
      * @param column The PokeColum enum instance
      * @return the wanted index
      */
-    private int getIndexForColumnEnum(PokeColumn column) {
-        TableColumn tableColumn = this.getColumn(column.heading);
+    private int getIndexForColumnEnum(final PokeColumn column) {
+        final TableColumn tableColumn = this.getColumn(column.heading);
         if (tableColumn != null) {
             return this.convertColumnIndexToView(tableColumn.getModelIndex());
         }
