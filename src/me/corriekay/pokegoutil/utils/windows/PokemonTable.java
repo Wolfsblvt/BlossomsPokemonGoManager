@@ -80,13 +80,13 @@ public class PokemonTable extends JTable {
                 if (keys.size() > 0) {
                     final SortKey prim = keys.get(0);
                     config.setString(ConfigKey.SORT_ORDER_1, prim.getSortOrder().toString());
-                    String sortEnum = PokeColumn.getForHeading(ptm.getColumnName(prim.getColumn())).name();
+                    final String sortEnum = PokeColumn.getForHeading(ptm.getColumnName(prim.getColumn())).name();
                     config.setString(ConfigKey.SORT_ENUM_1, sortEnum);
                 }
                 if (keys.size() > 1) {
                     final SortKey sec = keys.get(1);
                     config.setString(ConfigKey.SORT_ORDER_2, sec.getSortOrder().toString());
-                    String sortEnum = PokeColumn.getForHeading(ptm.getColumnName(sec.getColumn())).name();
+                    final String sortEnum = PokeColumn.getForHeading(ptm.getColumnName(sec.getColumn())).name();
                     config.setString(ConfigKey.SORT_ENUM_2, sortEnum);
                 }
             });
@@ -94,7 +94,8 @@ public class PokemonTable extends JTable {
         // Add cell renderers
         for (final PokeColumn column : PokeColumn.values()) {
             columnModel.getColumn(column.id).setCellRenderer(column.getCellRenderer());
-        } try {
+        }
+        try {
             restoreColumnOrder();
         }
         catch(Exception exc) {
@@ -104,11 +105,11 @@ public class PokemonTable extends JTable {
     }
 
     /**
-     * Loads the column order settings from configuration and applies them to the table
+     * Loads the column order settings from configuration and applies them to the table.
      */
     private void restoreColumnOrder() {
         List<String> myColumnEnumNames = new LinkedList<String>();
-        String columnOrder = config.getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
+        final String columnOrder = config.getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
         if (columnOrder != null && !columnOrder.isEmpty()) {
             myColumnEnumNames.addAll(Arrays.asList(columnOrder.split(COLUMN_SEPARATOR)));
         } else {
@@ -137,7 +138,7 @@ public class PokemonTable extends JTable {
 
     /**
      * Stores the column order to configuration file, as a list of ENUM names
-     * globbed together separated by COLUMN_SEPARATOR
+     * globbed together separated by COLUMN_SEPARATOR.
      */
     public void saveColumnOrderToConfig() {
         List<String> enumNames = new LinkedList<String>();
@@ -174,40 +175,41 @@ public class PokemonTable extends JTable {
      * @param sortcolumnCfgKey The config key to look up the sort column (Enum)
      * @param sortorderCfgKey  The config key to look up the sort order  (ASC/DESC)
      */
-    private void recreateSortKeyFromConfig(List<SortKey> sortKeys, ConfigKey sortcolumnCfgKey, ConfigKey sortorderCfgKey) {
+    private void recreateSortKeyFromConfig(final List<SortKey> sortKeys,
+            final ConfigKey sortcolumnCfgKey, final ConfigKey sortorderCfgKey) {
 
-        String sortColumnEnumName = config.getString(sortcolumnCfgKey);
-        String sortOrderConfigValue = config.getString(sortorderCfgKey);
-        if (sortColumnEnumName == null || sortOrderConfigValue == null) {
-            return;
-        }
-        try {
-            // resolving Column's enum name to it's heading,
-            // and then ask from the table for the index nr of that heading
-            PokeColumn sortColumn = PokeColumn.valueOf(sortColumnEnumName);
-            int sortColIndex = getIndexForColumnEnum(sortColumn);
-            // ASCENDING or DESCENDING
-            SortOrder sortOrder = SortOrder.valueOf(sortOrderConfigValue);
-            sortKeys.add(new SortKey(sortColIndex, sortOrder));
-        } catch (final IllegalArgumentException e) {
-            System.out.println("Error when restoring sort keys. Enum='"
-                    + sortColumnEnumName + "', sort order='" + sortOrderConfigValue + "'");
-            System.out.println("This sort key will not be restored.");
+        final String sortColumnEnumName = config.getString(sortcolumnCfgKey);
+        final String sortOrderConfigValue = config.getString(sortorderCfgKey);
+        if (sortColumnEnumName != null && sortOrderConfigValue != null) {
+            try {
+                // resolving Column's enum name to it's heading,
+                // and then ask from the table for the index nr of that heading
+                final PokeColumn sortColumn = PokeColumn.valueOf(sortColumnEnumName);
+                int sortColIndex = getIndexForColumnEnum(sortColumn);
+                // ASCENDING or DESCENDING
+                SortOrder sortOrder = SortOrder.valueOf(sortOrderConfigValue);
+                sortKeys.add(new SortKey(sortColIndex, sortOrder));
+            } catch (final IllegalArgumentException e) {
+                System.out.println("Error when restoring sort keys. Enum='"
+                        + sortColumnEnumName + "', sort order='" + sortOrderConfigValue + "'");
+                System.out.println("This sort key will not be restored.");
+            }
         }
     }
 
     /**
-     * Query from the JTable/table model the index of a column for which we know only the enum name
+     * Queries from the JTable/table model the index of a column for which
+     * we know only the enum name.
      *
      * @param column The PokeColum enum instance
      * @return the wanted index
      */
     private int getIndexForColumnEnum(PokeColumn column) {
-        TableColumn c = this.getColumn(column.heading);
-        if (c != null) {
-            return this.convertColumnIndexToView(c.getModelIndex());
+        TableColumn tableColumn = this.getColumn(column.heading);
+        if (tableColumn != null) {
+            return this.convertColumnIndexToView(tableColumn.getModelIndex());
         }
-        throw(new IllegalArgumentException("No TableColumn found for PokeColumn '" + column.name()));
+        throw new IllegalArgumentException("No TableColumn found for PokeColumn '" + column.name());
     }
 
     /**
