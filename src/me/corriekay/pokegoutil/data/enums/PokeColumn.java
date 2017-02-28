@@ -16,7 +16,6 @@ import com.pokegoapi.main.PokemonMeta;
 import POGOProtos.Enums.PokemonIdOuterClass;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 import POGOProtos.Enums.PokemonTypeOuterClass.PokemonType;
-import POGOProtos.Settings.Master.MoveSettingsOuterClass.MoveSettings;
 import me.corriekay.pokegoutil.utils.AutoIncrementer;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
@@ -125,13 +124,13 @@ public enum PokeColumn {
     DPS_1("DPS 1", ColumnType.DPS1VALUE) {
         @Override
         public Object get(final Pokemon p) {
-            return Math.round(10.0 * PokemonCalculationUtils.dpsForMove(p, true)) / 10.0;
+            return PokemonCalculationUtils.dpsForMove(p, true);
         }
     },
     DPS_2("DPS 2", ColumnType.DPS2VALUE) {
         @Override
         public Object get(final Pokemon p) {
-            return Math.round(10.0 * PokemonCalculationUtils.dpsForMove(p, false)) / 10.0;
+            return PokemonCalculationUtils.dpsForMove(p, false);
         }
     },
     MOVETYPE_1("Movetype 1", ColumnType.STRING) {

@@ -36,6 +36,8 @@ public class PokemonTable extends JTable {
     public static final int COLUMN_MARGIN = 3;
     public static final int ROW_HEIGHT_PADDING = ConfigNew.getConfig().getInt(ConfigKey.ROW_PADDING);
 
+    private static final String COLUMN_SEPARATOR = ",";
+
     private final ConfigNew config = ConfigNew.getConfig();
 
     private PokemonTableModel ptm;
@@ -92,8 +94,7 @@ public class PokemonTable extends JTable {
         // Add cell renderers
         for (final PokeColumn column : PokeColumn.values()) {
             columnModel.getColumn(column.id).setCellRenderer(column.getCellRenderer());
-        }
-        try {
+        } try {
             restoreColumnOrder();
         }
         catch(Exception exc) {
@@ -102,13 +103,15 @@ public class PokemonTable extends JTable {
         }
     }
 
+    /**
+     * Loads the column order settings from configuration and applies them to the table
+     */
     private void restoreColumnOrder() {
         List<String> myColumnEnumNames = new LinkedList<String>();
         String columnOrder = config.getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
-        if (columnOrder != null && ! columnOrder.isEmpty()) {
-            myColumnEnumNames.addAll(Arrays.asList(columnOrder.split(",")));
-        }
-        else {
+        if (columnOrder != null && !columnOrder.isEmpty()) {
+            myColumnEnumNames.addAll(Arrays.asList(columnOrder.split(COLUMN_SEPARATOR)));
+        } else {
             myColumnEnumNames.addAll(Stream.of(PokeColumn.values())
                     .map(Enum::toString).collect(Collectors.toList()));
         }
@@ -132,6 +135,10 @@ public class PokemonTable extends JTable {
         }
     }
 
+    /**
+     * Stores the column order to configuration file, as a list of ENUM names
+     * globbed together separated by COLUMN_SEPARATOR
+     */
     public void saveColumnOrderToConfig() {
         List<String> enumNames = new LinkedList<String>();
         Enumeration<TableColumn> e = this.getColumnModel().getColumns();
@@ -145,7 +152,7 @@ public class PokemonTable extends JTable {
                 // can this happen in production use?
             }
         }
-        String columnOrderEnums = String.join(",", enumNames);
+        String columnOrderEnums = String.join(COLUMN_SEPARATOR, enumNames);
         ConfigNew.getConfig().setString(ConfigKey.POKEMONTABLE_COLUMNORDER, columnOrderEnums);
     }
 
