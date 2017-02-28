@@ -2,12 +2,6 @@ package me.corriekay.pokegoutil.windows;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Point;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
 import java.text.NumberFormat;
 import java.util.List;
 
@@ -33,6 +27,9 @@ import me.corriekay.pokegoutil.utils.ui.SmartScroller;
 import me.corriekay.pokegoutil.utils.version.Updater;
 
 
+/**
+ * The main class.
+ */
 public class PokemonGoMainWindow extends JFrame {
 
     private static final long serialVersionUID = -6224748358995357643L;
@@ -44,7 +41,6 @@ public class PokemonGoMainWindow extends JFrame {
     private final PokemonGo go;
     private final PlayerProfile pp;
     private final JTabbedPane tab = new JTabbedPane();
-    private final ConfigNew config = ConfigNew.getConfig();
 
     private static final int textAreaHeight = 150;
 
@@ -65,7 +61,7 @@ public class PokemonGoMainWindow extends JFrame {
 
         setLayout(new BorderLayout());
         setIconImage(FileHelper.loadImage("icon/PokeBall-icon.png"));
-        handleLayoutFromConfig();
+        UIHelper.handleLayoutFromConfig(this);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         final PokemonTab pokemonTab = new PokemonTab(go);
@@ -113,51 +109,6 @@ public class PokemonGoMainWindow extends JFrame {
                     + "(The main window will appear after you close this dialog box.)",
                     "Configuration problem", JOptionPane.WARNING_MESSAGE);
         }
-    }
-
-    /**
-     * Get the layout configuration from config file and applies to the window
-     * Also add listeners to get future changes in this configs.
-     */
-    private void handleLayoutFromConfig() {
-        setBounds(0, 0, config.getInt(ConfigKey.WINDOW_WIDTH), config.getInt(ConfigKey.WINDOW_HEIGHT));
-        if (config.getBool(ConfigKey.WINDOW_MAXIMIZE)) {
-            setExtendedState(JFrame.MAXIMIZED_BOTH);
-        }
-
-        // add EventHandler to save new window size and position to
-        // config for the app to remember over restarts
-        this.addWindowStateListener(new WindowStateListener() {
-
-            @Override
-            public void windowStateChanged(final WindowEvent e) {
-                if ((e.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH) {
-                    config.setBool(ConfigKey.WINDOW_MAXIMIZE, true);
-                } else {
-                    config.setBool(ConfigKey.WINDOW_MAXIMIZE, false);
-                }
-            }
-        });
-        this.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(final ComponentEvent e) {
-                final JFrame w = (JFrame) e.getComponent();
-                config.setInt(ConfigKey.WINDOW_WIDTH, w.getWidth());
-                config.setInt(ConfigKey.WINDOW_HEIGHT, w.getHeight());
-            }
-
-            @Override
-            public void componentMoved(final ComponentEvent e) {
-                final JFrame w = (JFrame) e.getComponent();
-                config.setInt(ConfigKey.WINDOW_POS_X, w.getX());
-                config.setInt(ConfigKey.WINDOW_POS_Y, w.getY());
-            }
-        });
-
-        final Point pt = UIHelper.getLocationMidScreen(this);
-        final int posx = config.getInt(ConfigKey.WINDOW_POS_X, pt.x);
-        final int posy = config.getInt(ConfigKey.WINDOW_POS_Y, pt.y);
-        setLocation(posx, posy);
     }
 
     /**
