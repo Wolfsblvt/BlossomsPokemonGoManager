@@ -1,5 +1,6 @@
 package me.corriekay.pokegoutil.utils.windows;
 
+import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -16,11 +17,14 @@ import javax.swing.SortOrder;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import com.pokegoapi.api.pokemon.Pokemon;
 
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.utils.helpers.InvalidIvValueException;
 import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
 
 /**
@@ -29,14 +33,15 @@ import me.corriekay.pokegoutil.utils.helpers.JTableColumnPacker;
  * <p>
  * Added things are row sorter, column comparators, listener and the cell renderers.
  */
-@SuppressWarnings("serial")
 public class PokemonTable extends JTable {
 
     // Global statics
     public static final int COLUMN_MARGIN = 3;
     public static final int ROW_HEIGHT_PADDING = ConfigNew.getConfig().getInt(ConfigKey.ROW_PADDING);
 
+    private static final long serialVersionUID = 8205978051944394627L;
     private static final String COLUMN_SEPARATOR = ",";
+    private static final int MIN_FONT_SIZE = 2;
 
     private final ConfigNew config = ConfigNew.getConfig();
 
@@ -99,8 +104,7 @@ public class PokemonTable extends JTable {
         }
         try {
             restoreColumnOrder();
-        }
-        catch(Exception exc) {
+        } catch (Exception exc) {
             System.out.println("Oooops, something went wrong with table order rearranging!");
             System.out.println(exc.toString());
         }
@@ -110,7 +114,7 @@ public class PokemonTable extends JTable {
      * Loads the column order settings from configuration and applies them to the table.
      */
     private void restoreColumnOrder() {
-        List<String> myColumnEnumNames = new LinkedList<String>();
+        final List<String> myColumnEnumNames = new LinkedList<String>();
         final String columnOrder = config.getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
         if (columnOrder != null && !columnOrder.isEmpty()) {
             myColumnEnumNames.addAll(Arrays.asList(columnOrder.split(COLUMN_SEPARATOR)));
@@ -120,19 +124,18 @@ public class PokemonTable extends JTable {
         }
 
         int newIndex = 0;
-        for (String enumName : myColumnEnumNames) {
+        for (final String enumName : myColumnEnumNames) {
             try {
-                PokeColumn pokeColumn = PokeColumn.valueOf(enumName);
-                TableColumn c = this.getColumn(pokeColumn.heading);
+                final PokeColumn pokeColumn = PokeColumn.valueOf(enumName);
+                final TableColumn c = this.getColumn(pokeColumn.heading);
                 if (c != null) {
-                    int currentIndex = this.convertColumnIndexToView(c.getModelIndex());
+                    final int currentIndex = this.convertColumnIndexToView(c.getModelIndex());
                     if (currentIndex != newIndex) {
                         this.getColumnModel().moveColumn(currentIndex, newIndex);
                     }
                     newIndex++;
                 }
-            }
-            catch(IllegalArgumentException exc) {
+            } catch (IllegalArgumentException exc) {
                 columnErrors.add(enumName);
             }
         }
@@ -143,20 +146,14 @@ public class PokemonTable extends JTable {
      * globbed together separated by COLUMN_SEPARATOR.
      */
     public void saveColumnOrderToConfig() {
-        List<String> enumNames = new LinkedList<String>();
-        Enumeration<TableColumn> e = this.getColumnModel().getColumns();
-        while(e.hasMoreElements()) {
-            String columnHeading = e.nextElement().getHeaderValue().toString();
-            try {
-                enumNames.add(PokeColumn.getForHeading(columnHeading).toString());
-            }
-            catch (IllegalArgumentException exc)
-            {
-                // can this happen in production use?
-            }
+        final List<String> enumNames = new LinkedList<String>();
+        final Enumeration<TableColumn> e = this.getColumnModel().getColumns();
+        while (e.hasMoreElements()) {
+            final String columnHeading = e.nextElement().getHeaderValue().toString();
+            enumNames.add(PokeColumn.getForHeading(columnHeading).toString());
         }
         final String columnOrderEnums = String.join(COLUMN_SEPARATOR, enumNames);
-        ConfigNew.getConfig().setString(ConfigKey.POKEMONTABLE_COLUMNORDER, columnOrderEnums);
+        config.setString(ConfigKey.POKEMONTABLE_COLUMNORDER, columnOrderEnums);
     }
 
     /**
@@ -244,5 +241,63 @@ public class PokemonTable extends JTable {
             rowFilter = new PokemonRowFilter(filterText);
         }
         trs.setRowFilter(rowFilter);
+    }
+    
+    /**
+     * Set font size if specified in config file.
+     */
+    public void applySpecifiedFontSize() {
+        final Font font = getFont();
+        final int size = Math.max(MIN_FONT_SIZE, config.getInt(ConfigKey.FONT_SIZE, font.getSize()));
+        if (size != font.getSize()) {
+            setFont(font.deriveFont((float) size));
+        }
+    }
+    
+    /**
+     * Return the selected pokemons on the list.
+     * @return ArrayList of the selected pokemons
+     */
+    public ArrayList<Pokemon> getSelectedPokemon() {
+        final ArrayList<Pokemon> pokes = new ArrayList<>();
+        final PokemonTableModel model = (PokemonTableModel) getModel();
+        for (final int i : getSelectedRows()) {
+            final Pokemon poke = model.getPokemonByIndex(i);
+            if (poke != null) {
+                pokes.add(poke);
+            }
+        }
+        return pokes;
+    }
+
+    /**
+     * Method for selecting pokemons with IV less than "text".
+     * @param text iv passed as argument to be selected.
+     */
+    public void selectLessThanIv(final String text) {
+        try {
+            if (!NumberUtils.isNumber(text)) {
+                throw new InvalidIvValueException();
+            }
+
+            final double ivLessThan = Double.parseDouble(text);
+            final int maxIvValue = 100;
+            if (ivLessThan > maxIvValue || ivLessThan < 0) {
+                throw new InvalidIvValueException();
+            }
+
+            clearSelection();
+            System.out.println("Selecting Pokemon with IV less than: " + text);
+
+            for (int i = 0; i < getRowCount(); i++) {
+                final double pIv = (double) getValueAt(i, getIndexForColumnEnum(PokeColumn.IV_RATING)) * 100;
+                if (pIv < ivLessThan) {
+                    getSelectionModel().addSelectionInterval(i, i);
+                }
+            }
+        } catch (InvalidIvValueException e) {
+            System.out.println(e.getMessage());
+        }
+        
     }
 }
