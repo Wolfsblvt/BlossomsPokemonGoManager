@@ -865,7 +865,7 @@ public class PokemonTab extends JPanel {
     public void removeSelection(final Pokemon p) {
         final PokemonTableModel model = (PokemonTableModel) pt.getModel();
         final int index = model.getIndexByPokemon(p);
-        if (index > 0 && selectedRowsList!=null) {
+        if (index > 0 && selectedRowsList != null) {
             selectedRowsList.remove(index);
         }
     }
