@@ -125,7 +125,7 @@ We use discord to organize our development and answer questions. We also post im
 - **A:** Oh man. Those are complicated calculations, but really helpful. Gym Offense means how good your Pokémon is to attack, Gym Defense how good it can defend one. Duel Ability just means plain attack power. Now the important thing is that those columns with the "Rating" suffix compare your current moveset and stats to the best possible version of that Species you can achieve. Like how good is your Vaporeon compared to a 100% one with Hydro Pump. The other three columns compare to the best possible that exists. Which one that is, that's printed in the console when you start the tool. For more information behind the calculations You can [look here](https://www.reddit.com/r/TheSilphRoad/comments/4vx729/pokemon_rankings_cheat_sheets_gym_offense_gym/) or google how Professor_Kukui's formulas are.
 
 #### Q: I heard I can use the Paid Hash Key service with your tool so that I have the latest cracked API. How?
-- **A:** At the moment, you have to add the key manually to you `config.json` file. Open it, search for the "login" node and add it like below. Important is the "pokehash" node. The rest are your current login informations and can be overwritten.
+- **A:** At the moment, you have to add the key manually to you `config.json` file. Open it, search for the "login" node and add it like below. Important is the "pokehash" node. The rest are your current login informations and can be overwritten. [Check here if you want to acquire such a key or want to know how it works and what it is](https://talk.pogodev.org/d/55-api-hashing-service-f-a-q).
 ```
 "login": {
 	"pokehash": {"key": "YOUR_KEY_HERE"},
