@@ -43,6 +43,7 @@ import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.exceptions.hash.HashException;
 
 import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
+import POGOProtos.Networking.Responses.GetInventoryResponseOuterClass.GetInventoryResponse;
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse;
 import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse;
@@ -54,6 +55,7 @@ import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.EvolveHelper;
 import me.corriekay.pokegoutil.utils.helpers.LocationHelper;
+import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler.ReplacePattern;
 import me.corriekay.pokegoutil.utils.pokemon.PokeNick;
@@ -203,13 +205,18 @@ public class PokemonTab extends JPanel {
         refreshPkmn();
     }
 
+    /**
+     * Try to obtain the updated list of Pokemons from server.
+     */
     private void refreshPkmn() {
         try {
-            go.getInventories().updateInventories(true);
-            PokemonGoMainWindow.getInstance().refreshTitle();
-        } catch (final Exception e) {
-            e.printStackTrace();
+            final GetInventoryResponse updateInventories = go.getInventories().updateInventories(true);
+            go.getInventories().updateInventories(updateInventories);
+        } catch (LoginFailedException | CaptchaActiveException | RemoteServerException | HashException e) {
+            System.out.println("Error obtaining updated list from server");
+            ConsolePrintStream.printException(e);
         }
+        PokemonGoMainWindow.getInstance().refreshTitle();
         SwingUtilities.invokeLater(this::refreshList);
         System.out.println("Done refreshing Pokémon list");
     }
@@ -300,11 +307,6 @@ public class PokemonTab extends JPanel {
 
         handler.bulkRenameWithPattern(renamePattern, perPokeCallback);
 
-        try {
-            go.getInventories().updateInventories(true);
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText("Pokémon batch rename complete!", selection.size(), success, skipped, err);
     }
@@ -353,7 +355,6 @@ public class PokemonTab extends JPanel {
                 skipped.increment();
                 return;
             }
-            removeSelection(poke);
             finalSelection.add(poke);
         });
         
@@ -376,6 +377,7 @@ public class PokemonTab extends JPanel {
                         Utilities.getRealExceptionMessage(e)));
             }
         }
+        selectedRowsList = null;
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText("Pokémon multi-transfer complete!", total.intValue(), success, skipped, err);
     }
@@ -534,12 +536,7 @@ public class PokemonTab extends JPanel {
                     Utilities.getRealExceptionMessage(e)));
             }
         });
-
-        try {
-            go.getInventories().updateInventories();
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        PokemonGoMainWindow.getInstance().refreshTitle();
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText(String.format(
                 "Pokémon batch evolve%s complete!",
@@ -653,12 +650,7 @@ public class PokemonTab extends JPanel {
                     Utilities.getRealExceptionMessage(e)));
             }
         });
-        try {
-            go.getInventories().updateInventories(true);
-            PokemonGoMainWindow.getInstance().refreshTitle();
-        } catch (final RemoteServerException | LoginFailedException | CaptchaActiveException | HashException e) {
-            e.printStackTrace();
-        }
+        PokemonGoMainWindow.getInstance().refreshTitle();
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText("Pokémon batch powerup complete!", selection.size(), success, skipped, err);
 
@@ -873,20 +865,20 @@ public class PokemonTab extends JPanel {
     public void removeSelection(final Pokemon p) {
         final PokemonTableModel model = (PokemonTableModel) pt.getModel();
         final int index = model.getIndexByPokemon(p);
-        if (index > 0) {
+        if (index > 0 && selectedRowsList!=null) {
             selectedRowsList.remove(index);
         }
     }
 
     public void refreshList() {
+        pt.constructNewTableModel(go.getInventories().getPokebank().getPokemons());
         try {
-            pt.constructNewTableModel(go.getInventories().getPokebank().getPokemons());
-            if (selectedRowsList != null) {
+            if (selectedRowsList != null) { 
                 for (final Integer index : selectedRowsList) {
                     pt.addRowSelectionInterval(index, index);
                 }
             }
-        } catch (final Exception e) {
+        } catch (final IllegalArgumentException e) {
             e.printStackTrace();
         }
     }
