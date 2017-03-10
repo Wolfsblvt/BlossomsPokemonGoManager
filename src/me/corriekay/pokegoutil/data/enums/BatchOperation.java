@@ -8,7 +8,9 @@ public enum BatchOperation {
     EVOLVE("Evolve"),
     POWER_UP("Power-Up"),
     TRANSFER("Transfer"),
-    FAVORITE("Toggle Favorite");
+    FAVORITE("Toggle Favorite"),
+    SET_FAVORITE_YES("Set Favorite Yes"),
+    SET_FAVORITE_NO("Set Favorite No");
 
     private final String friendlyName;
 

@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
@@ -37,10 +36,7 @@ import com.pokegoapi.api.inventory.ItemBag;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.exceptions.CaptchaActiveException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
-import com.pokegoapi.exceptions.hash.HashException;
+import com.pokegoapi.exceptions.request.RequestFailedException;
 
 import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
 import POGOProtos.Networking.Responses.GetInventoryResponseOuterClass.GetInventoryResponse;
@@ -55,6 +51,7 @@ import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.EvolveHelper;
 import me.corriekay.pokegoutil.utils.helpers.LocationHelper;
+import me.corriekay.pokegoutil.utils.helpers.TriConsumer;
 import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler.ReplacePattern;
@@ -136,7 +133,9 @@ public class PokemonTab extends JPanel {
             transferSelected = new JButton(BatchOperation.TRANSFER.toString()),
             evolveSelected = new JButton(BatchOperation.EVOLVE.toString()),
             powerUpSelected = new JButton(BatchOperation.POWER_UP.toString()),
-            toggleFavorite = new JButton(BatchOperation.FAVORITE.toString());
+            toggleFavorite = new JButton(BatchOperation.FAVORITE.toString()),
+            setFavoriteYes = new JButton(BatchOperation.SET_FAVORITE_YES.toString()),
+            setFavoriteNo = new JButton(BatchOperation.SET_FAVORITE_NO.toString());
         final IVTransferTextField ivTransfer = new IVTransferTextField(pt::selectLessThanIv);
         final JButton transferIv = new JButton("Select Pokemon < IV");
         final JComboBox<String> pokelang = new JComboBox<String>(LOCALES);
@@ -150,6 +149,8 @@ public class PokemonTab extends JPanel {
         topPanel.add(evolveSelected, gbc);
         topPanel.add(powerUpSelected, gbc);
         topPanel.add(toggleFavorite, gbc);
+        topPanel.add(setFavoriteYes, gbc);
+        topPanel.add(setFavoriteNo, gbc);
         topPanel.add(ivTransfer, gbc);
         topPanel.add(transferIv, gbc);
         
@@ -167,19 +168,21 @@ public class PokemonTab extends JPanel {
         sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(sp, BorderLayout.CENTER);
         
-        refreshPkmn.addActionListener(l -> new OperationWorker(this::refreshPkmn).execute());
-        renameSelected.addActionListener(l -> new OperationWorker(this::renameSelected).execute());
-        transferSelected.addActionListener(l -> new OperationWorker(this::transferSelected).execute());
-        evolveSelected.addActionListener(l -> new OperationWorker(this::evolveSelected).execute());
-        powerUpSelected.addActionListener(l -> new OperationWorker(this::powerUpSelected).execute());
-        toggleFavorite.addActionListener(l -> new OperationWorker(this::toggleFavorite).execute());
-        transferIv.addActionListener(l -> new OperationWorker(pt::selectLessThanIv, ivTransfer.getText()).execute());
+        refreshPkmn.addActionListener(l -> new OperationWorker<Object>(this::refreshPkmn).execute());
+        renameSelected.addActionListener(l -> new OperationWorker<Object>(this::renameSelected).execute());
+        transferSelected.addActionListener(l -> new OperationWorker<Object>(this::transferSelected).execute());
+        evolveSelected.addActionListener(l -> new OperationWorker<Object>(this::evolveSelected).execute());
+        powerUpSelected.addActionListener(l -> new OperationWorker<Object>(this::powerUpSelected).execute());
+        toggleFavorite.addActionListener(l -> new OperationWorker<BatchOperation>(this::toggleFavorite, null).execute());
+        setFavoriteYes.addActionListener(l -> new OperationWorker<BatchOperation>(this::toggleFavorite, BatchOperation.SET_FAVORITE_YES).execute());
+        setFavoriteNo.addActionListener(l -> new OperationWorker<BatchOperation>(this::toggleFavorite, BatchOperation.SET_FAVORITE_NO).execute());
+        transferIv.addActionListener(l -> new OperationWorker<String>(pt::selectLessThanIv, ivTransfer.getText()).execute());
 
         pokelang.setSelectedItem(config.getString(ConfigKey.LANGUAGE));
-        pokelang.addActionListener(e -> new OperationWorker(this::changeLanguage, (String) pokelang.getSelectedItem()).execute());
+        pokelang.addActionListener(e -> new OperationWorker<String>(this::changeLanguage, (String) pokelang.getSelectedItem()).execute());
 
         fontSize.setSelectedItem(String.valueOf(pt.getFont().getSize()));
-        fontSize.addActionListener(e -> new OperationWorker(() -> {
+        fontSize.addActionListener(e -> new OperationWorker<Object>(() -> {
             final String innerSize = fontSize.getSelectedItem().toString();
             pt.setFont(pt.getFont().deriveFont(Float.parseFloat(innerSize)));
             config.setInt(ConfigKey.FONT_SIZE, Integer.parseInt(innerSize));
@@ -212,7 +215,7 @@ public class PokemonTab extends JPanel {
         try {
             final GetInventoryResponse updateInventories = go.getInventories().updateInventories(true);
             go.getInventories().updateInventories(updateInventories);
-        } catch (LoginFailedException | CaptchaActiveException | RemoteServerException | HashException e) {
+        } catch (RequestFailedException e) {
             System.out.println("Error obtaining updated list from server");
             ConsolePrintStream.printException(e);
         }
@@ -254,7 +257,7 @@ public class PokemonTab extends JPanel {
             success = new MutableInt(),
             total = new MutableInt(1);
 
-        final BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback = (renameResult, pokemon) -> {
+        final TriConsumer<NicknamePokemonResponse.Result, Pokemon, String> perPokeCallback = (renameResult, pokemon, previousNickname) -> {
             System.out.println(String.format(
                 "Doing Rename %d of %d",
                 total.getValue(),
@@ -286,14 +289,14 @@ public class PokemonTab extends JPanel {
                 System.out.println(String.format(
                     "Renaming %s from \"%s\" to \"%s\", Result: Success!",
                     PokemonUtils.getLocalPokeName(pokemon),
-                    pokemon.getNickname(),
+                    previousNickname,
                     PokeHandler.generatePokemonNickname(renamePattern, pokemon)));
             } else {
                 err.increment();
                 System.out.println(String.format(
                     "Renaming %s failed! Code: %s; Nick: \"%s\"",
                     PokemonUtils.getLocalPokeName(pokemon),
-                    renameResult.toString(),
+                    previousNickname,
                     PokeHandler.generatePokemonNickname(renamePattern, pokemon)));
             }
 
@@ -370,7 +373,7 @@ public class PokemonTab extends JPanel {
                             candies));
                 });
                 success.add(finalSelection.size());
-            } catch (CaptchaActiveException | LoginFailedException | RemoteServerException | HashException e) {
+            } catch (RequestFailedException e) {
                 err.add(finalSelection.size());
                 System.out.println(String.format(
                         "Error transferring pokemons! %s",
@@ -536,6 +539,7 @@ public class PokemonTab extends JPanel {
                     Utilities.getRealExceptionMessage(e)));
             }
         });
+        selectedRowsList = null;
         PokemonGoMainWindow.getInstance().refreshTitle();
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText(String.format(
@@ -657,13 +661,13 @@ public class PokemonTab extends JPanel {
     }
 
     // feature added by Ben Kauffman
-    private void toggleFavorite() {
+    private void toggleFavorite(final BatchOperation operation) {
         final ArrayList<Pokemon> selection = pt.getSelectedPokemon();
         if (selection.isEmpty()) {
             return;
         }
 
-        if (!confirmOperation(BatchOperation.FAVORITE, selection)) {
+        if (!confirmOperation(operation, selection)) {
             return;
         }
 
@@ -675,23 +679,30 @@ public class PokemonTab extends JPanel {
         selection.forEach(poke -> {
             try {
                 System.out.println(String.format(
-                    "Toggling favorite %d of %d",
+                    "Setting favorite %d of %d",
                     total.getValue(),
                     selection.size()));
                 total.increment();
+                boolean favorite = !poke.isFavorite();
+                if (operation != null) {
+                    if (operation.equals(BatchOperation.SET_FAVORITE_YES)) {
+                        favorite = true;
+                    } else {
+                        favorite = false;
+                    }
+                }
                 final SetFavoritePokemonResponse.Result favoriteResult = poke
-                    .setFavoritePokemon(!poke.isFavorite());
+                    .setFavoritePokemon(favorite);
                 System.out.println(String.format(
                     "Attempting to set favorite for %s to %b...",
                     PokemonUtils.getLocalPokeName(poke),
-                    !poke.isFavorite()));
-                go.getPlayerProfile().updateProfile();
+                    favorite));
 
                 if (favoriteResult == SetFavoritePokemonResponse.Result.SUCCESS) {
                     System.out.println(String.format(
                         "Favorite for %s set to %b, Result: Success!",
                         PokemonUtils.getLocalPokeName(poke),
-                        !poke.isFavorite()));
+                        favorite));
                     success.increment();
                 } else {
                     err.increment();
@@ -715,13 +726,10 @@ public class PokemonTab extends JPanel {
                     Utilities.getRealExceptionMessage(e)));
             }
         });
-        try {
-            PokemonGoMainWindow.getInstance().refreshTitle();
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        
+        PokemonGoMainWindow.getInstance().refreshTitle();
         SwingUtilities.invokeLater(this::refreshPkmn);
-        showFinishedText("Pokémon batch \"toggle favorite\" complete!", selection.size(), success, skipped,
+        showFinishedText(String.format("Pokémon batch \"%s\" complete!", operation), selection.size(), success, skipped,
             err);
     }
 

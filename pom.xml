@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>BPGM</groupId>
     <artifactId>BPGM</artifactId>
-    <version>0.1.7-hotfix3</version>
+    <version>0.1.7-hotfix4</version>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <testSourceDirectory>test</testSourceDirectory>
@@ -104,7 +104,7 @@
         <dependency>
             <groupId>com.github.gegy1000</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
-            <version>3846939d2870e37186b8d4cb9b9fec7912cc445f</version>
+            <version>199cda2914ba0ac037d5e3690dee9021b32f37af</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>

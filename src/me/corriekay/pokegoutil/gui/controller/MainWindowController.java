@@ -4,8 +4,6 @@ import java.text.NumberFormat;
 
 import com.pokegoapi.api.inventory.Stats;
 import com.pokegoapi.api.player.PlayerProfile;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
 
 import POGOProtos.Data.PlayerDataOuterClass.PlayerData;
 import javafx.event.ActionEvent;
@@ -127,56 +125,51 @@ public class MainWindowController extends BaseController<BorderPane> {
         if (pp != null) {
             while (!done) {
                 done = true;
-                try {
-                    final PlayerData pd = pp.getPlayerData();
-                    final Stats stats = pp.getStats();
+                final PlayerData pd = pp.getPlayerData();
+                final Stats stats = pp.getStats();
 
-                    Color color = null;
-                    switch (pd.getTeam().getNumber()) {
-                        case 0 :// noteam
-                            color = Color.rgb(160, 160, 160, 0.99);
-                            break;
-                        case 1 :// blue
-                            color = Color.rgb(0, 0, 255, 0.99);
-                            break;
-                        case 2 :// red
-                            color = Color.rgb(204, 0, 0, 0.99);
-                            break;
-                        case 3 :// yellow
-                            color = Color.rgb(255, 255, 0, 0.99);
-                            break;
-                    }
-                    if (color != null) {
-                        final int width = (int) teamIcon.getFitWidth();
-                        final int height = (int) teamIcon.getFitHeight();
-                        final WritableImage dest = new WritableImage(width, height);
-                        final PixelWriter writer = dest.getPixelWriter();
-                        for (int x = 0; x < width; x++) {
-                            for (int y = 0; y < height; y++) {
-                                writer.setColor(x, y, color);
-                            }
-                        }
-                        teamIcon.setImage(dest);
-                    }
-                    playerNameLabel.setText(pd.getUsername() + " ");
-                    playerLvl.setText("Lvl: " + Integer.toString(stats.getLevel()));
-                    final NumberFormat f = NumberFormat.getInstance();
-                    playerStardustLbl.setText(f.format(
-                            pp.getCurrency(PlayerProfile.Currency.STARDUST))
-                            + " Stardust");
-                    nbPkmInBagsLbl.setText(Integer.toString(PokemonBagManager.getNbPokemon())
-                            + SLASH
-                            + Integer.toString(pp.getPlayerData().getMaxPokemonStorage())
-                            + " Pokémon");
-                    nbItemsBagsLbl.setText(
-                            Integer.toString(InventoryManager.getInventories().getItemBag().getItemsCount())
-                            + SLASH
-                            + Integer.toString(pp.getPlayerData().getMaxItemStorage())
-                            + " Items");
-                } catch (LoginFailedException | RemoteServerException e) {
-                    System.out.println("bad stuff happened:" + e.toString());
-                    done = false;
+                Color color = null;
+                switch (pd.getTeam().getNumber()) {
+                    case 0 :// noteam
+                        color = Color.rgb(160, 160, 160, 0.99);
+                        break;
+                    case 1 :// blue
+                        color = Color.rgb(0, 0, 255, 0.99);
+                        break;
+                    case 2 :// red
+                        color = Color.rgb(204, 0, 0, 0.99);
+                        break;
+                    case 3 :// yellow
+                        color = Color.rgb(255, 255, 0, 0.99);
+                        break;
                 }
+                if (color != null) {
+                    final int width = (int) teamIcon.getFitWidth();
+                    final int height = (int) teamIcon.getFitHeight();
+                    final WritableImage dest = new WritableImage(width, height);
+                    final PixelWriter writer = dest.getPixelWriter();
+                    for (int x = 0; x < width; x++) {
+                        for (int y = 0; y < height; y++) {
+                            writer.setColor(x, y, color);
+                        }
+                    }
+                    teamIcon.setImage(dest);
+                }
+                playerNameLabel.setText(pd.getUsername() + " ");
+                playerLvl.setText("Lvl: " + Integer.toString(stats.getLevel()));
+                final NumberFormat f = NumberFormat.getInstance();
+                playerStardustLbl.setText(f.format(
+                        pp.getCurrency(PlayerProfile.Currency.STARDUST))
+                        + " Stardust");
+                nbPkmInBagsLbl.setText(Integer.toString(PokemonBagManager.getNbPokemon())
+                        + SLASH
+                        + Integer.toString(pp.getPlayerData().getMaxPokemonStorage())
+                        + " Pokémon");
+                nbItemsBagsLbl.setText(
+                        Integer.toString(InventoryManager.getInventories().getItemBag().getItemsCount())
+                        + SLASH
+                        + Integer.toString(pp.getPlayerData().getMaxItemStorage())
+                        + " Items");
             }
         }
     }
