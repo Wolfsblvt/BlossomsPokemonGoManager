@@ -39,8 +39,6 @@ public class EvolveOperationTest {
      * Evolve a pokemon that is in gym.
      *
      * @throws InvalidCurrencyException invalid currency
-     * @throws LoginFailedException login fail
-     * @throws RemoteServerException sever error
      */
     @Test
     public void pokemonIsInGym() throws InvalidCurrencyException {
@@ -74,7 +72,6 @@ public class EvolveOperationTest {
      *
      * @throws InvalidCurrencyException invalid currency
      * @throws LoginFailedException login fail
-     * @throws RemoteServerException sever error
      */
     @Test
     public void notEnoughCandies() throws InvalidCurrencyException, LoginFailedException {
@@ -94,7 +91,6 @@ public class EvolveOperationTest {
      *
      * @throws InvalidCurrencyException invalid currency
      * @throws LoginFailedException login fail
-     * @throws RemoteServerException sever error
      */
     @Test
     public void sucessfullyEvolve() throws InvalidCurrencyException, LoginFailedException {

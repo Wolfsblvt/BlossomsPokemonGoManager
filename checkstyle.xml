@@ -41,10 +41,14 @@
     <!-- General Whitespace -->
     <module name="FileTabCharacter"/>
 
+  	<module name="SuppressionCommentFilter"/>
+  	
     <!-- TreeWalker Checks -->
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
 
+  		<module name="FileContentsHolder"/>
+  		
         <!-- Annotations -->
         <module name="AnnotationLocation">
             <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>

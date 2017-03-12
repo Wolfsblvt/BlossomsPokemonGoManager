@@ -102,12 +102,7 @@ public class PokemonTable extends JTable {
                 columnModel.getColumn(column.id).setCellEditor(column.getCellEditor());
             }
         }
-        try {
-            restoreColumnOrder();
-        } catch (Exception exc) {
-            System.out.println("Oooops, something went wrong with table order rearranging!");
-            System.out.println(exc.toString());
-        }
+        restoreColumnOrder();
     }
 
     /**

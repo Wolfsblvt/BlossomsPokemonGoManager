@@ -38,21 +38,21 @@ public class PokemonTableModel extends AbstractTableModel {
      * Updates the table data with given pokemon list.
      *
      * @param pokes The list of pokemon that should be displayed
-     */
+     */ 
     public void updateTableData(final List<Pokemon> pokes) {
-        ClearTable();
+        clearTable();
 
         final MutableInt i = new MutableInt();
 
         pokes.forEach(p -> {
             pokeCol.add(i.getValue(), p);
-
             for (final PokeColumn column : PokeColumn.values()) {
                 // Reason: To avoid future problems inside whatever columns
-                // noinspection CheckStyle
                 try {
                     column.data.add(i.getValue(), column.get(p));
+                    //CHECKSTYLE:OFF
                 } catch (NullPointerException e) {
+                    //CHECKSTYLE:ON
                     System.out.println("Error getting data for column: " + column.heading + " and value: " + i.getValue());
                     ConsolePrintStream.printException(e);
                 }
@@ -64,7 +64,10 @@ public class PokemonTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
-    private void ClearTable() {
+    /**
+     * Clear the values from the table.
+     */
+    private void clearTable() {
         pokeCol.clear();
         for (final PokeColumn column : PokeColumn.values()) {
             column.data.clear();
