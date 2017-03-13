@@ -59,8 +59,17 @@ public abstract class Operation {
         this.pokemon = pokemon;
     }
 
+    /**
+     * Abstract method to create the operation.
+     * @return BpmOperationResult with the operation created.
+     */
     protected abstract BpmOperationResult doOperation();
 
+    /**
+     * Execute the desired operation.
+     * @return BpmOperationResult with the result of the operation
+     * @throws InvalidCurrencyException when an invalidCurrencyException occours
+     */
     public BpmOperationResult execute() throws InvalidCurrencyException {
         BpmOperationResult result = validateOperation();
 

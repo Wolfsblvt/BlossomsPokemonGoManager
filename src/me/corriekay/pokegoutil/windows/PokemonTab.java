@@ -126,7 +126,6 @@ public class PokemonTab extends JPanel {
      * Handle component creation and initialization inside PokemonTab constructor.
      */
     private void addAndInitializeComponents() {
-        final SearchBarTextField searchBar = new SearchBarTextField(pt::filterTable);
         final JPanel topPanel = new JPanel(new GridBagLayout());
         final JButton refreshPkmn = new JButton("Refresh List"),
             renameSelected = new JButton(BatchOperation.RENAME.toString()),
@@ -158,7 +157,7 @@ public class PokemonTab extends JPanel {
         gbc.weighty = 1.0;
         gbc.gridwidth = GRID_WIDTH;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        topPanel.add(searchBar, gbc);
+        topPanel.add(new SearchBarTextField(pt::filterTable), gbc);
         
         topPanel.add(pokelang);
         topPanel.add(fontSize);
@@ -173,7 +172,7 @@ public class PokemonTab extends JPanel {
         transferSelected.addActionListener(l -> new OperationWorker<Object>(this::transferSelected).execute());
         evolveSelected.addActionListener(l -> new OperationWorker<Object>(this::evolveSelected).execute());
         powerUpSelected.addActionListener(l -> new OperationWorker<Object>(this::powerUpSelected).execute());
-        toggleFavorite.addActionListener(l -> new OperationWorker<BatchOperation>(this::toggleFavorite, null).execute());
+        toggleFavorite.addActionListener(l -> new OperationWorker<BatchOperation>(this::toggleFavorite, BatchOperation.FAVORITE).execute());
         setFavoriteYes.addActionListener(l -> new OperationWorker<BatchOperation>(this::toggleFavorite, BatchOperation.SET_FAVORITE_YES).execute());
         setFavoriteNo.addActionListener(l -> new OperationWorker<BatchOperation>(this::toggleFavorite, BatchOperation.SET_FAVORITE_NO).execute());
         transferIv.addActionListener(l -> new OperationWorker<String>(pt::selectLessThanIv, ivTransfer.getText()).execute());
@@ -189,6 +188,10 @@ public class PokemonTab extends JPanel {
         }).execute());
     }
 
+    /**
+     * Change the language of the pokemons using the langCode.
+     * @param langCode language to change
+     */
     private void changeLanguage(final String langCode) {
         config.setString(ConfigKey.LANGUAGE, langCode);
 
@@ -660,77 +663,75 @@ public class PokemonTab extends JPanel {
 
     }
 
-    // feature added by Ben Kauffman
+    /**
+     * To favorite or not the selected Pokemon's.
+     * @author Ben Kauffman
+     * @param operation which operation to do regarding favorite: Toogle, Set Yes or Set No 
+     */
     private void toggleFavorite(final BatchOperation operation) {
         final ArrayList<Pokemon> selection = pt.getSelectedPokemon();
-        if (selection.isEmpty()) {
-            return;
-        }
+        if (!selection.isEmpty() && confirmOperation(operation, selection)) {
+            final MutableInt err = new MutableInt(),
+                    skipped = new MutableInt(),
+                    success = new MutableInt(),
+                    total = new MutableInt(1);
 
-        if (!confirmOperation(operation, selection)) {
-            return;
-        }
-
-        final MutableInt err = new MutableInt(),
-            skipped = new MutableInt(),
-            success = new MutableInt(),
-            total = new MutableInt(1);
-
-        selection.forEach(poke -> {
-            try {
-                System.out.println(String.format(
-                    "Setting favorite %d of %d",
-                    total.getValue(),
-                    selection.size()));
-                total.increment();
-                boolean favorite = !poke.isFavorite();
-                if (operation != null) {
+            selection.forEach(poke -> {
+                try {
+                    System.out.println(String.format(
+                            "Setting favorite %d of %d",
+                            total.getValue(),
+                            selection.size()));
+                    total.increment();
+                    final boolean favorite;
                     if (operation.equals(BatchOperation.SET_FAVORITE_YES)) {
                         favorite = true;
-                    } else {
+                    } else if (operation.equals(BatchOperation.SET_FAVORITE_NO)) {
                         favorite = false;
+                    } else {
+                        favorite = !poke.isFavorite();
                     }
-                }
-                final SetFavoritePokemonResponse.Result favoriteResult = poke
-                    .setFavoritePokemon(favorite);
-                System.out.println(String.format(
-                    "Attempting to set favorite for %s to %b...",
-                    PokemonUtils.getLocalPokeName(poke),
-                    favorite));
-
-                if (favoriteResult == SetFavoritePokemonResponse.Result.SUCCESS) {
+                    final SetFavoritePokemonResponse.Result favoriteResult = poke
+                            .setFavoritePokemon(favorite);
                     System.out.println(String.format(
-                        "Favorite for %s set to %b, Result: Success!",
-                        PokemonUtils.getLocalPokeName(poke),
-                        favorite));
-                    success.increment();
-                } else {
+                            "Attempting to set favorite for %s to %b...",
+                            PokemonUtils.getLocalPokeName(poke),
+                            favorite));
+
+                    if (favoriteResult == SetFavoritePokemonResponse.Result.SUCCESS) {
+                        System.out.println(String.format(
+                                "Favorite for %s set to %b, Result: Success!",
+                                PokemonUtils.getLocalPokeName(poke),
+                                favorite));
+                        success.increment();
+                    } else {
+                        err.increment();
+                        System.out.println(String.format(
+                                "Error toggling favorite for %s, result: %s",
+                                PokemonUtils.getLocalPokeName(poke),
+                                favoriteResult.toString()));
+                    }
+
+                    // If not last element, sleep until the next one
+                    if (!selection.get(selection.size() - 1).equals(poke)) {
+                        final int sleepMin = config.getInt(ConfigKey.DELAY_FAVORITE_MIN);
+                        final int sleepMax = config.getInt(ConfigKey.DELAY_FAVORITE_MAX);
+                        Utilities.sleepRandom(sleepMin, sleepMax);
+                    }
+                } catch (final Exception e) {
                     err.increment();
                     System.out.println(String.format(
-                        "Error toggling favorite for %s, result: %s",
-                        PokemonUtils.getLocalPokeName(poke),
-                        favoriteResult.toString()));
+                            "Error toggling favorite for %s! %s",
+                            PokemonUtils.getLocalPokeName(poke),
+                            Utilities.getRealExceptionMessage(e)));
                 }
+            });
 
-                // If not last element, sleep until the next one
-                if (!selection.get(selection.size() - 1).equals(poke)) {
-                    final int sleepMin = config.getInt(ConfigKey.DELAY_FAVORITE_MIN);
-                    final int sleepMax = config.getInt(ConfigKey.DELAY_FAVORITE_MAX);
-                    Utilities.sleepRandom(sleepMin, sleepMax);
-                }
-            } catch (final Exception e) {
-                err.increment();
-                System.out.println(String.format(
-                    "Error toggling favorite for %s! %s",
-                    PokemonUtils.getLocalPokeName(poke),
-                    Utilities.getRealExceptionMessage(e)));
-            }
-        });
-        
-        PokemonGoMainWindow.getInstance().refreshTitle();
-        SwingUtilities.invokeLater(this::refreshPkmn);
-        showFinishedText(String.format("Pokémon batch \"%s\" complete!", operation), selection.size(), success, skipped,
-            err);
+            PokemonGoMainWindow.getInstance().refreshTitle();
+            SwingUtilities.invokeLater(this::refreshPkmn);
+            showFinishedText(String.format("Pokémon batch \"%s\" complete!", operation), selection.size(), success, skipped,
+                    err);
+        }
     }
 
     /**

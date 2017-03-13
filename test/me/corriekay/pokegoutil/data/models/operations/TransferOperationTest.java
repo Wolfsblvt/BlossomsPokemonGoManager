@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.pokegoapi.exceptions.InvalidCurrencyException;
-import com.pokegoapi.exceptions.request.LoginFailedException;
 
 import me.corriekay.pokegoutil.data.enums.OperationError;
 import me.corriekay.pokegoutil.data.models.BpmOperationResult;
