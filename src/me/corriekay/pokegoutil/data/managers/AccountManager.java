@@ -85,11 +85,16 @@ public final class AccountManager {
         }
     }
 
+    public PokemonGo getPokemonGo() {
+        return go;
+    }
+    
     public LoginData getLoginData() {
         final LoginData loginData = new LoginData(
                 config.getString(ConfigKey.LOGIN_PTC_USERNAME),
                 config.getString(ConfigKey.LOGIN_PTC_PASSWORD),
-                config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN));
+                config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN),
+                config.getString(ConfigKey.LOGIN_POKEHASHKEY));
 
         if (loginData.isValidGoogleLogin()) {
             loginData.setSavedToken(true);
@@ -147,13 +152,14 @@ public final class AccountManager {
      * @return results of the login
      */
     private BpmResult logOnGoogleAuth(final LoginData loginData) {
-        OkHttpClient http;
-        CredentialProvider cp;
+        final OkHttpClient http;
+        final CredentialProvider cp;
         http = new OkHttpClient();
 
         final String authCode = loginData.getToken();
         final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
-
+        config.setString(ConfigKey.LOGIN_POKEHASHKEY, loginData.getHashKey());
+        
         boolean shouldRefresh = false;
         if (loginData.isSavedToken() && saveAuth) {
             shouldRefresh = true;
@@ -179,7 +185,7 @@ public final class AccountManager {
                 deleteLoginData(LoginType.GOOGLE_AUTH);
             }
         } catch (RequestFailedException e) {
-            deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
+//            deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
             return new BpmResult(e.getMessage());
         }
 
@@ -187,7 +193,7 @@ public final class AccountManager {
             prepareLogin(cp, http);
             return new BpmResult();
         } catch (RequestFailedException e) {
-            deleteLoginData(LoginType.ALL);
+//            deleteLoginData(LoginType.ALL);
             return new BpmResult(e.getMessage());
         }
     }
@@ -199,13 +205,14 @@ public final class AccountManager {
      * @return results of the login
      */
     private BpmResult logOnPtc(final LoginData loginData) {
-        OkHttpClient http;
-        CredentialProvider cp;
+        final OkHttpClient http;
+        final CredentialProvider cp;
         http = new OkHttpClient();
 
         final String username = loginData.getUsername();
         final String password = loginData.getPassword();
         final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
+        config.setString(ConfigKey.LOGIN_POKEHASHKEY, loginData.getHashKey());
 
         try {
             cp = new PtcCredentialProvider(http, username, password);
@@ -216,7 +223,7 @@ public final class AccountManager {
                 deleteLoginData(LoginType.PTC);
             }
         } catch (RequestFailedException e) {
-            deleteLoginData(LoginType.PTC);
+//            deleteLoginData(LoginType.PTC);
             return new BpmResult(e.getMessage());
         }
 
@@ -224,7 +231,7 @@ public final class AccountManager {
             prepareLogin(cp, http);
             return new BpmResult();
         } catch (RequestFailedException e) {
-            deleteLoginData(LoginType.ALL);
+//            deleteLoginData(LoginType.ALL);
             return new BpmResult(e.getMessage());
         }
     }
@@ -238,8 +245,8 @@ public final class AccountManager {
      */
     private void prepareLogin(final CredentialProvider cp, final OkHttpClient http)
             throws RequestFailedException {
-        go = new PokemonGo(http);
-        LoginHelper.login(go, cp, api -> {
+        LoginHelper.login(new PokemonGo(http), cp, api -> {
+            go = api;
             playerAccount = new PlayerAccount(go.getPlayerProfile());
             initOtherControllers();
         });

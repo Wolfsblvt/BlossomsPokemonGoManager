@@ -122,7 +122,7 @@ public class MenuBar extends JMenuBar {
             "Version: " + Updater.getUpdater().currentVersion
                 + StringLiterals.NEWLINE
                 + StringLiterals.NEWLINE + "Original Author: Corrie 'Blossom' Kay"
-                + StringLiterals.NEWLINE + "Current Author: Wolfsblvt"
+                + StringLiterals.NEWLINE + "Current Authors: Wolfsblvt, FernandoTBarros"
                 + StringLiterals.NEWLINE
                 + StringLiterals.NEWLINE + "Collaborators: Ljay, naderki, wullxz,"
                 + StringLiterals.NEWLINE + "Cryptically, eralpsahin, weblue,"
@@ -138,6 +138,8 @@ public class MenuBar extends JMenuBar {
                 + StringLiterals.NEWLINE
                 + StringLiterals.NEWLINE + "Thanks to Grover for providing"
                 + StringLiterals.NEWLINE + "such a great API."
+                + StringLiterals.NEWLINE + "Thanks to gegy1000 for keeping up"
+                + StringLiterals.NEWLINE + "Grover."
                 + StringLiterals.NEWLINE
                 + StringLiterals.NEWLINE + "Thanks to Draseart for "
                 + "the icon art.",

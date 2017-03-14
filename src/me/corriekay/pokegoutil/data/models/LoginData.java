@@ -7,6 +7,7 @@ public class LoginData {
     private String token;
     private String username;
     private String password;
+    private String hashKey;
     private LoginType loginType;
     private boolean isSavedToken;
 
@@ -31,6 +32,14 @@ public class LoginData {
         this.token = token;
         this.loginType = LoginType.ALL;
     }
+    
+    public LoginData(String username, String password, String token, String hashKey) {
+        this.username = username;
+        this.password = password;
+        this.token = token;
+        this.hashKey = hashKey;
+        this.loginType = LoginType.ALL;
+    }
 
     public LoginType getLoginType() {
         return loginType;
@@ -47,6 +56,10 @@ public class LoginData {
     public String getUsername() {
         return username;
     }
+    
+    public String getHashKey() {
+        return hashKey;
+    }
 
     public boolean hasPassword() {
         return password != null && password.length() > 0;
@@ -62,6 +75,10 @@ public class LoginData {
 
     public boolean hasUsername() {
         return username != null && username.length() > 0;
+    }
+    
+    public boolean hasHashKey() {
+        return hashKey != null && hashKey.length() > 0;
     }
 
     public boolean isSavedToken() {
@@ -96,9 +113,14 @@ public class LoginData {
         this.username = username;
     }
 
+    public void setHashKey(String hashKey) {
+        this.hashKey = hashKey;
+    }
+    
     @Override
     public String toString() {
         return String.format("Username: %s | Password: %s | Token: %s | LoginType: %s | isSavedToken %b",
                 username, password, token, loginType, isSavedToken);
     }
+
 }
