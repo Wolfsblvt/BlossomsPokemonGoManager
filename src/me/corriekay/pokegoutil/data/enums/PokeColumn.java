@@ -115,14 +115,20 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             return PokemonUtils.formatMove(p.getMove1())
-                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, true));
+// Don't show it here since it now has its own column
+// Possibly re-enable by boolean when column hiding becomes an option 
+//                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, true))
+                ;
         }
     },
     MOVE_2("Move 2", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             return PokemonUtils.formatMove(p.getMove2())
-                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, false));
+// Don't show it here since it now has its own column
+// Possibly re-enable by boolean when column hiding becomes an option
+//                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, false))
+                ;
         }
     },
     DPS_1("DPS 1", ColumnType.DPS1VALUE) {
