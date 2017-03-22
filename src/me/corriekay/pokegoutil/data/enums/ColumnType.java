@@ -63,6 +63,10 @@ public enum ColumnType {
         String.class,
         Comparators.STRING
     ),
+    NUMBER_STRING(            
+        String.class,
+        Comparators.NUMBER_STRING
+    ),
     FUTURE_STRING(
         String.class,
         Comparators.FUTURE_STRING,
@@ -101,6 +105,18 @@ public enum ColumnType {
                 right = String.valueOf(0);
             }
             return Integer.compare(Integer.parseInt(left), Integer.parseInt(right));
+        };
+        public static final Comparator<String> NUMBER_STRING = (left, right) -> {
+            // pre-initialize first split entries with "-1" so "-" (= NO_VALUE_SIGN) will be sorted separate from 0
+            String[] sLeft = {"-1","0"};
+            String[] sRight = {"-1","0"};
+            if (left.indexOf("/") > 0) {
+                sLeft = left.split("/");
+            }
+            if (right.indexOf("/") > 0) {
+                sRight = right.split("/");
+            }
+            return Integer.compare(Integer.parseInt(sLeft[0]), Integer.parseInt(sRight[0]));
         };
     }
 

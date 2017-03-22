@@ -165,7 +165,7 @@ public enum PokeColumn {
             return p.getMaxStamina();
         }
     },
-    EVOLVABLE_COUNT("Evolvable", ColumnType.NULLABLE_INT) {
+    EVOLVABLE_COUNT("Evolvable", ColumnType.NUMBER_STRING) {
         @Override
         public Object get(final Pokemon p) {
             if (p.getCandiesToEvolve() > 1) {
@@ -173,19 +173,32 @@ public enum PokeColumn {
                 final int candiesToEvolve = p.getCandiesToEvolve();
 
                 int evolvable = (int) ((double) candies / candiesToEvolve);
+                // Keep separate track of evolvable with "Transfer After Evolve" TAE)
+                int evolvableTAE = evolvable;
                 int rest = candies % candiesToEvolve;
-                final boolean transferAfterEvolve = ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE);
+                int restTAE = rest;
+// Disregarded since it's now tracked separately
+//                final boolean transferAfterEvolve = ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE);
 
                 // We iterate and get how many candies are added while evolving and if that can make up for some more evolves
                 int newEvolvable = evolvable;
+                // Keep a separate track of how many candies we get with "Transfer After Evolve" (TAE)
+                int newEvolvableTAE = evolvable;
                 do {
-                    final int candyGiven = newEvolvable + (transferAfterEvolve ? newEvolvable : 0);
+//                    final int candyGiven = newEvolvable + (transferAfterEvolve ? newEvolvable : 0);
+                    final int candyGiven = newEvolvable;
                     newEvolvable = (int) ((double) (candyGiven + rest) / candiesToEvolve);
                     evolvable = evolvable + newEvolvable;
                     rest = (candyGiven + rest) % candiesToEvolve;
-                } while (newEvolvable > 0);
 
-                return String.valueOf(evolvable);
+                    final int candyGivenTAE = newEvolvableTAE + newEvolvableTAE;
+                    newEvolvableTAE = (int) ((double) (candyGivenTAE + restTAE) / candiesToEvolve);
+                    evolvableTAE = evolvableTAE + newEvolvableTAE;
+                    restTAE = (candyGivenTAE + restTAE) % candiesToEvolve;
+					
+				} while (newEvolvable > 0);
+
+                return String.valueOf(evolvable) + "/" + String.valueOf(evolvableTAE);
             } else {
                 return StringLiterals.NO_VALUE_SIGN;
             }
