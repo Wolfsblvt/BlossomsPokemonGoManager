@@ -320,14 +320,16 @@ public class PokeHandler {
         TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = p.getSettings().getType().toString();
+                // need to strip "pokemon_type_" prefix or "pokemon_type_none" 
+                final String type = PokemonUtils.formatType(p.getSettings().getType());//p.getSettings().getType().toString();
                 return abbreviateType(type);
             }
         },
         TYPE_2("Pokémon Type 2 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = p.getSettings().getType2().toString();
+                // need to strip "pokemon_type_" prefix or "pokemon_type_none" 
+                final String type = PokemonUtils.formatType(p.getSettings().getType2());//p.getSettings().getType2().toString();
                 return abbreviateType(type);
             }
         },
@@ -382,7 +384,10 @@ public class PokeHandler {
          * @return The abbreviated type with two characters.
          */
         private static String abbreviateType(final String type) {
-            if ("none".equalsIgnoreCase(type)) {
+// this will never happen since "none" already was stripped in the PokemonUtils.formatType() call
+//            if ("none".equalsIgnoreCase(type)) {
+// instead we need to check if the returned type is empty            
+            if (type.isEmpty()) {
                 return "__";
             } else if ("fighting".equalsIgnoreCase(type) || "ground".equalsIgnoreCase(type)) {
                 // "Gr" is Grass, so we make Ground "Gd". "Fi" is Fire, so we make Fighting "Fg"
