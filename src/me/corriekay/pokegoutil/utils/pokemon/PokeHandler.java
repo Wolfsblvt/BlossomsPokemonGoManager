@@ -170,7 +170,7 @@ public class PokeHandler {
         LEVEL("Pokémon Level") {
             @Override
             public String get(final Pokemon p) {
-                return PokeColumn.LEVEL.get(p).toString();
+                return StringUtils.leftPad(PokeColumn.LEVEL.get(p).toString(), 4, '0');
             }
         },
         IV_RATING("IV Rating in two digits (XX for 100%) [2]") {
