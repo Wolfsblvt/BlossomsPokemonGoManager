@@ -363,6 +363,15 @@ public class PokeHandler {
                 final int length = 3;
                 return pad((int) PokeColumn.POKEDEX_ID.get(p), length);
             }
+        },
+        GENDER("Gender symbol [1]") {
+            @Override
+            public String get(final Pokemon p) {
+                final String gender = PokeColumn.GENDER.get(p).toString(); 
+                final String gChar = (gender == "FEMALE" ? UnicodeHelper.get("female") : 
+                                      gender == "MALE" ? UnicodeHelper.get("male") : UnicodeHelper.get("none")) ;
+                return gChar;
+            }
         };
 
         /**
