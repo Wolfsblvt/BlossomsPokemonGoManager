@@ -155,7 +155,7 @@ public class PokeHandler {
                 return PokeColumn.CP.get(p).toString();
             }
         },
-        CP_EVOLVED("CP if pokemon was fully evolved (equals %cp% for highest species in the family)") {
+        CP_EVOLVED("CP if Pokémon was fully evolved (equals %cp% for highest species in the family)") {
             @Override
             public String get(final Pokemon p) {
                 return PokeColumn.CP_EVOLVED.get(p).toString();
@@ -217,7 +217,7 @@ public class PokeHandler {
                 return UnicodeHelper.get(PokeColumn.IV_DEFENSE.get(p).toString());
             }
         },
-        IV_STAM_UNI("IV Stamina Unicode (⓯  for 15) {1]") {
+        IV_STAM_UNI("IV Stamina Unicode (⓯  for 15) [1]") {
             @Override
             public String get(final Pokemon p) {
                 return UnicodeHelper.get(PokeColumn.IV_STAMINA.get(p).toString());
