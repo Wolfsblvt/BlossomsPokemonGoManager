@@ -265,28 +265,42 @@ public class PokeHandler {
                 return PokeColumn.MAX_CP_40.get(p).toString();
             }
         },
-        MOVE_TYPE_1("Move 1 abbreviated (Ghost = Gh) [2]") {
+        MOVE_1("Move 1 abbreviated (Uppercase with STAB else lowercase) [2]") {
+            @Override
+            public String get(final Pokemon p) {
+                final String move = PokemonUtils.formatMove(p.getMove1());
+                return PokemonUtils.hasStab(p.getPokemonId(), p.getMove1()) ? abbreviateMove(move).toUpperCase() : abbreviateMove(move).toLowerCase();
+            }
+        },
+        MOVE_2("Move 2 abbreviated (Uppercase with STAB else lowercase) [2]") {
+            @Override
+            public String get(final Pokemon p) {
+                final String move = PokemonUtils.formatMove(p.getMove2());
+                return PokemonUtils.hasStab(p.getPokemonId(), p.getMove2()) ? abbreviateMove(move).toUpperCase() : abbreviateMove(move).toLowerCase();
+            }
+        },
+        MOVE_TYPE_1("Move Type 1 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = PokemonUtils.formatType(PokemonMeta.getMoveSettings(p.getMove1()).getPokemonType());
-                return PokemonUtils.hasStab(p.getPokemonId(), p.getMove1()) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
+                return abbreviateType(type);
             }
         },
-        MOVE_TYPE_2("Move 2 abbreviated (Ghost = Gh) [2]") {
+        MOVE_TYPE_2("Move Type 2 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = PokemonUtils.formatType(PokemonMeta.getMoveSettings(p.getMove2()).getPokemonType());
-                return PokemonUtils.hasStab(p.getPokemonId(), p.getMove2()) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
+                return abbreviateType(type);
             }
         },
-        MOVE_TYPE_1_UNI("Move 1 abbreviated (Eletric = ⚡) [1]") {
+        MOVE_TYPE_1_UNI("Move Type 1 abbreviated (Electric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = PokemonMeta.getMoveSettings(p.getMove1()).getPokemonType().toString();
                 return UnicodeHelper.get(type);
             }
         },
-        MOVE_TYPE_2_UNI("Move 2 abbreviated (Eletric = ⚡) [1]") {
+        MOVE_TYPE_2_UNI("Move Type 2 abbreviated (Electric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = PokemonMeta.getMoveSettings(p.getMove2()).getPokemonType().toString();
@@ -333,14 +347,14 @@ public class PokeHandler {
                 return abbreviateType(type);
             }
         },
-        TYPE_1_UNI("Pokémon Type 1 Unicode (Eletric = ⚡) [1]") {
+        TYPE_1_UNI("Pokémon Type 1 Unicode (Electric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = p.getSettings().getType().toString();
                 return UnicodeHelper.get(type);
             }
         },
-        TYPE_2_UNI("Pokémon Type 2 Unicode (Eletric = ⚡) [1]") {
+        TYPE_2_UNI("Pokémon Type 2 Unicode (Electric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = p.getSettings().getType2().toString();
@@ -375,6 +389,23 @@ public class PokeHandler {
                 return gChar;
             }
         };
+
+        /**
+         * Abbreviate Move to two characters.
+         * @param move The move.
+         * @return The abbreviated move with two characters.
+         */
+        private static String abbreviateMove(final String move) {
+            // check if move has two words
+            if (move.indexOf(" ") > 0) {
+                String[] moveWords = move.split(" ");
+                // too many charge moves have the same initials so we do not make exceptions for them.
+                // this is further complicated because the moves can have STAB which is indicated by uppercase
+                return moveWords[0].substring(0, 1) + moveWords[1].substring(0, 1);  
+            } else {
+                return move.substring(0, 2);
+            }
+        }
 
         /**
          * Abbreviate Movement/Pokémon type, to two character.
