@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import me.corriekay.pokegoutil.BlossomsPoGoManager;
 import me.corriekay.pokegoutil.utils.*;
 
 public class s201224434 {
@@ -32,7 +33,7 @@ public class s201224434 {
     }
 
     /**
-     * Purpose : Test AutoIncrementer class defalut constructor
+     * Purpose : Test AutoIncrementer class default constructor
      * Input : AutoIncrementer()
      * Expected : 
      *      return 0
@@ -197,6 +198,22 @@ public class s201224434 {
         result = Utilities.concatString('!', myString3);
         assertEquals("", result);
     }
+    
+    /**
+     * Purpose : Test ConfigNew class concatString method
+     * Input : 
+     * Expected : 
+     *      
+     */
+    @Test
+    public void testConfigNew() {
+        ConfigNew myCFG = ConfigNew.getConfig();
+
+        
+    }
+    
+    
+    
     
     
     
