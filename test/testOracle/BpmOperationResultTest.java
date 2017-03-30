@@ -10,20 +10,40 @@ import me.corriekay.pokegoutil.data.enums.OperationError;
 import me.corriekay.pokegoutil.data.models.BpmOperationResult;
 import me.corriekay.pokegoutil.gui.enums.OperationId;
 
-public class TestBpmOperationResult {
+public class BpmOperationResultTest {
     
     public BpmOperationResult bpmOperationResult;
 
+    @Before
+    public void setUp() throws Exception {
+        bpmOperationResult = new BpmOperationResult();
+    }
+    
     /**
-     * Purpose: Construct BpmOperationResult class.
+     * Purpose: Destroy BpmOperationResult class.
      * Input: void
      * Expected:
-     *          getSuccessMessageList().isEmpty() is true.
+     *          bpmOperationResult is null.
      */
-    @Before
-    public void setUp() {
-        bpmOperationResult = new BpmOperationResult();
+    @After
+    public void tearDown() throws Exception {
+        bpmOperationResult = null;
+        assertNull(bpmOperationResult);
+    }
+    
+    /**
+     * Purpose: Construct BpmOperationResult class.
+     * Input: void -> string "Error!", OperationError.EVOLVE_FAIL
+     * Expected:
+     *          getSuccessMessageList().isEmpty() is true. ->
+     *          getOperationError() is OperationError.EVOLVE_FAIL.
+     */
+    @Test
+    public void testConstructor() {
         assertEquals(true, bpmOperationResult.getSuccessMessageList().isEmpty());
+        bpmOperationResult = null;
+        bpmOperationResult = new BpmOperationResult("Error!", OperationError.EVOLVE_FAIL);
+        assertEquals(OperationError.EVOLVE_FAIL, bpmOperationResult.getOperationError());
     }
     
     /**
@@ -34,7 +54,7 @@ public class TestBpmOperationResult {
      */
     @Test
     public void testAddSuccessMessage() {
-        bpmOperationResult.getSuccessMessageList().add("Success!");
+        bpmOperationResult.addSuccessMessage("Success!");
         assertEquals(1, bpmOperationResult.getSuccessMessageList().size());
     }
     
@@ -55,7 +75,7 @@ public class TestBpmOperationResult {
      * Purpose: Get operation error.
      * Input: setOperationError void -> OperationError.EVOLVE_FAIL
      * Expected:
-     *          getOperationError() is null -> OperationError.EVOLVE_FAIL
+     *          getOperationError() is null. -> OperationError.EVOLVE_FAIL.
      */
     @Test
     public void testGetOperationError() {
@@ -114,16 +134,5 @@ public class TestBpmOperationResult {
         bpmOperationResult.setOperationError(OperationError.EVOLVE_FAIL);
         assertEquals(OperationError.EVOLVE_FAIL, bpmOperationResult.getOperationError());
     }
-    
-    /**
-     * Purpose: Destroy BpmOperationResult class.
-     * Input: void
-     * Expected:
-     *          bpmOperationResult is null.
-     */
-    @After
-    public void tearUp() {
-        bpmOperationResult = null;
-        assertNull(bpmOperationResult);
-    }
+
 }
