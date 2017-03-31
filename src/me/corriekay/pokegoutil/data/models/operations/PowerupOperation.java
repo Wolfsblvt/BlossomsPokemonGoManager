@@ -1,8 +1,6 @@
 package me.corriekay.pokegoutil.data.models.operations;
 
 import com.pokegoapi.exceptions.InvalidCurrencyException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.data.enums.OperationError;
 import me.corriekay.pokegoutil.data.managers.AccountManager;
@@ -52,7 +50,7 @@ public class PowerupOperation extends Operation {
 
     @Override
     public BpmOperationResult validateOperation()
-            throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+            throws InvalidCurrencyException {
         if (pokemon.isInGym()) {
             return new BpmOperationResult("Pokemon is in gym", OperationError.IN_GYM);
         }

@@ -1,10 +1,7 @@
 package me.corriekay.pokegoutil.data.models.operations;
 
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.exceptions.CaptchaActiveException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
-import com.pokegoapi.exceptions.hash.HashException;
+import com.pokegoapi.exceptions.request.RequestFailedException;
 
 import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse.Result;
 import me.corriekay.pokegoutil.data.enums.OperationError;
@@ -34,7 +31,7 @@ public class TransferOperation extends Operation {
     }
 
     @Override
-    protected BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException {
+    protected BpmOperationResult doOperation() {
 
         final Pokemon poke = pokemon.getPokemon();
         final int candies = poke.getCandy();
@@ -43,18 +40,12 @@ public class TransferOperation extends Operation {
         final String errorTransferingString = "Error transferring %s, result: %s";
         try {
             transferResult = poke.transferPokemon();
-        } catch (CaptchaActiveException e) {
+        } catch (RequestFailedException e) {
             e.printStackTrace();
             return new BpmOperationResult(String.format(
                     errorTransferingString,
                     PokemonUtils.getLocalPokeName(poke),
-                    "Captcha active in account"),
-                    OperationError.EVOLVE_FAIL);
-        } catch (HashException e) {
-            return new BpmOperationResult(String.format(
-                    errorTransferingString,
-                    pokemon.getSpecies(),
-                    "Error with Hash: " + e.getMessage()),
+                    e.getMessage()),
                     OperationError.EVOLVE_FAIL);
         }
         

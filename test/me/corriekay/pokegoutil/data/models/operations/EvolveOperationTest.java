@@ -10,8 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.pokegoapi.exceptions.InvalidCurrencyException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
+import com.pokegoapi.exceptions.request.LoginFailedException;
 
 import me.corriekay.pokegoutil.data.enums.OperationError;
 import me.corriekay.pokegoutil.data.models.BpmOperationResult;
@@ -40,11 +39,9 @@ public class EvolveOperationTest {
      * Evolve a pokemon that is in gym.
      *
      * @throws InvalidCurrencyException invalid currency
-     * @throws LoginFailedException login fail
-     * @throws RemoteServerException sever error
      */
     @Test
-    public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void pokemonIsInGym() throws InvalidCurrencyException {
         doReturn(true).when(pokemon).isInGym();
 
         final BpmOperationResult result = operation.execute();
@@ -58,10 +55,9 @@ public class EvolveOperationTest {
      *
      * @throws InvalidCurrencyException invalid currency
      * @throws LoginFailedException login fail
-     * @throws RemoteServerException sever error
      */
     @Test
-    public void pokemonIsNotEvolvable() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void pokemonIsNotEvolvable() throws InvalidCurrencyException, LoginFailedException {
         final int noCandiesToEvolve = 0;
         doReturn(noCandiesToEvolve).when(pokemon).getCandies2Evlv();
 
@@ -76,10 +72,9 @@ public class EvolveOperationTest {
      *
      * @throws InvalidCurrencyException invalid currency
      * @throws LoginFailedException login fail
-     * @throws RemoteServerException sever error
      */
     @Test
-    public void notEnoughCandies() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void notEnoughCandies() throws InvalidCurrencyException, LoginFailedException {
         final int insufficentCandies = 24;
         final int candiesToEvolve = 25;
         doReturn(insufficentCandies).when(pokemon).getCandies();
@@ -96,10 +91,9 @@ public class EvolveOperationTest {
      *
      * @throws InvalidCurrencyException invalid currency
      * @throws LoginFailedException login fail
-     * @throws RemoteServerException sever error
      */
     @Test
-    public void sucessfullyEvolve() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void sucessfullyEvolve() throws InvalidCurrencyException, LoginFailedException {
         final int sufficentCandies = 25;
         final int candiesToEvolve = 25;
         doReturn(sufficentCandies).when(pokemon).getCandies();

@@ -32,17 +32,14 @@ import me.corriekay.pokegoutil.utils.version.Updater;
  */
 public class PokemonGoMainWindow extends JFrame {
 
+    private static PokemonGoMainWindow instance;
+
     private static final long serialVersionUID = -6224748358995357643L;
-    public JTextArea textArea = new JTextArea();
-    public JScrollPane jsp;
-
-    public static PokemonGoMainWindow instance = null;
-
+    private static final int TEXT_AREA_HEIGHT = 150;
+    
     private final PokemonGo go;
     private final PlayerProfile pp;
     private final JTabbedPane tab = new JTabbedPane();
-
-    private static final int textAreaHeight = 150;
 
     private final GlobalSettingsController globalSettings = GlobalSettingsController.getGlobalSettingsController();
 
@@ -95,12 +92,12 @@ public class PokemonGoMainWindow extends JFrame {
         final Updater updater = Updater.getUpdater();
         updater.checkForNewVersion();
 
-        List<String> errors = pokemonTab.getColumnErrors();
+        final List<String> errors = pokemonTab.getPokemonTable().getColumnErrors();
         if (!errors.isEmpty()) {
             System.out.println("WARNING: Some column names from config could not be recognized!");
-            String configString = ConfigNew.getConfig().getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
+            final String configString = ConfigNew.getConfig().getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
             System.out.printf("Config string is: '%s'\n", configString);
-            for (String wrongColumn : errors) {
+            for (final String wrongColumn : errors) {
                 System.out.printf("  Name not recognized: '%s'\n", wrongColumn);
             }
             System.out.println("Existing columns for which no match in configuation was found will appear at the end of the table.");
@@ -117,18 +114,18 @@ public class PokemonGoMainWindow extends JFrame {
      * @param smartscroll use smart scroll
      */
     private void initializeConsole(final boolean smartscroll) {
+        final JTextArea textArea = new JTextArea();
         textArea.setEditable(false);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-        jsp = new JScrollPane(textArea);
-        jsp.setPreferredSize(new Dimension(Integer.MAX_VALUE, textAreaHeight));
+        final JScrollPane jsp = new JScrollPane(textArea);
+        jsp.setPreferredSize(new Dimension(Integer.MAX_VALUE, TEXT_AREA_HEIGHT));
         if (smartscroll) {
             new SmartScroller(jsp);
         }
         add(jsp, BorderLayout.SOUTH);
 
         globalSettings.getLogController().setTextArea(textArea);
-
     }
 
     /**
@@ -144,6 +141,9 @@ public class PokemonGoMainWindow extends JFrame {
         return go;
     }
 
+    /**
+     * Method for showing the title updated.
+     */
     public void refreshTitle() {
         try {
             final NumberFormat f = NumberFormat.getInstance();
@@ -156,6 +156,9 @@ public class PokemonGoMainWindow extends JFrame {
         }
     }
 
+    /**
+     * Start main Window by showing it.
+     */
     public void start() {
         setVisible(true);
     }

@@ -3,20 +3,19 @@ package me.corriekay.pokegoutil.windows;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -26,91 +25,88 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 
 import com.pokegoapi.api.PokemonGo;
+import com.pokegoapi.api.inventory.ItemBag;
 import com.pokegoapi.api.map.pokemon.EvolutionResult;
 import com.pokegoapi.api.player.PlayerProfile.Currency;
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.exceptions.CaptchaActiveException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
-import com.pokegoapi.exceptions.hash.HashException;
+import com.pokegoapi.exceptions.request.RequestFailedException;
 
+import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
+import POGOProtos.Networking.Responses.GetInventoryResponseOuterClass.GetInventoryResponse;
+import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
+import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse;
+import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse;
+import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass.UpgradePokemonResponse;
 import me.corriekay.pokegoutil.data.enums.BatchOperation;
-import me.corriekay.pokegoutil.data.enums.PokeColumn;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
-import me.corriekay.pokegoutil.utils.helpers.LDocumentListener;
+import me.corriekay.pokegoutil.utils.helpers.EvolveHelper;
 import me.corriekay.pokegoutil.utils.helpers.LocationHelper;
+import me.corriekay.pokegoutil.utils.helpers.TriConsumer;
+import me.corriekay.pokegoutil.utils.logging.ConsolePrintStream;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler.ReplacePattern;
 import me.corriekay.pokegoutil.utils.pokemon.PokeNick;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
-import me.corriekay.pokegoutil.utils.ui.GhostText;
+import me.corriekay.pokegoutil.utils.ui.IVTransferTextField;
+import me.corriekay.pokegoutil.utils.ui.SearchBarTextField;
 import me.corriekay.pokegoutil.utils.windows.PokemonTable;
 import me.corriekay.pokegoutil.utils.windows.PokemonTableModel;
-import POGOProtos.Enums.PokemonFamilyIdOuterClass.PokemonFamilyId;
-import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
-import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
-import POGOProtos.Networking.Responses.ReleasePokemonResponseOuterClass.ReleasePokemonResponse;
-import POGOProtos.Networking.Responses.SetFavoritePokemonResponseOuterClass.SetFavoritePokemonResponse;
-import POGOProtos.Networking.Responses.UpgradePokemonResponseOuterClass.UpgradePokemonResponse;
 
 /**
  * The main PokemonTab.
  */
-@SuppressWarnings("serial")
 public class PokemonTab extends JPanel {
 
-    private final PokemonGo go;
-    private final PokemonTable pt;
-    private static final JTextField searchBar = new JTextField("");
-    private static final JTextField ivTransfer = new JTextField("", 20);
-    private static final ConfigNew config = ConfigNew.getConfig();
-
+    public static final Map<Long, EvolveHelper> MAP_POKEMON_ITEM = new HashMap<Long, EvolveHelper>();
+    private static final long serialVersionUID = -3356302801659055820L;
+    private static PokemonGo go;
+    
     // Used constants
-    private static final int WHEN_TO_SHOW_SELECTION_TITLE = 2;
     private static final String GYM_SKIPPED_MESSAGE_UNFORMATTED = "%s with %d CP is in gym, skipping.";
+    private static final int WHEN_TO_SHOW_SELECTION_TITLE = 2;
+    private static final int GRID_WIDTH = 3;
     private static final int POPUP_WIDTH = 500;
     private static final int POPUP_HEIGHT = 400;
-    private static final int MIN_FONT_SIZE = 2;
+    // Pokemon name language drop down
+    private static final String[] LOCALES = {"en", "de", "fr", "ru", "zh_CN", "zh_HK", "ja"}; 
+    private static final String[] SIZES = new String[] {"8", "10", "11", "12", "14", "16", "18"};
+
+    private final PokemonTable pt;
+    private final ConfigNew config = ConfigNew.getConfig();
+    private List<Integer> selectedRowsList;
 
     /**
      * Creates an instance of the PokemonTab.
-     *
-     * @param go The go api class.
+     * @param goInstance The go api class.
      */
-    public PokemonTab(final PokemonGo go) {
+    public PokemonTab(final PokemonGo goInstance) {
         super();
 
         setLayout(new BorderLayout());
-        this.go = go;
-        pt = new PokemonTable(go);
-        final JPanel topPanel = new JPanel(new GridBagLayout());
-        final JButton refreshPkmn = new JButton("Refresh List"),
-            renameSelected = new JButton(BatchOperation.RENAME.toString()),
-            transferSelected = new JButton(BatchOperation.TRANSFER.toString()),
-            evolveSelected = new JButton(BatchOperation.EVOLVE.toString()),
-            powerUpSelected = new JButton(BatchOperation.POWER_UP.toString()),
-            toggleFavorite = new JButton(BatchOperation.FAVORITE.toString());
-
+        go = goInstance;
+        pt = new PokemonTable();
+        addAndInitializeComponents();
+       
         pt.getSelectionModel().addListSelectionListener(event -> {
             if (event.getValueIsAdjusting()) {
                 // We need a break here. Cause otherwise mouse selection would trigger twice. (Yeah, that's swing)
                 return;
             }
             if (event.getSource() == pt.getSelectionModel() && pt.getRowSelectionAllowed()) {
+                if (pt.getSelectionModel().getAnchorSelectionIndex() > -1 && pt.getSelectionModel().getLeadSelectionIndex() > -1) {
+                    selectedRowsList = Arrays.stream(pt.getSelectedRows()).boxed().collect(Collectors.toList());
+                }
                 final int selectedRows = pt.getSelectedRowCount();
                 if (selectedRows >= WHEN_TO_SHOW_SELECTION_TITLE) {
                     PokemonGoMainWindow.getInstance().setTitle(selectedRows + " Pokémon selected");
@@ -120,146 +116,82 @@ public class PokemonTab extends JPanel {
             }
         });
 
-        final GridBagConstraints gbc = new GridBagConstraints();
-        topPanel.add(refreshPkmn, gbc);
-        refreshPkmn.addActionListener(l -> new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                refreshPkmn();
-                return null;
-            }
-        }.execute());
-        topPanel.add(renameSelected, gbc);
-        renameSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                renameSelected();
-                return null;
-            }
-        }.execute());
-        topPanel.add(transferSelected, gbc);
-        transferSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                transferSelected();
-                return null;
-            }
-        }.execute());
-        topPanel.add(evolveSelected, gbc);
-        evolveSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                evolveSelected();
-                return null;
-            }
-        }.execute());
-        topPanel.add(powerUpSelected, gbc);
-        powerUpSelected.addActionListener(l -> new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                powerUpSelected();
-                return null;
-            }
-        }.execute());
-        topPanel.add(toggleFavorite, gbc);
-        toggleFavorite.addActionListener(l -> new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                toggleFavorite();
-                return null;
-            }
-        }.execute());
-
-        ivTransfer.addKeyListener(
-            new KeyListener() {
-                @Override
-                public void keyPressed(final KeyEvent event) {
-                    if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                        new SwingWorker<Void, Void>() {
-                            @Override
-                            protected Void doInBackground() {
-                                selectLessThanIv();
-                                return null;
-                            }
-                        }.execute();
-                    }
-                }
-
-                @Override
-                public void keyTyped(final KeyEvent event) {
-                    // nothing here
-                }
-
-                @Override
-                public void keyReleased(final KeyEvent event) {
-                    // nothing here
-                }
-            });
-
-        topPanel.add(ivTransfer, gbc);
-
-        new GhostText(ivTransfer, "Pokemon IV");
+        //Try to apply the specified font size to table
+        pt.applySpecifiedFontSize();
+        
+        pt.constructNewTableModel(go.getInventories().getPokebank().getPokemons());
+    }
+    
+    /**
+     * Handle component creation and initialization inside PokemonTab constructor.
+     */
+    private void addAndInitializeComponents() {
+        final JPanel topPanel = new JPanel(new GridBagLayout());
+        final JButton refreshPkmn = new JButton("Refresh List"),
+            renameSelected = new JButton(BatchOperation.RENAME.toString()),
+            transferSelected = new JButton(BatchOperation.TRANSFER.toString()),
+            evolveSelected = new JButton(BatchOperation.EVOLVE.toString()),
+            powerUpSelected = new JButton(BatchOperation.POWER_UP.toString()),
+            toggleFavorite = new JButton(BatchOperation.FAVORITE.toString()),
+            setFavoriteYes = new JButton(BatchOperation.SET_FAVORITE_YES.toString()),
+            setFavoriteNo = new JButton(BatchOperation.SET_FAVORITE_NO.toString());
+        final IVTransferTextField ivTransfer = new IVTransferTextField(pt::selectLessThanIv);
         final JButton transferIv = new JButton("Select Pokemon < IV");
-        transferIv.addActionListener(l -> new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                selectLessThanIv();
-                return null;
-            }
-        }.execute());
-        topPanel.add(transferIv, gbc);
+        final JComboBox<String> pokelang = new JComboBox<String>(LOCALES);
+        final JComboBox<String> fontSize = new JComboBox<>(SIZES);
 
+        final GridBagConstraints gbc = new GridBagConstraints();
+        
+        topPanel.add(refreshPkmn, gbc);
+        topPanel.add(renameSelected, gbc);
+        topPanel.add(transferSelected, gbc);
+        topPanel.add(evolveSelected, gbc);
+        topPanel.add(powerUpSelected, gbc);
+        topPanel.add(toggleFavorite, gbc);
+        topPanel.add(setFavoriteYes, gbc);
+        topPanel.add(setFavoriteNo, gbc);
+        topPanel.add(ivTransfer, gbc);
+        topPanel.add(transferIv, gbc);
+        
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        gbc.gridwidth = 3;
+        gbc.gridwidth = GRID_WIDTH;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        topPanel.add(searchBar, gbc);
-
-        // Pokemon name language drop down
-        final String[] locales = {"en", "de", "fr", "ru", "zh_CN", "zh_HK", "ja"};
-        final JComboBox<String> pokelang = new JComboBox<>(locales);
-        pokelang.setSelectedItem(config.getString(ConfigKey.LANGUAGE));
-        pokelang.addActionListener(e -> new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                final String lang = (String) pokelang.getSelectedItem();
-                changeLanguage(lang);
-                return null;
-            }
-        }.execute());
+        topPanel.add(new SearchBarTextField(pt::filterTable), gbc);
+        
         topPanel.add(pokelang);
-
-        // Set font size if specified in config
-        final Font font = pt.getFont();
-        final int size = Math.max(MIN_FONT_SIZE, config.getInt(ConfigKey.FONT_SIZE, font.getSize()));
-        if (size != font.getSize()) {
-            pt.setFont(font.deriveFont((float) size));
-        }
-
-        // Font size dropdown
-        final String[] sizes = {"8", "10", "11", "12", "14", "16", "18"};
-        final JComboBox<String> fontSize = new JComboBox<>(sizes);
-        fontSize.setSelectedItem(String.valueOf(size));
-        fontSize.addActionListener(e -> new SwingWorker<Void, Void>() {
-            @Override
-            protected Void doInBackground() {
-                final String size = fontSize.getSelectedItem().toString();
-                pt.setFont(pt.getFont().deriveFont(Float.parseFloat(size)));
-                config.setInt(ConfigKey.FONT_SIZE, Integer.parseInt(size));
-                return null;
-            }
-        }.execute());
         topPanel.add(fontSize);
-
-        LDocumentListener.addChangeListener(searchBar, e -> refreshList());
-        new GhostText(searchBar, "Search Pokémon...");
 
         add(topPanel, BorderLayout.NORTH);
         final JScrollPane sp = new JScrollPane(pt);
         sp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(sp, BorderLayout.CENTER);
+        
+        refreshPkmn.addActionListener(l -> new OperationWorker<Object>(this::refreshPkmn).execute());
+        renameSelected.addActionListener(l -> new OperationWorker<Object>(this::renameSelected).execute());
+        transferSelected.addActionListener(l -> new OperationWorker<Object>(this::transferSelected).execute());
+        evolveSelected.addActionListener(l -> new OperationWorker<Object>(this::evolveSelected).execute());
+        powerUpSelected.addActionListener(l -> new OperationWorker<Object>(this::powerUpSelected).execute());
+        toggleFavorite.addActionListener(l -> new OperationWorker<BatchOperation>(this::toggleFavorite, BatchOperation.FAVORITE).execute());
+        setFavoriteYes.addActionListener(l -> new OperationWorker<BatchOperation>(this::toggleFavorite, BatchOperation.SET_FAVORITE_YES).execute());
+        setFavoriteNo.addActionListener(l -> new OperationWorker<BatchOperation>(this::toggleFavorite, BatchOperation.SET_FAVORITE_NO).execute());
+        transferIv.addActionListener(l -> new OperationWorker<String>(pt::selectLessThanIv, ivTransfer.getText()).execute());
+
+        pokelang.setSelectedItem(config.getString(ConfigKey.LANGUAGE));
+        pokelang.addActionListener(e -> new OperationWorker<String>(this::changeLanguage, (String) pokelang.getSelectedItem()).execute());
+
+        fontSize.setSelectedItem(String.valueOf(pt.getFont().getSize()));
+        fontSize.addActionListener(e -> new OperationWorker<Object>(() -> {
+            final String innerSize = fontSize.getSelectedItem().toString();
+            pt.setFont(pt.getFont().deriveFont(Float.parseFloat(innerSize)));
+            config.setInt(ConfigKey.FONT_SIZE, Integer.parseInt(innerSize));
+        }).execute());
     }
 
+    /**
+     * Change the language of the pokemons using the langCode.
+     * @param langCode language to change
+     */
     private void changeLanguage(final String langCode) {
         config.setString(ConfigKey.LANGUAGE, langCode);
 
@@ -279,13 +211,18 @@ public class PokemonTab extends JPanel {
         refreshPkmn();
     }
 
+    /**
+     * Try to obtain the updated list of Pokemons from server.
+     */
     private void refreshPkmn() {
         try {
-            go.getInventories().updateInventories();
-            PokemonGoMainWindow.getInstance().refreshTitle();
-        } catch (final Exception e) {
-            e.printStackTrace();
+            final GetInventoryResponse updateInventories = go.getInventories().updateInventories(true);
+            go.getInventories().updateInventories(updateInventories);
+        } catch (RequestFailedException e) {
+            System.out.println("Error obtaining updated list from server");
+            ConsolePrintStream.printException(e);
         }
+        PokemonGoMainWindow.getInstance().refreshTitle();
         SwingUtilities.invokeLater(this::refreshList);
         System.out.println("Done refreshing Pokémon list");
     }
@@ -305,20 +242,25 @@ public class PokemonTab extends JPanel {
     }
 
     private void renameSelected() {
-        final ArrayList<Pokemon> selection = getSelectedPokemon();
+        final ArrayList<Pokemon> selection = pt.getSelectedPokemon();
         if (selection.isEmpty()) {
             return;
         }
 
         final PokeHandler handler = new PokeHandler(selection);
-        final String renamePattern = inputOperation(BatchOperation.RENAME, selection);
+        final String renamePattern = (String) JOptionPane.showInputDialog(null, buildPanelForRename(), 
+                "Renaming " + selection.size() + " Pokémon.", JOptionPane.PLAIN_MESSAGE, null, null, 
+                config.getString(ConfigKey.RENAME_PATTERN));
+        if (renamePattern != null) {
+            config.setString(ConfigKey.RENAME_PATTERN, renamePattern);
+        }
 
         final MutableInt err = new MutableInt(),
             skipped = new MutableInt(),
             success = new MutableInt(),
             total = new MutableInt(1);
 
-        final BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback = (renameResult, pokemon) -> {
+        final TriConsumer<NicknamePokemonResponse.Result, Pokemon, String> perPokeCallback = (renameResult, pokemon, previousNickname) -> {
             System.out.println(String.format(
                 "Doing Rename %d of %d",
                 total.getValue(),
@@ -350,14 +292,14 @@ public class PokemonTab extends JPanel {
                 System.out.println(String.format(
                     "Renaming %s from \"%s\" to \"%s\", Result: Success!",
                     PokemonUtils.getLocalPokeName(pokemon),
-                    pokemon.getNickname(),
+                    previousNickname,
                     PokeHandler.generatePokemonNickname(renamePattern, pokemon)));
             } else {
                 err.increment();
                 System.out.println(String.format(
                     "Renaming %s failed! Code: %s; Nick: \"%s\"",
                     PokemonUtils.getLocalPokeName(pokemon),
-                    renameResult.toString(),
+                    previousNickname,
                     PokeHandler.generatePokemonNickname(renamePattern, pokemon)));
             }
 
@@ -371,17 +313,12 @@ public class PokemonTab extends JPanel {
 
         handler.bulkRenameWithPattern(renamePattern, perPokeCallback);
 
-        try {
-            go.getInventories().updateInventories();
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText("Pokémon batch rename complete!", selection.size(), success, skipped, err);
     }
 
     private void transferSelected() {
-        final ArrayList<Pokemon> selection = getSelectedPokemon();
+        final ArrayList<Pokemon> selection = pt.getSelectedPokemon();
         final ArrayList<Pokemon> finalSelection = new ArrayList<Pokemon>();
         if (selection.isEmpty()) {
             return;
@@ -439,19 +376,20 @@ public class PokemonTab extends JPanel {
                             candies));
                 });
                 success.add(finalSelection.size());
-            } catch (CaptchaActiveException | LoginFailedException | RemoteServerException | HashException e) {
+            } catch (RequestFailedException e) {
                 err.add(finalSelection.size());
                 System.out.println(String.format(
                         "Error transferring pokemons! %s",
                         Utilities.getRealExceptionMessage(e)));
             }
         }
+        selectedRowsList = null;
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText("Pokémon multi-transfer complete!", total.intValue(), success, skipped, err);
     }
 
     private void evolveSelected() {
-        final ArrayList<Pokemon> selection = getSelectedPokemon();
+        final ArrayList<Pokemon> selection = pt.getSelectedPokemon();
         if (selection.isEmpty()) {
             return;
         }
@@ -508,7 +446,13 @@ public class PokemonTab extends JPanel {
                     return;
                 }
 
-                final EvolutionResult evolutionResultWrapper = poke.evolve();
+                final EvolutionResult evolutionResultWrapper;
+                final EvolveHelper evolve = MAP_POKEMON_ITEM.get(poke.getId());
+                if (evolve != null && evolve.isEvolveWithItem()) {
+                    evolutionResultWrapper = poke.evolve(evolve.getItemToEvolveId());
+                } else {
+                    evolutionResultWrapper = poke.evolve();
+                }
                 if (evolutionResultWrapper.isSuccessful()) {
                     final Pokemon newPoke = evolutionResultWrapper.getEvolvedPokemon();
                     int newCandies = newPoke.getCandy();
@@ -531,8 +475,8 @@ public class PokemonTab extends JPanel {
                                     + "CP: %d[+%d], "
                                     + "HP: %d[+%d])",
                                 newCandies, candies, candiesToEvolve, candyRefund,
-                                newCp, (newCp - cp),
-                                newHp, (newHp - hp)));
+                                newCp, newCp - cp,
+                                newHp, newHp - hp));
                         } else {
                             // Sleep before transferring
                             final int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
@@ -546,6 +490,7 @@ public class PokemonTab extends JPanel {
                                 newCandies = newPoke.getCandy();
                                 candyRefund++;
                             }
+                            removeSelection(poke);
                             System.out.println(String.format(
                                 "Transferring %s, Result: %s",
                                 StringUtils.capitalize(newPoke.getPokemonId().toString().toLowerCase()),
@@ -564,10 +509,9 @@ public class PokemonTab extends JPanel {
                                 + "CP: %d[+%d], "
                                 + "HP: %d[+%d])",
                             newCandies, candies, candiesToEvolve, candyRefund,
-                            newCp, (newCp - cp),
-                            newHp, (newHp - hp)));
+                            newCp, newCp - cp,
+                            newHp, newHp - hp));
                     }
-                    go.getInventories().updateInventories();
                     success.increment();
                 } else {
                     err.increment();
@@ -579,8 +523,8 @@ public class PokemonTab extends JPanel {
 
                 // If not last element, sleep until the next one
                 if (!selection.get(selection.size() - 1).equals(poke)) {
-                    int sleepMin;
-                    int sleepMax;
+                    final int sleepMin;
+                    final int sleepMax;
                     if (afterTransfer) {
                         sleepMin = config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
                         sleepMax = config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
@@ -598,12 +542,8 @@ public class PokemonTab extends JPanel {
                     Utilities.getRealExceptionMessage(e)));
             }
         });
-
-        try {
-            go.getInventories().updateInventories();
-        } catch (final Exception e) {
-            e.printStackTrace();
-        }
+        selectedRowsList = null;
+        PokemonGoMainWindow.getInstance().refreshTitle();
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText(String.format(
                 "Pokémon batch evolve%s complete!",
@@ -612,7 +552,7 @@ public class PokemonTab extends JPanel {
     }
 
     private void powerUpSelected() {
-        final ArrayList<Pokemon> selection = getSelectedPokemon();
+        final ArrayList<Pokemon> selection = pt.getSelectedPokemon();
         if (selection.isEmpty()) {
             return;
         }
@@ -717,142 +657,81 @@ public class PokemonTab extends JPanel {
                     Utilities.getRealExceptionMessage(e)));
             }
         });
-        try {
-            go.getInventories().updateInventories();
-            PokemonGoMainWindow.getInstance().refreshTitle();
-        } catch (final RemoteServerException | LoginFailedException | CaptchaActiveException | HashException e) {
-            e.printStackTrace();
-        }
+        PokemonGoMainWindow.getInstance().refreshTitle();
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText("Pokémon batch powerup complete!", selection.size(), success, skipped, err);
 
     }
 
-    // feature added by Ben Kauffman
-    private void toggleFavorite() {
-        final ArrayList<Pokemon> selection = getSelectedPokemon();
-        if (selection.isEmpty()) {
-            return;
-        }
+    /**
+     * To favorite or not the selected Pokemon's.
+     * @author Ben Kauffman
+     * @param operation which operation to do regarding favorite: Toogle, Set Yes or Set No 
+     */
+    private void toggleFavorite(final BatchOperation operation) {
+        final ArrayList<Pokemon> selection = pt.getSelectedPokemon();
+        if (!selection.isEmpty() && confirmOperation(operation, selection)) {
+            final MutableInt err = new MutableInt(),
+                    skipped = new MutableInt(),
+                    success = new MutableInt(),
+                    total = new MutableInt(1);
 
-        if (!confirmOperation(BatchOperation.FAVORITE, selection)) {
-            return;
-        }
-
-        final MutableInt err = new MutableInt(),
-            skipped = new MutableInt(),
-            success = new MutableInt(),
-            total = new MutableInt(1);
-
-        selection.forEach(poke -> {
-            try {
-                System.out.println(String.format(
-                    "Toggling favorite %d of %d",
-                    total.getValue(),
-                    selection.size()));
-                total.increment();
-                final SetFavoritePokemonResponse.Result favoriteResult = poke
-                    .setFavoritePokemon(!poke.isFavorite());
-                System.out.println(String.format(
-                    "Attempting to set favorite for %s to %b...",
-                    PokemonUtils.getLocalPokeName(poke),
-                    !poke.isFavorite()));
-                go.getPlayerProfile().updateProfile();
-
-                if (favoriteResult == SetFavoritePokemonResponse.Result.SUCCESS) {
+            selection.forEach(poke -> {
+                try {
                     System.out.println(String.format(
-                        "Favorite for %s set to %b, Result: Success!",
-                        PokemonUtils.getLocalPokeName(poke),
-                        !poke.isFavorite()));
-                    success.increment();
-                } else {
+                            "Setting favorite %d of %d",
+                            total.getValue(),
+                            selection.size()));
+                    total.increment();
+                    final boolean favorite;
+                    if (operation.equals(BatchOperation.SET_FAVORITE_YES)) {
+                        favorite = true;
+                    } else if (operation.equals(BatchOperation.SET_FAVORITE_NO)) {
+                        favorite = false;
+                    } else {
+                        favorite = !poke.isFavorite();
+                    }
+                    final SetFavoritePokemonResponse.Result favoriteResult = poke
+                            .setFavoritePokemon(favorite);
+                    System.out.println(String.format(
+                            "Attempting to set favorite for %s to %b...",
+                            PokemonUtils.getLocalPokeName(poke),
+                            favorite));
+
+                    if (favoriteResult == SetFavoritePokemonResponse.Result.SUCCESS) {
+                        System.out.println(String.format(
+                                "Favorite for %s set to %b, Result: Success!",
+                                PokemonUtils.getLocalPokeName(poke),
+                                favorite));
+                        success.increment();
+                    } else {
+                        err.increment();
+                        System.out.println(String.format(
+                                "Error toggling favorite for %s, result: %s",
+                                PokemonUtils.getLocalPokeName(poke),
+                                favoriteResult.toString()));
+                    }
+
+                    // If not last element, sleep until the next one
+                    if (!selection.get(selection.size() - 1).equals(poke)) {
+                        final int sleepMin = config.getInt(ConfigKey.DELAY_FAVORITE_MIN);
+                        final int sleepMax = config.getInt(ConfigKey.DELAY_FAVORITE_MAX);
+                        Utilities.sleepRandom(sleepMin, sleepMax);
+                    }
+                } catch (final Exception e) {
                     err.increment();
                     System.out.println(String.format(
-                        "Error toggling favorite for %s, result: %s",
-                        PokemonUtils.getLocalPokeName(poke),
-                        favoriteResult.toString()));
+                            "Error toggling favorite for %s! %s",
+                            PokemonUtils.getLocalPokeName(poke),
+                            Utilities.getRealExceptionMessage(e)));
                 }
+            });
 
-                // If not last element, sleep until the next one
-                if (!selection.get(selection.size() - 1).equals(poke)) {
-                    final int sleepMin = config.getInt(ConfigKey.DELAY_FAVORITE_MIN);
-                    final int sleepMax = config.getInt(ConfigKey.DELAY_FAVORITE_MAX);
-                    Utilities.sleepRandom(sleepMin, sleepMax);
-                }
-            } catch (final Exception e) {
-                err.increment();
-                System.out.println(String.format(
-                    "Error toggling favorite for %s! %s",
-                    PokemonUtils.getLocalPokeName(poke),
-                    Utilities.getRealExceptionMessage(e)));
-            }
-        });
-        try {
             PokemonGoMainWindow.getInstance().refreshTitle();
-        } catch (final Exception e) {
-            e.printStackTrace();
+            SwingUtilities.invokeLater(this::refreshPkmn);
+            showFinishedText(String.format("Pokémon batch \"%s\" complete!", operation), selection.size(), success, skipped,
+                    err);
         }
-        SwingUtilities.invokeLater(this::refreshPkmn);
-        showFinishedText("Pokémon batch \"toggle favorite\" complete!", selection.size(), success, skipped,
-            err);
-    }
-
-    private void selectLessThanIv() {
-        if (!NumberUtils.isNumber(ivTransfer.getText())) {
-            System.out.println("Please select a valid IV value (0-100)");
-            return;
-        }
-
-        final double ivLessThan = Double.parseDouble(ivTransfer.getText());
-        if (ivLessThan > 100 || ivLessThan < 0) {
-            System.out.println("Please select a valid IV value (0-100)");
-            return;
-        }
-        pt.clearSelection();
-        System.out.println("Selecting Pokemon with IV less than: " + ivTransfer.getText());
-
-        for (int i = 0; i < pt.getRowCount(); i++) {
-            final double pIv = (double) pt.getValueAt(i, PokeColumn.IV_RATING.id) * 100;
-            //final double pIv = Double.parseDouble((String) pt.getValueAt(i, 3));
-            if (pIv < ivLessThan) {
-                pt.getSelectionModel().addSelectionInterval(i, i);
-            }
-        }
-    }
-
-    /**
-     * Handles.. idk why we have this. @author Cryptic
-     *
-     * @param operation operation to be done
-     * @param pokes     list of pokemons
-     * @return rename pattern
-     */
-    private String inputOperation(final BatchOperation operation, final ArrayList<Pokemon> pokes) {
-        JPanel panel;
-        String message = "";
-        String savedPattern = "";
-
-        switch (operation) {
-            case RENAME:
-                panel = buildPanelForRename();
-                savedPattern = config.getString(ConfigKey.RENAME_PATTERN);
-                message = "Renaming " + pokes.size() + " Pokémon.";
-                break;
-            default:
-                panel = buildPanelForOperation(operation, pokes);
-                break;
-        }
-
-        final String input = (String) JOptionPane.showInputDialog(null, panel, message, JOptionPane.PLAIN_MESSAGE, null, null, savedPattern);
-        if (input != null) {
-            switch (operation) {
-                case RENAME:
-                    config.setString(ConfigKey.RENAME_PATTERN, input);
-                default:
-                    break;
-            }
-        }
-        return input;
     }
 
     /**
@@ -899,7 +778,8 @@ public class PokemonTab extends JPanel {
         // We take 20 px for each row, 5 px buffer, and cap that at may 400
         // pixel.
         final int height = Math.min(400, pokes.size() * 20 + 5);
-        panel.setPreferredSize(new Dimension(500, height));
+        final int width = 500;
+        panel.setPreferredSize(new Dimension(width, height));
 
         pokes.forEach(p -> {
             String str = String.format("%s - CP: %d, IV: %s%%",
@@ -911,6 +791,12 @@ public class PokemonTab extends JPanel {
                 case EVOLVE:
                     str += " Cost: " + p.getCandiesToEvolve();
                     str += p.getCandiesToEvolve() > 1 ? " Candies" : " Candy";
+                    if (MAP_POKEMON_ITEM.containsKey(p.getId())) {
+                        final EvolveHelper evolve = MAP_POKEMON_ITEM.get(p.getId());
+                        if (evolve.isEvolveWithItem()) {
+                            str += " Evolving to " + evolve.getPokemonToEvolve() + " using " + evolve.getItemToEvolve();
+                        }
+                    }
                     break;
                 case POWER_UP:
                     str += " Cost: " + p.getCandyCostsForPowerup();
@@ -963,8 +849,7 @@ public class PokemonTab extends JPanel {
             @Override
             public void mouseClicked(final MouseEvent mouseEvent) {
                 @SuppressWarnings("unchecked")
-                final
-                JList<ReplacePattern> theList = ((JList<ReplacePattern>) mouseEvent.getSource());
+                final JList<ReplacePattern> theList = (JList<ReplacePattern>) mouseEvent.getSource();
                 final boolean isDoubleClick = mouseEvent.getClickCount() == 2;
                 if (isDoubleClick) {
                     final int index = theList.locationToIndex(mouseEvent.getPoint());
@@ -981,79 +866,55 @@ public class PokemonTab extends JPanel {
         panel.add(scroll);
         return panel;
     }
-
-    public ArrayList<Pokemon> getSelectedPokemon() {
-        final ArrayList<Pokemon> pokes = new ArrayList<>();
+    
+    /**
+     * Helper method to remove the pokemon from the selectedRowsList.
+     * @param p pokemon that will be removed from the list
+     */
+    public void removeSelection(final Pokemon p) {
         final PokemonTableModel model = (PokemonTableModel) pt.getModel();
-        for (final int i : pt.getSelectedRows()) {
-            final Pokemon poke = model.getPokemonByIndex(i);
-            if (poke != null) {
-                pokes.add(poke);
-            }
+        final int index = model.getIndexByPokemon(p);
+        if (index > 0 && selectedRowsList != null) {
+            selectedRowsList.remove(index);
         }
-        return pokes;
     }
 
     public void refreshList() {
-        final List<Pokemon> pokes = new ArrayList<>();
-        final String search = searchBar.getText().replaceAll(StringLiterals.SPACE, "").replaceAll(StringLiterals.UNDERSCORE, "").replaceAll("snek", "ekans")
-                .toLowerCase();
-        final String[] terms = search.split(";");
+        pt.constructNewTableModel(go.getInventories().getPokebank().getPokemons());
         try {
-            if ("".equals(search) || "searchpokémon...".equals(search)) {
-                pokes.addAll(go.getInventories().getPokebank().getPokemons());
-            }
-            else
-            {
-                synchronized (go.getInventories().getPokebank().getLock()) {
-                    go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-                        final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
-                        String familyName = "";
-                        if (useFamilyName) {
-                            // Try translating family name
-                            try {
-                                final PokemonId familyPokemonId = PokemonId.valueOf(poke.getPokemonFamily().toString().replaceAll(StringLiterals.FAMILY_PREFIX, ""));
-                                familyName = PokemonUtils.getLocalPokeName(familyPokemonId.getNumber());
-                            } catch (final IllegalArgumentException e) {
-                                familyName = poke.getPokemonFamily().toString();
-                            }
-                        }
-
-                        String searchme = Utilities.concatString(',',
-                                PokemonUtils.getLocalPokeName(poke),
-                                ((useFamilyName) ? familyName : ""),
-                                poke.getNickname(),
-                                poke.getSettings().getType().toString(),
-                                poke.getSettings().getType2().toString(),
-                                poke.getMove1().toString(),
-                                poke.getMove2().toString(),
-                                poke.getPokeball().toString());
-                        searchme = searchme.replaceAll("_FAST", "").replaceAll(StringLiterals.FAMILY_PREFIX, "").replaceAll("NONE", "")
-                                .replaceAll("ITEM_", "").replaceAll(StringLiterals.POKEMON_TYPE_PREFIX, "").replaceAll(StringLiterals.UNDERSCORE, "")
-                                .replaceAll(StringLiterals.SPACE, "").toLowerCase();
-
-                        for (final String s : terms) {
-                            if (searchme.contains(s)) {
-                                pokes.add(poke);
-                                // Break, so that a Pokémon isn't added twice even if it
-                                // matches more than one criteria
-                                break;
-                            }
-                        }
-                    });
+            if (selectedRowsList != null) { 
+                for (final Integer index : selectedRowsList) {
+                    pt.addRowSelectionInterval(index, index);
                 }
             }
-            pt.constructNewTableModel(pokes);
-
-        } catch (final Exception e) {
+        } catch (final IllegalArgumentException e) {
             e.printStackTrace();
         }
+    }
+
+    public static ItemBag getPlayerItems() {
+        return go.getInventories().getItemBag();
+    }
+
+    public List<String> getColumnErrors() {
+        return pt.getColumnErrors();
+    }
+
+    public void saveColumnOrder() {
+        pt.saveColumnOrderToConfig();
+    }
+
+    public PokemonTable getPokemonTable() {
+        return pt;
     }
 
     /**
      * Provide custom formatting for the list of patterns.
      */
     private class ReplacePatternRenderer extends JLabel implements ListCellRenderer<ReplacePattern> {
+
+        private static final long serialVersionUID = -7057892212235868835L;
+
         /**
          * Constructor to create a ReplacePatternRenderer.
          */
@@ -1080,13 +941,5 @@ public class PokemonTab extends JPanel {
 
             return this;
         }
-    }
-
-    public List<String> getColumnErrors() {
-        return pt.getColumnErrors();
-    }
-
-    public void saveColumnOrder() {
-        pt.saveColumnOrderToConfig();
     }
 }

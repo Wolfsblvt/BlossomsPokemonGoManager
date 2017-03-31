@@ -10,8 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.pokegoapi.exceptions.InvalidCurrencyException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
 
 import me.corriekay.pokegoutil.data.enums.OperationError;
 import me.corriekay.pokegoutil.data.models.BpmOperationResult;
@@ -39,11 +37,9 @@ public class TransferOperationTest {
      * Transfer a pokemon that is favorite.
      *
      * @throws InvalidCurrencyException invalid currency
-     * @throws LoginFailedException login fail
-     * @throws RemoteServerException sever error
      */
     @Test
-    public void pokemonIsFavorite() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void pokemonIsFavorite() throws InvalidCurrencyException {
         doReturn(true).when(pokemon).isIsFavorite();
 
         final BpmOperationResult result = operation.execute();
@@ -56,11 +52,9 @@ public class TransferOperationTest {
      * Transfer a pokemon that is in gym.
      *
      * @throws InvalidCurrencyException invalid currency
-     * @throws LoginFailedException login fail
-     * @throws RemoteServerException sever error
      */
     @Test
-    public void pokemonIsInGym() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void pokemonIsInGym() throws InvalidCurrencyException {
         doReturn(true).when(pokemon).isInGym();
 
         final BpmOperationResult result = operation.execute();
@@ -73,11 +67,9 @@ public class TransferOperationTest {
      * Transfer a pokemon successfully.
      *
      * @throws InvalidCurrencyException invalid currency
-     * @throws LoginFailedException login failed
-     * @throws RemoteServerException server error
      */
     @Test
-    public void sucessfullyTransfer() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    public void sucessfullyTransfer() throws InvalidCurrencyException {
         doReturn(new BpmOperationResult()).when(operation).doOperation();
 
         final BpmOperationResult result = operation.execute();
