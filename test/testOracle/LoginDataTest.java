@@ -8,12 +8,16 @@ import org.junit.Test;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.data.models.LoginData;
-
+/**
+ * TODO. Comment required.
+ *
+ */
 public class LoginDataTest {
     LoginData loginData;
 
     @Before
     public void setUp() throws Exception {
+        loginData = new LoginData();
     }
 
     @After
@@ -21,110 +25,181 @@ public class LoginDataTest {
     }
 
     @Test
-    public void testLoginData() {
+    public void testConstructor() {
+        loginData = null;
         loginData = new LoginData();
         assertEquals(LoginType.NONE, loginData.getLoginType());
     }
 
-    //TODO.
     @Test
-    public void testLoginDataString() {
-        fail("Not yet implemented");
+    public void testConstructorWithOneString() {
+        loginData = null;
+        loginData = new LoginData("Token!");
+        assertEquals(LoginType.GOOGLE_AUTH, loginData.getLoginType());
     }
 
     @Test
-    public void testLoginDataStringString() {
-        fail("Not yet implemented");
+    public void testConstructorWithTwoStrings() {
+        loginData = null;
+        loginData = new LoginData("Username!", "Password!");
+        assertEquals(LoginType.PTC, loginData.getLoginType());
     }
 
     @Test
-    public void testLoginDataStringStringString() {
-        fail("Not yet implemented");
+    public void testConstructorWithThreeStrings() {
+        loginData = null;
+        loginData = new LoginData("Username!", "Password!", "Token!");
+        assertEquals(LoginType.ALL, loginData.getLoginType());
     }
 
     @Test
     public void testGetLoginType() {
-        fail("Not yet implemented");
+        loginData.setLoginType(LoginType.GOOGLE_AUTH);
+        assertEquals(LoginType.GOOGLE_AUTH, loginData.getLoginType());
     }
 
     @Test
     public void testGetPassword() {
-        fail("Not yet implemented");
+        loginData.setPassword("Password!");
+        assertEquals("Password!", loginData.getPassword());
     }
 
     @Test
     public void testGetToken() {
-        fail("Not yet implemented");
+        loginData.setToken("Token!");
+        assertEquals("Token!", loginData.getToken());
     }
 
     @Test
     public void testGetUsername() {
-        fail("Not yet implemented");
+        loginData.setUsername("Username!");
+        assertEquals("Username!", loginData.getUsername());
     }
 
     @Test
     public void testHasPassword() {
-        fail("Not yet implemented");
+        loginData.setPassword(null);
+        assertEquals(false, loginData.hasPassword());
+        loginData.setPassword("");
+        assertEquals(false, loginData.hasPassword());
+        loginData.setPassword("Password!");
+        assertEquals(true, loginData.hasPassword());
     }
 
     @Test
     public void testHasSavedCredentials() {
-        fail("Not yet implemented");
+        loginData.setUsername(null);
+        loginData.setPassword(null);
+        loginData.setToken(null);
+        assertEquals(false, loginData.hasSavedCredentials());
+        loginData.setToken("Token!");
+        assertEquals(true, loginData.hasSavedCredentials());
+        loginData.setToken(null);
+        loginData.setUsername("Username!");
+        loginData.setPassword("Password!");
+        assertEquals(true, loginData.hasSavedCredentials());
+        loginData.setToken("Token!");
+        assertEquals(true, loginData.hasSavedCredentials());
     }
 
     @Test
     public void testHasToken() {
-        fail("Not yet implemented");
+        loginData.setToken(null);
+        assertEquals(false, loginData.hasToken());
+        loginData.setToken("");
+        assertEquals(false, loginData.hasToken());
+        loginData.setToken("Token!");
+        assertEquals(true, loginData.hasToken());
     }
 
     @Test
     public void testHasUsername() {
-        fail("Not yet implemented");
+        loginData.setUsername(null);
+        assertEquals(false, loginData.hasUsername());
+        loginData.setUsername("");
+        assertEquals(false, loginData.hasUsername());
+        loginData.setUsername("Username!");
+        assertEquals(true, loginData.hasUsername());
     }
 
     @Test
     public void testIsSavedToken() {
-        fail("Not yet implemented");
+        loginData.setSavedToken(false);
+        assertEquals(false, loginData.isSavedToken());
+        loginData.setSavedToken(true);
+        assertEquals(true, loginData.isSavedToken());
     }
 
     @Test
     public void testIsValidGoogleLogin() {
-        fail("Not yet implemented");
+        loginData.setToken(null);
+        assertEquals(false, loginData.isValidGoogleLogin());
+        loginData.setToken("");
+        assertEquals(false, loginData.isValidGoogleLogin());
+        loginData.setToken("Token!");
+        assertEquals(true, loginData.isValidGoogleLogin());
     }
 
     @Test
     public void testIsValidPtcLogin() {
-        fail("Not yet implemented");
+        loginData.setUsername(null);
+        loginData.setPassword(null);
+        assertEquals(false, loginData.isValidPtcLogin());
+        loginData.setUsername("Username!");
+        assertEquals(false, loginData.isValidPtcLogin());
+        loginData.setUsername(null);
+        loginData.setPassword("Password!");
+        assertEquals(false, loginData.isValidPtcLogin());
+        loginData.setUsername("Username!");
+        assertEquals(true, loginData.isValidPtcLogin());
     }
 
     @Test
     public void testSetLoginType() {
-        fail("Not yet implemented");
+        loginData.setLoginType(LoginType.GOOGLE_AUTH);
+        assertEquals(LoginType.GOOGLE_AUTH, loginData.getLoginType());
     }
 
     @Test
     public void testSetPassword() {
-        fail("Not yet implemented");
+        loginData.setPassword("Password!");
+        assertEquals("Password!", loginData.getPassword());
     }
 
     @Test
     public void testSetSavedToken() {
-        fail("Not yet implemented");
+        loginData.setSavedToken(false);
+        assertEquals(false, loginData.isSavedToken());
+        loginData.setSavedToken(true);
+        assertEquals(true, loginData.isSavedToken());
     }
 
     @Test
     public void testSetToken() {
-        fail("Not yet implemented");
+        loginData.setToken("Token!");
+        assertEquals("Token!", loginData.getToken());
     }
 
     @Test
     public void testSetUsername() {
-        fail("Not yet implemented");
+        loginData.setUsername("Username!");
+        assertEquals("Username!", loginData.getUsername());
     }
 
     @Test
     public void testToString() {
-        fail("Not yet implemented");
+        loginData.setUsername(null);
+        loginData.setPassword(null);
+        loginData.setToken(null);
+        loginData.setLoginType(LoginType.NONE);
+        loginData.setSavedToken(false);
+        assertEquals("Username: null | Password: null | Token: null | LoginType: NONE | isSavedToken false", loginData.toString());
+        loginData.setUsername("Username!");
+        loginData.setPassword("Password!");
+        loginData.setToken("Token!");
+        loginData.setLoginType(LoginType.ALL);
+        loginData.setSavedToken(true);
+        assertEquals("Username: Username! | Password: Password! | Token: Token! | LoginType: ALL | isSavedToken true", loginData.toString());
     }
 
 }
