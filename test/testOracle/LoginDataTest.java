@@ -13,7 +13,7 @@ import me.corriekay.pokegoutil.data.models.LoginData;
  *
  */
 public class LoginDataTest {
-    LoginData loginData;
+    private LoginData loginData;
 
     @Before
     public void setUp() throws Exception {

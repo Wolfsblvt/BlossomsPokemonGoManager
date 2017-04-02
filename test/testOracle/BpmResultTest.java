@@ -12,7 +12,7 @@ import me.corriekay.pokegoutil.data.models.BpmResult;
 
 public class BpmResultTest {
 
-    public BpmResult bpmResult;
+    private BpmResult bpmResult;
     
     @Before
     public void setUp() throws Exception {

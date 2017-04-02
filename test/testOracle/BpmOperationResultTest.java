@@ -12,7 +12,7 @@ import me.corriekay.pokegoutil.gui.enums.OperationId;
 
 public class BpmOperationResultTest {
     
-    public BpmOperationResult bpmOperationResult;
+    private BpmOperationResult bpmOperationResult;
 
     @Before
     public void setUp() throws Exception {

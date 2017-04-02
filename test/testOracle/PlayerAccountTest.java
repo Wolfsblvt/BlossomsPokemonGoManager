@@ -13,7 +13,7 @@ import me.corriekay.pokegoutil.data.models.PlayerAccount;
 
 public class PlayerAccountTest {
     //TODO
-    PlayerAccount playerAccount;
+    private PlayerAccount playerAccount;
 
     @Before
     public void setUp() throws Exception {

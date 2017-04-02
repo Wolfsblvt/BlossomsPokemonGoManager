@@ -10,7 +10,7 @@ import me.corriekay.pokegoutil.data.models.Inventory;
 
 public class InventoryTest {
     
-    Inventory inventory;
+    private Inventory inventory;
 
     /**
      * Purpose: Construct and destroy Inventory class.
