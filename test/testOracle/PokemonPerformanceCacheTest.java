@@ -27,7 +27,13 @@ public class PokemonPerformanceCacheTest {
     @After
     public void tearDown() throws Exception {
     }
-
+    
+    /**
+     * Purpose: Init PokemonPerformanceCache class
+     * Input: PokemonPerformanceCache  Make variable
+     * Expected: PokemonPerformanceCache variable 
+     */
+    
     @Test
     public void PokemonPerformanceCacheInitTest() {
         PokemonPerformanceCache testCashe = null;

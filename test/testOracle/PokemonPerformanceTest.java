@@ -31,6 +31,12 @@ public class PokemonPerformanceTest {
     public void tearDown() throws Exception {
     }
 
+    /**
+     * Purpose: Init PokemonPerformance<T> class
+     * Input: PokemonPerformance<T>  Make variable
+     * Expected: PokemonPerformance<T> variable(Id,T,MoveA,MoveB); 
+     */
+    
     @Test
     public void PokemonPerformanceInitTest() {
         PokemonId IdMock = EasyMock.createMock(PokemonId.class);

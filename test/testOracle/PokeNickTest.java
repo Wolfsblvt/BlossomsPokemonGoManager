@@ -30,7 +30,13 @@ public class PokeNickTest {
     @After
     public void tearDown() throws Exception {
     }
-
+    
+    /**
+     * Purpose: Init PokeNick class
+     * Input: PokeNick make PokeNick variable
+     * Expected: PokeNick class
+     */
+    
     @Test
     public void PokeNickInitTest() {
         Pokemon testPokemon = EasyMock.createMock(Pokemon.class);
@@ -42,6 +48,13 @@ public class PokeNickTest {
         
         EasyMock.verify(testPokemon);
     }
+    
+    /**
+     * Purpose: overwrite toString
+     * Input: toString PokeNick("pattern123",testPokemon) -> "pattern123"
+     * Expected: 
+     *          Return "pattern123"
+     */
 
     @Test
     public void toStringTest() {
@@ -51,10 +64,20 @@ public class PokeNickTest {
         PokeNick testNick = new PokeNick("pattern123",testPokemon);
         String testString = testNick.toString();
         
-        assertNotNull(testString);
+        assertEquals(testString,"pattern123");
         
         EasyMock.verify(testPokemon);
     }
+    
+    /**
+     * Purpose: check Nickname > MAX_NICKNAME_LENGTH
+     * Input: isTooLong 
+     *          1. "pattern123456789123" -> true
+     *          2. "NICKern" -> false
+     * Expected: 
+     *          1.  Return true
+     *          2.  Return false
+     */
     
     @Test
     public void isTooLongTest() {

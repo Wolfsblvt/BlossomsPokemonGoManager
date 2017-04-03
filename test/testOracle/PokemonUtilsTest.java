@@ -34,55 +34,82 @@ public class PokemonUtilsTest {
     public void tearDown() throws Exception {
     }
 
+    /**
+     * Purpose: Init PokemonUtils class
+     * Input: PokemonUtils  Make variable
+     * Expected: PokemonUtils variable; 
+     */
+    
     @Test
     public void PokemonUtilsInitTest() {
         PokemonUtils testUtils = null;
         assertNull(testUtils);
         
     }
+    
+    /**
+     * Purpose: Get LocalPokeName By Id
+     * Input: getLocalPokeName  getLocalPokeName(30) -> Nidorina
+     * Expected: Return "Nidorina"; 
+     */
 
     @Test
     public void getLocalPokeNameIdTest() {
         PokemonUtils testUtils = null;
         String result = testUtils.getLocalPokeName(30);
-        
-        assertNotNull(result);
+
+        assertEquals(result,"Nidorina");
     }
+    
+    /**
+     * Purpose: Get LocalPokeName By Pokemon
+     * Input: getLocalPokeName  getLocalPokeName(Pokemon) -> Venusaur
+     * Expected: Return "Venusaur"; 
+     */
+
     
     @Test
     public void getLocalPokeNamePokemonTest() {
         PokemonUtils testUtils = null;
-        PokemonIdOuterClass.PokemonId testIdMock = null;
+        PokemonIdOuterClass.PokemonId testId = PokemonIdOuterClass.PokemonId.VENUSAUR;
         Pokemon testPokemon = EasyMock.createMock(Pokemon.class);
-        EasyMock.expect(testPokemon.getPokemonId()).andReturn(testIdMock);
-        EasyMock.expect(testIdMock.getNumber()).andReturn(30);
+        EasyMock.expect(testPokemon.getPokemonId()).andReturn(testId);
         EasyMock.replay(testPokemon);
         String result = testUtils.getLocalPokeName(testPokemon);
-        
-        assertNotNull(result);
+
+        assertEquals(result,"Venusaur");
         
         EasyMock.verify(testPokemon);
     }
     
+    /**
+     * Purpose: Convert TeamColor
+     * Input: convertTeamColorToName  
+     *        convertTeamColorToName(0) -> None
+     *        convertTeamColorToName(4) -> UNKNOWN_TEAM
+     * Expected: 
+     *        0 : Return "None"
+     *        4 : Return "UNKNOWN_TEAM"
+     */
+
     @Test
     public void convertTeamColorToNameTest() {
         PokemonUtils testUtils = null;
         
-        String result = testUtils.convertTeamColorToName(0);
+        String resultA = testUtils.convertTeamColorToName(0);      
+        String resultB = testUtils.convertTeamColorToName(4);
         
-        assertEquals(result,"None");
+        assertEquals(resultA,"None");
+        assertEquals(resultB,"UNKNOWN_TEAM");
         
     }
     
-    @Test
-    public void convertTeamColorToNameFailTest() {
-        PokemonUtils testUtils = null;
-        
-        String result = testUtils.convertTeamColorToName(4);
-        
-        assertEquals(result,"UNKNOWN_TEAM");
-        
-    }
+    /**
+     * Purpose: format Type
+     * Input: formatType Null -> POKEMON_TYPE_GRASS
+     * Expected: 
+     *        Return "Grass"
+     */
     
     @Test
     public void formatTypeTest() {
@@ -90,10 +117,17 @@ public class PokemonUtilsTest {
         POGOProtos.Enums.PokemonTypeOuterClass.PokemonType testPokemonType = POGOProtos.Enums.PokemonTypeOuterClass.PokemonType.POKEMON_TYPE_GRASS;
         
         String result = testUtils.formatType(testPokemonType);
-        
-        assertNotNull(result);
+
+        assertEquals(result,"Grass");
         
     }
+    
+    /**
+     * Purpose: format Move
+     * Input: formatMove Null -> TACKLE
+     * Expected: 
+     *        Return "Grass"
+     */
     
     @Test
     public void formatMoveTest() {
@@ -101,10 +135,17 @@ public class PokemonUtilsTest {
         PokemonMove testMove = PokemonMove.TACKLE;
         
         String result = testUtils.formatMove(testMove);
-        
-        assertNotNull(result);
+
+        assertEquals(result,"Tackle");
         
     }
+    
+    /**
+     * Purpose: format Dps
+     * Input: formatDps Null -> 20.0
+     * Expected: 
+     *        Return "(20.00 dps)"
+     */
     
     @Test
     public void formatDpsTest() {
@@ -112,10 +153,17 @@ public class PokemonUtilsTest {
         double testDps = 20.0;
         
         String result = testUtils.formatDps(testDps);
-        
-        assertNotNull(result);
+
+        assertEquals(result,"(20.00 dps)");
         
     }
+    
+    /**
+     * Purpose: format Item
+     * Input: formatItem Null -> ITEM_HYPER_POTION
+     * Expected: 
+     *        Return "Hyper Potion"
+     */
     
     @Test
     public void formatItemTest() {
@@ -123,10 +171,18 @@ public class PokemonUtilsTest {
         ItemId testItemId = ItemId.ITEM_HYPER_POTION;
         
         String result = testUtils.formatItem(testItemId);
-        
-        assertNotNull(result);
+
+        assertEquals(result,"Hyper Potion");
         
     }
+    
+    /**
+     * Purpose: Check Same Type Attack Bonus(Stab)
+     * Input: hasStab hasStab(Golduck,Tackle) -> true/false
+     * Expected: 
+     *        Return "true" or "false"
+     */
+    
     
     @Test
     public void hasStabTest() {

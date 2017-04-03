@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import POGOProtos.Enums.PokemonIdOuterClass;
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonPerformance;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonPerformanceStats;
@@ -30,17 +31,22 @@ public class PokemonPerformanceStatsTest {
     @After
     public void tearDown() throws Exception {
     }
+    
+    /**
+     * Purpose: Init PokemonPerformanceStats class
+     * Input: PokemonPerformanceStats Make variable
+     * Expected: PokemonPerformanceStats variable(VENUSAUR,null,null,null)
+     */
 
     @Test
     public void PokemonPerformanceStatsInitTest() {
-        PokemonId pokemonIdMock = EasyMock.createMock(PokemonId.class);
+        PokemonId pokemonId = PokemonIdOuterClass.PokemonId.VENUSAUR;
         PokemonPerformance<Long> PerformanceLongA = null;
         PokemonPerformance<Double> PerformanceDouble = null;
         PokemonPerformance<Long> PerformanceLongB = null;
+
         
-        EasyMock.replay(pokemonIdMock);
-        
-        //PokemonPerformanceStats testStats = new PokemonPerformanceStats(pokemonIdMock,PerformanceLongA,PerformanceDouble,PerformanceLongB);
+        //PokemonPerformanceStats testStats = new PokemonPerformanceStats(pokemonId,PerformanceLongA,PerformanceDouble,PerformanceLongB);
     
     }
 

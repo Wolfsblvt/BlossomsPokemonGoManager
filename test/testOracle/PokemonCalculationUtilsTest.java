@@ -30,16 +30,27 @@ public class PokemonCalculationUtilsTest {
     @After
     public void tearDown() throws Exception {
     }
+    /**
+     * Purpose: Init PokemonCalculationUtils class
+     * Input: PokemonCalculation  Make variable
+     * Expected: PokemonCalculationUtils variable 
+     */
 
     @Test
     public void PokemonCalculationUtilsInitTest() {
         PokemonCalculationUtils testUtilsMock = EasyMock.createMock(PokemonCalculationUtils.class);
         EasyMock.replay(testUtilsMock);
         
-        assertNotNull(testUtilsMock);
+        double testDouble = testUtilsMock.NORMAL_MULTIPLIER; 
+        assertNull(testDouble);
         
         EasyMock.verify(testUtilsMock);
     }
+    /**
+     * Purpose: Calculate Pokemon ivRating
+     * Input: ivRating Calculate ivRating
+     * Expected: return ivRating(Double) 
+     */
     
     @Test
     public void ivRatingTest() {
