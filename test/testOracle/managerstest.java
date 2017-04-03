@@ -56,7 +56,7 @@ public class managerstest {
     5. Google Login(App Password)
     6. alertBox Cancel
     */
-    @Test                       
+    //@Test                       
     public void logOntest() {
         Acontroller = AccountController.getInstance();
         Acontroller.initialize();
