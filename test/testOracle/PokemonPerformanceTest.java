@@ -36,7 +36,7 @@ public class PokemonPerformanceTest {
      * Input: PokemonPerformance<T>  Make variable
      * Expected: PokemonPerformance<T> variable(Id,T,MoveA,MoveB); 
      */
-    
+  //afdsa
     @Test
     public void PokemonPerformanceInitTest() {
         PokemonId IdMock = EasyMock.createMock(PokemonId.class);

@@ -35,7 +35,7 @@ public class PokemonCalculationUtilsTest {
      * Input: PokemonCalculation  Make variable
      * Expected: PokemonCalculationUtils variable 
      */
-
+  //afdsa
     @Test
     public void PokemonCalculationUtilsInitTest() {
         PokemonCalculationUtils testUtilsMock = EasyMock.createMock(PokemonCalculationUtils.class);

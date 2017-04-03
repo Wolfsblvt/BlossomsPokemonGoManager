@@ -1171,7 +1171,7 @@ public class PokeHandlerTest {
         String testString = ReplacePattern.SWORD_UNICODE.get(testPokemon);
 
         assertNotNull(testString);
-
+        //fafsda
         EasyMock.verify(testPokemon);
     }
     
