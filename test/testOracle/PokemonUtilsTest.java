@@ -17,7 +17,7 @@ import POGOProtos.Inventory.Item.ItemIdOuterClass.ItemId;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 public class PokemonUtilsTest {
-  //afdsa
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
     }

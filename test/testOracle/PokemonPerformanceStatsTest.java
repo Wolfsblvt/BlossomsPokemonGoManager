@@ -15,7 +15,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonPerformance;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonPerformanceStats;
 
 public class PokemonPerformanceStatsTest {
-  //afdsa
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
     }

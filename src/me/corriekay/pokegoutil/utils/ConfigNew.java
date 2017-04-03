@@ -196,6 +196,7 @@ public final class ConfigNew {
      */
     public void setBool(final ConfigKey configKey, final boolean value) {
         try {
+
             final FindResult res = findNode(configKey.keyName, true);
             // Set if value is different or if default value should be added
             boolean defaultValue = configKey.getDefaultValue();
@@ -391,7 +392,9 @@ public final class ConfigNew {
      * Removes json nodes that do not belong in the file and fills it with missing values' defaults then.
      */
     private void cleanUpAndFill() {
+
         ConfigKey[] keys = ConfigKey.values();
+        
         Map<ConfigKey, Object> allConfigs = new HashMap<>(keys.length);
 
         // Read all config values or take defaults
@@ -399,7 +402,6 @@ public final class ConfigNew {
             Object value = getAsObject(configKey);
             allConfigs.put(configKey, value);
         }
-
         // Reset the json file and fill it again
         json = new JSONObject();
         for (HashMap.Entry<ConfigKey, Object> entry : allConfigs.entrySet()) {

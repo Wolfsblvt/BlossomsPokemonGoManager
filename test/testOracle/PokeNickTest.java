@@ -14,7 +14,7 @@ import com.pokegoapi.api.pokemon.Pokemon;
 import me.corriekay.pokegoutil.utils.pokemon.PokeNick;
 
 public class PokeNickTest {
-  //afdsa
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
     }

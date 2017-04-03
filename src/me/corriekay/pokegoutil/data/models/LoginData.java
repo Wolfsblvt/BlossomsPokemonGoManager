@@ -98,7 +98,7 @@ public class LoginData {
 
     @Override
     public String toString() {
-        return String.format("Username: %s | Password: %s | Token: %s | LoginType: %s | isSavedToken %b",
+        return String.format("Username: %s | Password: %s | Token: %s | LoginType: %s | isSavedToken: %b",
                 username, password, token, loginType, isSavedToken);
     }
 }
