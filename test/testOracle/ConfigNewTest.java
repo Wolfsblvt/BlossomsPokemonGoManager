@@ -25,6 +25,8 @@ public class ConfigNewTest {
 
     @Before
     public void setUp() throws Exception {
+        File file = new File(System.getProperty("user.dir"), "config.json");
+        file.delete();
     }
 
     @After

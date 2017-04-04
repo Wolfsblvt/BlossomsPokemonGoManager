@@ -105,7 +105,7 @@ public class UtilitiesTest {
      * Expected : 
      *      return 10 + a,   ( 0 <= a < 1)
      */
-    //@Test
+    @Test
     public void testSleep() {
         int sleepTime = 10;
         long milis = System.currentTimeMillis();
@@ -121,7 +121,7 @@ public class UtilitiesTest {
      * Expected : 
      *      return 10 ~ 100
      */
-    //@Test
+    @Test
     public void testSleepRandom() {
         int sleepTimeMin = 10;
         int sleepTimeMax = 100;
