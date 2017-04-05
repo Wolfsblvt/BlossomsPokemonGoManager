@@ -159,10 +159,10 @@ public enum PokeColumn {
             return PokemonUtils.formatType(type);
         }
     },
-    HP("HP", ColumnType.INT) {
+    HP("HP", ColumnType.NUMBER_STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getMaxStamina();
+            return String.valueOf(p.getStamina())+"/"+String.valueOf(p.getMaxStamina());
         }
     },
     EVOLVABLE_COUNT("Evolvable", ColumnType.NUMBER_STRING) {
@@ -419,6 +419,12 @@ public enum PokeColumn {
             return p.getPokemonDisplay() != null ? (p.getPokemonDisplay().getShiny() ? YES : "")
                     : "";
         }
+    },
+    HEALTH("Health", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getStamina()/(double) p.getMaxStamina();
+        }       
     },
     PID("PID", ColumnType.LONG) {
         @Override

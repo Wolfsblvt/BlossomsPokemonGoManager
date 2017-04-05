@@ -65,7 +65,8 @@ public enum ColumnType {
     ),
     NUMBER_STRING(            
         String.class,
-        Comparators.NUMBER_STRING
+        Comparators.NUMBER_STRING,
+        CellRendererHelper.NUMBER_STRING
     ),
     FUTURE_STRING(
         String.class,
