@@ -6,6 +6,8 @@ import java.util.concurrent.CompletableFuture;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.EvolveHelper;
@@ -117,7 +119,12 @@ public enum ColumnType {
             if (right.indexOf("/") > 0) {
                 sRight = right.split("/");
             }
-            return Integer.compare(Integer.parseInt(sLeft[0]), Integer.parseInt(sRight[0]));
+            final boolean useFullHP = ConfigNew.getConfig().getBool(ConfigKey.HP_SORT_ON_FULL);
+            if (useFullHP) {
+                return Integer.compare(Integer.parseInt(sLeft[1]), Integer.parseInt(sRight[1]));                              
+            } else {
+                return Integer.compare(Integer.parseInt(sLeft[0]), Integer.parseInt(sRight[0]));
+            }
         };
     }
 
