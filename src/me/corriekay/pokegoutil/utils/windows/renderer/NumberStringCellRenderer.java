@@ -15,7 +15,7 @@ import me.corriekay.pokegoutil.utils.Utilities;
 public class NumberStringCellRenderer extends JLabel implements TableCellRenderer {
 
  	/**
-     * Creates an instance of the ..., with string values centered.
+     * Makes number_string values display centered.
      */
     @Override
     public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected,

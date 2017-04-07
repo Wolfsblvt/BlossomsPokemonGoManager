@@ -65,7 +65,7 @@ public enum ColumnType {
         String.class,
         Comparators.STRING
     ),
-    NUMBER_STRING(            
+    NUMBER_STRING(
         String.class,
         Comparators.NUMBER_STRING,
         CellRendererHelper.NUMBER_STRING
@@ -111,19 +111,30 @@ public enum ColumnType {
         };
         public static final Comparator<String> NUMBER_STRING = (left, right) -> {
             // pre-initialize first split entries with "-1" so "-" (= NO_VALUE_SIGN) will be sorted separate from 0
-            String[] sLeft = {"-1","0"};
-            String[] sRight = {"-1","0"};
-            if (left.indexOf("/") > 0) {
+            String[] sLeft = {"-1","-1"};
+            String[] sRight = {"-1","-1"};
+            Integer iResult0 = 0;
+            Integer iResult1 = 0;
+
+            if (left.indexOf("/") > -1) {
                 sLeft = left.split("/");
             }
-            if (right.indexOf("/") > 0) {
+            if (right.indexOf("/") > -1) {
                 sRight = right.split("/");
             }
+
+            iResult0 = Integer.compare(Integer.parseInt(sLeft[0]), Integer.parseInt(sRight[0]));
+            iResult1 = Integer.compare(Integer.parseInt(sLeft[1]), Integer.parseInt(sRight[1]));
+
             final boolean useFullHP = ConfigNew.getConfig().getBool(ConfigKey.HP_SORT_ON_FULL);
-            if (useFullHP) {
-                return Integer.compare(Integer.parseInt(sLeft[1]), Integer.parseInt(sRight[1]));                              
-            } else {
-                return Integer.compare(Integer.parseInt(sLeft[0]), Integer.parseInt(sRight[0]));
+            final String sortEnum1 =  ConfigNew.getConfig().getString(ConfigKey.SORT_ENUM_1);
+
+            if (useFullHP && sortEnum1.equals("HP")) {
+                if(iResult1 == 0) {return iResult0;} else {return iResult1;}                              
+            } 
+            else 
+            {
+                if(iResult0 == 0) {return iResult1;} else {return iResult0;}
             }
         };
     }
