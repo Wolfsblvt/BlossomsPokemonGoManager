@@ -41,6 +41,10 @@ public enum UnicodeHelper {
     TYPE_WATER(0x26C6, PokemonType.POKEMON_TYPE_WATER.toString()),
     SHIELD(0x26E8, "shield"),
     SWORD(0x2694, "sword");
+    FEMALE(0x2640,"female"),
+    MALE(0x2642,"male"),
+    NONE(0x2260,"none");
+    
 
     private int hexaCode;
     private String identifier;

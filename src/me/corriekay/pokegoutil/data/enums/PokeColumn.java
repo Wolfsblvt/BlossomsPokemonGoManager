@@ -115,14 +115,20 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             return PokemonUtils.formatMove(p.getMove1())
-                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, true));
+// Don't show it here since it now has its own column
+// Possibly re-enable by boolean when column hiding becomes an option 
+//                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, true))
+                ;
         }
     },
     MOVE_2("Move 2", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
             return PokemonUtils.formatMove(p.getMove2())
-                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, false));
+// Don't show it here since it now has its own column
+// Possibly re-enable by boolean when column hiding becomes an option
+//                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, false))
+                ;
         }
     },
     DPS_1("DPS 1", ColumnType.DPS1VALUE) {
@@ -153,13 +159,13 @@ public enum PokeColumn {
             return PokemonUtils.formatType(type);
         }
     },
-    HP("HP", ColumnType.INT) {
+    HP("HP", ColumnType.NUMBER_STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getMaxStamina();
+            return String.valueOf(p.getStamina())+"/"+String.valueOf(p.getMaxStamina());
         }
     },
-    EVOLVABLE_COUNT("Evolvable", ColumnType.NULLABLE_INT) {
+    EVOLVABLE_COUNT("Evolvable", ColumnType.NUMBER_STRING) {
         @Override
         public Object get(final Pokemon p) {
             if (p.getCandiesToEvolve() > 1) {
@@ -167,19 +173,32 @@ public enum PokeColumn {
                 final int candiesToEvolve = p.getCandiesToEvolve();
 
                 int evolvable = (int) ((double) candies / candiesToEvolve);
+                // Keep separate track of evolvable with "Transfer After Evolve" TAE)
+                int evolvableTAE = evolvable;
                 int rest = candies % candiesToEvolve;
-                final boolean transferAfterEvolve = ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE);
+                int restTAE = rest;
+// Disregarded since it's now tracked separately
+//                final boolean transferAfterEvolve = ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE);
 
                 // We iterate and get how many candies are added while evolving and if that can make up for some more evolves
                 int newEvolvable = evolvable;
+                // Keep a separate track of how many candies we get with "Transfer After Evolve" (TAE)
+                int newEvolvableTAE = evolvable;
                 do {
-                    final int candyGiven = newEvolvable + (transferAfterEvolve ? newEvolvable : 0);
+//                    final int candyGiven = newEvolvable + (transferAfterEvolve ? newEvolvable : 0);
+                    final int candyGiven = newEvolvable;
                     newEvolvable = (int) ((double) (candyGiven + rest) / candiesToEvolve);
                     evolvable = evolvable + newEvolvable;
                     rest = (candyGiven + rest) % candiesToEvolve;
-                } while (newEvolvable > 0);
 
-                return String.valueOf(evolvable);
+                    final int candyGivenTAE = newEvolvableTAE + newEvolvableTAE;
+                    newEvolvableTAE = (int) ((double) (candyGivenTAE + restTAE) / candiesToEvolve);
+                    evolvableTAE = evolvableTAE + newEvolvableTAE;
+                    restTAE = (candyGivenTAE + restTAE) % candiesToEvolve;
+					
+				} while (newEvolvable > 0);
+
+                return String.valueOf(evolvable) + "/" + String.valueOf(evolvableTAE);
             } else {
                 return StringLiterals.NO_VALUE_SIGN;
             }
@@ -400,6 +419,12 @@ public enum PokeColumn {
             return p.getPokemonDisplay() != null ? (p.getPokemonDisplay().getShiny() ? YES : "")
                     : "";
         }
+    },
+    HEALTH("Health", ColumnType.PERCENTAGE) {
+        @Override
+        public Object get(final Pokemon p) {
+            return p.getStamina()/(double) p.getMaxStamina();
+        }       
     },
     PID("PID", ColumnType.LONG) {
         @Override

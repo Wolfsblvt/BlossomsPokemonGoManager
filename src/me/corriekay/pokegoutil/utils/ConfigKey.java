@@ -36,7 +36,8 @@ public enum ConfigKey {
     SHOW_BULK_POPUP("settings.popupAfterBulk", true, Type.BOOLEAN),
     INCLUDE_FAMILY("settings.includeFamily", true, Type.BOOLEAN),
     ALTERNATIVE_IV_CALCULATION("settings.alternativeIvCalculation", false, Type.BOOLEAN),
-
+    HP_SORT_ON_FULL("settings.sortOnFullHP", true, Type.BOOLEAN),
+    
     LANGUAGE("options.lang", "en", Type.STRING),
     FONT_SIZE("options.font.size", 12, Type.INTEGER),
     ROW_PADDING("options.row.padding", 3, Type.INTEGER),
