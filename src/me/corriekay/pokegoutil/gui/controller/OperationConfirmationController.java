@@ -1,8 +1,6 @@
 package me.corriekay.pokegoutil.gui.controller;
 
 import com.pokegoapi.exceptions.InvalidCurrencyException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -84,7 +82,7 @@ public class OperationConfirmationController extends BaseController<AnchorPane> 
                         pokemon.getSummary(),
                         result.getErrorMessage()));
             }
-        } catch (InvalidCurrencyException | LoginFailedException | RemoteServerException e) {
+        } catch (InvalidCurrencyException e) {
             System.out.println(String.format(
                     "Error %s %s! %s",
                     operation.getOperationId().getActionVerbDuring(),

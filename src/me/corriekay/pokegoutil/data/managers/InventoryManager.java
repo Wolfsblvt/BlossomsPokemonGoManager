@@ -2,11 +2,9 @@ package me.corriekay.pokegoutil.data.managers;
 
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.inventory.Inventories;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
 
-/*
- * This controller takes care of interactions with the inventory items
+/**
+ * This controller takes care of interactions with the inventory items.
  */
 public final class InventoryManager {
 
@@ -33,7 +31,7 @@ public final class InventoryManager {
         sIsInit = true;
     }
 
-    public static Inventories getInventories() throws LoginFailedException, RemoteServerException {
+    public static Inventories getInventories() {
         return sIsInit ? S_INSTANCE.inventories : null;
     }
 }

@@ -4,20 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.function.BiConsumer;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.exceptions.CaptchaActiveException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
-import com.pokegoapi.exceptions.hash.HashException;
+import com.pokegoapi.exceptions.request.RequestFailedException;
 import com.pokegoapi.main.PokemonMeta;
 
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
 import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.utils.helpers.TriConsumer;
 import me.corriekay.pokegoutil.utils.helpers.UnicodeHelper;
 
 public class PokeHandler {
@@ -62,7 +60,7 @@ public class PokeHandler {
         try {
             final NicknamePokemonResponse.Result result = pokemon.renamePokemon(pokeNick.toString());
             return result;
-        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
+        } catch (RequestFailedException e) {
             System.out.println("Error while renaming "
                 + PokemonUtils.getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
                 + Utilities.getRealExceptionMessage(e));
@@ -73,22 +71,22 @@ public class PokeHandler {
     // endregion
 
     /**
-     * Rename a bunch of Pokemon based on a pattern
+     * Rename a bunch of Pokemon based on a pattern.
      *
      * @param pattern         The pattern to use for renaming
      * @param perPokeCallback Will be called for each Pokémon that has been (tried) to
      *                        rename.
-     * @return A <c>LinkedHashMap</c> with each Pokémon as key and the result as
-     * value.
+     * @return A LinkedHashMap with each Pokémon as key and the result as value.
      */
-    public LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> bulkRenameWithPattern(final String pattern,
-                                                                                        final BiConsumer<NicknamePokemonResponse.Result, Pokemon> perPokeCallback) {
-        final LinkedHashMap<Pokemon, NicknamePokemonResponse.Result> results = new LinkedHashMap<>();
+    public Map<Pokemon, NicknamePokemonResponse.Result> bulkRenameWithPattern(final String pattern,
+            final TriConsumer<NicknamePokemonResponse.Result, Pokemon, String> perPokeCallback) {
+        final Map<Pokemon, NicknamePokemonResponse.Result> results = new LinkedHashMap<>();
 
         mons.forEach(p -> {
+            final String previousNickname = p.getNickname();
             final NicknamePokemonResponse.Result result = renameWithPattern(pattern, p);
             if (perPokeCallback != null) {
-                perPokeCallback.accept(result, p);
+                perPokeCallback.accept(result, p, previousNickname);
             }
             results.put(p, result);
         });

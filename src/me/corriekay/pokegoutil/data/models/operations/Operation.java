@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.pokegoapi.exceptions.InvalidCurrencyException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.RemoteServerException;
 
 import javafx.collections.ObservableList;
 import me.corriekay.pokegoutil.data.models.BpmOperationResult;
@@ -61,9 +59,18 @@ public abstract class Operation {
         this.pokemon = pokemon;
     }
 
-    protected abstract BpmOperationResult doOperation() throws LoginFailedException, RemoteServerException;
+    /**
+     * Abstract method to create the operation.
+     * @return BpmOperationResult with the operation created.
+     */
+    protected abstract BpmOperationResult doOperation();
 
-    public BpmOperationResult execute() throws InvalidCurrencyException, LoginFailedException, RemoteServerException {
+    /**
+     * Execute the desired operation.
+     * @return BpmOperationResult with the result of the operation
+     * @throws InvalidCurrencyException when an invalidCurrencyException occours
+     */
+    public BpmOperationResult execute() throws InvalidCurrencyException {
         BpmOperationResult result = validateOperation();
 
         if (result.isSuccess()) {
@@ -98,5 +105,5 @@ public abstract class Operation {
     }
 
     public abstract BpmOperationResult validateOperation()
-            throws InvalidCurrencyException, LoginFailedException, RemoteServerException;
+            throws InvalidCurrencyException;
 }

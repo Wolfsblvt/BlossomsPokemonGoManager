@@ -74,7 +74,7 @@ public class MenuBar extends JMenuBar {
         includeFamily.addItemListener(
             e -> {
                 config.setBool(ConfigKey.INCLUDE_FAMILY, includeFamily.isSelected());
-                if (!pokemonTab.getSelectedPokemon().isEmpty()) {
+                if (!pokemonTab.getPokemonTable().getSelectedPokemon().isEmpty()) {
                     SwingUtilities.invokeLater(pokemonTab::refreshList);
                 }
             });
@@ -152,7 +152,6 @@ public class MenuBar extends JMenuBar {
     }
 
     private void displayTrainerStats() throws Exception {
-        go.getInventories().updateInventories();
         PlayerProfile pp = go.getPlayerProfile();
         Stats stats = pp.getStats();
         Object[] tstats = {

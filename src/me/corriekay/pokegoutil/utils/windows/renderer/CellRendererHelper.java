@@ -14,6 +14,8 @@ public final class CellRendererHelper {
     public static final DpsCellRenderer DPS2VALUE = new DpsCellRenderer().withRatingColors(0, 45);
     public static final FutureCellRenderer FUTURE = new FutureCellRenderer();
     public static final AutoIncrementCellRenderer AUTO_INCREMENT = new AutoIncrementCellRenderer();
+    public static final CheckBoxCellRenderer CHECK_BOX = new CheckBoxCellRenderer();
+    public static final CheckBoxCellEditor CHECK_BOX_EDITOR = new CheckBoxCellEditor();
 
     // Special renderer
     public static final NumberCellRenderer IV = new NumberCellRenderer().withRatingColors(0, PokemonUtils.MAX_IV);

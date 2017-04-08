@@ -6,7 +6,6 @@ import java.awt.datatransfer.StringSelection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,10 +20,7 @@ import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.auth.GoogleAutoCredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
-import com.pokegoapi.exceptions.AsyncPokemonGoException;
-import com.pokegoapi.exceptions.CaptchaActiveException;
-import com.pokegoapi.exceptions.LoginFailedException;
-import com.pokegoapi.exceptions.hash.HashException;
+import com.pokegoapi.exceptions.request.RequestFailedException;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
 import me.corriekay.pokegoutil.utils.ConfigKey;
@@ -345,14 +341,9 @@ public final class AccountController {
                 } else {
                     throw new IllegalStateException("credentialProvider is null.");
                 }
-            } catch (LoginFailedException | AsyncPokemonGoException | IllegalStateException | CaptchaActiveException | HashException e) {
-                if (e instanceof AsyncPokemonGoException && e.getCause() instanceof RuntimeException && e.getCause().getCause() instanceof ExecutionException && e.getCause().getCause().getCause() instanceof HashException) {
-                    alertFailedLogin(e.getCause().getCause().getCause().getClass().getSimpleName(), e.getCause().getCause().getCause().getMessage(), tries);
-                } else {
-                    alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
-                }
+            } catch (RequestFailedException e) {
+                alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                 e.printStackTrace();
-                // deleteLoginData(LoginType.ALL);
             }
         }
     }

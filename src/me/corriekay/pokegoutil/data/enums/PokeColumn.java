@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import com.pokegoapi.api.pokemon.Evolutions;
@@ -16,18 +17,21 @@ import com.pokegoapi.main.PokemonMeta;
 import POGOProtos.Enums.PokemonIdOuterClass;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 import POGOProtos.Enums.PokemonTypeOuterClass.PokemonType;
+import POGOProtos.Inventory.Item.ItemIdOuterClass.ItemId;
+import POGOProtos.Settings.Master.Pokemon.EvolutionBranchOuterClass.EvolutionBranch;
 import me.corriekay.pokegoutil.utils.AutoIncrementer;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
-import me.corriekay.pokegoutil.utils.helpers.CollectionHelper;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
+import me.corriekay.pokegoutil.utils.helpers.EvolveHelper;
 import me.corriekay.pokegoutil.utils.helpers.LocationHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonPerformanceCache;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.windows.renderer.CellRendererHelper;
+import me.corriekay.pokegoutil.windows.PokemonTab;
 
 /**
  * A class that holds data relevant for each column.
@@ -137,7 +141,7 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             final PokemonMove move = p.getMove1();
-            PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
+            final PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
             return PokemonUtils.formatType(type);
         }
     },
@@ -145,7 +149,7 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             final PokemonMove move = p.getMove2();
-            PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
+            final PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
             return PokemonUtils.formatType(type);
         }
     },
@@ -197,10 +201,36 @@ public enum PokeColumn {
             }
         }
     },
-    STARDUST_TO_POWERUP("Stardust", ColumnType.INT) {
+    ITEM_TO_EVOLVE("Item To Evolve", ColumnType.EVOLVE_CHECK_BOX) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getStardustCostsForPowerup();
+            if (PokemonTab.MAP_POKEMON_ITEM.containsKey(p.getId())) {
+                return PokemonTab.MAP_POKEMON_ITEM.get(p.getId());
+            }
+            final List<EvolutionBranch> evolutionBranch = p.getEvolutionBranch();
+            if (evolutionBranch != null && evolutionBranch.size() > 0) {
+                for (final EvolutionBranch evoBranch : evolutionBranch) {
+                    if (evoBranch.getEvolutionItemRequirement() != null 
+                            && evoBranch.getEvolutionItemRequirement() != ItemId.UNRECOGNIZED 
+                            && evoBranch.getEvolutionItemRequirement() != ItemId.ITEM_UNKNOWN) {
+                        final EvolveHelper evolve = new EvolveHelper(evoBranch.getEvolution(), evoBranch.getEvolutionItemRequirement());
+                        PokemonTab.MAP_POKEMON_ITEM.put(p.getId(), evolve);
+                        return evolve;
+                    }
+                }
+            }
+            return null;
+        }
+    },
+    STARDUST_TO_POWERUP("Stardust", ColumnType.NULLABLE_INT) {
+        @Override
+        public Object get(final Pokemon p) {
+            final int startdust = p.getStardustCostsForPowerup();
+            if (startdust != 0) {
+                return String.valueOf(startdust);
+            } else {
+                return StringLiterals.NO_VALUE_SIGN;
+            }
         }
     },
     MAX_CP_CUR("Max CP (Cur)", ColumnType.INT) {
@@ -382,9 +412,10 @@ public enum PokeColumn {
     public final int id;
     public final String heading;
     public final ColumnType columnType;
-    public final ArrayList data;
+    public final ArrayList<Object> data;
 
     private TableCellRenderer customCellRenderer;
+    private TableCellEditor customCellEditor;
 
     /**
      * Constructor to create the enum entries.
@@ -396,7 +427,7 @@ public enum PokeColumn {
         this.id = Internal.AUTO_INCREMENTER.get();
         this.heading = heading;
         this.columnType = columnType;
-        this.data = CollectionHelper.provideArrayList(columnType.clazz);
+        this.data = new ArrayList<>();
     }
 
     /**
@@ -448,7 +479,7 @@ public enum PokeColumn {
      *
      * @return The comparator.
      */
-    public Comparator getComparator() {
+    public Comparator<?> getComparator() {
         return columnType.comparator;
     }
 
@@ -459,6 +490,15 @@ public enum PokeColumn {
      */
     public TableCellRenderer getCellRenderer() {
         return customCellRenderer != null ? customCellRenderer : columnType.tableCellRenderer;
+    }
+    
+    /**
+     * Returns the table cell editor for the given column, based on the column type.
+     *
+     * @return The cell editor.
+     */
+    public TableCellEditor getCellEditor() {
+        return customCellEditor != null ? customCellEditor : columnType.tableCellEditor;
     }
 
     /**
