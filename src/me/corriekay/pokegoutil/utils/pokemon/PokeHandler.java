@@ -217,7 +217,7 @@ public class PokeHandler {
                 return UnicodeHelper.get(PokeColumn.IV_DEFENSE.get(p).toString());
             }
         },
-        IV_STAM_UNI("IV Stamina Unicode (⓯  for 15) {1]") {
+        IV_STAM_UNI("IV Stamina Unicode (⓯  for 15) [1]") {
             @Override
             public String get(final Pokemon p) {
                 return UnicodeHelper.get(PokeColumn.IV_STAMINA.get(p).toString());
