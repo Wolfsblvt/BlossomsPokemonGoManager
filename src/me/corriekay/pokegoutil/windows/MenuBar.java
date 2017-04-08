@@ -117,7 +117,7 @@ public class MenuBar extends JMenuBar {
         });
         help.add(checkUpdates);
 
-        JMenuItem about = new JMenuItem("About");
+        final JMenuItem about = new JMenuItem("About");
         about.addActionListener(l -> JOptionPane.showMessageDialog(null,
             "Version: " + Updater.getUpdater().currentVersion
                 + StringLiterals.NEWLINE
@@ -139,7 +139,7 @@ public class MenuBar extends JMenuBar {
                 + StringLiterals.NEWLINE + "Thanks to Grover for providing"
                 + StringLiterals.NEWLINE + "such a great API."
                 + StringLiterals.NEWLINE + "Thanks to gegy1000 for keeping up"
-                + StringLiterals.NEWLINE + "Grover."
+                + StringLiterals.NEWLINE + "Grover's work."
                 + StringLiterals.NEWLINE
                 + StringLiterals.NEWLINE + "Thanks to Draseart for "
                 + "the icon art.",

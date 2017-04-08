@@ -77,7 +77,7 @@ public class LoginController extends BaseController<StackPane> {
         final Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error Login");
         alert.setHeaderText("Unfortunately, your login has failed");
-        alert.setContentText(message != null ? message : "" + "\nPress OK to try again.");
+        alert.setContentText(message != null ? message : "" + "\nPress OK to go back and try again later.");
         alert.showAndWait();
     }
 
@@ -101,6 +101,11 @@ public class LoginController extends BaseController<StackPane> {
 
         ptcRadio.setToggleGroup(radioGroup);
         googleRadio.setToggleGroup(radioGroup);
+        radioGroup.selectedToggleProperty().addListener(listener -> {
+            if (saveAuthChkbx.isSelected()) {
+                saveAuthChkbx.fire();
+            }
+        }); 
         
         ptcPane.disableProperty().bind(ptcRadio.selectedProperty().not());
         googlePane.disableProperty().bind(googleRadio.selectedProperty().not());
@@ -152,7 +157,7 @@ public class LoginController extends BaseController<StackPane> {
      *
      * @param ignored event
      */
-    private void onloginBtnClicked(final ActionEvent ignored) {
+    public void onloginBtnClicked(final ActionEvent ignored) {
         if (hashKeyField.textProperty().isNotEmpty().get()) {
             
             if (ptcRadio.isSelected()) {
@@ -279,9 +284,20 @@ public class LoginController extends BaseController<StackPane> {
      * @param loginData login credentials
      */
     private void tryLogin(final LoginData loginData) {
+        final BpmResult loginResult = accountManager.login(loginData);
+
+        if (loginResult.isSuccess()) {
+            //             openMainWindow();
+            openOldWindow();
+        } else {
+            alertFailedLogin(loginResult.getErrorMessage());
+        }
     }
 
-    public static void logOff() throws Exception {
+    /**
+     * Logoff from main app.
+     */
+    public static void logOff() {
 
         BlossomsPoGoManager.getMainWindow().setVisible(false);
         BlossomsPoGoManager.getMainWindow().dispose();
