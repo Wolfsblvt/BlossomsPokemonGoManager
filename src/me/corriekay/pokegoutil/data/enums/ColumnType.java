@@ -111,30 +111,36 @@ public enum ColumnType {
         };
         public static final Comparator<String> NUMBER_STRING = (left, right) -> {
             // pre-initialize first split entries with "-1" so "-" (= NO_VALUE_SIGN) will be sorted separate from 0
-            String[] sLeft = {"-1","-1"};
-            String[] sRight = {"-1","-1"};
+            String[] sLeft = {StringLiterals.MINUS_ONE, StringLiterals.MINUS_ONE};
+            String[] sRight = {StringLiterals.MINUS_ONE, StringLiterals.MINUS_ONE};
             Integer iResult0 = 0;
             Integer iResult1 = 0;
 
-            if (left.indexOf("/") > -1) {
-                sLeft = left.split("/");
+            if (left.indexOf(StringLiterals.SLASH) > -1) {
+                sLeft = left.split(StringLiterals.SLASH);
             }
-            if (right.indexOf("/") > -1) {
-                sRight = right.split("/");
+            if (right.indexOf(StringLiterals.SLASH) > -1) {
+                sRight = right.split(StringLiterals.SLASH);
             }
 
             iResult0 = Integer.compare(Integer.parseInt(sLeft[0]), Integer.parseInt(sRight[0]));
             iResult1 = Integer.compare(Integer.parseInt(sLeft[1]), Integer.parseInt(sRight[1]));
 
             final boolean useFullHP = ConfigNew.getConfig().getBool(ConfigKey.HP_SORT_ON_FULL);
-            final String sortEnum1 =  ConfigNew.getConfig().getString(ConfigKey.SORT_ENUM_1);
+            final String sortEnum1 = ConfigNew.getConfig().getString(ConfigKey.SORT_ENUM_1);
 
-            if (useFullHP && sortEnum1.equals("HP")) {
-                if(iResult1 == 0) {return iResult0;} else {return iResult1;}                              
-            } 
-            else 
-            {
-                if(iResult0 == 0) {return iResult1;} else {return iResult0;}
+            if (useFullHP && "HP".equals(sortEnum1)) {
+                if (iResult1 == 0) { 
+                    return iResult0; 
+                } else { 
+                    return iResult1; 
+                }                              
+            } else {
+                if (iResult0 == 0) { 
+                    return iResult1;
+                } else {
+                    return iResult0;
+                }
             }
         };
     }

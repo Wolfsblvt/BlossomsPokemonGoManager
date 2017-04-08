@@ -2,11 +2,15 @@ package me.corriekay.pokegoutil.utils;
 
 import javax.swing.SortOrder;
 
+/**
+ * Enum class that handle all the keys and the default values in config.json file.
+ */
 public enum ConfigKey {
 
     DEVELOPFLAG("develop", false, Type.BOOLEAN),
 
     LOGIN_SAVE_AUTH("login.saveAuth", false, Type.BOOLEAN),
+    LOGIN_LAST_TYPE("login.lastType", null, Type.STRING),
     LOGIN_GOOGLE_AUTH_TOKEN("login.google.authToken", null, Type.STRING),
     LOGIN_GOOGLE_APP_USERNAME("login.google.username", null, Type.STRING),
     LOGIN_GOOGLE_APP_PASSWORD("login.google.password", null, Type.STRING),
@@ -68,21 +72,55 @@ public enum ConfigKey {
     DEVICE_INFO_CUSTOM_FIRMWARE_TAGS("deviceInfo.custom.firmware.tags", null, Type.STRING),
     DEVICE_INFO_CUSTOM_FIRMWARE_TYPE("deviceInfo.custom.firmware.type", null, Type.STRING),
     DEVICE_INFO_CUSTOM_HARDWARE_MANUFACUTER("deviceInfo.custom.hardware.manufacturer", null, Type.STRING),
-    DEVICE_INFO_CUSTOM_HARDWARE_MODEL("deviceInfo.custom.hardware.model", null, Type.STRING);
+    DEVICE_INFO_CUSTOM_HARDWARE_MODEL("deviceInfo.custom.hardware.model", null, Type.STRING),
+
+    //Default unicode icons for UnicodeHelper class, it can now be customized in config.json file
+    UNICODE_ICON_TYPE_BUG("unicode.type_bug", 0x2042, Type.INTEGER),
+    UNICODE_ICON_TYPE_DARK("unicode.type_dark", 0x263D, Type.INTEGER),
+    UNICODE_ICON_TYPE_DRAGON("unicode.type_dragon", 0x26E9, Type.INTEGER),
+    UNICODE_ICON_TYPE_ELETRIC("unicode.type_eletric", 0x2607, Type.INTEGER),
+    UNICODE_ICON_TYPE_FAIRY("unicode.type_fairy", 0x2764, Type.INTEGER),
+    UNICODE_ICON_TYPE_FIGHTING("unicode.type_fighting", 0x270A, Type.INTEGER),
+    UNICODE_ICON_TYPE_FIRE("unicode.type_fire", 0x2668, Type.INTEGER),
+    UNICODE_ICON_TYPE_FLYING("unicode.type_flying", 0x2708, Type.INTEGER),
+    UNICODE_ICON_TYPE_GHOST("unicode.type_ghost", 0x26B0, Type.INTEGER),
+    UNICODE_ICON_TYPE_GRASS("unicode.type_grass", 0x2E19, Type.INTEGER),
+    UNICODE_ICON_TYPE_GROUND("unicode.type_ground", 0x26F0, Type.INTEGER),
+    UNICODE_ICON_TYPE_ICE("unicode.type_ice", 0x2744, Type.INTEGER),
+    UNICODE_ICON_TYPE_NORMAL("unicode.type_normal", 0x2734, Type.INTEGER),
+    UNICODE_ICON_TYPE_POISON("unicode.type_poison", 0x2620, Type.INTEGER),
+    UNICODE_ICON_TYPE_PSYCHIC("unicode.type_psychic", 0x269B, Type.INTEGER),
+    UNICODE_ICON_TYPE_ROCK("unicode.type_rock", 0x25C9, Type.INTEGER),
+    UNICODE_ICON_TYPE_STEEL("unicode.type_steel", 0x26D3, Type.INTEGER),
+    UNICODE_ICON_TYPE_WATER("unicode.type_water", 0x26C6, Type.INTEGER),
+    UNICODE_ICON_SHIELD("unicode.shield", 0x26E8, Type.INTEGER),
+    UNICODE_ICON_SWORD("unicode.sword", 0x2694, Type.INTEGER);
     
     public final String keyName;
     public final Object defaultValue;
     public final Type type;
 
-    ConfigKey(String keyName, Object defaultValue, Type type) {
+    /**
+     * Default constructor for ConfigKey enum.
+     * @param keyName name of the key
+     * @param defaultValue default value of the key
+     * @param type of the key
+     */
+    ConfigKey(final String keyName, final Object defaultValue, final Type type) {
         this.keyName = keyName;
         this.defaultValue = defaultValue;
         this.type = type;
     }
 
+    /**
+     * Auxiliary method to return the defaultValue of the key.
+     * @param <T> the type of the return
+     * @return the default object returned
+     * @throws ClassCastException when a Class can't be cast to T
+     */
     @SuppressWarnings("unchecked")
     public <T> T getDefaultValue() throws ClassCastException {
-        Class<?> clazz = type.getClazz();
+        final Class<?> clazz = type.getClazz();
         return (T) clazz.cast(defaultValue);
     }
 
@@ -103,7 +141,7 @@ public enum ConfigKey {
          * @param clazz The class to parse.
          * @param <T>   Type of the class, also return type.
          */
-        <T> Type(Class<T> clazz) {
+        <T> Type(final Class<T> clazz) {
             this.clazz = clazz;
         }
 

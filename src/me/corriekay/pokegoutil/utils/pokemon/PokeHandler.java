@@ -42,7 +42,7 @@ public class PokeHandler {
     }
 
     /**
-     * Rename a single Pokemon based on a pattern
+     * Rename a single Pokemon based on a pattern.
      *
      * @param pattern The pattern to use for renaming
      * @param pokemon The Pokemon to rename
@@ -170,7 +170,8 @@ public class PokeHandler {
         LEVEL("Pokémon Level") {
             @Override
             public String get(final Pokemon p) {
-                return StringUtils.leftPad(PokeColumn.LEVEL.get(p).toString(), 4, '0');
+                final int size = 4;
+                return StringUtils.leftPad(PokeColumn.LEVEL.get(p).toString(), size, '0');
             }
         },
         IV_RATING("IV Rating in two digits (XX for 100%) [2]") {
@@ -335,7 +336,7 @@ public class PokeHandler {
             @Override
             public String get(final Pokemon p) {
                 // need to strip "pokemon_type_" prefix or "pokemon_type_none" 
-                final String type = PokemonUtils.formatType(p.getSettings().getType());//p.getSettings().getType().toString();
+                final String type = PokemonUtils.formatType(p.getSettings().getType());
                 return abbreviateType(type);
             }
         },
@@ -343,7 +344,7 @@ public class PokeHandler {
             @Override
             public String get(final Pokemon p) {
                 // need to strip "pokemon_type_" prefix or "pokemon_type_none" 
-                final String type = PokemonUtils.formatType(p.getSettings().getType2());//p.getSettings().getType2().toString();
+                final String type = PokemonUtils.formatType(p.getSettings().getType2());
                 return abbreviateType(type);
             }
         },
@@ -384,8 +385,8 @@ public class PokeHandler {
             @Override
             public String get(final Pokemon p) {
                 final String gender = PokeColumn.GENDER.get(p).toString(); 
-                final String gChar = (gender == "FEMALE" ? UnicodeHelper.get("female") : 
-                                      gender == "MALE" ? UnicodeHelper.get("male") : UnicodeHelper.get("none")) ;
+                final String gChar = "FEMALE".equals(gender) ? UnicodeHelper.get("female") 
+                        : "MALE".equals(gender) ? UnicodeHelper.get("male") : UnicodeHelper.get("none");
                 return gChar;
             }
         };

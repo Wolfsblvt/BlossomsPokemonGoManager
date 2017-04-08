@@ -101,11 +101,6 @@ public class LoginController extends BaseController<StackPane> {
 
         ptcRadio.setToggleGroup(radioGroup);
         googleRadio.setToggleGroup(radioGroup);
-        radioGroup.selectedToggleProperty().addListener(listener -> {
-            if (saveAuthChkbx.isSelected()) {
-                saveAuthChkbx.fire();
-            }
-        }); 
         
         ptcPane.disableProperty().bind(ptcRadio.selectedProperty().not());
         googlePane.disableProperty().bind(googleRadio.selectedProperty().not());
@@ -139,6 +134,21 @@ public class LoginController extends BaseController<StackPane> {
                 getTokenBtn.setDisable(true);
             }
         }
+
+        final LoginType lastLoginType = configLoginData.getLoginType();
+        if (lastLoginType != null) { 
+            if (LoginType.isGoogle(lastLoginType)) {
+                radioGroup.selectToggle(googleRadio);
+            } else {
+                radioGroup.selectToggle(ptcRadio);
+            }
+        }
+        
+        radioGroup.selectedToggleProperty().addListener(listener -> {
+            if (saveAuthChkbx.isSelected()) {
+                saveAuthChkbx.fire();
+            }
+        }); 
     }
 
     /**
@@ -287,6 +297,7 @@ public class LoginController extends BaseController<StackPane> {
         final BpmResult loginResult = accountManager.login(loginData);
 
         if (loginResult.isSuccess()) {
+            
             //             openMainWindow();
             openOldWindow();
         } else {

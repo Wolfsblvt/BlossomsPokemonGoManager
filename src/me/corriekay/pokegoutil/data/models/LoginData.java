@@ -15,25 +15,25 @@ public class LoginData {
         this.loginType = LoginType.NONE;
     }
 
-    public LoginData(String token) {
+    public LoginData(final String token) {
         this.token = token;
         this.loginType = LoginType.GOOGLE_AUTH;
     }
 
-    public LoginData(String username, String password) {
+    public LoginData(final String username, final String password) {
         this.username = username;
         this.password = password;
         this.loginType = LoginType.PTC;
     }
 
-    public LoginData(String username, String password, String token) {
+    public LoginData(final String username, final String password, final String token) {
         this.username = username;
         this.password = password;
         this.token = token;
         this.loginType = LoginType.ALL;
     }
     
-    public LoginData(String username, String password, String token, String hashKey) {
+    public LoginData(final String username, final String password, final String token, final String hashKey) {
         this.username = username;
         this.password = password;
         this.token = token;
@@ -93,33 +93,33 @@ public class LoginData {
         return hasUsername() && hasPassword();
     }
 
-    public void setLoginType(LoginType loginType) {
+    public void setLoginType(final LoginType loginType) {
         this.loginType = loginType;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
-    public void setSavedToken(boolean isSavedToken) {
+    public void setSavedToken(final boolean isSavedToken) {
         this.isSavedToken = isSavedToken;
     }
 
-    public void setToken(String token) {
+    public void setToken(final String token) {
         this.token = token;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
-    public void setHashKey(String hashKey) {
+    public void setHashKey(final String hashKey) {
         this.hashKey = hashKey;
     }
     
     @Override
     public String toString() {
-        return String.format("Username: %s | Password: %s | Token: %s | LoginType: %s | isSavedToken %b",
+        return String.format("Username: %s | Password: %s | Token: %s | LoginType: %s | isSavedToken: %b",
                 username, password, token, loginType, isSavedToken);
     }
 

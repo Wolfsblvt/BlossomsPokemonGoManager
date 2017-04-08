@@ -28,16 +28,21 @@ public final class AccountManager {
     private PokemonGo go;
     private PlayerAccount playerAccount;
 
+    /**
+     * Private constructor to avoid instantiating this class.
+     */
+    private AccountManager() { }
+    
+    /**
+     * Static method to obtain the only singleton instance of this class.
+     * @return AccountManager if is already created or create and return it.
+     */
     public static AccountManager getInstance() {
         if (instance == null) {
             instance = new AccountManager();
             // DO any required initialization stuff here
         }
         return instance;
-    }
-
-    private AccountManager() {
-
     }
 
     /**
@@ -89,6 +94,10 @@ public final class AccountManager {
         return go;
     }
     
+    /**
+     * Get login information from config.json file.
+     * @return LoginData with all the information inside
+     */
     public LoginData getLoginData() {
         final LoginData loginData = new LoginData(
                 config.getString(ConfigKey.LOGIN_PTC_USERNAME),
@@ -98,6 +107,10 @@ public final class AccountManager {
 
         if (loginData.isValidGoogleLogin()) {
             loginData.setSavedToken(true);
+        }
+        final String lastLoginType = ConfigNew.getConfig().getString(ConfigKey.LOGIN_LAST_TYPE);
+        if (lastLoginType != null) {
+            loginData.setLoginType(LoginType.valueOf(lastLoginType));
         }
 
         return loginData;
@@ -116,6 +129,9 @@ public final class AccountManager {
         return go != null ? go.getPlayerProfile() : null;
     }
 
+    /**
+     * Initialize controllers.
+     */
     private void initOtherControllers() {
         InventoryManager.initialize(go);
         PokemonBagManager.initialize(go);
@@ -185,15 +201,16 @@ public final class AccountManager {
                 deleteLoginData(LoginType.GOOGLE_AUTH);
             }
         } catch (RequestFailedException e) {
-//            deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
+            //deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
             return new BpmResult(e.getMessage());
         }
 
         try {
             prepareLogin(cp, http);
+            config.setString(ConfigKey.LOGIN_LAST_TYPE, LoginType.GOOGLE_AUTH.toString());
             return new BpmResult();
         } catch (RequestFailedException e) {
-//            deleteLoginData(LoginType.ALL);
+            //deleteLoginData(LoginType.ALL);
             return new BpmResult(e.getMessage());
         }
     }
@@ -223,15 +240,16 @@ public final class AccountManager {
                 deleteLoginData(LoginType.PTC);
             }
         } catch (RequestFailedException e) {
-//            deleteLoginData(LoginType.PTC);
+            //deleteLoginData(LoginType.PTC);
             return new BpmResult(e.getMessage());
         }
 
         try {
             prepareLogin(cp, http);
+            config.setString(ConfigKey.LOGIN_LAST_TYPE, LoginType.PTC.toString());
             return new BpmResult();
         } catch (RequestFailedException e) {
-//            deleteLoginData(LoginType.ALL);
+            //deleteLoginData(LoginType.ALL);
             return new BpmResult(e.getMessage());
         }
     }
