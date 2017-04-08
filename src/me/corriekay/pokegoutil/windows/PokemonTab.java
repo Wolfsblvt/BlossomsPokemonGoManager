@@ -365,7 +365,7 @@ public class PokemonTab extends JPanel {
         });
         
         if (finalSelection.size() > 0) {
-            System.out.println(String.format("Multi-Transfering %d pokemons, %d skipped", finalSelection.size(), skipped.intValue()));
+            System.out.println(String.format((total.intValue() > 1?"Multi-":"")+"Transfering %d Pokémon, %d skipped", finalSelection.size(), skipped.intValue()));
             try {
                 final Map<PokemonFamilyId, Integer> transferResult = go.getInventories().getPokebank().releasePokemon(finalSelection.toArray(new Pokemon[1]));
                 transferResult.forEach((pokeFamilyID, candies) -> {
@@ -385,7 +385,7 @@ public class PokemonTab extends JPanel {
         }
         selectedRowsList = null;
         SwingUtilities.invokeLater(this::refreshList);
-        showFinishedText("Pokémon multi-transfer complete!", total.intValue(), success, skipped, err);
+        showFinishedText("Pokémon "+(total.intValue() > 1?"multi-":"")+"transfer complete!", total.intValue(), success, skipped, err);
     }
 
     private void evolveSelected() {
