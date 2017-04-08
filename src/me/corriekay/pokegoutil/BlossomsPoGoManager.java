@@ -56,7 +56,7 @@ public class BlossomsPoGoManager extends Application {
         }
         sPrimaryStage = stage;
     }
-    
+
     /**
      * Get the current main window.
      *
@@ -65,7 +65,7 @@ public class BlossomsPoGoManager extends Application {
     public static PokemonGoMainWindow getMainWindow() {
         return mainWindow;
     }
-    
+
     /**
      * Set the new main window.
      *
@@ -80,8 +80,8 @@ public class BlossomsPoGoManager extends Application {
         setupGlobalExceptionHandling();
 
         if (ConfigNew.getConfig().getBool(ConfigKey.DEVELOPFLAG)) {
-//            new ChooseGuiWindowController();
-//            sPrimaryStage.show();
+            //new ChooseGuiWindowController();
+            //sPrimaryStage.show();
             new LoginController();
             BlossomsPoGoManager.getPrimaryStage().show();
         } else {
@@ -106,18 +106,18 @@ public class BlossomsPoGoManager extends Application {
 
             final String[] options = new String[] {"Continue anyway", "Exit"};
             final int continueChoice = JOptionPane.showOptionDialog(
-                WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
-                String.join(StringLiterals.NEWLINE, result)
+                    WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                    String.join(StringLiterals.NEWLINE, result)
                     + StringLiterals.NEWLINE
                     + StringLiterals.NEWLINE + "Application got a critical error."
                     + StringLiterals.NEWLINE + "You can report the error on GitHub or Discord."
                     + StringLiterals.NEWLINE
                     + StringLiterals.NEWLINE + "It is possible to continue here, but do note that the application might not work as expected."
                     + StringLiterals.NEWLINE + "Close and restart if that's the case.",
-                "General Unhandled Error",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.ERROR_MESSAGE,
-                null, options, options[0]);
+                    "General Unhandled Error",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE,
+                    null, options, options[0]);
             if (continueChoice == 1) {
                 // If exit is chosen, we exit here.
                 System.exit(-1);

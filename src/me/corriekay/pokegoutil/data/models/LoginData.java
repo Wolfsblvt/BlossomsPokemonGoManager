@@ -101,8 +101,8 @@ public class LoginData {
         this.password = password;
     }
 
-    public void setSavedToken(final boolean isSavedToken) {
-        this.isSavedToken = isSavedToken;
+    public void setSavedToken(final boolean savedToken) {
+        this.isSavedToken = savedToken;
     }
 
     public void setToken(final String token) {

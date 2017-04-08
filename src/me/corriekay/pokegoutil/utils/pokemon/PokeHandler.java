@@ -14,6 +14,7 @@ import com.pokegoapi.main.PokemonMeta;
 
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.TriConsumer;
 import me.corriekay.pokegoutil.utils.helpers.UnicodeHelper;
@@ -62,8 +63,8 @@ public class PokeHandler {
             return result;
         } catch (RequestFailedException e) {
             System.out.println("Error while renaming "
-                + PokemonUtils.getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
-                + Utilities.getRealExceptionMessage(e));
+                    + PokemonUtils.getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
+                    + Utilities.getRealExceptionMessage(e));
             return NicknamePokemonResponse.Result.UNRECOGNIZED;
         }
     }
@@ -184,8 +185,8 @@ public class PokeHandler {
             @Override
             public String get(final Pokemon p) {
                 return (Integer.toHexString((int) PokeColumn.IV_ATTACK.get(p))
-                    + Integer.toHexString((int) PokeColumn.IV_DEFENSE.get(p))
-                    + Integer.toHexString((int) PokeColumn.IV_STAMINA.get(p))).toUpperCase();
+                        + Integer.toHexString((int) PokeColumn.IV_DEFENSE.get(p))
+                        + Integer.toHexString((int) PokeColumn.IV_STAMINA.get(p))).toUpperCase();
             }
         },
         IV_ATT("IV Attack [2]") {
@@ -387,7 +388,7 @@ public class PokeHandler {
                 final String gender = PokeColumn.GENDER.get(p).toString(); 
                 final String gChar = "FEMALE".equals(gender) ? UnicodeHelper.get("female") 
                         : "MALE".equals(gender) ? UnicodeHelper.get("male") : UnicodeHelper.get("none");
-                return gChar;
+                        return gChar;
             }
         };
 
@@ -398,8 +399,8 @@ public class PokeHandler {
          */
         private static String abbreviateMove(final String move) {
             // check if move has two words
-            if (move.indexOf(" ") > 0) {
-                String[] moveWords = move.split(" ");
+            if (move.indexOf(StringLiterals.SPACE) > 0) {
+                final String[] moveWords = move.split(StringLiterals.SPACE);
                 // too many charge moves have the same initials so we do not make exceptions for them.
                 // this is further complicated because the moves can have STAB which is indicated by uppercase
                 return moveWords[0].substring(0, 1) + moveWords[1].substring(0, 1);  
@@ -416,13 +417,11 @@ public class PokeHandler {
          * @return The abbreviated type with two characters.
          */
         private static String abbreviateType(final String type) {
-// this will never happen since "none" already was stripped in the PokemonUtils.formatType() call
-//            if ("none".equalsIgnoreCase(type)) {
-// instead we need to check if the returned type is empty            
+            //we need to check if the returned type is empty            
             if (type.isEmpty()) {
                 return "__";
             } else if ("fighting".equalsIgnoreCase(type) || "ground".equalsIgnoreCase(type)) {
-                // "Gr" is Grass, so we make Ground "Gd". "Fi" is Fire, so we make Fighting "Fg"
+                //"Gr" is Grass, so we make Ground "Gd". "Fi" is Fire, so we make Fighting "Fg"
                 return type.substring(0, 1).toUpperCase() + type.substring(type.length() - 1).toLowerCase();
             } else {
                 return StringUtils.capitalize(type.substring(0, 2).toLowerCase());

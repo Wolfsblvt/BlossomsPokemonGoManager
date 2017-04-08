@@ -20,8 +20,6 @@ import POGOProtos.Enums.PokemonTypeOuterClass.PokemonType;
 import POGOProtos.Inventory.Item.ItemIdOuterClass.ItemId;
 import POGOProtos.Settings.Master.Pokemon.EvolutionBranchOuterClass.EvolutionBranch;
 import me.corriekay.pokegoutil.utils.AutoIncrementer;
-import me.corriekay.pokegoutil.utils.ConfigKey;
-import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
@@ -114,21 +112,20 @@ public enum PokeColumn {
     MOVE_1("Move 1", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return PokemonUtils.formatMove(p.getMove1())
-// Don't show it here since it now has its own column
-// Possibly re-enable by boolean when column hiding becomes an option 
-//                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, true))
-                ;
+            return PokemonUtils.formatMove(p.getMove1());
+            // Don't show it here since it now has its own column
+            // Possibly re-enable by boolean when column hiding becomes an option 
+            //                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, true))
+
         }
     },
     MOVE_2("Move 2", ColumnType.STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return PokemonUtils.formatMove(p.getMove2())
-// Don't show it here since it now has its own column
-// Possibly re-enable by boolean when column hiding becomes an option
-//                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, false))
-                ;
+            return PokemonUtils.formatMove(p.getMove2());
+            // Don't show it here since it now has its own column
+            // Possibly re-enable by boolean when column hiding becomes an option
+            //                + PokemonUtils.formatDps(PokemonCalculationUtils.dpsForMove(p, false))
         }
     },
     DPS_1("DPS 1", ColumnType.DPS1VALUE) {
@@ -162,7 +159,7 @@ public enum PokeColumn {
     HP("HP", ColumnType.NUMBER_STRING) {
         @Override
         public Object get(final Pokemon p) {
-            return String.valueOf(p.getStamina())+"/"+String.valueOf(p.getMaxStamina());
+            return String.valueOf(p.getStamina()) + StringLiterals.SLASH + String.valueOf(p.getMaxStamina());
         }
     },
     EVOLVABLE_COUNT("Evolvable", ColumnType.NUMBER_STRING) {
@@ -173,19 +170,19 @@ public enum PokeColumn {
                 final int candiesToEvolve = p.getCandiesToEvolve();
 
                 int evolvable = (int) ((double) candies / candiesToEvolve);
-                // Keep separate track of evolvable with "Transfer After Evolve" TAE)
+                //Keep separate track of evolvable with "Transfer After Evolve" TAE)
                 int evolvableTAE = evolvable;
                 int rest = candies % candiesToEvolve;
                 int restTAE = rest;
-// Disregarded since it's now tracked separately
-//                final boolean transferAfterEvolve = ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE);
+                //Disregarded since it's now tracked separately
+                //final boolean transferAfterEvolve = ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE);
 
-                // We iterate and get how many candies are added while evolving and if that can make up for some more evolves
+                //We iterate and get how many candies are added while evolving and if that can make up for some more evolves
                 int newEvolvable = evolvable;
-                // Keep a separate track of how many candies we get with "Transfer After Evolve" (TAE)
+                //Keep a separate track of how many candies we get with "Transfer After Evolve" (TAE)
                 int newEvolvableTAE = evolvable;
                 do {
-//                    final int candyGiven = newEvolvable + (transferAfterEvolve ? newEvolvable : 0);
+                    //final int candyGiven = newEvolvable + (transferAfterEvolve ? newEvolvable : 0);
                     final int candyGiven = newEvolvable;
                     newEvolvable = (int) ((double) (candyGiven + rest) / candiesToEvolve);
                     evolvable = evolvable + newEvolvable;
@@ -195,10 +192,9 @@ public enum PokeColumn {
                     newEvolvableTAE = (int) ((double) (candyGivenTAE + restTAE) / candiesToEvolve);
                     evolvableTAE = evolvableTAE + newEvolvableTAE;
                     restTAE = (candyGivenTAE + restTAE) % candiesToEvolve;
-					
-				} while (newEvolvable > 0);
+                } while (newEvolvable > 0);
 
-                return String.valueOf(evolvable) + "/" + String.valueOf(evolvableTAE);
+                return String.valueOf(evolvable) + StringLiterals.SLASH + String.valueOf(evolvableTAE);
             } else {
                 return StringLiterals.NO_VALUE_SIGN;
             }
@@ -299,7 +295,7 @@ public enum PokeColumn {
             } else {
                 cpAfterFullyEvolve = p.getCpAfterFullEvolve(highestUpgradedFamily);
             }
-            
+
             if (cpAfterFullyEvolve != p.getCp()) {
                 return String.valueOf(cpAfterFullyEvolve);
             } else {
@@ -423,7 +419,7 @@ public enum PokeColumn {
     HEALTH("Health", ColumnType.PERCENTAGE) {
         @Override
         public Object get(final Pokemon p) {
-            return p.getStamina()/(double) p.getMaxStamina();
+            return p.getStamina() / (double) p.getMaxStamina();
         }       
     },
     PID("PID", ColumnType.LONG) {
@@ -516,7 +512,7 @@ public enum PokeColumn {
     public TableCellRenderer getCellRenderer() {
         return customCellRenderer != null ? customCellRenderer : columnType.tableCellRenderer;
     }
-    
+
     /**
      * Returns the table cell editor for the given column, based on the column type.
      *

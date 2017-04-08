@@ -32,7 +32,7 @@ public final class AccountManager {
      * Private constructor to avoid instantiating this class.
      */
     private AccountManager() { }
-    
+
     /**
      * Static method to obtain the only singleton instance of this class.
      * @return AccountManager if is already created or create and return it.
@@ -90,10 +90,14 @@ public final class AccountManager {
         }
     }
 
+    /**
+     * Return pokemonGo instance of the API.
+     * @return pokemonGo instance of the API.
+     */
     public PokemonGo getPokemonGo() {
         return go;
     }
-    
+
     /**
      * Get login information from config.json file.
      * @return LoginData with all the information inside
@@ -175,7 +179,7 @@ public final class AccountManager {
         final String authCode = loginData.getToken();
         final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
         config.setString(ConfigKey.LOGIN_POKEHASHKEY, loginData.getHashKey());
-        
+
         boolean shouldRefresh = false;
         if (loginData.isSavedToken() && saveAuth) {
             shouldRefresh = true;
@@ -202,7 +206,7 @@ public final class AccountManager {
             }
         } catch (RequestFailedException e) {
             //deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
-          	return new BpmResult(e.getMessage());
+            return new BpmResult(e.getMessage());
         }
 
         try {
