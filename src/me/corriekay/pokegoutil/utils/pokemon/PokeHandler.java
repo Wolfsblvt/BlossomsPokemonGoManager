@@ -386,9 +386,15 @@ public class PokeHandler {
             @Override
             public String get(final Pokemon p) {
                 final String gender = PokeColumn.GENDER.get(p).toString(); 
-                final String gChar = "FEMALE".equals(gender) ? UnicodeHelper.get("female") 
-                        : "MALE".equals(gender) ? UnicodeHelper.get("male") : UnicodeHelper.get("none");
-                        return gChar;
+                final String gChar;
+                if ("FEMALE".equals(gender)) { 
+                    gChar = UnicodeHelper.get("female");  
+                } else if ("MALE".equals(gender)) {
+                    gChar = UnicodeHelper.get("male");
+                } else {
+                    gChar = UnicodeHelper.get("none");
+                }
+                return gChar;
             }
         };
 
