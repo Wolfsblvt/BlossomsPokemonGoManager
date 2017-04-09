@@ -23,7 +23,8 @@
 						<HBox spacing="5">
 							<children>
 								<RadioButton fx:id="ptcRadio" selected="true" text="PTC" />
-								<RadioButton fx:id="googleRadio" text="Google" />
+								<RadioButton fx:id="googleRadio" text="Google Token" />
+                        		<RadioButton fx:id="googleAppRadio" layoutX="57.0" layoutY="10.0" text="Google App Pass" />
 							</children>
 						</HBox>
 						<Pane fx:id="ptcPane">
@@ -33,18 +34,28 @@
 							</children>
 						</Pane>
 						<Separator prefWidth="200.0" />
-						<Pane fx:id="googlePane">
-							<children>
-								<TextField fx:id="tokenField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="187.0" promptText="Google Auth Token:" />
-								<Button fx:id="getTokenBtn" layoutX="198.0" mnemonicParsing="false" text="Get Token" />
-							</children>
-						</Pane>
+                  <HBox fx:id="googlePane" prefWidth="260.0" spacing="5.0">
+                     <children>
+						<TextField fx:id="tokenField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="25.0" promptText="Google Auth Token:" HBox.hgrow="ALWAYS" />
+						<Button fx:id="getTokenBtn" mnemonicParsing="false" prefWidth="80.0" text="Get Token" />
+                        <Button fx:id="helpGoogleBtn" text="?" />
+                     </children>
+                  </HBox>
+                  <Separator layoutX="10.0" layoutY="107.0" prefWidth="200.0" />
+                  <Pane fx:id="googleAppPane" layoutX="10.0" layoutY="37.0">
+                     <children>
+                        <TextField fx:id="googleUsernameField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="243.0" promptText="Google Username:" />
+                        <PasswordField fx:id="googlePasswordField" layoutY="35.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="243.0" promptText="Google Password:" />
+                        <Button fx:id="helpGoogleAppBtn" layoutX="248.0" text="?" />
+                     </children>
+                  </Pane>
 						<AnchorPane>
 							<children>
-								<Separator prefWidth="269.0" AnchorPane.topAnchor="10.0" />
-                        <Label layoutY="24.0" text="Hash Key:" AnchorPane.topAnchor="24.0" />
-								<TextField fx:id="hashKeyField" layoutX="56.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="210.0" promptText="Hash Key:" AnchorPane.topAnchor="20.0" />
-								<CheckBox fx:id="saveAuthChkbx" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="17.0" prefWidth="147.0" text="Remember Credencials" AnchorPane.topAnchor="60.0" />
+      							<Separator prefWidth="269.0" AnchorPane.topAnchor="10.0" />
+                        		<Label layoutY="24.0" text="Hash Key:" AnchorPane.topAnchor="24.0" />
+								<TextField fx:id="hashKeyField" layoutX="56.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="187.0" promptText="0123456789ABCDEFGHIJ" AnchorPane.topAnchor="20.0" />
+                        		<Button fx:id="helpBtn" layoutX="248.0" layoutY="20.0" text="?" AnchorPane.topAnchor="20.0" />
+								<CheckBox fx:id="saveAuthChkbx" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="17.0" prefWidth="147.0" text="Remember Credentials" AnchorPane.topAnchor="60.0" />
 								<Button fx:id="loginBtn" alignment="CENTER" contentDisplay="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="111.0" text="ENTER" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="55.0" />
 							</children>
 						</AnchorPane>

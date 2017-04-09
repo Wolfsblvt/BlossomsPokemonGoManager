@@ -3,6 +3,7 @@ package me.corriekay.pokegoutil.data.managers;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
 import com.pokegoapi.auth.CredentialProvider;
+import com.pokegoapi.auth.GoogleAutoCredentialProvider;
 import com.pokegoapi.auth.GoogleUserCredentialProvider;
 import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.request.LoginFailedException;
@@ -107,9 +108,11 @@ public final class AccountManager {
                 config.getString(ConfigKey.LOGIN_PTC_USERNAME),
                 config.getString(ConfigKey.LOGIN_PTC_PASSWORD),
                 config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN),
+                config.getString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME),
+                config.getString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD),
                 config.getString(ConfigKey.LOGIN_POKEHASHKEY));
 
-        if (loginData.isValidGoogleLogin()) {
+        if (loginData.hasToken()) {
             loginData.setSavedToken(true);
         }
         final String lastLoginType = ConfigNew.getConfig().getString(ConfigKey.LOGIN_LAST_TYPE);
@@ -153,6 +156,11 @@ public final class AccountManager {
             case GOOGLE_AUTH:
                 if (loginData.isValidGoogleLogin()) {
                     return logOnGoogleAuth(loginData);
+                }
+                break;
+            case GOOGLE_APP_PASSWORD:
+                if (loginData.isValidGoogleAppLogin()) {
+                    return logOnGoogleApp(loginData);
                 }
                 break;
             case PTC:
@@ -251,6 +259,45 @@ public final class AccountManager {
         try {
             prepareLogin(cp, http);
             config.setString(ConfigKey.LOGIN_LAST_TYPE, LoginType.PTC.toString());
+            return new BpmResult();
+        } catch (RequestFailedException e) {
+            //deleteLoginData(LoginType.ALL);
+            return new BpmResult(e.getMessage());
+        }
+    }
+    
+    /**
+     * Login using Google App Password.
+     *
+     * @param loginData the login data used to login
+     * @return results of the login
+     */
+    private BpmResult logOnGoogleApp(final LoginData loginData) {
+        final OkHttpClient http;
+        final CredentialProvider cp;
+        http = new OkHttpClient();
+        
+        final String username = loginData.getGoogleUsername();
+        final String password = loginData.getGooglePassword();
+        final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
+        config.setString(ConfigKey.LOGIN_POKEHASHKEY, loginData.getHashKey());
+
+        try {
+            cp = new GoogleAutoCredentialProvider(http, username, password);
+            config.setString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME, username);
+            if (saveAuth) {
+                config.setString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD, password);
+            } else {
+                deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
+            }
+        } catch (RequestFailedException e) {
+            //deleteLoginData(LoginType.PTC);
+            return new BpmResult(e.getMessage());
+        }
+        
+        try {
+            prepareLogin(cp, http);
+            config.setString(ConfigKey.LOGIN_LAST_TYPE, LoginType.GOOGLE_APP_PASSWORD.toString());
             return new BpmResult();
         } catch (RequestFailedException e) {
             //deleteLoginData(LoginType.ALL);

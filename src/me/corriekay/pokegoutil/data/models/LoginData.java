@@ -7,6 +7,8 @@ public class LoginData {
     private String token;
     private String username;
     private String password;
+    private String googleUsername;
+    private String googlePassword;
     private String hashKey;
     private LoginType loginType;
     private boolean isSavedToken;
@@ -33,10 +35,12 @@ public class LoginData {
         this.loginType = LoginType.ALL;
     }
     
-    public LoginData(final String username, final String password, final String token, final String hashKey) {
+    public LoginData(final String username, final String password, final String token, final String googleUsername, final String googlePassword, final String hashKey) {
         this.username = username;
         this.password = password;
         this.token = token;
+        this.googleUsername = googleUsername;
+        this.googlePassword = googlePassword;
         this.hashKey = hashKey;
         this.loginType = LoginType.ALL;
     }
@@ -48,6 +52,10 @@ public class LoginData {
     public String getPassword() {
         return password;
     }
+    
+    public String getGooglePassword() {
+        return googlePassword;
+    }
 
     public String getToken() {
         return token;
@@ -57,6 +65,10 @@ public class LoginData {
         return username;
     }
     
+    public String getGoogleUsername() {
+        return googleUsername;
+    }
+    
     public String getHashKey() {
         return hashKey;
     }
@@ -64,9 +76,13 @@ public class LoginData {
     public boolean hasPassword() {
         return password != null && password.length() > 0;
     }
+    
+    public boolean hasGooglePassword() {
+        return googlePassword != null && googlePassword.length() > 0;
+    }
 
     public boolean hasSavedCredentials() {
-        return isValidPtcLogin() || isValidGoogleLogin();
+        return isValidPtcLogin() || isValidGoogleLogin() || isValidGoogleAppLogin();
     }
 
     public boolean hasToken() {
@@ -75,6 +91,10 @@ public class LoginData {
 
     public boolean hasUsername() {
         return username != null && username.length() > 0;
+    }
+    
+    public boolean hasGoogleUsername() {
+        return googleUsername != null && googleUsername.length() > 0;
     }
     
     public boolean hasHashKey() {
@@ -88,6 +108,10 @@ public class LoginData {
     public boolean isValidGoogleLogin() {
         return hasToken();
     }
+    
+    public boolean isValidGoogleAppLogin() {
+        return hasGoogleUsername() && hasGooglePassword();
+    }
 
     public boolean isValidPtcLogin() {
         return hasUsername() && hasPassword();
@@ -100,6 +124,10 @@ public class LoginData {
     public void setPassword(final String password) {
         this.password = password;
     }
+    
+    public void setGooglePassword(final String passwordParam) {
+        this.googlePassword = passwordParam;
+    }
 
     public void setSavedToken(final boolean savedToken) {
         this.isSavedToken = savedToken;
@@ -111,6 +139,10 @@ public class LoginData {
 
     public void setUsername(final String username) {
         this.username = username;
+    }
+    
+    public void setGoogleUsername(final String usernameParam) {
+        this.googleUsername = usernameParam;
     }
 
     public void setHashKey(final String hashKey) {
