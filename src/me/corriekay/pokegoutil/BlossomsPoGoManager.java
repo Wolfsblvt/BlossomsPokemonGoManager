@@ -4,17 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import me.corriekay.pokegoutil.data.managers.AccountController;
 import me.corriekay.pokegoutil.data.managers.GlobalSettingsController;
 import me.corriekay.pokegoutil.gui.controller.LoginController;
-import me.corriekay.pokegoutil.utils.ConfigKey;
-import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
-import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
 import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 
@@ -78,15 +73,8 @@ public class BlossomsPoGoManager extends Application {
     @Override
     public void start(final Stage primaryStage) {
         setupGlobalExceptionHandling();
-
-        if (ConfigNew.getConfig().getBool(ConfigKey.DEVELOPFLAG)) {
-            //new ChooseGuiWindowController();
-            //sPrimaryStage.show();
-            new LoginController();
-            BlossomsPoGoManager.getPrimaryStage().show();
-        } else {
-            openOldGui();
-        }
+        new LoginController();
+        BlossomsPoGoManager.getPrimaryStage().show();
     }
 
     /**
@@ -122,17 +110,6 @@ public class BlossomsPoGoManager extends Application {
                 // If exit is chosen, we exit here.
                 System.exit(-1);
             }
-        });
-    }
-
-    /**
-     * Opens the old GUI.
-     */
-    private void openOldGui() {
-        SwingUtilities.invokeLater(() -> {
-            UIHelper.setNativeLookAndFeel();
-            AccountController.initialize();
-            AccountController.logOn();
         });
     }
 }
