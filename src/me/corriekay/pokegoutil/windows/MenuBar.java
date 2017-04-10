@@ -40,7 +40,7 @@ public class MenuBar extends JMenuBar {
         });
         file.add(trainerStats);
 
-        JMenuItem logout = new JMenuItem("Logout");
+        JMenuItem logout = new JMenuItem("Exit");
         logout.addActionListener(al -> {
             try {
                 logout();
@@ -150,7 +150,7 @@ public class MenuBar extends JMenuBar {
     }
 
     private void logout() throws Exception {
-        AccountController.logOff();
+        System.exit(0);
     }
 
     private void displayTrainerStats() throws Exception {
