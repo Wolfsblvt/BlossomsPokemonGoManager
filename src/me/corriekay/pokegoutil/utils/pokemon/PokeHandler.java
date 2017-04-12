@@ -165,7 +165,7 @@ public class PokeHandler {
         HP("Hit Points") {
             @Override
             public String get(final Pokemon p) {
-                return PokeColumn.HP.get(p).toString();
+                return String.valueOf(p.getMaxStamina());
             }
         },
         LEVEL("Pokémon Level") {
@@ -281,18 +281,18 @@ public class PokeHandler {
                 return PokemonUtils.hasStab(p.getPokemonId(), p.getMove2()) ? abbreviateMove(move).toUpperCase() : abbreviateMove(move).toLowerCase();
             }
         },
-        MOVE_TYPE_1("Move Type 1 abbreviated (Ghost = Gh) [2]") {
+        MOVE_TYPE_1("Move Type 1 abbreviated (Uppercase with STAB else lowercase) [2]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = PokemonUtils.formatType(PokemonMeta.getMoveSettings(p.getMove1()).getPokemonType());
-                return abbreviateType(type);
+                return PokemonUtils.hasStab(p.getPokemonId(), p.getMove1()) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
-        MOVE_TYPE_2("Move Type 2 abbreviated (Ghost = Gh) [2]") {
+        MOVE_TYPE_2("Move Type 2 abbreviated (Uppercase with STAB else lowercase) [2]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = PokemonUtils.formatType(PokemonMeta.getMoveSettings(p.getMove2()).getPokemonType());
-                return abbreviateType(type);
+                return PokemonUtils.hasStab(p.getPokemonId(), p.getMove2()) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
         MOVE_TYPE_1_UNI("Move Type 1 abbreviated (Electric = ⚡) [1]") {
