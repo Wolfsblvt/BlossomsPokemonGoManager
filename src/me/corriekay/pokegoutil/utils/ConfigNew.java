@@ -151,7 +151,11 @@ public final class ConfigNew {
     public void setJSONObject(final ConfigKey configKey, final JSONObject value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            if (res.getNode().optJSONObject(res.getName()) != value || value.equals(configKey.getDefaultValue())) {
+            
+            //Introduce Explaining Variable
+            final boolean isValueDifferent = res.getNode().optJSONObject(res.getName()) != value ;
+            final boolean isValueEqualToDefalutValue = value.equals(configKey.getDefaultValue());
+            if ( isValueDifferent || isValueEqualToDefalutValue ) {
                 res.getNode().put(res.getName(), value);
                 saveConfig();
             }
@@ -199,8 +203,14 @@ public final class ConfigNew {
 
             final FindResult res = findNode(configKey.keyName, true);
             // Set if value is different or if default value should be added
-            boolean defaultValue = configKey.getDefaultValue();
-            if (res.getNode().optBoolean(res.getName(), defaultValue) != value || value == defaultValue) {
+            
+            // change boolean to final boolean
+            final boolean defaultValue = configKey.getDefaultValue();
+            
+            //Introduce Explaining Variable
+            final boolean isValueDifferent = res.getNode().optBoolean(res.getName(), defaultValue) != value ;
+            final boolean isValueEqualToDefalutValue = (value == defaultValue);
+            if (isValueDifferent || isValueEqualToDefalutValue) {
                 res.getNode().put(res.getName(), value);
                 saveConfig();
             }
@@ -248,7 +258,11 @@ public final class ConfigNew {
         try {
             final FindResult res = findNode(configKey.keyName, true);
             // Set if value is different or if default value should be added
-            if (!res.getNode().optString(res.getName(), "." + configKey.getDefaultValue()).equals(value)) {
+            
+            //Introduce Explaining Variable
+            final String stringOfNode = res.getNode().optString(res.getName(), "." + configKey.getDefaultValue());
+            final boolean isStringOfNodeEqualToValue = stringOfNode.equals(value) ;
+            if (!isStringOfNodeEqualToValue) {
                 res.getNode().put(res.getName(), StringEscapeUtils.escapeJson(value));
                 saveConfig();
             }
@@ -295,7 +309,11 @@ public final class ConfigNew {
         try {
             final FindResult res = findNode(configKey.keyName, true);
             // Set if value is different or if default value should be added
-            if (res.getNode().optInt(res.getName(), 1 + (int) configKey.getDefaultValue()) != value) {
+            
+            //Introduce Explaining Variable
+            final int intOfNode = res.getNode().optInt(res.getName(), 1 + (int) configKey.getDefaultValue());
+            final boolean isValueDifferent = (intOfNode != value) ;
+            if ( isValueDifferent ) {
                 res.getNode().put(res.getName(), value);
                 saveConfig();
             }
@@ -341,7 +359,11 @@ public final class ConfigNew {
     public void setDouble(final ConfigKey configKey, final double value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            if (res.getNode().optDouble(res.getName(), 1 + (double) configKey.getDefaultValue()) != value) {
+            
+            //Introduce Explaining Variable
+            final double doubleOfNode = res.getNode().optDouble(res.getName(), 1 + (double) configKey.getDefaultValue());
+            final boolean isValueDifferent = (doubleOfNode != value) ;
+            if ( isValueDifferent ) {
                 res.getNode().put(res.getName(), value);
                 saveConfig();
             }
