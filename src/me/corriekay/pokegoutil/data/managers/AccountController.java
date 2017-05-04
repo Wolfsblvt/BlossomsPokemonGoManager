@@ -91,47 +91,60 @@ public final class AccountController {
 
             int response;
             
-            if (directLoginWithSavedCredentials == JOptionPane.CANCEL_OPTION) {
+            boolean isClickCancel = directLoginWithSavedCredentials == JOptionPane.CANCEL_OPTION;
+            boolean isClickYes = directLoginWithSavedCredentials == JOptionPane.YES_OPTION;
+            
+            if (isClickCancel) {
                 System.exit(0);
                 return;
-            } else if (directLoginWithSavedCredentials == JOptionPane.YES_OPTION) {
-                if (getLoginData(LoginType.GOOGLE_AUTH) != null || getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null) {
-                    response = JOptionPane.NO_OPTION; // This means Google. Trust me
-                } else if (getLoginData(LoginType.PTC) != null) {
-                    response = JOptionPane.YES_OPTION; // And this PTC. Yeah, really
-                } else {
-                    // Something is wrong here, we delete login and start anew
-                    deleteLoginData(LoginType.ALL);
-                    return;
-                }
             } else {
-                // We do not want to login directly, so go for the question box and delete that data before
-                deleteLoginData(LoginType.ALL);
+                if (isClickYes) {
+                    boolean isSelectGoogle = getLoginData(LoginType.GOOGLE_AUTH) != null || getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null;
+                    boolean isSelectPtc = getLoginData(LoginType.PTC) != null;
+                    
+                    if (isSelectGoogle) {
+                        response = JOptionPane.NO_OPTION; // This means Google. Trust me
+                    } else if (isSelectPtc) {
+                        response = JOptionPane.YES_OPTION; // And this PTC. Yeah, really
+                    } else {
+                        // Something is wrong here, we delete login and start anew
+                        deleteLoginData(LoginType.ALL);
+                        return;
+                    }
+                } else {
+                    // We do not want to login directly, so go for the question box and delete that data before
+                    deleteLoginData(LoginType.ALL);
 
-                UIManager.put("OptionPane.noButtonText", "Use Google Auth");
-                UIManager.put("OptionPane.yesButtonText", "Use PTC Auth");
-                UIManager.put("OptionPane.cancelButtonText", "Exit");
-                UIManager.put("OptionPane.okButtonText", "Ok");
+                    UIManager.put("OptionPane.noButtonText", "Use Google Auth");
+                    UIManager.put("OptionPane.yesButtonText", "Use PTC Auth");
+                    UIManager.put("OptionPane.cancelButtonText", "Exit");
+                    UIManager.put("OptionPane.okButtonText", "Ok");
 
-                final JPanel panel1 = new JPanel(new BorderLayout());
-                panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
-                panel1.add(ptcUsernameTextField, BorderLayout.CENTER);
-                final JPanel panel2 = new JPanel(new BorderLayout());
-                panel2.add(new JLabel("PTC Password: "), BorderLayout.LINE_START);
-                panel2.add(ptcPasswordTextField, BorderLayout.CENTER);
-                final Object[] panel = {panel1, panel2};
+                    final JPanel panel1 = new JPanel(new BorderLayout());
+                    panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
+                    panel1.add(ptcUsernameTextField, BorderLayout.CENTER);
+                    final JPanel panel2 = new JPanel(new BorderLayout());
+                    panel2.add(new JLabel("PTC Password: "), BorderLayout.LINE_START);
+                    panel2.add(ptcPasswordTextField, BorderLayout.CENTER);
+                    final Object[] panel = {panel1, panel2};
 
-                response = JOptionPane.showConfirmDialog(
-                    WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
-                    panel,
-                    "Login",
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.PLAIN_MESSAGE);
+                    response = JOptionPane.showConfirmDialog(
+                        WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                        panel,
+                        "Login",
+                        JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.PLAIN_MESSAGE);
+                }
             }
 
-            if (response == JOptionPane.CANCEL_OPTION || response == JOptionPane.CLOSED_OPTION) {
+            boolean isSelectCancelInDialog = (response == JOptionPane.CANCEL_OPTION);
+            boolean isSelectCloseInDialog = (response == JOptionPane.CLOSED_OPTION);
+            boolean isSelectOkInDialog = (response == JOptionPane.OK_OPTION);
+            boolean isSelectNoInDialog = (response == JOptionPane.NO_OPTION);
+            
+            if (isSelectCancelInDialog || isSelectCloseInDialog) {
                 System.exit(0);
-            } else if (response == JOptionPane.OK_OPTION) {
+            } else if (isSelectOkInDialog) {
                 try {
                     credentialProvider = new PtcCredentialProvider(http, ptcUsernameTextField.getText(), ptcPasswordTextField.getText());
                     config.setString(ConfigKey.LOGIN_PTC_USERNAME, ptcUsernameTextField.getText());
@@ -152,7 +165,7 @@ public final class AccountController {
                 deleteLoginData(LoginType.GOOGLE_AUTH, true);
                 deleteLoginData(LoginType.GOOGLE_APP_PASSWORD, true);
 
-            } else if (response == JOptionPane.NO_OPTION) {
+            } else if (isSelectNoInDialog) {
                 final String googleAuthTitle = "Google Auth";
 
                 // We to set up some vars that we may need later.
