@@ -466,31 +466,46 @@ public final class AccountController {
 
     private static void deleteLoginData(final LoginType type, final boolean justCleanup) {
         if (!justCleanup) {
-            config.delete(ConfigKey.LOGIN_SAVE_AUTH);
+            deleteSavedLoginData();
         }
         switch (type) {
             case ALL:
-                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
-                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
-                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+                deleteGoogleAuthLoginData();
+                deleteGoogleAppLoginData();
+                deletePtcLoginData();
                 break;
             case PTC:
-                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
-                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+                deletePtcLoginData();
                 break;
             case GOOGLE_AUTH:
-                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                deleteGoogleAuthLoginData();
                 break;
             case GOOGLE_APP_PASSWORD:
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
+                deleteGoogleAppLoginData();
                 break;
             default:
         }
     }
 
+    private static void deleteGoogleAuthLoginData() {
+        config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+    }
+
+    private static void deleteSavedLoginData() {
+        config.delete(ConfigKey.LOGIN_SAVE_AUTH);
+    }
+
+    private static void deletePtcLoginData() {
+        config.delete(ConfigKey.LOGIN_PTC_USERNAME);
+        config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+    }
+
+    private static void deleteGoogleAppLoginData() {
+        config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
+        config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
+    }
+
+    
     /** 
      * Check if there is any login saved and ask for user to use it or not.
      * @return JOptionPane.NO_OPTION, JOptionPane.YES_OPTION, JOptionPane.CANCEL_OPTION
