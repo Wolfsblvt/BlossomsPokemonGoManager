@@ -20,17 +20,14 @@ public final class InventoryManager {
     }
 
     public static void initialize(PokemonGo go) {
-        if (sIsInit)
-            return;
-
-        try {
-            S_INSTANCE.inventories = go.getInventories();
-        } catch (Exception e) {
-            //TODO sumthin here
-            return;
+        if (!sIsInit) {
+            try {
+                S_INSTANCE.inventories = go.getInventories();
+            } catch (Exception e) {
+                // TODO sumthin here
+                sIsInit = true;
+            }
         }
-
-        sIsInit = true;
     }
 
     public static Inventories getInventories() throws LoginFailedException, RemoteServerException {
