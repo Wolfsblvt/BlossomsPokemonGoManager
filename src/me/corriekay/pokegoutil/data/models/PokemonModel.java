@@ -605,7 +605,7 @@ public class PokemonModel {
 
     public PokemonModel(final Pokemon pokemon) {
         this.pokemon = pokemon;
-        initialze();
+        initialize();
     }
 
     public IntegerProperty atkProperty() {
@@ -818,12 +818,12 @@ public class PokemonModel {
     }
 
     // 이 부분 위주로 고치자.
-    private void initialze() {
+    private void initialize() {
         setNumId(getPokemonIdValue());
         setNickname(pokemon.getNickname());
         setSpecies(PokemonUtils.getLocalPokeName(pokemon));
         setLevel(pokemon.getLevel());
-        // Replace deprecated method to work class's method.
+        // Replace deprecated method to working class's method.
         setIv(PokeHandler.ReplacePattern.IV_RATING.get(pokemon));
         setAtk(pokemon.getIndividualAttack());
         setDef(pokemon.getIndividualDefense());
@@ -1093,7 +1093,7 @@ public class PokemonModel {
 
     public void setPokemon(final Pokemon pokemon) {
         this.pokemon = pokemon;
-        initialze();
+        initialize();
     }
 
     public void setSpecies(final String species) {
