@@ -831,18 +831,16 @@ public class PokemonModel {
         setType1(StringUtils.capitalize(getPokemonType()));
         setType2(StringUtils.capitalize(getPokemonType2()));
 
-        final Double dps1 = PokemonCalculationUtils.dpsForMove(pokemon, true);
-        final Double dps2 = PokemonCalculationUtils.dpsForMove(pokemon, false);
         setMove1(String.format("%s (%.2fdps)",
             WordUtils.capitalize(
                 pokemon.getMove1().toString().toLowerCase()
                     .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-            dps1));
+            PokemonCalculationUtils.dpsForMove(pokemon, true)));
         setMove2(String.format("%s (%.2fdps)",
             WordUtils.capitalize(
                 pokemon.getMove2().toString().toLowerCase()
                     .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-            dps2));
+            PokemonCalculationUtils.dpsForMove(pokemon, false)));
 
         setCp(pokemon.getCp());
         setHp(pokemon.getMaxStamina());
