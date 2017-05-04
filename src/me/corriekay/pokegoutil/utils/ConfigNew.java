@@ -399,7 +399,10 @@ public final class ConfigNew {
      */
     private void checkModified() {
         final long currentModifiedTime = file.lastModified();
-        if (currentModifiedTime != lastModified) {
+        
+        //Introduce Explaining Variable
+        final boolean isFileModified = (currentModifiedTime != lastModified);
+        if (isFileModified) {
             System.out.print("Modified config.json externally. Will be reloaded now.");
             // Re-read the file now
             final String content = FileHelper.readFile(file);
@@ -448,7 +451,7 @@ public final class ConfigNew {
         FileHelper.saveFile(file, json.toString(FileHelper.INDENT));
         lastModified = file.lastModified();
     }
-
+    
     /**
      * The Result which combines a node with it's value.
      */
