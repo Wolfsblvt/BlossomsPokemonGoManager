@@ -825,11 +825,8 @@ public class PokemonModel {
         setMaxEvolvedCp(getMaxEvolvedCpForHighestEvolution());
         setMaxEvolvedCpCurrent(getMaxEvolvedCpCurrentForHighestEvolution());
         initializeCandiesStatus();
-        
         setDustToLevel(pokemon.getStardustCostsForPowerup());
-        setPokeball(WordUtils.capitalize(
-                pokemon.getPokeball().toString().toLowerCase()
-                        .replaceAll("item_", "").replaceAll(UNDERSCORE, " ")));
+        setPokeball(getPokeballMessage());
         setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(pokemon.getCreationTimeMs())));
         setIsFavorite(pokemon.isFavorite());
         setDuelAbility(PokemonCalculationUtils.duelAbility(pokemon));
@@ -839,6 +836,12 @@ public class PokemonModel {
         setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
+    }
+
+    private String getPokeballMessage() {
+        return WordUtils.capitalize(
+                pokemon.getPokeball().toString().toLowerCase()
+                        .replaceAll("item_", "").replaceAll(UNDERSCORE, " "));
     }
 
     private void initializeCandiesStatus() {
