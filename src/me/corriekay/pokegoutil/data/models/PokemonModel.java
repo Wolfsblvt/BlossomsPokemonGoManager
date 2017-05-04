@@ -276,7 +276,6 @@ public class PokemonModel {
         return hp;
     }
 
-    // 이 부분 위주로 고치자.
     private void initialize() {
         initializePokemonCharacteristicData();
         setMaxCp(getMaxCpForCurrentPokemon());
@@ -363,7 +362,6 @@ public class PokemonModel {
         setNickname(pokemon.getNickname());
         setSpecies(PokemonUtils.getLocalPokeName(pokemon));
         setLevel(pokemon.getLevel());
-        // Replace deprecated method to working class's method.
         setIv(PokeHandler.ReplacePattern.IV_RATING.get(pokemon));
         setAtk(pokemon.getIndividualAttack());
         setDef(pokemon.getIndividualDefense());
