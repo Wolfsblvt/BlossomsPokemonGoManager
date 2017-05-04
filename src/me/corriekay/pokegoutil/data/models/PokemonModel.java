@@ -824,19 +824,8 @@ public class PokemonModel {
         setMaxCpCurrent(getMaxCpCurrentForCurrentPokemon());
         setMaxEvolvedCp(getMaxEvolvedCpForHighestEvolution());
         setMaxEvolvedCpCurrent(getMaxEvolvedCpCurrentForHighestEvolution());
-
-        int pokemonCandies = pokemon.getCandy();
-
-        setCandies(pokemonCandies);
-        if (pokemon.getCandiesToEvolve() != 0) {
-            setCandies2Evlv(pokemon.getCandiesToEvolve());
-            // Rounded down candies / toEvolve
-            setEvolvable(String.valueOf((int) ((double) pokemonCandies / pokemon.getCandiesToEvolve())));
-
-        } else {
-            setCandies2Evlv(0);
-            setEvolvable("-");
-        }
+        initializeCandiesStatus();
+        
         setDustToLevel(pokemon.getStardustCostsForPowerup());
         setPokeball(WordUtils.capitalize(
                 pokemon.getPokeball().toString().toLowerCase()
@@ -850,6 +839,20 @@ public class PokemonModel {
         setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
+    }
+
+    private void initializeCandiesStatus() {
+        int pokemonCandies = pokemon.getCandy();
+
+        setCandies(pokemonCandies);
+        if (pokemon.getCandiesToEvolve() != 0) {
+            setCandies2Evlv(pokemon.getCandiesToEvolve());
+            setEvolvable(String.valueOf((int) ((double) pokemonCandies / pokemon.getCandiesToEvolve())));
+
+        } else {
+            setCandies2Evlv(0);
+            setEvolvable("-");
+        }
     }
 
     private int getMaxEvolvedCpForHighestEvolution() {
