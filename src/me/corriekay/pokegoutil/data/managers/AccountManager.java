@@ -144,20 +144,21 @@ public final class AccountManager {
      * @return results of the login
      */
     public BpmResult login(final LoginData loginData) {
+        BpmResult result = new BpmResult("Invalid Login Type");
         switch (loginData.getLoginType()) {
             case GOOGLE_AUTH:
                 if (loginData.isValidGoogleLogin()) {
-                    return logOnGoogleAuth(loginData);
+                    result = logOnGoogleAuth(loginData);
                 }
                 break;
             case PTC:
                 if (loginData.isValidPtcLogin()) {
-                    return logOnPtc(loginData);
+                    result = logOnPtc(loginData);
                 }
                 break;
             default:
         }
-        return new BpmResult("Invalid Login Type");
+        return result;
     }
 
     /**
