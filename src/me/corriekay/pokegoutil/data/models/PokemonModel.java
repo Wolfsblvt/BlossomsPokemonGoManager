@@ -842,13 +842,10 @@ public class PokemonModel {
     }
 
     private void initializeCandiesStatus() {
-        int pokemonCandies = pokemon.getCandy();
-
-        setCandies(pokemonCandies);
+        setCandies(pokemon.getCandy());
         if (pokemon.getCandiesToEvolve() != 0) {
             setCandies2Evlv(pokemon.getCandiesToEvolve());
-            setEvolvable(String.valueOf((int) ((double) pokemonCandies / pokemon.getCandiesToEvolve())));
-
+            setEvolvable(String.valueOf((int) ((double) getCandies() / pokemon.getCandiesToEvolve())));
         } else {
             setCandies2Evlv(0);
             setEvolvable("-");
