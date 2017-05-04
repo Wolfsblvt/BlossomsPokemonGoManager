@@ -161,7 +161,11 @@ public final class Utilities {
      */
     public static String getRealExceptionMessage(final Exception exception) {
         String message = exception.getMessage();
-        if (exception instanceof InvalidProtocolBufferException || "Contents of buffer are null".equals(message)) {
+        
+        //Introduce Explaining Variable
+        final boolean isExceptionEqualToInvalidProtocolBufferException = exception instanceof InvalidProtocolBufferException;
+        final boolean isExceptionMessageEqualToContentsOfBufferAreNull = "Contents of buffer are null".equals(message);
+        if ( isExceptionEqualToInvalidProtocolBufferException || isExceptionMessageEqualToContentsOfBufferAreNull) {
             message = "Server hasn't responded in time. "
                 + "Seems to be busy. "
                 + "The action may have been successful though. (" + message + ")";
