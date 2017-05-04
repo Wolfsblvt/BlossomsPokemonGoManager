@@ -14,11 +14,9 @@ public class ProfileManager {
     }
 
     public static void initialize(PokemonGo go) {
-        if (sIsInit)
-            return;
-
-        S_INSTANCE.pp = go.getPlayerProfile();
-
+        if (!sIsInit) 
+            S_INSTANCE.pp = go.getPlayerProfile();
+       
         sIsInit = true;
     }
 
