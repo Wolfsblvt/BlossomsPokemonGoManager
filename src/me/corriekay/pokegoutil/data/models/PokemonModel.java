@@ -825,6 +825,10 @@ public class PokemonModel {
         setMaxEvolvedCp(getMaxEvolvedCpForHighestEvolution());
         setMaxEvolvedCpCurrent(getMaxEvolvedCpCurrentForHighestEvolution());
         initializeCandiesStatus();
+        initializePokemonDataAssciatedWithTrainer();
+    }
+
+    private void initializePokemonDataAssciatedWithTrainer() {
         setDustToLevel(pokemon.getStardustCostsForPowerup());
         setPokeball(getPokeballMessage());
         setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(pokemon.getCreationTimeMs())));
@@ -832,7 +836,6 @@ public class PokemonModel {
         setDuelAbility(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffense(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefense(PokemonCalculationUtils.gymDefense(pokemon));
-
         setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
