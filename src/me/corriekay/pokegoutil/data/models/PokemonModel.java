@@ -820,18 +820,17 @@ public class PokemonModel {
     // 이 부분 위주로 고치자.
     private void initialize() {
         initializePokemonData();
-
         // Max CP calculation for current PokemonModel
-        int maxCpCurrentVar = 0;
-        int maxCpVar = 0;
+        int maxCpCurrent = 0;
+        int maxCp = 0;
         try {
-            maxCpCurrentVar = pokemon.getMaxCpForPlayer();
-            maxCpVar = pokemon.getMaxCp();
+            maxCpCurrent = pokemon.getMaxCpForPlayer();
+            maxCp = pokemon.getMaxCp();
         } catch (NoSuchItemException e) {
             System.out.println(e.getMessage());
         }
-        setMaxCp(maxCpVar);
-        setMaxCpCurrent(maxCpCurrentVar);
+        setMaxCp(maxCp);
+        setMaxCpCurrent(maxCpCurrent);
 
         // Max CP calculation for highest evolution of current PokemonModel
         final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
