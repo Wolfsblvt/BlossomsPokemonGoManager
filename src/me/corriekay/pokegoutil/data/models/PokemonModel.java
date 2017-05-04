@@ -71,8 +71,6 @@ public class PokemonModel {
         return atk;
     }
 
-    // Bunch of getters and setters
-
     public IntegerProperty candies2EvlvProperty() {
         return candies2Evlv;
     }
