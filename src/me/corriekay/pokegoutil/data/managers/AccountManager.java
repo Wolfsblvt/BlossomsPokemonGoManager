@@ -61,30 +61,44 @@ public final class AccountManager {
      */
     private void deleteLoginData(final LoginType type, final boolean deleteSaveAuth) {
         if (deleteSaveAuth) {
-            config.delete(ConfigKey.LOGIN_SAVE_AUTH);
+            deleteSavedLoginData();
         }
 
         switch (type) {
             case ALL:
-                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
-                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
-                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+                deleteGoogleAuthLoginData();
+                deleteGoogleAppLoginData();
+                deletePtcLoginData();
                 break;
             case GOOGLE_AUTH:
-                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                deleteGoogleAuthLoginData();
                 break;
             case GOOGLE_APP_PASSWORD:
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
+                deleteGoogleAppLoginData();
                 break;
             case PTC:
-                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
-                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+                deletePtcLoginData();
                 break;
             default:
         }
+    }
+
+    private void deleteGoogleAuthLoginData() {
+        config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+    }
+
+    private void deleteSavedLoginData() {
+        config.delete(ConfigKey.LOGIN_SAVE_AUTH);
+    }
+
+    private void deletePtcLoginData() {
+        config.delete(ConfigKey.LOGIN_PTC_USERNAME);
+        config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+    }
+
+    private void deleteGoogleAppLoginData() {
+        config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
+        config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
     }
 
     public LoginData getLoginData() {
