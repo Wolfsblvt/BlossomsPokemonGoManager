@@ -832,14 +832,10 @@ public class PokemonModel {
         setType2(StringUtils.capitalize(getPokemonType2()));
 
         setMove1(String.format("%s (%.2fdps)",
-                WordUtils.capitalize(
-                        getPokemonMove1()
-                                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+                WordUtils.capitalize(getPokemonMove1Message()),
                 PokemonCalculationUtils.dpsForMove(pokemon, true)));
         setMove2(String.format("%s (%.2fdps)",
-                WordUtils.capitalize(
-                        getPokemonMove2()
-                                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+                WordUtils.capitalize(getPokemonMove2Message()),
                 PokemonCalculationUtils.dpsForMove(pokemon, false)));
 
         setCp(pokemon.getCp());
@@ -895,6 +891,16 @@ public class PokemonModel {
         setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
+    }
+
+    private String getPokemonMove2Message() {
+        return getPokemonMove2()
+                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ");
+    }
+
+    private String getPokemonMove1Message() {
+        return getPokemonMove1()
+                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ");
     }
 
     private String getPokemonMove2() {
