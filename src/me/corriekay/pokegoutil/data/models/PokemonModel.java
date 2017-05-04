@@ -820,17 +820,8 @@ public class PokemonModel {
     // 이 부분 위주로 고치자.
     private void initialize() {
         initializePokemonData();
-        // Max CP calculation for current PokemonModel
-        int maxCpCurrent = 0;
-        int maxCp = 0;
-        try {
-            maxCpCurrent = pokemon.getMaxCpForPlayer();
-            maxCp = pokemon.getMaxCp();
-        } catch (NoSuchItemException e) {
-            System.out.println(e.getMessage());
-        }
-        setMaxCp(maxCp);
-        setMaxCpCurrent(maxCpCurrent);
+        setMaxCp(getMaxCpForCurrentPokemon());
+        setMaxCpCurrent(getMaxCpCurrentForCurrentPokemon());
         setMaxEvolvedCp(getMaxEvolvedCpForHighestEvolution());
         setMaxEvolvedCpCurrent(getMaxEvolvedCpCurrentForHighestEvolution());
 
@@ -860,9 +851,8 @@ public class PokemonModel {
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
     }
-    
+
     private int getMaxEvolvedCpForHighestEvolution() {
-        // Max CP calculation for highest evolution of current PokemonModel
         final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
         int maxEvolvedCp = 0;
         for (final PokemonId pokemonId : highest) {
@@ -870,15 +860,34 @@ public class PokemonModel {
         }
         return maxEvolvedCp;
     }
-    
+
     private int getMaxEvolvedCpCurrentForHighestEvolution() {
-        // Max CP calculation for highest evolution of current PokemonModel
         final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
         int maxEvolvedCpCurrent = 0;
         for (final PokemonId pokemonId : highest) {
             maxEvolvedCpCurrent = Math.max(maxEvolvedCpCurrent, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
         }
         return maxEvolvedCpCurrent;
+    }
+    
+    private int getMaxCpForCurrentPokemon() {
+        int maxCp = 0;
+        try {
+            maxCp = pokemon.getMaxCp();
+        } catch (NoSuchItemException e) {
+            System.out.println(e.getMessage());
+        }
+        return maxCp;
+    }
+    
+    private int getMaxCpCurrentForCurrentPokemon() {
+        int maxCpCurrent = 0;
+        try {
+            maxCpCurrent = pokemon.getMaxCpForPlayer();
+        } catch (NoSuchItemException e) {
+            System.out.println(e.getMessage());
+        }
+        return maxCpCurrent;
     }
 
     private void initializePokemonData() {
