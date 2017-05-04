@@ -415,12 +415,12 @@ public final class ConfigNew {
      */
     private void cleanUpAndFill() {
 
-        ConfigKey[] keys = ConfigKey.values();
+        ConfigKey[] allConfigKeys = ConfigKey.values();
         
-        Map<ConfigKey, Object> allConfigs = new HashMap<>(keys.length);
+        Map<ConfigKey, Object> allConfigs = new HashMap<>(allConfigKeys.length);
 
         // Read all config values or take defaults
-        for (ConfigKey configKey : keys) {
+        for (ConfigKey configKey : allConfigKeys) {
             Object value = getAsObject(configKey);
             allConfigs.put(configKey, value);
         }
