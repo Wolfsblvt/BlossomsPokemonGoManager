@@ -831,19 +831,8 @@ public class PokemonModel {
         }
         setMaxCp(maxCp);
         setMaxCpCurrent(maxCpCurrent);
-
-        // Max CP calculation for highest evolution of current PokemonModel
-        final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
-        int maxEvolvedCpVar = 0;
-        int maxEvolvedCpCurrentVar = 0;
-        // If Eeveelutions, Evolutions.getHighest return all evolutions in list, otherwise return just 1 element with the top evolution
-        for (final PokemonId pokemonId : highest) {
-            maxEvolvedCpVar = Math.max(maxEvolvedCpVar, pokemon.getCpFullEvolveAndPowerup(pokemonId));
-            maxEvolvedCpCurrentVar = Math.max(maxEvolvedCpCurrentVar, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
-        }
-
-        setMaxEvolvedCp(maxEvolvedCpVar);
-        setMaxEvolvedCpCurrent(maxEvolvedCpCurrentVar);
+        setMaxEvolvedCp(getMaxEvolvedCpForHighestEvolution());
+        setMaxEvolvedCpCurrent(getMaxEvolvedCpCurrentForHighestEvolution());
 
         int pokemonCandies = pokemon.getCandy();
 
@@ -871,6 +860,26 @@ public class PokemonModel {
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
     }
+    
+    private int getMaxEvolvedCpForHighestEvolution() {
+        // Max CP calculation for highest evolution of current PokemonModel
+        final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
+        int maxEvolvedCp = 0;
+        for (final PokemonId pokemonId : highest) {
+            maxEvolvedCp = Math.max(maxEvolvedCp, pokemon.getCpFullEvolveAndPowerup(pokemonId));
+        }
+        return maxEvolvedCp;
+    }
+    
+    private int getMaxEvolvedCpCurrentForHighestEvolution() {
+        // Max CP calculation for highest evolution of current PokemonModel
+        final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
+        int maxEvolvedCpCurrent = 0;
+        for (final PokemonId pokemonId : highest) {
+            maxEvolvedCpCurrent = Math.max(maxEvolvedCpCurrent, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
+        }
+        return maxEvolvedCpCurrent;
+    }
 
     private void initializePokemonData() {
         setNumId(getPokemonIdValue());
@@ -884,14 +893,12 @@ public class PokemonModel {
         setStam(pokemon.getIndividualStamina());
         setType1(StringUtils.capitalize(getPokemonType()));
         setType2(StringUtils.capitalize(getPokemonType2()));
-
         setMove1(String.format("%s (%.2fdps)",
                 WordUtils.capitalize(getPokemonMove1Message()),
                 PokemonCalculationUtils.dpsForMove(pokemon, true)));
         setMove2(String.format("%s (%.2fdps)",
                 WordUtils.capitalize(getPokemonMove2Message()),
                 PokemonCalculationUtils.dpsForMove(pokemon, false)));
-
         setCp(pokemon.getCp());
         setHp(pokemon.getMaxStamina());
     }
