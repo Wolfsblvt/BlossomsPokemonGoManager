@@ -819,27 +819,7 @@ public class PokemonModel {
 
     // 이 부분 위주로 고치자.
     private void initialize() {
-        setNumId(getPokemonIdValue());
-        setNickname(pokemon.getNickname());
-        setSpecies(PokemonUtils.getLocalPokeName(pokemon));
-        setLevel(pokemon.getLevel());
-        // Replace deprecated method to working class's method.
-        setIv(PokeHandler.ReplacePattern.IV_RATING.get(pokemon));
-        setAtk(pokemon.getIndividualAttack());
-        setDef(pokemon.getIndividualDefense());
-        setStam(pokemon.getIndividualStamina());
-        setType1(StringUtils.capitalize(getPokemonType()));
-        setType2(StringUtils.capitalize(getPokemonType2()));
-
-        setMove1(String.format("%s (%.2fdps)",
-                WordUtils.capitalize(getPokemonMove1Message()),
-                PokemonCalculationUtils.dpsForMove(pokemon, true)));
-        setMove2(String.format("%s (%.2fdps)",
-                WordUtils.capitalize(getPokemonMove2Message()),
-                PokemonCalculationUtils.dpsForMove(pokemon, false)));
-
-        setCp(pokemon.getCp());
-        setHp(pokemon.getMaxStamina());
+        initializePokemonData();
 
         // Max CP calculation for current PokemonModel
         int maxCpCurrentVar = 0;
@@ -891,6 +871,30 @@ public class PokemonModel {
         setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
+    }
+
+    private void initializePokemonData() {
+        setNumId(getPokemonIdValue());
+        setNickname(pokemon.getNickname());
+        setSpecies(PokemonUtils.getLocalPokeName(pokemon));
+        setLevel(pokemon.getLevel());
+        // Replace deprecated method to working class's method.
+        setIv(PokeHandler.ReplacePattern.IV_RATING.get(pokemon));
+        setAtk(pokemon.getIndividualAttack());
+        setDef(pokemon.getIndividualDefense());
+        setStam(pokemon.getIndividualStamina());
+        setType1(StringUtils.capitalize(getPokemonType()));
+        setType2(StringUtils.capitalize(getPokemonType2()));
+
+        setMove1(String.format("%s (%.2fdps)",
+                WordUtils.capitalize(getPokemonMove1Message()),
+                PokemonCalculationUtils.dpsForMove(pokemon, true)));
+        setMove2(String.format("%s (%.2fdps)",
+                WordUtils.capitalize(getPokemonMove2Message()),
+                PokemonCalculationUtils.dpsForMove(pokemon, false)));
+
+        setCp(pokemon.getCp());
+        setHp(pokemon.getMaxStamina());
     }
 
     private String getPokemonMove2Message() {
