@@ -168,7 +168,7 @@ public final class AccountManager {
      */
     private BpmResult logOnGoogleAuth(final LoginData loginData) {
         OkHttpClient http;
-        CredentialProvider cp;
+        CredentialProvider credentialProvider;
         http = new OkHttpClient();
 
         final String authCode = loginData.getToken();
@@ -192,7 +192,7 @@ public final class AccountManager {
                 throw new LoginFailedException();
             }
 
-            cp = provider;
+            credentialProvider = provider;
             if (saveAuth && !shouldRefresh) {
                 config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
             } else if (!saveAuth) {
@@ -204,7 +204,7 @@ public final class AccountManager {
         }
 
         try {
-            prepareLogin(cp, http);
+            prepareLogin(credentialProvider, http);
             return new BpmResult();
         } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
             deleteLoginData(LoginType.ALL);
@@ -220,7 +220,7 @@ public final class AccountManager {
      */
     private BpmResult logOnPtc(final LoginData loginData) {
         OkHttpClient http;
-        CredentialProvider cp;
+        CredentialProvider credentialProvider;
         http = new OkHttpClient();
 
         final String username = loginData.getUsername();
@@ -228,7 +228,7 @@ public final class AccountManager {
         final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
 
         try {
-            cp = new PtcCredentialProvider(http, username, password);
+            credentialProvider = new PtcCredentialProvider(http, username, password);
             config.setString(ConfigKey.LOGIN_PTC_USERNAME, username);
             if (saveAuth) {
                 config.setString(ConfigKey.LOGIN_PTC_PASSWORD, password);
@@ -241,7 +241,7 @@ public final class AccountManager {
         }
 
         try {
-            prepareLogin(cp, http);
+            prepareLogin(credentialProvider, http);
             return new BpmResult();
         } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
             deleteLoginData(LoginType.ALL);
