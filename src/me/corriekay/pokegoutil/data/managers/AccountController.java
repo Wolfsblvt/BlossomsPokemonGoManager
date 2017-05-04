@@ -433,21 +433,30 @@ public final class AccountController {
     }
 
     private static List<String> getLoginData(final LoginType type) {
+        List<String> result = null;
+  
         switch (type) {
             case GOOGLE_AUTH:
                 final String token = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
-                return (token != null) ? Collections.singletonList(token) : null;
+                boolean isTokenNotNull = (token != null);
+                if(isTokenNotNull)
+                    result = Collections.singletonList(token);
             case GOOGLE_APP_PASSWORD:
                 final String googleUsername = config.getString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
                 final String googlePassword = config.getString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
-                return (googleUsername != null && googlePassword != null) ? Arrays.asList(googleUsername, googlePassword) : null;
+                boolean isGoogleAppAccountNotNull = (googleUsername != null && googlePassword != null);
+                if (isGoogleAppAccountNotNull)
+                    result = Arrays.asList(googleUsername, googlePassword);
             case PTC:
                 final String ptcUsername = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
                 final String ptcPassword = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
-                return (ptcUsername != null && ptcPassword != null) ? Arrays.asList(ptcUsername, ptcPassword) : null;
+                boolean isPtcAccountNotNull = (ptcUsername != null && ptcPassword != null);
+                if(isPtcAccountNotNull)
+                    result = Arrays.asList(ptcUsername, ptcPassword);
             default:
-                return null;
         }
+        
+        return result;
     }
 
 
