@@ -784,9 +784,9 @@ public class PokemonModel {
 
     public String getSummary() {
         return String.format(
-            "%s (%s) IV: %s CP: %d",
-            getNickname(), getSpecies(),
-            getIv(), getCp());
+                "%s (%s) IV: %s CP: %d",
+                getNickname(), getSpecies(),
+                getIv(), getCp());
     }
 
     public String getType1() {
@@ -817,13 +817,13 @@ public class PokemonModel {
         return hp;
     }
 
-    //이 부분 위주로 고치자.
+    // 이 부분 위주로 고치자.
     private void initialze() {
         setNumId(getPokemonIdValue());
         setNickname(pokemon.getNickname());
         setSpecies(PokemonUtils.getLocalPokeName(pokemon));
         setLevel(pokemon.getLevel());
-        //Replace deprecated method to work class's method. 
+        // Replace deprecated method to work class's method.
         setIv(PokeHandler.ReplacePattern.IV_RATING.get(pokemon));
         setAtk(pokemon.getIndividualAttack());
         setDef(pokemon.getIndividualDefense());
@@ -832,15 +832,15 @@ public class PokemonModel {
         setType2(StringUtils.capitalize(getPokemonType2()));
 
         setMove1(String.format("%s (%.2fdps)",
-            WordUtils.capitalize(
-                pokemon.getMove1().toString().toLowerCase()
-                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-            PokemonCalculationUtils.dpsForMove(pokemon, true)));
+                WordUtils.capitalize(
+                        getPokemonMove1()
+                                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+                PokemonCalculationUtils.dpsForMove(pokemon, true)));
         setMove2(String.format("%s (%.2fdps)",
-            WordUtils.capitalize(
-                pokemon.getMove2().toString().toLowerCase()
-                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-            PokemonCalculationUtils.dpsForMove(pokemon, false)));
+                WordUtils.capitalize(
+                        getPokemonMove2()
+                                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+                PokemonCalculationUtils.dpsForMove(pokemon, false)));
 
         setCp(pokemon.getCp());
         setHp(pokemon.getMaxStamina());
@@ -861,7 +861,7 @@ public class PokemonModel {
         final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
         int maxEvolvedCpVar = 0;
         int maxEvolvedCpCurrentVar = 0;
-        //If Eeveelutions, Evolutions.getHighest return all evolutions in list, otherwise return just 1 element with the top evolution
+        // If Eeveelutions, Evolutions.getHighest return all evolutions in list, otherwise return just 1 element with the top evolution
         for (final PokemonId pokemonId : highest) {
             maxEvolvedCpVar = Math.max(maxEvolvedCpVar, pokemon.getCpFullEvolveAndPowerup(pokemonId));
             maxEvolvedCpCurrentVar = Math.max(maxEvolvedCpCurrentVar, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
@@ -884,8 +884,8 @@ public class PokemonModel {
         }
         setDustToLevel(pokemon.getStardustCostsForPowerup());
         setPokeball(WordUtils.capitalize(
-            pokemon.getPokeball().toString().toLowerCase()
-                .replaceAll("item_", "").replaceAll(UNDERSCORE, " ")));
+                pokemon.getPokeball().toString().toLowerCase()
+                        .replaceAll("item_", "").replaceAll(UNDERSCORE, " ")));
         setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(pokemon.getCreationTimeMs())));
         setIsFavorite(pokemon.isFavorite());
         setDuelAbility(PokemonCalculationUtils.duelAbility(pokemon));
@@ -895,6 +895,14 @@ public class PokemonModel {
         setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
+    }
+
+    private String getPokemonMove2() {
+        return pokemon.getMove2().toString().toLowerCase();
+    }
+
+    private String getPokemonMove1() {
+        return pokemon.getMove1().toString().toLowerCase();
     }
 
     private String getPokemonType2() {
