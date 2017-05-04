@@ -819,7 +819,7 @@ public class PokemonModel {
 
     // 이 부분 위주로 고치자.
     private void initialize() {
-        initializePokemonData();
+        initializePokemonCharacteristicData();
         setMaxCp(getMaxCpForCurrentPokemon());
         setMaxCpCurrent(getMaxCpCurrentForCurrentPokemon());
         setMaxEvolvedCp(getMaxEvolvedCpForHighestEvolution());
@@ -899,7 +899,7 @@ public class PokemonModel {
         return maxCpCurrent;
     }
 
-    private void initializePokemonData() {
+    private void initializePokemonCharacteristicData() {
         setNumId(getPokemonIdValue());
         setNickname(pokemon.getNickname());
         setSpecies(PokemonUtils.getLocalPokeName(pokemon));
