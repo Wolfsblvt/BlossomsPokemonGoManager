@@ -169,12 +169,14 @@ public final class AccountManager {
      */
     private BpmResult logOnGoogleAuth(final LoginData loginData) {
         OkHttpClient http;
-        CredentialProvider credentialProvider;
+        CredentialProvider credentialProvider = null;
         http = new OkHttpClient();
 
         final String authCode = loginData.getToken();
         final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
 
+        BpmResult result = new BpmResult();
+        
         boolean shouldRefresh = false;
         if (loginData.isSavedToken() && saveAuth) {
             shouldRefresh = true;
@@ -201,16 +203,19 @@ public final class AccountManager {
             }
         } catch (LoginFailedException | RemoteServerException | CaptchaActiveException e) {
             deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
-            return new BpmResult(e.getMessage());
+            result =  new BpmResult(e.getMessage());
         }
-
-        try {
-            prepareLogin(credentialProvider, http);
-            return new BpmResult();
-        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
-            deleteLoginData(LoginType.ALL);
-            return new BpmResult(e.getMessage());
+        
+        if (result.isSuccess()) {
+            try {
+                prepareLogin(credentialProvider, http);
+            } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
+                deleteLoginData(LoginType.ALL);
+                result = new BpmResult(e.getMessage());
+            }
         }
+        
+        return result;
     }
 
     /**
