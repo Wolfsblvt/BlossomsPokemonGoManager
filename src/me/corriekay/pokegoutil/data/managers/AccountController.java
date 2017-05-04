@@ -177,9 +177,10 @@ public final class AccountController {
 
                 LoginType usedGoogleLoginType = checkSavedConfig();
 
+                boolean isLoginTypeGoogleAuth = usedGoogleLoginType == LoginType.GOOGLE_AUTH;
                 if (LoginType.isGoogle(usedGoogleLoginType)) {
                     // We check if google login data saved and skip the input options then
-                    if (usedGoogleLoginType == LoginType.GOOGLE_AUTH) {
+                    if (isLoginTypeGoogleAuth) {
                         // Sets refresh, when we use the existing token, cause it needs to be refreshed
                         authTokenRefresh = true;
                     }
@@ -294,7 +295,8 @@ public final class AccountController {
                 try {
                     GoogleUserCredentialProvider googleProvider = null;
                     GoogleAutoCredentialProvider googleAutoProvider;
-                    if (usedGoogleLoginType == LoginType.GOOGLE_AUTH) {
+                    boolean isLoginTypeAppPassword = (usedGoogleLoginType == LoginType.GOOGLE_APP_PASSWORD);
+                    if (isLoginTypeGoogleAuth) {
                         // We have google OAuth here, so we use the token and/or refresh it
                         if (authTokenRefresh) {
                             // Based on usage in https://github.com/Grover-c13/PokeGOAPI-Java
@@ -304,7 +306,7 @@ public final class AccountController {
                             googleProvider.login(googleAuthToken);
                         }
                         credentialProvider = googleProvider;
-                    } else if (usedGoogleLoginType == LoginType.GOOGLE_APP_PASSWORD) {
+                    } else if (isLoginTypeAppPassword) {
                         // We have app password login here
                         googleAutoProvider = new GoogleAutoCredentialProvider(http, googleUsername, googlePassword);
                         credentialProvider = googleAutoProvider;
@@ -316,9 +318,9 @@ public final class AccountController {
                         config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
 
                         // We save the login data now
-                        if (usedGoogleLoginType == LoginType.GOOGLE_AUTH && !authTokenRefresh) {
+                        if (isLoginTypeGoogleAuth && !authTokenRefresh) {
                             config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, googleProvider.getRefreshToken());
-                        } else if (usedGoogleLoginType == LoginType.GOOGLE_APP_PASSWORD) {
+                        } else if (isLoginTypeAppPassword) {
                             config.setString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME, googleUsername);
                             config.setString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD, googlePassword);
                         }
