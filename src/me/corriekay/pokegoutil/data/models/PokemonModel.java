@@ -840,8 +840,11 @@ public class PokemonModel {
 
     private String getPokeballMessage() {
         return WordUtils.capitalize(
-                pokemon.getPokeball().toString().toLowerCase()
-                        .replaceAll("item_", "").replaceAll(UNDERSCORE, " "));
+                getPokeballString().replaceAll("item_", "").replaceAll(UNDERSCORE, " "));
+    }
+
+    private String getPokeballString() {
+        return pokemon.getPokeball().toString().toLowerCase();
     }
 
     private void initializeCandiesStatus() {
@@ -872,7 +875,7 @@ public class PokemonModel {
         }
         return maxEvolvedCpCurrent;
     }
-    
+
     private int getMaxCpForCurrentPokemon() {
         int maxCp = 0;
         try {
@@ -882,7 +885,7 @@ public class PokemonModel {
         }
         return maxCp;
     }
-    
+
     private int getMaxCpCurrentForCurrentPokemon() {
         int maxCpCurrent = 0;
         try {
