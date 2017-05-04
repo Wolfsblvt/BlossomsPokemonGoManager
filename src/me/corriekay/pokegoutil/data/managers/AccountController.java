@@ -63,11 +63,9 @@ public final class AccountController {
      * Does pre-initializiton before using of the class.
      */
     public static void initialize() {
-        if (sIsInit) {
-            return;
+        if (!sIsInit) {
+            sIsInit = true;
         }
-
-        sIsInit = true;
     }
 
     public static void logOn() {
