@@ -159,7 +159,7 @@ public final class AccountController {
 
                 LoginType usedGoogleLoginType = checkSavedConfig();
 
-                boolean isLoginTypeGoogleAuth = usedGoogleLoginType == LoginType.GOOGLE_AUTH;
+                boolean isLoginTypeGoogleAuth = (usedGoogleLoginType == LoginType.GOOGLE_AUTH);
                 if (LoginType.isGoogle(usedGoogleLoginType)) {
                     // We check if google login data saved and skip the input options then
                     if (isLoginTypeGoogleAuth) {
@@ -249,18 +249,7 @@ public final class AccountController {
                             JTextField googleUsernameTextField = new JTextField(width);
                             JTextField googlePasswordTextField = new JTextField(width);
 
-                            final JPanel panel1 = new JPanel(new BorderLayout());
-                            panel1.add(new JLabel("Username: "), BorderLayout.LINE_START);
-                            panel1.add(googleUsernameTextField, BorderLayout.CENTER);
-                            final JPanel panel2 = new JPanel(new BorderLayout());
-                            panel2.add(new JLabel("Password: "), BorderLayout.LINE_START);
-                            panel2.add(googlePasswordTextField, BorderLayout.CENTER);
-                            final Object[] goggleAppPasswordPanel = {panel1, panel2};
-
-                            final int googleAppLoginDetailsResult = JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
-                                goggleAppPasswordPanel,
-                                googleAuthTitle,
-                                JOptionPane.OK_CANCEL_OPTION);
+                            final int googleAppLoginDetailsResult = popUpGoogleAppDialog(googleAuthTitle, googleUsernameTextField, googlePasswordTextField);
                             if (googleAppLoginDetailsResult == JOptionPane.OK_OPTION) {
                                 googleUsername = googleUsernameTextField.getText();
                                 googlePassword = googlePasswordTextField.getText();
@@ -352,6 +341,22 @@ public final class AccountController {
         }
     }
 
+    private static int popUpGoogleAppDialog(final String googleAuthTitle, JTextField googleUsernameTextField, JTextField googlePasswordTextField) {
+        final JPanel panel1 = new JPanel(new BorderLayout());
+        panel1.add(new JLabel("Username: "), BorderLayout.LINE_START);
+        panel1.add(googleUsernameTextField, BorderLayout.CENTER);
+        final JPanel panel2 = new JPanel(new BorderLayout());
+        panel2.add(new JLabel("Password: "), BorderLayout.LINE_START);
+        panel2.add(googlePasswordTextField, BorderLayout.CENTER);
+        final Object[] goggleAppPasswordPanel = {panel1, panel2};
+
+        final int googleAppLoginDetailsResult = JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+            goggleAppPasswordPanel,
+            googleAuthTitle,
+            JOptionPane.OK_CANCEL_OPTION);
+        return googleAppLoginDetailsResult;
+    }
+
     private static int popUpConfirmDialog(final JTextField ptcUsernameTextField, final JTextField ptcPasswordTextField) {
         int response;
         
@@ -412,20 +417,19 @@ public final class AccountController {
     }
 
     private static LoginType checkSavedConfig() {
-        if (!config.getBool(ConfigKey.LOGIN_SAVE_AUTH)) {
-            return LoginType.NONE;
-        } else {
+        LoginType result = LoginType.NONE;
+        if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH)){ 
             if (getLoginData(LoginType.GOOGLE_AUTH) != null) {
-                return LoginType.GOOGLE_AUTH;
+                result = LoginType.GOOGLE_AUTH;
             }
             if (getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null) {
-                return LoginType.GOOGLE_APP_PASSWORD;
+                result = LoginType.GOOGLE_APP_PASSWORD;
             }
             if (getLoginData(LoginType.PTC) != null) {
-                return LoginType.PTC;
+                result = LoginType.PTC;
             }
-            return LoginType.NONE;
         }
+        return result;
     }
 
     private static List<String> getLoginData(final LoginType type) {
