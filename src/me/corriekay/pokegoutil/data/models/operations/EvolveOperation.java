@@ -16,6 +16,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 public class EvolveOperation extends Operation {
 
+ 
     /**
      * Instantiate EvolveOperation. Only used in mocking.
      */
@@ -62,26 +63,17 @@ public class EvolveOperation extends Operation {
                     evolutionResult.getResult().toString()),
                     OperationError.EVOLVE_FAIL);
         }
+        
+        EvolveElement ExEle = new EvolveElement(pokemon.getPokemon());
+        EvolveElement NewEle = new EvolveElement(evolutionResult.getEvolvedPokemon());
 
-        final Pokemon poke = pokemon.getPokemon();
-        final int candies = poke.getCandy();
-        final int candiesToEvolve = poke.getCandiesToEvolve();
-        final int cp = poke.getCp();
-        final int hp = poke.getMaxStamina();
-
-        final Pokemon newPoke = evolutionResult.getEvolvedPokemon();
-        final int newCandies = newPoke.getCandy();
-        final int newCp = newPoke.getCp();
-        final int newHp = newPoke.getStamina();
-        final int candyRefund = 1;
-
-        pokemon.setPokemon(newPoke);
+        pokemon.setPokemon(NewEle.getPokemon());
 
         final BpmOperationResult result = new BpmOperationResult();
 
         result.addSuccessMessage(String.format(
                 "Evolving %s. Evolve result: %s",
-                PokemonUtils.getLocalPokeName(poke),
+                PokemonUtils.getLocalPokeName(ExEle.getPokemon()),
                 evolutionResult.getResult().toString()));
 
         result.addSuccessMessage(String.format(
@@ -89,9 +81,9 @@ public class EvolveOperation extends Operation {
                         + "(Candies: %d[%d-%d+%d], "
                         + "CP: %d[+%d], "
                         + "HP: %d[+%d])",
-                        newCandies, candies, candiesToEvolve, candyRefund,
-                        newCp, (newCp - cp),
-                        newHp, (newHp - hp)));
+                        NewEle.candies, ExEle.candies, ExEle.candiesToEvolve, ExEle.candyRefund,
+                        NewEle.Cp, (NewEle.Cp - ExEle.cp),
+                        NewEle.Hp, (NewEle.Hp - ExEle.hp)));
 
         if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)){
             result.setNextOperation(OperationId.TRANSFER);
