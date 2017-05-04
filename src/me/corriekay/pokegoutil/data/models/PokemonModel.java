@@ -10,7 +10,6 @@ import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.NoSuchItemException;
 
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
-import POGOProtos.Settings.Master.PokemonSettingsOuterClass.PokemonSettings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -21,7 +20,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import me.corriekay.pokegoutil.data.managers.AccountManager;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
@@ -604,7 +602,6 @@ public class PokemonModel {
     private final StringProperty evolvable = new SimpleStringProperty();
 
     private Pokemon pokemon;
-    private final AccountManager accountManager = AccountManager.getInstance();
 
     public PokemonModel(final Pokemon pokemon) {
         this.pokemon = pokemon;
@@ -822,9 +819,7 @@ public class PokemonModel {
 
     //이 부분 위주로 고치자.
     private void initialze() {
-        final PokemonSettings settings = pokemon.getSettings();
-
-        setNumId(settings.getPokemonIdValue());
+        setNumId(getPokemonIdValue());
         setNickname(pokemon.getNickname());
         setSpecies(PokemonUtils.getLocalPokeName(pokemon));
         setLevel(pokemon.getLevel());
@@ -833,8 +828,8 @@ public class PokemonModel {
         setAtk(pokemon.getIndividualAttack());
         setDef(pokemon.getIndividualDefense());
         setStam(pokemon.getIndividualStamina());
-        setType1(StringUtils.capitalize(settings.getType().toString().toLowerCase()));
-        setType2(StringUtils.capitalize(settings.getType2().toString().toLowerCase()));
+        setType1(StringUtils.capitalize(getPokemonType()));
+        setType2(StringUtils.capitalize(getPokemonType2()));
 
         final Double dps1 = PokemonCalculationUtils.dpsForMove(pokemon, true);
         final Double dps2 = PokemonCalculationUtils.dpsForMove(pokemon, false);
@@ -902,6 +897,18 @@ public class PokemonModel {
         setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
+    }
+
+    private String getPokemonType2() {
+        return pokemon.getSettings().getType2().toString().toLowerCase();
+    }
+
+    private String getPokemonType() {
+        return pokemon.getSettings().getType().toString().toLowerCase();
+    }
+
+    private int getPokemonIdValue() {
+        return pokemon.getSettings().getPokemonIdValue();
     }
 
     public BooleanProperty isFavoriteProperty() {
