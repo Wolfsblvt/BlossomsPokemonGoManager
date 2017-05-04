@@ -124,7 +124,11 @@ public final class AccountManager {
     }
 
     public PlayerProfile getPlayerProfile() {
-        return go != null ? go.getPlayerProfile() : null;
+        PlayerProfile result = null;
+        if(go != null)
+            result = go.getPlayerProfile();
+        
+        return result;
     }
 
     private void initOtherControllers() {
