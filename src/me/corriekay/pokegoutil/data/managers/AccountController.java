@@ -114,26 +114,8 @@ public final class AccountController {
                 } else {
                     // We do not want to login directly, so go for the question box and delete that data before
                     deleteLoginData(LoginType.ALL);
-
-                    UIManager.put("OptionPane.noButtonText", "Use Google Auth");
-                    UIManager.put("OptionPane.yesButtonText", "Use PTC Auth");
-                    UIManager.put("OptionPane.cancelButtonText", "Exit");
-                    UIManager.put("OptionPane.okButtonText", "Ok");
-
-                    final JPanel panel1 = new JPanel(new BorderLayout());
-                    panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
-                    panel1.add(ptcUsernameTextField, BorderLayout.CENTER);
-                    final JPanel panel2 = new JPanel(new BorderLayout());
-                    panel2.add(new JLabel("PTC Password: "), BorderLayout.LINE_START);
-                    panel2.add(ptcPasswordTextField, BorderLayout.CENTER);
-                    final Object[] panel = {panel1, panel2};
-
-                    response = JOptionPane.showConfirmDialog(
-                        WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
-                        panel,
-                        "Login",
-                        JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE);
+                    
+                    response = popUpConfirmDialog(ptcUsernameTextField, ptcPasswordTextField);
                 }
             }
 
@@ -368,6 +350,31 @@ public final class AccountController {
                 // deleteLoginData(LoginType.ALL);
             }
         }
+    }
+
+    private static int popUpConfirmDialog(final JTextField ptcUsernameTextField, final JTextField ptcPasswordTextField) {
+        int response;
+        
+        UIManager.put("OptionPane.noButtonText", "Use Google Auth");
+        UIManager.put("OptionPane.yesButtonText", "Use PTC Auth");
+        UIManager.put("OptionPane.cancelButtonText", "Exit");
+        UIManager.put("OptionPane.okButtonText", "Ok");
+        
+        final JPanel panel1 = new JPanel(new BorderLayout());
+        panel1.add(new JLabel("PTC Username: "), BorderLayout.LINE_START);
+        panel1.add(ptcUsernameTextField, BorderLayout.CENTER);
+        final JPanel panel2 = new JPanel(new BorderLayout());
+        panel2.add(new JLabel("PTC Password: "), BorderLayout.LINE_START);
+        panel2.add(ptcPasswordTextField, BorderLayout.CENTER);
+        final Object[] panel = {panel1, panel2};
+
+        response = JOptionPane.showConfirmDialog(
+            WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+            panel,
+            "Login",
+            JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE);
+        return response;
     }
 
     private static void initOtherControllers(final PokemonGo go) {
