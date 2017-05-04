@@ -71,6 +71,16 @@ public class EvolveOperation extends Operation {
 
         final BpmOperationResult result = new BpmOperationResult();
 
+        successMessage(evolutionResult, ExEle, NewEle, result);
+
+        if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)){
+            result.setNextOperation(OperationId.TRANSFER);
+        }
+
+        return result;
+    }
+
+    private void successMessage(final EvolutionResult evolutionResult, EvolveElement ExEle, EvolveElement NewEle, final BpmOperationResult result) {
         result.addSuccessMessage(String.format(
                 "Evolving %s. Evolve result: %s",
                 PokemonUtils.getLocalPokeName(ExEle.getPokemon()),
@@ -82,14 +92,8 @@ public class EvolveOperation extends Operation {
                         + "CP: %d[+%d], "
                         + "HP: %d[+%d])",
                         NewEle.candies, ExEle.candies, ExEle.candiesToEvolve, ExEle.candyRefund,
-                        NewEle.Cp, (NewEle.Cp - ExEle.cp),
-                        NewEle.Hp, (NewEle.Hp - ExEle.hp)));
-
-        if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)){
-            result.setNextOperation(OperationId.TRANSFER);
-        }
-
-        return result;
+                        NewEle.cp, (NewEle.cp - ExEle.cp),
+                        NewEle.hp, (NewEle.hp - ExEle.hp)));
     }
 
     @Override
