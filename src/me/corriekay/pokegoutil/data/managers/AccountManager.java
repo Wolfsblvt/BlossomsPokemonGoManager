@@ -226,13 +226,15 @@ public final class AccountManager {
      */
     private BpmResult logOnPtc(final LoginData loginData) {
         OkHttpClient http;
-        CredentialProvider credentialProvider;
+        CredentialProvider credentialProvider = null;
         http = new OkHttpClient();
 
         final String username = loginData.getUsername();
         final String password = loginData.getPassword();
         final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
 
+        BpmResult result = new BpmResult();
+        
         try {
             credentialProvider = new PtcCredentialProvider(http, username, password);
             config.setString(ConfigKey.LOGIN_PTC_USERNAME, username);
@@ -243,16 +245,19 @@ public final class AccountManager {
             }
         } catch (LoginFailedException | RemoteServerException | CaptchaActiveException e) {
             deleteLoginData(LoginType.PTC);
-            return new BpmResult(e.getMessage());
+            result = new BpmResult(e.getMessage());
         }
-
-        try {
-            prepareLogin(credentialProvider, http);
-            return new BpmResult();
-        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
-            deleteLoginData(LoginType.ALL);
-            return new BpmResult(e.getMessage());
+        
+        if (result.isSuccess()) {
+            try {
+                prepareLogin(credentialProvider, http);
+            } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
+                deleteLoginData(LoginType.ALL);
+                result = new BpmResult(e.getMessage());
+            }
         }
+        
+        return result;
     }
 
     /**
