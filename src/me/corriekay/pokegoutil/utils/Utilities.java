@@ -48,6 +48,7 @@ public final class Utilities {
      */
     @SuppressWarnings("unchecked")
     public static <T extends Comparable> T limit(final T min, final T value, final T max) {
+        // remove many return phase
         T result;
         if (value.compareTo(min) < 0) {
             result = min;
@@ -189,14 +190,17 @@ public final class Utilities {
      * @return The combined string.
      */
     public static String concatString(final char delimiter, final String... strings) {
+        // remove many return phase
+        String concatenatedString;
         if (strings.length == 0) {
-            return "";
+            concatenatedString = "";
         }
-
-        String combined = strings[0];
-        for (int i = 1; i < strings.length; i++) {
-            combined += delimiter + strings[i];
+        else {
+            concatenatedString = strings[0];
+            for (int i = 1; i < strings.length; i++) {
+                concatenatedString += delimiter + strings[i];
+            }
         }
-        return combined;
+        return concatenatedString;
     }
 }
