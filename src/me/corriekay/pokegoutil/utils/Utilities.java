@@ -48,13 +48,16 @@ public final class Utilities {
      */
     @SuppressWarnings("unchecked")
     public static <T extends Comparable> T limit(final T min, final T value, final T max) {
+        T result;
         if (value.compareTo(min) < 0) {
-            return min;
+            result = min;
         }
-        if (value.compareTo(max) > 0) {
-            return max;
+        else if (value.compareTo(max) > 0) {
+            result = max;
         }
-        return value;
+        else
+            result= value;
+        return result;
     }
 
     /**
@@ -67,6 +70,7 @@ public final class Utilities {
      */
     public static double percentage(final double number, final double maximum) {
         //return (maximum != 0.0) ? number / maximum : 1.0;
+        
         //remove ternary operation
         double percent;
         if ( maximum != 0.0)
@@ -87,6 +91,7 @@ public final class Utilities {
     public static String percentageWithTwoCharacters(final double decimalNumber) {
         final int percentage = (int) Math.round(decimalNumber * PERCENTAGE_FACTOR);
         //return (percentage < PERCENTAGE_FACTOR) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
+        
         //remove ternary operation
         String percentageToString;
         if ( percentage < PERCENTAGE_FACTOR)
