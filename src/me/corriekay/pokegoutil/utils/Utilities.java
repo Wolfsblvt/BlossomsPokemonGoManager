@@ -165,17 +165,20 @@ public final class Utilities {
      * @return The real exception message.
      */
     public static String getRealExceptionMessage(final Exception exception) {
-        String message = exception.getMessage();
-        
+        String exceptionMessage = exception.getMessage();
+        // Split Temporary Variable
+        String returnMessage;
         //Introduce Explaining Variable
         final boolean isExceptionEqualToInvalidProtocolBufferException = exception instanceof InvalidProtocolBufferException;
-        final boolean isExceptionMessageEqualToContentsOfBufferAreNull = "Contents of buffer are null".equals(message);
+        final boolean isExceptionMessageEqualToContentsOfBufferAreNull = "Contents of buffer are null".equals(exceptionMessage);
         if ( isExceptionEqualToInvalidProtocolBufferException || isExceptionMessageEqualToContentsOfBufferAreNull) {
-            message = "Server hasn't responded in time. "
+            returnMessage = "Server hasn't responded in time. "
                 + "Seems to be busy. "
-                + "The action may have been successful though. (" + message + ")";
+                + "The action may have been successful though. (" + exceptionMessage + ")";
         }
-        return message;
+        else
+            returnMessage = exceptionMessage;
+        return returnMessage;
     }
 
     /**
