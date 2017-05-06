@@ -43,10 +43,12 @@ public final class ConfigNew {
             } catch (final IOException e) {
                 System.out.println(e.toString());
             }
-            json = new JSONObject();
+            //json = new JSONObject();
+            setJson(new JSONObject());
             saveConfig();
         } else {
-            json = new JSONObject(FileHelper.readFile(file));
+            //json = new JSONObject(FileHelper.readFile(file));
+            setJson(new JSONObject(FileHelper.readFile(file)));
         }
         cleanUpAndFill();
     }
@@ -382,7 +384,8 @@ public final class ConfigNew {
     private FindResult findNode(final String path, final boolean create) {
         checkModified();
         final ArrayList<String> parts = new ArrayList<>(Arrays.asList(path.split("\\.")));
-        JSONObject current = json;
+        //JSONObject current = json;
+        JSONObject current = getJson();
         for (final String item : parts.subList(0, parts.size() - 1)) {
             if (!current.has(item) && create) {
                 current.put(item, new JSONObject());
@@ -401,15 +404,17 @@ public final class ConfigNew {
         final long currentModifiedTime = file.lastModified();
         
         //Introduce Explaining Variable
-        final boolean isFileModified = (currentModifiedTime != lastModified);
+        final boolean isFileModified = (currentModifiedTime != getLastModified());
         if (isFileModified) {
             System.out.print("Modified config.json externally. Will be reloaded now.");
             // Re-read the file now
             final String content = FileHelper.readFile(file);
             if (content != null) {
-                json = new JSONObject(content);
+                //json = new JSONObject(content);
+                setJson(new JSONObject(content));
             }
-            lastModified = currentModifiedTime;
+            //lastModified = currentModifiedTime;
+            setLastModified(currentModifiedTime);
         }
     }
 
@@ -428,7 +433,8 @@ public final class ConfigNew {
             allConfigs.put(configKey, value);
         }
         // Reset the json file and fill it again
-        json = new JSONObject();
+        //json = new JSONObject();
+        setJson(new JSONObject());
         for (HashMap.Entry<ConfigKey, Object> entry : allConfigs.entrySet()) {
             setFromObject(entry.getKey(), entry.getValue());
         }
@@ -448,8 +454,38 @@ public final class ConfigNew {
      * Save the config file.
      */
     public void saveConfig() {
-        FileHelper.saveFile(file, json.toString(FileHelper.INDENT));
-        lastModified = file.lastModified();
+        //FileHelper.saveFile(file, json.toString(FileHelper.INDENT));
+        FileHelper.saveFile(file, getJson().toString(FileHelper.INDENT));
+        //lastModified = file.lastModified();
+        setLastModified(file.lastModified());
+    }
+    
+    /**
+     * get json
+     */
+    public JSONObject getJson(){
+        return json;
+    }
+    
+    /**
+     *  set json
+     */
+    public void setJson(JSONObject aJson){
+        json = aJson;
+    }
+    
+    /**
+     * get lastModified
+     */
+    public long getLastModified(){
+        return lastModified;
+    }
+    
+    /**
+     * set lastModified
+     */
+    public void setLastModified(long modifiedTime){
+        lastModified = modifiedTime;
     }
     
     /**
