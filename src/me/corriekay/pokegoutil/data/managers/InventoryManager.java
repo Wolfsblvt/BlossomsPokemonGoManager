@@ -23,9 +23,9 @@ public final class InventoryManager {
         if (!sIsInit) {
             try {
                 S_INSTANCE.inventories = go.getInventories();
+                sIsInit = true;
             } catch (Exception e) {
                 // TODO sumthin here
-                sIsInit = true;
             }
         }
     }

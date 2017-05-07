@@ -27,6 +27,7 @@ public class PokemonBagManager {
                 // TODO sumthin here
             }
         }
+        
     }
 
     public static ObservableList<PokemonModel> getAllPokemon() {
