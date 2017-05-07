@@ -54,6 +54,10 @@ public class TransferOperation extends Operation {
             return operationResultMessage(poke, errorTransferingString,transferResult.toString(),OperationError.TRANSFER_FAIL);
         }
 
+        return trasferSuccessMessage(poke, candies);
+    }
+
+    private BpmOperationResult trasferSuccessMessage(final Pokemon poke, final int candies) {
         final int newCandies = poke.getCandy();
         final BpmOperationResult result = new BpmOperationResult();
 
