@@ -59,18 +59,22 @@ public class PowerupOperation extends Operation {
 
         final int candies = pokemon.getCandies();
         final int candiesToPowerup = pokemon.getCandyCostsForPowerup();
-        if (candies < candiesToPowerup) {
+        if (!enoughSource(candies, candiesToPowerup)) {
             return needSomeToPowerUp(candies, candiesToPowerup,OperationError.INSUFFICENT_CANDIES);
         }
 
         final int stardust = AccountManager.getInstance().getPlayerAccount().getStardust();
         final int stardustToPowerUp = pokemon.getStardustCostsForPowerup();
 
-        if (stardust < stardustToPowerUp) {
+        if (!enoughSource(stardust, stardustToPowerUp)) {
             return needSomeToPowerUp(candies, candiesToPowerup,OperationError.INSUFFICENT_STARDUSTS);
         }
 
         return new BpmOperationResult();
+    }
+
+    private boolean enoughSource(final int exist, final int needToPowerUp) {
+        return exist >= needToPowerUp;
     }
 
     private BpmOperationResult needSomeToPowerUp(final int exist, final int needToPowerUp, OperationError operationError) {
