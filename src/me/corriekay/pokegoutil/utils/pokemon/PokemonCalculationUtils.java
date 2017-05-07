@@ -59,8 +59,9 @@ public final class PokemonCalculationUtils {
                 * Math.pow(statsAttributes.getBaseStamina() + p.getIndividualStamina(), 0.5);
             return (cpIv - cpMin) / (cpMax - cpMin);
         } else {
-            return Utilities.percentage(p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina(),
-                PokemonUtils.MAX_IV + PokemonUtils.MAX_IV + PokemonUtils.MAX_IV);
+            final double cpIv = p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina();
+            final double cpMax = PokemonUtils.MAX_IV + PokemonUtils.MAX_IV + PokemonUtils.MAX_IV;
+            return Utilities.percentage(cpIv, cpMax);
         }
     }
 
