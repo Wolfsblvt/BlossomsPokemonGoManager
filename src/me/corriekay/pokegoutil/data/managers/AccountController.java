@@ -91,8 +91,8 @@ public final class AccountController {
 
             int response;
             
-            boolean isClickCancel = directLoginWithSavedCredentials == JOptionPane.CANCEL_OPTION;
-            boolean isClickYes = directLoginWithSavedCredentials == JOptionPane.YES_OPTION;
+            boolean isClickCancel = (directLoginWithSavedCredentials == JOptionPane.CANCEL_OPTION);
+            boolean isClickYes = (directLoginWithSavedCredentials == JOptionPane.YES_OPTION);
             
             if (isClickCancel) {
                 System.exit(0);
@@ -310,6 +310,7 @@ public final class AccountController {
                 //Using Google, remove PTC infos
                 deleteLoginData(LoginType.PTC, true);
             }
+            
             UIManager.put("OptionPane.noButtonText", "No");
             UIManager.put("OptionPane.yesButtonText", "Yes");
             UIManager.put("OptionPane.okButtonText", "Ok");
@@ -319,6 +320,7 @@ public final class AccountController {
                 if (credentialProvider != null) {
 
                     go = new PokemonGo(http);
+                    
                     LoginHelper.login(go, credentialProvider, api -> {
                         instance.logged = true;
                         instance.go = api;
@@ -421,11 +423,9 @@ public final class AccountController {
         if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH)){ 
             if (getLoginData(LoginType.GOOGLE_AUTH) != null) {
                 result = LoginType.GOOGLE_AUTH;
-            }
-            if (getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null) {
+            }else if (getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null) {
                 result = LoginType.GOOGLE_APP_PASSWORD;
-            }
-            if (getLoginData(LoginType.PTC) != null) {
+            }else if (getLoginData(LoginType.PTC) != null) {
                 result = LoginType.PTC;
             }
         }
@@ -441,18 +441,21 @@ public final class AccountController {
                 boolean isTokenNotNull = (token != null);
                 if(isTokenNotNull)
                     result = Collections.singletonList(token);
+                break;
             case GOOGLE_APP_PASSWORD:
                 final String googleUsername = config.getString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
                 final String googlePassword = config.getString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
                 boolean isGoogleAppAccountNotNull = (googleUsername != null && googlePassword != null);
                 if (isGoogleAppAccountNotNull)
                     result = Arrays.asList(googleUsername, googlePassword);
+                break;
             case PTC:
                 final String ptcUsername = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
                 final String ptcPassword = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
                 boolean isPtcAccountNotNull = (ptcUsername != null && ptcPassword != null);
                 if(isPtcAccountNotNull)
                     result = Arrays.asList(ptcUsername, ptcPassword);
+                break;
             default:
         }
         
