@@ -51,6 +51,12 @@ public final class PokemonUtils {
      * @return The translated Pokémon name
      */
     public static String getLocalPokeName(final int id) {
+        final Locale locale = getLocale();
+
+        return PokeDictionary.getDisplayName(id, locale);
+    }
+
+    private static Locale getLocale() {
         final String lang = ConfigNew.getConfig().getString(ConfigKey.LANGUAGE);
 
         final Locale locale;
@@ -60,8 +66,7 @@ public final class PokemonUtils {
         } else {
             locale = new Locale(langar[0], langar[1]);
         }
-
-        return PokeDictionary.getDisplayName(id, locale);
+        return locale;
     }
 
     /**
