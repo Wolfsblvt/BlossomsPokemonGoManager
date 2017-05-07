@@ -408,10 +408,12 @@ public final class ConfigNew {
         if (isFileModified) {
             System.out.print("Modified config.json externally. Will be reloaded now.");
             // Re-read the file now
-            final String content = FileHelper.readFile(file);
-            if (content != null) {
+            
+            // rename
+            final String reReadContent = FileHelper.readFile(file);
+            if (reReadContent != null) {
                 //json = new JSONObject(content);
-                setJson(new JSONObject(content));
+                setJson(new JSONObject(reReadContent));
             }
             //lastModified = currentModifiedTime;
             setLastModified(currentModifiedTime);
