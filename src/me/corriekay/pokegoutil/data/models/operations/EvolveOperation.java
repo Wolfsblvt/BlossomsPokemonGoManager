@@ -55,6 +55,10 @@ public class EvolveOperation extends Operation {
                     evolutionResult.getResult().toString());                     
         }
         
+        return evolveSuccessMessage(evolutionResult);
+    }
+
+    private BpmOperationResult evolveSuccessMessage(final EvolutionResult evolutionResult) {
         EvolveElement ExEle = new EvolveElement(pokemon.getPokemon());
         EvolveElement NewEle = new EvolveElement(evolutionResult.getEvolvedPokemon());
 
