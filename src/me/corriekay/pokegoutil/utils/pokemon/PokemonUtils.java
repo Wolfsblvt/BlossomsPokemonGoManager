@@ -76,7 +76,8 @@ public final class PokemonUtils {
      * @return The translated Pokémon name
      */
     public static String getLocalPokeName(final Pokemon pokemon) {
-        return getLocalPokeName(pokemon.getPokemonId().getNumber());
+        PokemonId pokemonId = pokemon.getPokemonId();
+        return getLocalPokeName(pokemonId.getNumber());
     }
 
     /**
