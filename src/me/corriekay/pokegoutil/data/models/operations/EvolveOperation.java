@@ -43,25 +43,16 @@ public class EvolveOperation extends Operation {
             evolutionResult = pokemon.getPokemon().evolve();
         } catch (CaptchaActiveException e) {
             e.printStackTrace();
-            return new BpmOperationResult(String.format(
-                    erroEvolvingString,
-                    pokemon.getSpecies(),
-                    "Captcha active in account"),
-                    OperationError.EVOLVE_FAIL);
+            return operationResultMessage(erroEvolvingString, 
+                    "Captcha active in account");
         } catch (HashException e) {
-            return new BpmOperationResult(String.format(
-                    erroEvolvingString,
-                    pokemon.getSpecies(),
-                    "Error with Hash: " + e.getMessage()),
-                    OperationError.EVOLVE_FAIL);
+            return operationResultMessage(erroEvolvingString, 
+                    "Error with Hash: " + e.getMessage());                   
         }
 
         if (!evolutionResult.isSuccessful()) {
-            return new BpmOperationResult(String.format(
-                    erroEvolvingString,
-                    pokemon.getSpecies(),
-                    evolutionResult.getResult().toString()),
-                    OperationError.EVOLVE_FAIL);
+            return operationResultMessage(erroEvolvingString, 
+                    evolutionResult.getResult().toString());                     
         }
         
         EvolveElement ExEle = new EvolveElement(pokemon.getPokemon());
@@ -70,7 +61,6 @@ public class EvolveOperation extends Operation {
         pokemon.setPokemon(NewEle.getPokemon());
 
         final BpmOperationResult result = new BpmOperationResult();
-
         successMessage(evolutionResult, ExEle, NewEle, result);
 
         if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)){
@@ -78,6 +68,15 @@ public class EvolveOperation extends Operation {
         }
 
         return result;
+    }
+
+    private BpmOperationResult operationResultMessage(final String erroEvolvingString,
+            String whatError) {
+        return new BpmOperationResult(String.format(
+                erroEvolvingString,
+                pokemon.getSpecies(),
+                whatError),
+                OperationError.EVOLVE_FAIL);
     }
 
     private void successMessage(final EvolutionResult evolutionResult, EvolveElement ExEle, EvolveElement NewEle, final BpmOperationResult result) {
