@@ -41,6 +41,14 @@ public class PokeNick {
     public PokeNick(final String pattern, final Pokemon pokemon) {
         this.pattern = pattern;
         this.pokemon = pokemon;
+        String replacedNickname = replaceNickName(pattern, pokemon);
+
+        // Set the stuff we need
+        fullNickname = replacedNickname;
+        usableNickname = StringUtils.substring(fullNickname, 0, MAX_NICKNAME_LENGTH);
+    }
+
+    private String replaceNickName(final String pattern, final Pokemon pokemon) {
         final Matcher m = regex.matcher(pattern);
         String replacedNickname = pattern;
         while (m.find()) {
@@ -57,10 +65,7 @@ public class PokeNick {
                 // Do nothing, nothing to replace
             }
         }
-
-        // Set the stuff we need
-        fullNickname = replacedNickname;
-        usableNickname = StringUtils.substring(fullNickname, 0, MAX_NICKNAME_LENGTH);
+        return replacedNickname;
     }
 
     @Override
