@@ -103,6 +103,13 @@ public final class PokemonCalculationUtils {
      * @return The percentage rating how good it is compared to the best.
      */
     public static double moveRating(final Pokemon p, final boolean primary) {
+        double highestDps = getHighestDps(p, primary);
+        // Now rate it
+        final double currentDps = dpsForMove(p, primary);
+        return Utilities.percentage(currentDps, highestDps);
+    }
+
+    private static double getHighestDps(final Pokemon p, final boolean primary) {
         final PokemonSettings pMeta = PokemonMeta.getPokemonSettings(p.getPokemonId());
         double highestDps = 0;
         final List<PokemonMove> moves = primary ? pMeta.getQuickMovesList() : pMeta.getCinematicMovesList();
@@ -112,9 +119,7 @@ public final class PokemonCalculationUtils {
                 highestDps = dps;
             }
         }
-        // Now rate it
-        final double currentDps = dpsForMove(p, primary);
-        return Utilities.percentage(currentDps, highestDps);
+        return highestDps;
     }
 
     /**
