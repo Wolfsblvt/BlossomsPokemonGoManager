@@ -48,13 +48,17 @@ public final class Utilities {
      */
     @SuppressWarnings("unchecked")
     public static <T extends Comparable> T limit(final T min, final T value, final T max) {
+        // remove many return phase
+        T result;
         if (value.compareTo(min) < 0) {
-            return min;
+            result = min;
         }
-        if (value.compareTo(max) > 0) {
-            return max;
+        else if (value.compareTo(max) > 0) {
+            result = max;
         }
-        return value;
+        else
+            result= value;
+        return result;
     }
 
     /**
@@ -66,7 +70,15 @@ public final class Utilities {
      * @return The percentage value.
      */
     public static double percentage(final double number, final double maximum) {
-        return (maximum != 0.0) ? number / maximum : 1.0;
+        //return (maximum != 0.0) ? number / maximum : 1.0;
+        
+        //remove ternary operation
+        double percent;
+        if ( maximum != 0.0)
+            percent = number / maximum;
+        else
+            percent = 1.0;
+        return percent;
     }
 
     /**
@@ -79,7 +91,15 @@ public final class Utilities {
     @Deprecated
     public static String percentageWithTwoCharacters(final double decimalNumber) {
         final int percentage = (int) Math.round(decimalNumber * PERCENTAGE_FACTOR);
-        return (percentage < PERCENTAGE_FACTOR) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
+        //return (percentage < PERCENTAGE_FACTOR) ? StringUtils.leftPad(String.valueOf(percentage), 2, '0') : "XX";
+        
+        //remove ternary operation
+        String percentageToString;
+        if ( percentage < PERCENTAGE_FACTOR)
+            percentageToString = StringUtils.leftPad(String.valueOf(percentage), 2, '0');
+        else
+            percentageToString = "XX";
+        return percentageToString;
     }
 
     /**
@@ -146,13 +166,20 @@ public final class Utilities {
      * @return The real exception message.
      */
     public static String getRealExceptionMessage(final Exception exception) {
-        String message = exception.getMessage();
-        if (exception instanceof InvalidProtocolBufferException || "Contents of buffer are null".equals(message)) {
-            message = "Server hasn't responded in time. "
+        String exceptionMessage = exception.getMessage();
+        // Split Temporary Variable
+        String returnMessage;
+        //Introduce Explaining Variable
+        final boolean isExceptionEqualToInvalidProtocolBufferException = exception instanceof InvalidProtocolBufferException;
+        final boolean isExceptionMessageEqualToContentsOfBufferAreNull = "Contents of buffer are null".equals(exceptionMessage);
+        if ( isExceptionEqualToInvalidProtocolBufferException || isExceptionMessageEqualToContentsOfBufferAreNull) {
+            returnMessage = "Server hasn't responded in time. "
                 + "Seems to be busy. "
-                + "The action may have been successful though. (" + message + ")";
+                + "The action may have been successful though. (" + exceptionMessage + ")";
         }
-        return message;
+        else
+            returnMessage = exceptionMessage;
+        return returnMessage;
     }
 
     /**
@@ -163,14 +190,17 @@ public final class Utilities {
      * @return The combined string.
      */
     public static String concatString(final char delimiter, final String... strings) {
+        // remove many return phase
+        String concatenatedString;
         if (strings.length == 0) {
-            return "";
+            concatenatedString = "";
         }
-
-        String combined = strings[0];
-        for (int i = 1; i < strings.length; i++) {
-            combined += delimiter + strings[i];
+        else {
+            concatenatedString = strings[0];
+            for (int i = 1; i < strings.length; i++) {
+                concatenatedString += delimiter + strings[i];
+            }
         }
-        return combined;
+        return concatenatedString;
     }
 }

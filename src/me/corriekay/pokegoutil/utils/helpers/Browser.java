@@ -6,7 +6,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public final class Browser {
+/*
+interface interfaceBrowser {
+    public boolean openUrl(String url);
+}
+*/
+//public final class Browser implements interfaceBrowser{
+public final class Browser{
     /** Prevent initializing this class. */
     private Browser() {
     }
