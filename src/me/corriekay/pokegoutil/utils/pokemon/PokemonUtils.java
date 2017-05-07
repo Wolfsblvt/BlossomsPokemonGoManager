@@ -87,14 +87,19 @@ public final class PokemonUtils {
      * @return team string value
      */
     public static String convertTeamColorToName(final int teamValue) {
-        final Team[] teams = Team.values();
+        String teamName = getTeamName(teamValue);
+        return teamName;
+    }
 
+    private static String getTeamName(final int teamValue) {
+        final Team[] teams = Team.values();
+        String teamName =  "UNKNOWN_TEAM";
         for (final Team team : teams) {
             if (team.getValue() == teamValue) {
-                return StringUtils.capitalize(team.toString().toLowerCase().replaceAll("team_", ""));
+                teamName = StringUtils.capitalize(team.toString().toLowerCase().replaceAll("team_", ""));
             }
         }
-        return "UNKNOWN_TEAM";
+        return teamName;
     }
 
     /**
