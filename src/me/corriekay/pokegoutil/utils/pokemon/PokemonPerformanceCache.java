@@ -75,13 +75,13 @@ public final class PokemonPerformanceCache {
     }
 
     private static void reportHighestStats() {
-        PokemonPerformance<Long> globalHighestDuelAbility = HIGHEST_STATS.duelAbility;
-        PokemonPerformance<Double> globalHighestGymOffense = HIGHEST_STATS.gymOffense;
-        PokemonPerformance<Long> globalHighestGymDefense = HIGHEST_STATS.gymDefense;
+        String HighestDuelAbility = HIGHEST_STATS.duelAbility.toString();
+        String HighestGymOffense = HIGHEST_STATS.gymOffense.toString();
+        String HighestGymDefense = HIGHEST_STATS.gymDefense.toString();
         
-        System.out.println("Highest Duel Ability: " + globalHighestDuelAbility.toString());
-        System.out.println("Highest Gym Offense: " + globalHighestGymOffense.toString());
-        System.out.println("Highest Gym Defense: " + globalHighestGymDefense.toString());
+        System.out.println("Highest Duel Ability: " + HighestDuelAbility);
+        System.out.println("Highest Gym Offense: " + HighestGymOffense);
+        System.out.println("Highest Gym Defense: " + HighestGymDefense);
     }
 
     /** Prevent initializing this class. */
