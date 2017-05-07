@@ -121,12 +121,12 @@ public final class AccountController {
 
             boolean isSelectCancelInDialog = (response == JOptionPane.CANCEL_OPTION);
             boolean isSelectCloseInDialog = (response == JOptionPane.CLOSED_OPTION);
-            boolean isSelectOkInDialog = (response == JOptionPane.OK_OPTION);
-            boolean isSelectNoInDialog = (response == JOptionPane.NO_OPTION);
+            boolean isSelectPtcLoginInDialog = (response == JOptionPane.OK_OPTION);
+            boolean isSelectGoogleLoginInDialog = (response == JOptionPane.NO_OPTION);
             
             if (isSelectCancelInDialog || isSelectCloseInDialog) {
                 System.exit(0);
-            } else if (isSelectOkInDialog) {
+            } else if (isSelectPtcLoginInDialog) {
                 try {
                     credentialProvider = new PtcCredentialProvider(http, ptcUsernameTextField.getText(), ptcPasswordTextField.getText());
                     config.setString(ConfigKey.LOGIN_PTC_USERNAME, ptcUsernameTextField.getText());
@@ -147,7 +147,7 @@ public final class AccountController {
                 deleteLoginData(LoginType.GOOGLE_AUTH, true);
                 deleteLoginData(LoginType.GOOGLE_APP_PASSWORD, true);
 
-            } else if (isSelectNoInDialog) {
+            } else if (isSelectGoogleLoginInDialog) {
                 final String googleAuthTitle = "Google Auth";
 
                 // We to set up some vars that we may need later.
@@ -180,81 +180,26 @@ public final class AccountController {
 
                     switch (answer) {
                         case 0: // Use OAuth Token
-                            //We need to get the auth code, as we do not have it yet.
-                            UIManager.put("OptionPane.okButtonText", "Ok");
-                            JOptionPane.showMessageDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
-                                "You will need to provide a google authentication key to log in."
-                                    + StringLiterals.NEWLINE + "A webpage should open up, please allow the permissions, and then copy the code into your clipboard."
-                                    + StringLiterals.NEWLINE
-                                    + StringLiterals.NEWLINE + "Press OK to continue",
-                                googleAuthTitle,
-                                JOptionPane.PLAIN_MESSAGE);
-
-                            //We're gonna try to load the page using the users browser
-                            final boolean success = Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
-
-                            // Okay, couldn't open it. We use the manual copy window
-                            UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
-                            if (!success && JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
-                                "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.",
-                                googleAuthTitle,
-                                JOptionPane.OK_CANCEL_OPTION,
-                                JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION) {
-                                final StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
-                                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
-                            }
-                            UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
-
+                            usedGoogleLoginType = loginUseOAuthToken(googleAuthTitle);
+                            
                             //The user should have the auth code now. Lets get it.
                             googleAuthToken = JOptionPane.showInputDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
                                 "Please provide the authentication code",
                                 googleAuthTitle,
                                 JOptionPane.PLAIN_MESSAGE);
-                            usedGoogleLoginType = LoginType.GOOGLE_AUTH;
                             break;
 
-                        case 1: // Advanced: Use App Password
-                            //We need to get the user data, as we do not have it yet.
-                            final String appPasswordMessage = "You want to login via App Password."
-                                + StringLiterals.NEWLINE + "For that, an app password has to be created."
-                                + StringLiterals.NEWLINE + "If you already have your password, click \"Skip\"."
-                                + StringLiterals.NEWLINE
-                                + StringLiterals.NEWLINE + "Otherwise, click on \"Open Website\" to access the google account control page where you are able"
-                                + StringLiterals.NEWLINE + "to create an app password."
-                                + StringLiterals.NEWLINE + "Choose 'Other' as app and name it something like 'BPGM' or such. Then copy your password."
-                                + StringLiterals.NEWLINE
-                                + StringLiterals.NEWLINE + "Do note: If google tells you you can't configure your App Passwords, then go back to your"
-                                + StringLiterals.NEWLINE + "google account control page and enable 2-Step Verification. Then you will be able to.";
-
-                            final String[] appPasswordOptions = new String[] {"Open Website", "Skip"};
-                            final int appPasswordResponse = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, appPasswordMessage, googleAuthTitle,
-                                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-                                null, appPasswordOptions, options[0]);
-
-                            // Open URL if chosen
-                            switch (appPasswordResponse) {
-                                case 0: // Open Webpage
-                                    String appPasswordUrl = "https://security.google.com/settings/security/apppasswords";
-                                    Browser.openUrl(appPasswordUrl);
-                                    break;
-                                case 1: // Skip
-                                    // We do nothing here, we have skipped
-                                    break;
-                                default:
-                                    // Can't happen
-                            }
-
+                        case 1 : // Advanced: Use App Password
+                            usedGoogleLoginType = loginUseAppPassword(googleAuthTitle);
                             // We ask the user to enter his login data now
                             final int width = 15;
                             JTextField googleUsernameTextField = new JTextField(width);
                             JTextField googlePasswordTextField = new JTextField(width);
-
                             final int googleAppLoginDetailsResult = popUpGoogleAppDialog(googleAuthTitle, googleUsernameTextField, googlePasswordTextField);
                             if (googleAppLoginDetailsResult == JOptionPane.OK_OPTION) {
                                 googleUsername = googleUsernameTextField.getText();
                                 googlePassword = googlePasswordTextField.getText();
                             }
-                            usedGoogleLoginType = LoginType.GOOGLE_APP_PASSWORD;
                             break;
                         default:
                             // Can't happen
@@ -341,6 +286,75 @@ public final class AccountController {
                 // deleteLoginData(LoginType.ALL);
             }
         }
+    }
+
+    private static LoginType loginUseOAuthToken(final String googleAuthTitle) {
+        LoginType usedGoogleLoginType;
+        //We need to get the auth code, as we do not have it yet.
+        UIManager.put("OptionPane.okButtonText", "Ok");
+        JOptionPane.showMessageDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+            "You will need to provide a google authentication key to log in."
+                + StringLiterals.NEWLINE + "A webpage should open up, please allow the permissions, and then copy the code into your clipboard."
+                + StringLiterals.NEWLINE
+                + StringLiterals.NEWLINE + "Press OK to continue",
+            googleAuthTitle,
+            JOptionPane.PLAIN_MESSAGE);
+
+        //We're gonna try to load the page using the users browser
+        final boolean success = Browser.openUrl(GoogleUserCredentialProvider.LOGIN_URL);
+
+        // Okay, couldn't open it. We use the manual copy window
+        UIManager.put("OptionPane.cancelButtonText", "Copy To Clipboard");
+        if (!success && JOptionPane.showConfirmDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+            "Please copy this link and paste it into a browser.\nThen, allow the permissions, and copy the code into your clipboard.",
+            googleAuthTitle,
+            JOptionPane.OK_CANCEL_OPTION,
+            JOptionPane.PLAIN_MESSAGE) == JOptionPane.CANCEL_OPTION) {
+            final StringSelection ss = new StringSelection(GoogleUserCredentialProvider.LOGIN_URL);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, ss);
+        }
+        UIManager.put("OptionPane.cancelButtonText", ButtonText.CANCEL);
+
+        usedGoogleLoginType = LoginType.GOOGLE_AUTH;
+        return usedGoogleLoginType;
+    }
+    
+    private static LoginType loginUseAppPassword(final String googleAuthTitle){
+        LoginType usedGoogleLoginType;
+      //We need to get the user data, as we do not have it yet.
+        final String appPasswordMessage = "You want to login via App Password."
+            + StringLiterals.NEWLINE + "For that, an app password has to be created."
+            + StringLiterals.NEWLINE + "If you already have your password, click \"Skip\"."
+            + StringLiterals.NEWLINE
+            + StringLiterals.NEWLINE + "Otherwise, click on \"Open Website\" to access the google account control page where you are able"
+            + StringLiterals.NEWLINE + "to create an app password."
+            + StringLiterals.NEWLINE + "Choose 'Other' as app and name it something like 'BPGM' or such. Then copy your password."
+            + StringLiterals.NEWLINE
+            + StringLiterals.NEWLINE + "Do note: If google tells you you can't configure your App Passwords, then go back to your"
+            + StringLiterals.NEWLINE + "google account control page and enable 2-Step Verification. Then you will be able to.";
+
+        final String[] appPasswordOptions = new String[] {"Open Website", "Skip"};
+        final int appPasswordResponse = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, appPasswordMessage, googleAuthTitle,
+            JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+            null, appPasswordOptions, "Use OAuth Token");
+
+        // Open URL if chosen
+        switch (appPasswordResponse) {
+            case 0: // Open Webpage
+                String appPasswordUrl = "https://security.google.com/settings/security/apppasswords";
+                Browser.openUrl(appPasswordUrl);
+                break;
+            case 1: // Skip
+                // We do nothing here, we have skipped
+                break;
+            default:
+                // Can't happen
+        }
+
+        
+        
+        usedGoogleLoginType = LoginType.GOOGLE_APP_PASSWORD;
+        return usedGoogleLoginType;
     }
 
     private static int popUpGoogleAppDialog(final String googleAuthTitle, JTextField googleUsernameTextField, JTextField googlePasswordTextField) {
