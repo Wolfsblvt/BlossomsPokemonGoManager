@@ -163,7 +163,11 @@ public final class PokemonUtils {
     public static boolean hasStab(final PokemonId pokemonId, final PokemonMove move) {
         final PokemonSettings settings = PokemonMeta.getPokemonSettings(pokemonId);
         final MoveSettings moveSettings = PokemonMeta.getMoveSettings(move);
-        return settings.getType().equals(moveSettings.getPokemonType()) || settings.getType2().equals(moveSettings.getPokemonType());
+        
+        boolean hasStabWithType1 = settings.getType().equals(moveSettings.getPokemonType());
+        boolean hasStabWithType2 = settings.getType2().equals(moveSettings.getPokemonType());
+        
+        return hasStabWithType1 || hasStabWithType2;
     }
 }
 
