@@ -1,4 +1,4 @@
-package me.corriekay.pokegoutil.utils.pokemon;
+0package me.corriekay.pokegoutil.utils.pokemon;
 
 import java.util.EnumMap;
 
@@ -27,7 +27,8 @@ public final class PokemonPerformanceCache {
 
         for (final PokemonId pokemonId : PokemonId.values()) {
             // We skip Pokemon that are currently not available for the global highest value collection
-            if (PokemonUtils.NOT_EXISTING_POKEMON_LIST.contains(pokemonId)) {
+            boolean isNotAvailablePokemonId = PokemonUtils.NOT_EXISTING_POKEMON_LIST.contains(pokemonId);
+            if (isNotAvailablePokemonId) {
                 continue;
             }
 
