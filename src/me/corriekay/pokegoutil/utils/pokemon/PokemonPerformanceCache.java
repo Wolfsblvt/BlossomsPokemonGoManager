@@ -1,4 +1,4 @@
-0package me.corriekay.pokegoutil.utils.pokemon;
+package me.corriekay.pokegoutil.utils.pokemon;
 
 import java.util.EnumMap;
 
@@ -71,6 +71,14 @@ public final class PokemonPerformanceCache {
 
         HIGHEST_STATS = new PokemonPerformanceStats(null, globalHighestDuelAbility, globalHighestGymOffense, globalHighestGymDefense);
 
+        reportHighestStats();
+    }
+
+    private static void reportHighestStats() {
+        PokemonPerformance<Long> globalHighestDuelAbility = HIGHEST_STATS.duelAbility;
+        PokemonPerformance<Double> globalHighestGymOffense = HIGHEST_STATS.gymOffense;
+        PokemonPerformance<Long> globalHighestGymDefense = HIGHEST_STATS.gymDefense;
+        
         System.out.println("Highest Duel Ability: " + globalHighestDuelAbility.toString());
         System.out.println("Highest Gym Offense: " + globalHighestGymOffense.toString());
         System.out.println("Highest Gym Defense: " + globalHighestGymDefense.toString());
