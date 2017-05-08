@@ -19,23 +19,22 @@ public class PokemonBagManager {
     }
 
     public static void initialize(PokemonGo go) {
-        if (sIsInit)
-            return;
-        try {
-            S_INSTANCE.pokemonBag = new PokemonBag(go.getInventories().getPokebank().getPokemons());
-        } catch (Exception e) {
-            //TODO sumthin here
-            return;
+        if (!sIsInit) {
+            try {
+                S_INSTANCE.pokemonBag = new PokemonBag(go.getInventories().getPokebank().getPokemons());
+                sIsInit = true;
+            } catch (Exception e) {
+                // TODO sumthin here
+            }
         }
-
-        sIsInit = true;
+        
     }
 
-    public static ObservableList<PokemonModel>getAllPokemon(){
+    public static ObservableList<PokemonModel> getAllPokemon() {
         return sIsInit ? S_INSTANCE.pokemonBag.getAllPokemon() : null;
     }
 
-    public static int getNbPokemon(){
+    public static int getNbPokemon() {
         return sIsInit ? S_INSTANCE.pokemonBag.getNumberPokemon() : 0;
     }
 }
