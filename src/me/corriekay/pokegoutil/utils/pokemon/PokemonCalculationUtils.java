@@ -345,10 +345,11 @@ public final class PokemonCalculationUtils {
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)
         final double weaveEnergyUsageRatio;
 
+        double weaveEnergyUsageRatioBase = (double) Math.abs(pm2.getEnergyDelta()) / (double) pm1.getEnergyDelta();
         if (Math.abs(pm2.getEnergyDelta()) == MAX_MOVE_ENERGY) {
-            weaveEnergyUsageRatio = Math.ceil((double) Math.abs(pm2.getEnergyDelta()) / (double) pm1.getEnergyDelta());
+            weaveEnergyUsageRatio = Math.ceil(weaveEnergyUsageRatioBase);
         } else {
-            weaveEnergyUsageRatio = (double) Math.abs(pm2.getEnergyDelta()) / (double) pm1.getEnergyDelta();
+            weaveEnergyUsageRatio = weaveEnergyUsageRatioBase;
         }
 
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*T2+(AA2+$AL$1)
