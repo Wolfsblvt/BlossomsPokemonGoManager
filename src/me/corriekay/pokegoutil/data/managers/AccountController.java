@@ -24,6 +24,7 @@ import com.pokegoapi.auth.PtcCredentialProvider;
 import com.pokegoapi.exceptions.AsyncPokemonGoException;
 import com.pokegoapi.exceptions.CaptchaActiveException;
 import com.pokegoapi.exceptions.LoginFailedException;
+import com.pokegoapi.exceptions.RemoteServerException;
 import com.pokegoapi.exceptions.hash.HashException;
 
 import me.corriekay.pokegoutil.data.enums.LoginType;
@@ -94,18 +95,11 @@ public final class AccountController {
             boolean isSelectPtcLoginInDialog = (response == JOptionPane.OK_OPTION);
             boolean isSelectGoogleLoginInDialog = (response == JOptionPane.NO_OPTION);
             
-            if (isSelectCancelInDialog || isSelectCloseInDialog) {
+            if (isSelectCancelInDialog || isSelectCloseInDialog) { 
                 System.exit(0);
             } else if (isSelectPtcLoginInDialog) {
                 try {
-                    credentialProvider = new PtcCredentialProvider(http, ptcUsernameTextField.getText(), ptcPasswordTextField.getText());
-                    config.setString(ConfigKey.LOGIN_PTC_USERNAME, ptcUsernameTextField.getText());
-                    if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
-                        config.setString(ConfigKey.LOGIN_PTC_PASSWORD, ptcPasswordTextField.getText());
-                        config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
-                    } else {
-                        deleteLoginData(LoginType.PTC);
-                    }
+                    credentialProvider = tryPtcLogOn(http, ptcUsernameTextField, ptcPasswordTextField);
                 } catch (final Exception e) {
                     alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
                     e.printStackTrace();
@@ -118,112 +112,10 @@ public final class AccountController {
                 deleteLoginData(LoginType.GOOGLE_APP_PASSWORD, true);
 
             } else if (isSelectGoogleLoginInDialog) {
-                final String googleAuthTitle = "Google Auth";
-
-                // We to set up some vars that we may need later.
-                // Those will be overwritten if data is entered, otherwise they should contain the correct values loaded from the config.
-                String googleAuthToken = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, null);
-                String googleUsername = config.getString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME, null);
-                String googlePassword = config.getString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD, null);
-                boolean authTokenRefresh = false;
-
-                LoginType usedGoogleLoginType = checkSavedConfig();
-
-                boolean isLoginTypeGoogleAuth = (usedGoogleLoginType == LoginType.GOOGLE_AUTH);
-                if (LoginType.isGoogle(usedGoogleLoginType)) {
-                    // We check if google login data saved and skip the input options then
-                    if (isLoginTypeGoogleAuth) {
-                        // Sets refresh, when we use the existing token, cause it needs to be refreshed
-                        authTokenRefresh = true;
-                    }
-                } else {
-                    // Okay, user should choose which login method he wants:
-                    String message = "Choose your method to login with your Google Account."
-                        + StringLiterals.NEWLINE
-                        + StringLiterals.NEWLINE + "If you are unexperienced, just choose \"OAuth Token\"."
-                        + StringLiterals.NEWLINE + "If you have trouble logging in with that method, or know what you are doing,"
-                        + StringLiterals.NEWLINE + "go ahead and take the App Password method.";
-                    String[] options = new String[] {"Use OAuth Token", "Advanced: Use App Password"};
-                    final int answer = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, message, googleAuthTitle,
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
-                        null, options, options[0]);
-
-                    switch (answer) {
-                        case 0: // Use OAuth Token
-                            usedGoogleLoginType = loginUseOAuthToken(googleAuthTitle);
-                            
-                            //The user should have the auth code now. Lets get it.
-                            googleAuthToken = JOptionPane.showInputDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
-                                "Please provide the authentication code",
-                                googleAuthTitle,
-                                JOptionPane.PLAIN_MESSAGE);
-                            break;
-
-                        case 1 : // Advanced: Use App Password
-                            usedGoogleLoginType = loginUseAppPassword(googleAuthTitle);
-                            // We ask the user to enter his login data now
-                            final int width = 15;
-                            JTextField googleUsernameTextField = new JTextField(width);
-                            JTextField googlePasswordTextField = new JTextField(width);
-                            final int googleAppLoginDetailsResult = popUpGoogleAppDialog(googleAuthTitle, googleUsernameTextField, googlePasswordTextField);
-                            if (googleAppLoginDetailsResult == JOptionPane.OK_OPTION) {
-                                googleUsername = googleUsernameTextField.getText();
-                                googlePassword = googlePasswordTextField.getText();
-                            }
-                            break;
-                        default:
-                            // Can't happen
-                    }
-                }
-
-                // Okay, we gathered all information now, so we will decide what we do now with it
-                // and then log in.
-                try {
-                    GoogleUserCredentialProvider googleProvider = null;
-                    GoogleAutoCredentialProvider googleAutoProvider;
-                    boolean isLoginTypeAppPassword = (usedGoogleLoginType == LoginType.GOOGLE_APP_PASSWORD);
-                    if (isLoginTypeGoogleAuth) {
-                        // We have google OAuth here, so we use the token and/or refresh it
-                        if (authTokenRefresh) {
-                            // Based on usage in https://github.com/Grover-c13/PokeGOAPI-Java
-                            googleProvider = new GoogleUserCredentialProvider(http, googleAuthToken);
-                        } else {
-                            googleProvider = new GoogleUserCredentialProvider(http);
-                            googleProvider.login(googleAuthToken);
-                        }
-                        credentialProvider = googleProvider;
-                    } else if (isLoginTypeAppPassword) {
-                        // We have app password login here
-                        googleAutoProvider = new GoogleAutoCredentialProvider(http, googleUsername, googlePassword);
-                        credentialProvider = googleAutoProvider;
-                    }
-
-                    // Now check if the data should be saved in config. Asking the user.
-                    if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
-                        // We save that auth is generally saved
-                        config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
-
-                        // We save the login data now
-                        if (isLoginTypeGoogleAuth && !authTokenRefresh) {
-                            config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, googleProvider.getRefreshToken());
-                        } else if (isLoginTypeAppPassword) {
-                            config.setString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME, googleUsername);
-                            config.setString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD, googlePassword);
-                        }
-                    } else {
-                        deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
-                        deleteLoginData(LoginType.GOOGLE_AUTH);
-                    }
-                } catch (final Exception e) {
-                    alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
-                    e.printStackTrace();
-                    // deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
-                    // deleteLoginData(LoginType.GOOGLE_AUTH);
+                boolean isLogOnErrorNotOccur = tryGoogleLogOn(tries, http, credentialProvider);
+                
+                if(isLogOnErrorNotOccur)
                     continue;
-                }
-
-                //Using Google, remove PTC infos
-                deleteLoginData(LoginType.PTC, true);
             }
             
             UIManager.put("OptionPane.noButtonText", "No");
@@ -256,6 +148,130 @@ public final class AccountController {
                 // deleteLoginData(LoginType.ALL);
             }
         }
+    }
+
+    private static boolean tryGoogleLogOn(int tries, OkHttpClient http, CredentialProvider credentialProvider) {
+        final String googleAuthTitle = "Google Auth";
+
+        // We to set up some vars that we may need later.
+        // Those will be overwritten if data is entered, otherwise they should contain the correct values loaded from the config.
+        String googleAuthToken = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, null);
+        String googleUsername = config.getString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME, null);
+        String googlePassword = config.getString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD, null);
+        boolean authTokenRefresh = false;
+
+        LoginType usedGoogleLoginType = checkSavedConfig();
+
+        boolean isLoginTypeGoogleAuth = (usedGoogleLoginType == LoginType.GOOGLE_AUTH);
+        if (LoginType.isGoogle(usedGoogleLoginType)) {
+            // We check if google login data saved and skip the input options then
+            if (isLoginTypeGoogleAuth) {
+                // Sets refresh, when we use the existing token, cause it needs to be refreshed
+                authTokenRefresh = true;
+            }
+        } else {
+            // Okay, user should choose which login method he wants:
+            String message = "Choose your method to login with your Google Account."
+                + StringLiterals.NEWLINE
+                + StringLiterals.NEWLINE + "If you are unexperienced, just choose \"OAuth Token\"."
+                + StringLiterals.NEWLINE + "If you have trouble logging in with that method, or know what you are doing,"
+                + StringLiterals.NEWLINE + "go ahead and take the App Password method.";
+            String[] options = new String[] {"Use OAuth Token", "Advanced: Use App Password"};
+            final int answer = JOptionPane.showOptionDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT, message, googleAuthTitle,
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE,
+                null, options, options[0]);
+
+            switch (answer) {
+                case 0: // Use OAuth Token
+                    usedGoogleLoginType = loginUseOAuthToken(googleAuthTitle);
+                    
+                    //The user should have the auth code now. Lets get it.
+                    googleAuthToken = JOptionPane.showInputDialog(WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                        "Please provide the authentication code",
+                        googleAuthTitle,
+                        JOptionPane.PLAIN_MESSAGE);
+                    break;
+
+                case 1 : // Advanced: Use App Password
+                    usedGoogleLoginType = loginUseAppPassword(googleAuthTitle);
+                    // We ask the user to enter his login data now
+                    final int width = 15;
+                    JTextField googleUsernameTextField = new JTextField(width);
+                    JTextField googlePasswordTextField = new JTextField(width);
+                    final int googleAppLoginDetailsResult = popUpGoogleAppDialog(googleAuthTitle, googleUsernameTextField, googlePasswordTextField);
+                    if (googleAppLoginDetailsResult == JOptionPane.OK_OPTION) {
+                        googleUsername = googleUsernameTextField.getText();
+                        googlePassword = googlePasswordTextField.getText();
+                    }
+                    break;
+                default:
+                    // Can't happen
+            }
+        }
+
+        // Okay, we gathered all information now, so we will decide what we do now with it
+        // and then log in.
+        try {
+            GoogleUserCredentialProvider googleProvider = null;
+            GoogleAutoCredentialProvider googleAutoProvider;
+            boolean isLoginTypeAppPassword = (usedGoogleLoginType == LoginType.GOOGLE_APP_PASSWORD);
+            if (isLoginTypeGoogleAuth) {
+                // We have google OAuth here, so we use the token and/or refresh it
+                if (authTokenRefresh) {
+                    // Based on usage in https://github.com/Grover-c13/PokeGOAPI-Java
+                    googleProvider = new GoogleUserCredentialProvider(http, googleAuthToken);
+                } else {
+                    googleProvider = new GoogleUserCredentialProvider(http);
+                    googleProvider.login(googleAuthToken);
+                }
+                credentialProvider = googleProvider;
+            } else if (isLoginTypeAppPassword) {
+                // We have app password login here
+                googleAutoProvider = new GoogleAutoCredentialProvider(http, googleUsername, googlePassword);
+                credentialProvider = googleAutoProvider;
+            }
+
+            // Now check if the data should be saved in config. Asking the user.
+            if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
+                // We save that auth is generally saved
+                config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
+
+                // We save the login data now
+                if (isLoginTypeGoogleAuth && !authTokenRefresh) {
+                    config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, googleProvider.getRefreshToken());
+                } else if (isLoginTypeAppPassword) {
+                    config.setString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME, googleUsername);
+                    config.setString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD, googlePassword);
+                }
+            } else {
+                deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
+                deleteLoginData(LoginType.GOOGLE_AUTH);
+            }
+        } catch (final Exception e) {
+            alertFailedLogin(e.getClass().getSimpleName(), e.getMessage(), tries);
+            e.printStackTrace();
+            // deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
+            // deleteLoginData(LoginType.GOOGLE_AUTH);
+            return false;
+        }
+
+        //Using Google, remove PTC infos
+        deleteLoginData(LoginType.PTC, true);
+        return true;
+    }
+
+    private static CredentialProvider tryPtcLogOn(OkHttpClient http, final JTextField ptcUsernameTextField, final JTextField ptcPasswordTextField)
+            throws LoginFailedException, CaptchaActiveException, RemoteServerException {
+        CredentialProvider credentialProvider;
+        credentialProvider = new PtcCredentialProvider(http, ptcUsernameTextField.getText(), ptcPasswordTextField.getText());
+        config.setString(ConfigKey.LOGIN_PTC_USERNAME, ptcUsernameTextField.getText());
+        if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
+            config.setString(ConfigKey.LOGIN_PTC_PASSWORD, ptcPasswordTextField.getText());
+            config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
+        } else {
+            deleteLoginData(LoginType.PTC);
+        }
+        return credentialProvider;
     }
 
     private static int logOnSavedAccount(final JTextField ptcUsernameTextField, final JTextField ptcPasswordTextField) {
