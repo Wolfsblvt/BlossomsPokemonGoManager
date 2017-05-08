@@ -282,32 +282,7 @@ public class PokemonModel {
     private void initialze() {
         final PokemonSettings settings = pokemon.getSettings();
 
-        setNumId(settings.getPokemonIdValue());
-        setNickname(pokemon.getNickname());
-        setSpecies(PokemonUtils.getLocalPokeName(pokemon));
-        setLevel(pokemon.getLevel());
-        setIv(Utilities.percentageWithTwoCharacters(PokemonCalculationUtils.ivRating(pokemon)));
-        setAtk(pokemon.getIndividualAttack());
-        setDef(pokemon.getIndividualDefense());
-        setStam(pokemon.getIndividualStamina());
-        setType1(StringUtils.capitalize(settings.getType().toString().toLowerCase()));
-        setType2(StringUtils.capitalize(settings.getType2().toString().toLowerCase()));
-
-        final Double dps1 = PokemonCalculationUtils.dpsForMove(pokemon, true);
-        final Double dps2 = PokemonCalculationUtils.dpsForMove(pokemon, false);
-        setMove1(String.format("%s (%.2fdps)",
-            WordUtils.capitalize(
-                pokemon.getMove1().toString().toLowerCase()
-                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-            dps1));
-        setMove2(String.format("%s (%.2fdps)",
-            WordUtils.capitalize(
-                pokemon.getMove2().toString().toLowerCase()
-                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-            dps2));
-
-        setCp(pokemon.getCp());
-        setHp(pokemon.getMaxStamina());
+        settingsInitial(settings);
 
         // Max CP calculation for current PokemonModel
         int maxCpCurrentVar = 0;
@@ -325,7 +300,7 @@ public class PokemonModel {
         final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
         int maxEvolvedCpVar = 0;
         int maxEvolvedCpCurrentVar = 0;
-        //If Eeveelutions, Evolutions.getHighest return all evolutions in list, otherwise return just 1 element with the top evolution
+        //If Evolutions, Evolutions.getHighest return all evolutions in list, otherwise return just 1 element with the top evolution
         for (final PokemonId pokemonId : highest) {
             maxEvolvedCpVar = Math.max(maxEvolvedCpVar, pokemon.getCpFullEvolveAndPowerup(pokemonId));
             maxEvolvedCpCurrentVar = Math.max(maxEvolvedCpCurrentVar, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
@@ -359,6 +334,35 @@ public class PokemonModel {
         setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
+    }
+
+    private void settingsInitial(final PokemonSettings settings) {
+        setNumId(settings.getPokemonIdValue());
+        setNickname(pokemon.getNickname());
+        setSpecies(PokemonUtils.getLocalPokeName(pokemon));
+        setLevel(pokemon.getLevel());
+        setIv(Utilities.percentageWithTwoCharacters(PokemonCalculationUtils.ivRating(pokemon)));
+        setAtk(pokemon.getIndividualAttack());
+        setDef(pokemon.getIndividualDefense());
+        setStam(pokemon.getIndividualStamina());
+        setType1(StringUtils.capitalize(settings.getType().toString().toLowerCase()));
+        setType2(StringUtils.capitalize(settings.getType2().toString().toLowerCase()));
+
+        final Double dps1 = PokemonCalculationUtils.dpsForMove(pokemon, true);
+        final Double dps2 = PokemonCalculationUtils.dpsForMove(pokemon, false);
+        setMove1(String.format("%s (%.2fdps)",
+            WordUtils.capitalize(
+                pokemon.getMove1().toString().toLowerCase()
+                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+            dps1));
+        setMove2(String.format("%s (%.2fdps)",
+            WordUtils.capitalize(
+                pokemon.getMove2().toString().toLowerCase()
+                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
+            dps2));
+
+        setCp(pokemon.getCp());
+        setHp(pokemon.getMaxStamina());
     }
 
     public BooleanProperty isFavoriteProperty() {
