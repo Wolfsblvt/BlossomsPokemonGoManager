@@ -345,7 +345,8 @@ public final class PokemonCalculationUtils {
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)
         final double weaveEnergyUsageRatio;
 
-        double weaveEnergyUsageRatioBase = (double) Math.abs(pm2.getEnergyDelta()) / (double) pm1.getEnergyDelta();
+        final double weaveEnergyUsageRatioBase = (double) Math.abs(pm2.getEnergyDelta()) / (double) pm1.getEnergyDelta();
+       
         if (Math.abs(pm2.getEnergyDelta()) == MAX_MOVE_ENERGY) {
             weaveEnergyUsageRatio = Math.ceil(weaveEnergyUsageRatioBase);
         } else {
@@ -354,9 +355,7 @@ public final class PokemonCalculationUtils {
 
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*T2+(AA2+$AL$1)
         //=IF(AB2=100,CEILING(AB2/U2),AB2/U2)*(T2+2000)+(AA2+$AL$1)
-        final double weaveCycleLength = weaveEnergyUsageRatio
-            * (pm1.getDurationMs() + additionalDelay)
-            + pm2.getDurationMs() + PokemonCalculationUtils.MOVE2_CHARGE_DELAY_MS;
+        final double weaveCycleLength = getWeaveCycleLength(additionalDelay, pm1, pm2, weaveEnergyUsageRatio);
 
         //=FLOOR(100000/AD2)
         //*(X2*(1+Y2*0.25) * (1+($AJ$1*Z2/100)))
@@ -366,13 +365,7 @@ public final class PokemonCalculationUtils {
         //*(R2*(1+(S2*0.25)))
         //=FLOOR(100000/AF2)*(X2*(1+Y2*0.25)*(1+($AJ$1*Z2/100)))+CEILING(FLOOR(100000/AF2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*(R2*(1+(S2*0.25)))
         //  +FLOOR((100000-(FLOOR(100000/AF2)*(AA2+$AL$1)+CEILING(FLOOR(100000/AF2)*IF(AB2=100,CEILING(AB2/U2),AB2/U2))*(T2+2000)))/(T2+2000))*(R2*(1+(S2*0.25)))
-        final double floorThingyCalculation = (
-            WEAVE_NUMBER - (
-                Math.floor(WEAVE_NUMBER / weaveCycleLength) * (pm2.getDurationMs()
-                    + PokemonCalculationUtils.MOVE2_CHARGE_DELAY_MS)
-                    + Math.ceil(Math.floor(WEAVE_NUMBER / weaveCycleLength) * weaveEnergyUsageRatio) * (pm1.getDurationMs() + additionalDelay)
-            )
-        ) / (pm1.getDurationMs() + additionalDelay);
+        final double floorThingyCalculation = getFloorThingyCalculation(additionalDelay, pm1, pm2, weaveEnergyUsageRatio, weaveCycleLength);
 
         //noinspection UnnecessaryLocalVariable
         final double weaveDPS = Math.floor(WEAVE_NUMBER / weaveCycleLength)
@@ -383,5 +376,21 @@ public final class PokemonCalculationUtils {
             * (pm1.getPower() * moveOneStab);
 
         return weaveDPS;
+    }
+
+    private static double getFloorThingyCalculation(final int additionalDelay, final MoveSettings pm1, final MoveSettings pm2, final double weaveEnergyUsageRatio, final double weaveCycleLength) {
+        return (
+            WEAVE_NUMBER - (
+                Math.floor(WEAVE_NUMBER / weaveCycleLength) * (pm2.getDurationMs()
+                    + PokemonCalculationUtils.MOVE2_CHARGE_DELAY_MS)
+                    + Math.ceil(Math.floor(WEAVE_NUMBER / weaveCycleLength) * weaveEnergyUsageRatio) * (pm1.getDurationMs() + additionalDelay)
+            )
+        ) / (pm1.getDurationMs() + additionalDelay);
+    }
+
+    private static double getWeaveCycleLength(final int additionalDelay, final MoveSettings pm1, final MoveSettings pm2, final double weaveEnergyUsageRatio) {
+        return weaveEnergyUsageRatio
+            * (pm1.getDurationMs() + additionalDelay)
+            + pm2.getDurationMs() + PokemonCalculationUtils.MOVE2_CHARGE_DELAY_MS;
     }
 }
