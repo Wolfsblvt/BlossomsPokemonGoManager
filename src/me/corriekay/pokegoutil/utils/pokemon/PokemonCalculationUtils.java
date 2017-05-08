@@ -47,8 +47,8 @@ public final class PokemonCalculationUtils {
      */
     public static double ivRating(final Pokemon p) {
         double Rating;
-        boolean doAdvancedCalculation = ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION);
-        if (doAdvancedCalculation) {
+        boolean isAdvancedCalculation = ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION);
+        if (isAdvancedCalculation) {
             final StatsAttributes statsAttributes = p.getSettings().getStats();
             Rating =(calculateCpIvAdvanced(p, statsAttributes) - calculateCpMinAdvanced(statsAttributes)) / 
                     (calculateCpMaxAdvanced(statsAttributes) - calculateCpMinAdvanced(statsAttributes));
