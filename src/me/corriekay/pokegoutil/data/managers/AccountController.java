@@ -87,37 +87,7 @@ public final class AccountController {
             final JTextField ptcUsernameTextField = new JTextField(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
             final JTextField ptcPasswordTextField = new JPasswordField(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
 
-            final int directLoginWithSavedCredentials = checkForSavedCredentials();
-
-            int response;
-            
-            boolean isClickCancel = (directLoginWithSavedCredentials == JOptionPane.CANCEL_OPTION);
-            boolean isClickYes = (directLoginWithSavedCredentials == JOptionPane.YES_OPTION);
-            
-            if (isClickCancel) {
-                System.exit(0);
-                return;
-            } else {
-                if (isClickYes) {
-                    boolean isSelectGoogle = getLoginData(LoginType.GOOGLE_AUTH) != null || getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null;
-                    boolean isSelectPtc = getLoginData(LoginType.PTC) != null;
-                    
-                    if (isSelectGoogle) {
-                        response = JOptionPane.NO_OPTION; // This means Google. Trust me
-                    } else if (isSelectPtc) {
-                        response = JOptionPane.YES_OPTION; // And this PTC. Yeah, really
-                    } else {
-                        // Something is wrong here, we delete login and start anew
-                        deleteLoginData(LoginType.ALL);
-                        return;
-                    }
-                } else {
-                    // We do not want to login directly, so go for the question box and delete that data before
-                    deleteLoginData(LoginType.ALL);
-                    
-                    response = popUpConfirmDialog(ptcUsernameTextField, ptcPasswordTextField);
-                }
-            }
+            int response = logOnSavedAccount(ptcUsernameTextField, ptcPasswordTextField);
 
             boolean isSelectCancelInDialog = (response == JOptionPane.CANCEL_OPTION);
             boolean isSelectCloseInDialog = (response == JOptionPane.CLOSED_OPTION);
@@ -286,6 +256,39 @@ public final class AccountController {
                 // deleteLoginData(LoginType.ALL);
             }
         }
+    }
+
+    private static int logOnSavedAccount(final JTextField ptcUsernameTextField, final JTextField ptcPasswordTextField) {
+        final int directLoginWithSavedCredentials = checkForSavedCredentials();
+
+        int response = JOptionPane.CANCEL_OPTION;
+        
+        boolean isClickCancel = (directLoginWithSavedCredentials == JOptionPane.CANCEL_OPTION);
+        boolean isClickYes = (directLoginWithSavedCredentials == JOptionPane.YES_OPTION);
+        
+        if (isClickCancel) {
+            System.exit(0);
+        } else {
+            if (isClickYes) {
+                boolean isSelectGoogle = getLoginData(LoginType.GOOGLE_AUTH) != null || getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null;
+                boolean isSelectPtc = getLoginData(LoginType.PTC) != null;
+                
+                if (isSelectGoogle) {
+                    response = JOptionPane.NO_OPTION; // This means Google. Trust me
+                } else if (isSelectPtc) {
+                    response = JOptionPane.YES_OPTION; // And this PTC. Yeah, really
+                } else {
+                    // Something is wrong here, we delete login and start anew
+                    deleteLoginData(LoginType.ALL);
+                }
+            } else {
+                // We do not want to login directly, so go for the question box and delete that data before
+                deleteLoginData(LoginType.ALL);
+                
+                response = popUpConfirmDialog(ptcUsernameTextField, ptcPasswordTextField);
+            }
+        }
+        return response;
     }
 
     private static LoginType loginUseOAuthToken(final String googleAuthTitle) {
