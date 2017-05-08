@@ -67,7 +67,7 @@ public class PokemonModel {
 
     public PokemonModel(final Pokemon pokemon) {
         this.pokemon = pokemon;
-        initialze();
+        initialize();
     }
 
     public IntegerProperty atkProperty() {
@@ -279,7 +279,7 @@ public class PokemonModel {
         return hp;
     }
 
-    private void initialze() {
+    private void initialize() {
         final PokemonSettings settings = pokemon.getSettings();
 
         settingsInitial(settings);
@@ -535,7 +535,7 @@ public class PokemonModel {
 
     public void setPokemon(final Pokemon pokemon) {
         this.pokemon = pokemon;
-        initialze();
+        initialize();
     }
 
     public void setSpecies(final String species) {
