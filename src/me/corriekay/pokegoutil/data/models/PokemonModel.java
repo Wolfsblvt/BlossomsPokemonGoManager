@@ -29,219 +29,187 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 public class PokemonModel {
     private static final String UNDERSCORE = "_";
-    private final IntegerProperty numId = new SimpleIntegerProperty();
-    private final StringProperty nickname = new SimpleStringProperty();
-    private final StringProperty species = new SimpleStringProperty();
-    private final DoubleProperty level = new SimpleDoubleProperty();
-    private final StringProperty iv = new SimpleStringProperty();
-    private final IntegerProperty atk = new SimpleIntegerProperty();
-    private final IntegerProperty def = new SimpleIntegerProperty();
-    private final IntegerProperty stam = new SimpleIntegerProperty();
-    private final StringProperty type1 = new SimpleStringProperty();
-    private final StringProperty type2 = new SimpleStringProperty();
-    private final StringProperty move1 = new SimpleStringProperty();
-    private final StringProperty move2 = new SimpleStringProperty();
-    private final IntegerProperty cp = new SimpleIntegerProperty();
-    private final IntegerProperty hp = new SimpleIntegerProperty();
-    private final IntegerProperty maxCp = new SimpleIntegerProperty();
-    private final IntegerProperty maxCpCurrent = new SimpleIntegerProperty();
-    private final IntegerProperty maxEvolvedCpCurrent = new SimpleIntegerProperty();
-    private final IntegerProperty maxEvolvedCp = new SimpleIntegerProperty();
-    private final IntegerProperty candies = new SimpleIntegerProperty();
-    private final IntegerProperty candies2Evlv = new SimpleIntegerProperty();
-    private final IntegerProperty dustToLevel = new SimpleIntegerProperty();
-    private final StringProperty pokeball = new SimpleStringProperty();
-    private final StringProperty caughtDate = new SimpleStringProperty();
-    private final BooleanProperty isFavorite = new SimpleBooleanProperty();
-    private final LongProperty duelAbility = new SimpleLongProperty();
-    private final DoubleProperty gymOffense = new SimpleDoubleProperty();
-    private final LongProperty gymDefense = new SimpleLongProperty();
-    private final LongProperty duelAbilityIv = new SimpleLongProperty();
-    private final DoubleProperty gymOffenseIv = new SimpleDoubleProperty();
-    private final LongProperty gymDefenseIv = new SimpleLongProperty();
-    private final StringProperty cpEvolved = new SimpleStringProperty();
-    private final StringProperty evolvable = new SimpleStringProperty();
-
-    private Pokemon pokemon;
-    private final AccountManager accountManager = AccountManager.getInstance();
+    private PokemonModelData data = new PokemonModelData(new SimpleIntegerProperty(), new SimpleStringProperty(), new SimpleStringProperty(), new SimpleDoubleProperty(), new SimpleStringProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleStringProperty(),
+            new SimpleStringProperty(), new SimpleStringProperty(), new SimpleStringProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(),
+            new SimpleStringProperty(), new SimpleStringProperty(), new SimpleBooleanProperty(), new SimpleLongProperty(), new SimpleDoubleProperty(), new SimpleLongProperty(), new SimpleLongProperty(), new SimpleDoubleProperty(), new SimpleLongProperty(), new SimpleStringProperty(), new SimpleStringProperty(), AccountManager.getInstance());
 
     public PokemonModel(final Pokemon pokemon) {
-        this.pokemon = pokemon;
+        this.data.pokemon = pokemon;
         initialize();
     }
 
     public IntegerProperty atkProperty() {
-        return atk;
+        return data.atk;
     }
 
     // Bunch of getters and setters
 
     public IntegerProperty candies2EvlvProperty() {
-        return candies2Evlv;
+        return data.candies2Evlv;
     }
 
     public IntegerProperty candiesProperty() {
-        return candies;
+        return data.candies;
     }
 
     public StringProperty caughtDateProperty() {
-        return caughtDate;
+        return data.caughtDate;
     }
 
     public StringProperty cpEvolvedProperty() {
-        return cpEvolved;
+        return data.cpEvolved;
     }
 
     public IntegerProperty cpProperty() {
-        return cp;
+        return data.cp;
     }
 
     public IntegerProperty defProperty() {
-        return def;
+        return data.def;
     }
 
     public LongProperty duelAbilityIvProperty() {
-        return duelAbilityIv;
+        return data.duelAbilityIv;
     }
 
     public LongProperty duelAbilityProperty() {
-        return duelAbility;
+        return data.duelAbility;
     }
 
     public IntegerProperty dustToLevelProperty() {
-        return dustToLevel;
+        return data.dustToLevel;
     }
 
     public StringProperty evolvableProperty() {
-        return evolvable;
+        return data.evolvable;
     }
 
     public int getAtk() {
-        return atk.get();
+        return data.atk.get();
     }
 
     public int getCandies() {
-        return candies.get();
+        return data.candies.get();
     }
 
     public int getCandies2Evlv() {
-        return candies2Evlv.get();
+        return data.candies2Evlv.get();
     }
 
     public int getCandyCostsForPowerup() {
-        return pokemon.getCandyCostsForPowerup();
+        return data.pokemon.getCandyCostsForPowerup();
     }
 
     public String getCaughtDate() {
-        return caughtDate.get();
+        return data.caughtDate.get();
     }
 
     public int getCp() {
-        return cp.get();
+        return data.cp.get();
     }
 
     public String getCpEvolved() {
-        return cpEvolved.get();
+        return data.cpEvolved.get();
     }
 
     public int getDef() {
-        return def.get();
+        return data.def.get();
     }
 
     public long getDuelAbility() {
-        return duelAbility.get();
+        return data.duelAbility.get();
     }
 
     public long getDuelAbilityIv() {
-        return duelAbilityIv.get();
+        return data.duelAbilityIv.get();
     }
 
     public int getDustToLevel() {
-        return dustToLevel.get();
+        return data.dustToLevel.get();
     }
 
     public String getEvolvable() {
-        return evolvable.get();
+        return data.evolvable.get();
     }
 
     public long getGymDefense() {
-        return gymDefense.get();
+        return data.gymDefense.get();
     }
 
     public long getGymDefenseIv() {
-        return gymDefenseIv.get();
+        return data.gymDefenseIv.get();
     }
 
     public double getGymOffense() {
-        return gymOffense.get();
+        return data.gymOffense.get();
     }
 
     public double getGymOffenseIv() {
-        return gymOffenseIv.get();
+        return data.gymOffenseIv.get();
     }
 
     public int getHp() {
-        return hp.get();
+        return data.hp.get();
     }
 
     public String getIv() {
-        return iv.get();
+        return data.iv.get();
     }
 
     public double getLevel() {
-        return level.get();
+        return data.level.get();
     }
 
     public int getMaxCp() {
-        return maxCp.get();
+        return data.maxCp.get();
     }
 
     public int getMaxCpCurrent() {
-        return maxCpCurrent.get();
+        return data.maxCpCurrent.get();
     }
 
     public int getMaxEvolvedCp() {
-        return maxEvolvedCp.get();
+        return data.maxEvolvedCp.get();
     }
 
     public int getMaxEvolvedCpCurrent() {
-        return maxEvolvedCpCurrent.get();
+        return data.maxEvolvedCpCurrent.get();
     }
 
     public String getMove1() {
-        return move1.get();
+        return data.move1.get();
     }
 
     public String getMove2() {
-        return move2.get();
+        return data.move2.get();
     }
 
     public String getNickname() {
-        return nickname.get();
+        return data.nickname.get();
     }
 
     public int getNumId() {
-        return numId.get();
+        return data.numId.get();
     }
 
     public String getPokeball() {
-        return pokeball.get();
+        return data.pokeball.get();
     }
 
     public Pokemon getPokemon() {
-        return pokemon;
+        return data.pokemon;
     }
 
     public String getSpecies() {
-        return species.get();
+        return data.species.get();
     }
 
     public int getStam() {
-        return stam.get();
+        return data.stam.get();
     }
 
     public int getStardustCostsForPowerup() {
-        return pokemon.getStardustCostsForPowerup();
+        return data.pokemon.getStardustCostsForPowerup();
     }
 
     public String getSummary() {
@@ -252,35 +220,35 @@ public class PokemonModel {
     }
 
     public String getType1() {
-        return type1.get();
+        return data.type1.get();
     }
 
     public String getType2() {
-        return type2.get();
+        return data.type2.get();
     }
 
     public LongProperty gymDefenseIvProperty() {
-        return gymDefenseIv;
+        return data.gymDefenseIv;
     }
 
     public LongProperty gymDefenseProperty() {
-        return gymDefense;
+        return data.gymDefense;
     }
 
     public DoubleProperty gymOffenseIvProperty() {
-        return gymOffenseIv;
+        return data.gymOffenseIv;
     }
 
     public DoubleProperty gymOffenseProperty() {
-        return gymOffense;
+        return data.gymOffense;
     }
 
     public IntegerProperty hpProperty() {
-        return hp;
+        return data.hp;
     }
 
     private void initialize() {
-        final PokemonSettings settings = pokemon.getSettings();
+        final PokemonSettings settings = data.pokemon.getSettings();
 
         settingsInitial(settings);
 
@@ -290,41 +258,41 @@ public class PokemonModel {
         // Max CP calculation for highest evolution of current PokemonModel
         setMaxCPHighest();
 
-        int pokemonCandies = pokemon.getCandy();
+        int pokemonCandies = data.pokemon.getCandy();
 
         setCandies(pokemonCandies);
-        if (pokemon.getCandiesToEvolve() != 0) {
-            setCandies2Evlv(pokemon.getCandiesToEvolve());
+        if (data.pokemon.getCandiesToEvolve() != 0) {
+            setCandies2Evlv(data.pokemon.getCandiesToEvolve());
             // Rounded down candies / toEvolve
-            setEvolvable(String.valueOf((int) ((double) pokemonCandies / pokemon.getCandiesToEvolve())));
+            setEvolvable(String.valueOf((int) ((double) pokemonCandies / data.pokemon.getCandiesToEvolve())));
 
         } else {
             setCandies2Evlv(0);
             setEvolvable("-");
         }
-        setDustToLevel(pokemon.getStardustCostsForPowerup());
+        setDustToLevel(data.pokemon.getStardustCostsForPowerup());
         setPokeball(WordUtils.capitalize(
-            pokemon.getPokeball().toString().toLowerCase()
+            data.pokemon.getPokeball().toString().toLowerCase()
                 .replaceAll("item_", "").replaceAll(UNDERSCORE, " ")));
-        setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(pokemon.getCreationTimeMs())));
-        setIsFavorite(pokemon.isFavorite());
-        setDuelAbility(PokemonCalculationUtils.duelAbility(pokemon));
-        setGymOffense(PokemonCalculationUtils.gymOffense(pokemon));
-        setGymDefense(PokemonCalculationUtils.gymDefense(pokemon));
+        setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(data.pokemon.getCreationTimeMs())));
+        setIsFavorite(data.pokemon.isFavorite());
+        setDuelAbility(PokemonCalculationUtils.duelAbility(data.pokemon));
+        setGymOffense(PokemonCalculationUtils.gymOffense(data.pokemon));
+        setGymDefense(PokemonCalculationUtils.gymDefense(data.pokemon));
 
-        setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
-        setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
-        setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
+        setDuelAbilityIv(PokemonCalculationUtils.duelAbility(data.pokemon));
+        setGymOffenseIv(PokemonCalculationUtils.gymOffense(data.pokemon));
+        setGymDefenseIv(PokemonCalculationUtils.gymDefense(data.pokemon));
     }
 
     private void setMaxCPHighest() {
-        final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
+        final List<PokemonId> highest = Evolutions.getHighest(data.pokemon.getPokemonId());
         int maxEvolvedCpVar = 0;
         int maxEvolvedCpCurrentVar = 0;
         //If Evolutions, Evolutions.getHighest return all evolutions in list, otherwise return just 1 element with the top evolution
         for (final PokemonId pokemonId : highest) {
-            maxEvolvedCpVar = Math.max(maxEvolvedCpVar, pokemon.getCpFullEvolveAndPowerup(pokemonId));
-            maxEvolvedCpCurrentVar = Math.max(maxEvolvedCpCurrentVar, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
+            maxEvolvedCpVar = Math.max(maxEvolvedCpVar, data.pokemon.getCpFullEvolveAndPowerup(pokemonId));
+            maxEvolvedCpCurrentVar = Math.max(maxEvolvedCpCurrentVar, data.pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
         }
 
         setMaxEvolvedCp(maxEvolvedCpVar);
@@ -335,8 +303,8 @@ public class PokemonModel {
         int maxCpCurrentVar = 0;
         int maxCpVar = 0;
         try {
-            maxCpCurrentVar = pokemon.getMaxCpForPlayer();
-            maxCpVar = pokemon.getMaxCp();
+            maxCpCurrentVar = data.pokemon.getMaxCpForPlayer();
+            maxCpVar = data.pokemon.getMaxCp();
         } catch (NoSuchItemException e) {
             System.out.println(e.getMessage());
         }
@@ -346,235 +314,235 @@ public class PokemonModel {
 
     private void settingsInitial(final PokemonSettings settings) {
         setNumId(settings.getPokemonIdValue());
-        setNickname(pokemon.getNickname());
-        setSpecies(PokemonUtils.getLocalPokeName(pokemon));
-        setLevel(pokemon.getLevel());
-        setIv(Utilities.percentageWithTwoCharacters(PokemonCalculationUtils.ivRating(pokemon)));
-        setAtk(pokemon.getIndividualAttack());
-        setDef(pokemon.getIndividualDefense());
-        setStam(pokemon.getIndividualStamina());
+        setNickname(data.pokemon.getNickname());
+        setSpecies(PokemonUtils.getLocalPokeName(data.pokemon));
+        setLevel(data.pokemon.getLevel());
+        setIv(Utilities.percentageWithTwoCharacters(PokemonCalculationUtils.ivRating(data.pokemon)));
+        setAtk(data.pokemon.getIndividualAttack());
+        setDef(data.pokemon.getIndividualDefense());
+        setStam(data.pokemon.getIndividualStamina());
         setType1(StringUtils.capitalize(settings.getType().toString().toLowerCase()));
         setType2(StringUtils.capitalize(settings.getType2().toString().toLowerCase()));
 
-        final Double dps1 = PokemonCalculationUtils.dpsForMove(pokemon, true);
-        final Double dps2 = PokemonCalculationUtils.dpsForMove(pokemon, false);
+        final Double dps1 = PokemonCalculationUtils.dpsForMove(data.pokemon, true);
+        final Double dps2 = PokemonCalculationUtils.dpsForMove(data.pokemon, false);
         setMove1(String.format("%s (%.2fdps)",
             WordUtils.capitalize(
-                pokemon.getMove1().toString().toLowerCase()
+                data.pokemon.getMove1().toString().toLowerCase()
                     .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
             dps1));
         setMove2(String.format("%s (%.2fdps)",
             WordUtils.capitalize(
-                pokemon.getMove2().toString().toLowerCase()
+                data.pokemon.getMove2().toString().toLowerCase()
                     .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
             dps2));
 
-        setCp(pokemon.getCp());
-        setHp(pokemon.getMaxStamina());
+        setCp(data.pokemon.getCp());
+        setHp(data.pokemon.getMaxStamina());
     }
 
     public BooleanProperty isFavoriteProperty() {
-        return isFavorite;
+        return data.isFavorite;
     }
 
     public boolean isInGym() {
-        return !pokemon.getDeployedFortId().isEmpty();
+        return !data.pokemon.getDeployedFortId().isEmpty();
     }
 
     public boolean isIsFavorite() {
-        return isFavorite.get();
+        return data.isFavorite.get();
     }
 
     public StringProperty ivProperty() {
-        return iv;
+        return data.iv;
     }
 
     public DoubleProperty levelProperty() {
-        return level;
+        return data.level;
     }
 
     public IntegerProperty maxCpCurrentProperty() {
-        return maxCpCurrent;
+        return data.maxCpCurrent;
     }
 
     public IntegerProperty maxCpProperty() {
-        return maxCp;
+        return data.maxCp;
     }
 
     public IntegerProperty maxEvolvedCpCurrentProperty() {
-        return maxEvolvedCpCurrent;
+        return data.maxEvolvedCpCurrent;
     }
 
     public IntegerProperty maxEvolvedCpProperty() {
-        return maxEvolvedCp;
+        return data.maxEvolvedCp;
     }
 
     public StringProperty move1Property() {
-        return move1;
+        return data.move1;
     }
 
     public StringProperty move2Property() {
-        return move2;
+        return data.move2;
     }
 
     public StringProperty nicknameProperty() {
-        return nickname;
+        return data.nickname;
     }
 
     public IntegerProperty numIdProperty() {
-        return numId;
+        return data.numId;
     }
 
     public StringProperty pokeballProperty() {
-        return pokeball;
+        return data.pokeball;
     }
 
     public void setAtk(final int atk) {
-        this.atk.set(atk);
+        this.data.atk.set(atk);
     }
 
     public void setCandies(final int candies) {
-        this.candies.set(candies);
+        this.data.candies.set(candies);
     }
 
     public void setCandies2Evlv(final int candies2Evlv) {
-        this.candies2Evlv.set(candies2Evlv);
+        this.data.candies2Evlv.set(candies2Evlv);
     }
 
     public void setCaughtDate(final String caughtDate) {
-        this.caughtDate.set(caughtDate);
+        this.data.caughtDate.set(caughtDate);
     }
 
     public void setCp(final int cp) {
-        this.cp.set(cp);
+        this.data.cp.set(cp);
     }
 
     public void setCpEvolved(final String cpEvolved) {
-        this.cpEvolved.set(cpEvolved);
+        this.data.cpEvolved.set(cpEvolved);
     }
 
     public void setDef(final int def) {
-        this.def.set(def);
+        this.data.def.set(def);
     }
 
     public void setDuelAbility(final long duelAbility) {
-        this.duelAbility.set(duelAbility);
+        this.data.duelAbility.set(duelAbility);
     }
 
     public void setDuelAbilityIv(final long duelAbilityIv) {
-        this.duelAbilityIv.set(duelAbilityIv);
+        this.data.duelAbilityIv.set(duelAbilityIv);
     }
 
     public void setDustToLevel(final int dustToLevel) {
-        this.dustToLevel.set(dustToLevel);
+        this.data.dustToLevel.set(dustToLevel);
     }
 
     public void setEvolvable(final String evolvable) {
-        this.evolvable.set(evolvable);
+        this.data.evolvable.set(evolvable);
     }
 
     public void setGymDefense(final long gymDefense) {
-        this.gymDefense.set(gymDefense);
+        this.data.gymDefense.set(gymDefense);
     }
 
     public void setGymDefenseIv(final long gymDefenseIv) {
-        this.gymDefenseIv.set(gymDefenseIv);
+        this.data.gymDefenseIv.set(gymDefenseIv);
     }
 
     public void setGymOffense(final double gymOffense) {
-        this.gymOffense.set(gymOffense);
+        this.data.gymOffense.set(gymOffense);
     }
 
     public void setGymOffenseIv(final double gymOffenseIv) {
-        this.gymOffenseIv.set(gymOffenseIv);
+        this.data.gymOffenseIv.set(gymOffenseIv);
     }
 
     public void setHp(final int hp) {
-        this.hp.set(hp);
+        this.data.hp.set(hp);
     }
 
     public void setIsFavorite(final boolean isFavorite) {
-        this.isFavorite.set(isFavorite);
+        this.data.isFavorite.set(isFavorite);
     }
 
     public void setIv(final String iv) {
-        this.iv.set(iv);
+        this.data.iv.set(iv);
     }
 
     public void setLevel(final double level) {
-        this.level.set(level);
+        this.data.level.set(level);
     }
 
     public void setMaxCp(final int maxCp) {
-        this.maxCp.set(maxCp);
+        this.data.maxCp.set(maxCp);
     }
 
     public void setMaxCpCurrent(final int maxCpCurrent) {
-        this.maxCpCurrent.set(maxCpCurrent);
+        this.data.maxCpCurrent.set(maxCpCurrent);
     }
 
     public void setMaxEvolvedCp(final int maxEvolvedCp) {
-        this.maxEvolvedCp.set(maxEvolvedCp);
+        this.data.maxEvolvedCp.set(maxEvolvedCp);
     }
 
     public void setMaxEvolvedCpCurrent(final int maxEvolvedCpCurrent) {
-        this.maxEvolvedCpCurrent.set(maxEvolvedCpCurrent);
+        this.data.maxEvolvedCpCurrent.set(maxEvolvedCpCurrent);
     }
 
     public void setMove1(final String move1) {
-        this.move1.set(move1);
+        this.data.move1.set(move1);
     }
 
     public void setMove2(final String move2) {
-        this.move2.set(move2);
+        this.data.move2.set(move2);
     }
 
     public void setNickname(final String nickname) {
-        this.nickname.set(nickname);
+        this.data.nickname.set(nickname);
     }
 
     public void setNumId(final int numId) {
-        this.numId.set(numId);
+        this.data.numId.set(numId);
     }
 
     public void setPokeball(final String pokeball) {
-        this.pokeball.set(pokeball);
+        this.data.pokeball.set(pokeball);
     }
 
     public void setPokemon(final Pokemon pokemon) {
-        this.pokemon = pokemon;
+        this.data.pokemon = pokemon;
         initialize();
     }
 
     public void setSpecies(final String species) {
-        this.species.set(species);
+        this.data.species.set(species);
     }
 
     public void setStam(final int stam) {
-        this.stam.set(stam);
+        this.data.stam.set(stam);
     }
 
     public void setType1(final String type1) {
-        this.type1.set(type1);
+        this.data.type1.set(type1);
     }
 
     public void setType2(final String type2) {
-        this.type2.set(type2);
+        this.data.type2.set(type2);
     }
 
     public StringProperty speciesProperty() {
-        return species;
+        return data.species;
     }
 
     public IntegerProperty stamProperty() {
-        return stam;
+        return data.stam;
     }
 
     public StringProperty type1Property() {
-        return type1;
+        return data.type1;
     }
 
     public StringProperty type2Property() {
-        return type2;
+        return data.type2;
     }
 }
