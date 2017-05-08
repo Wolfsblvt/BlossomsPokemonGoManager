@@ -46,23 +46,41 @@ public final class PokemonCalculationUtils {
      * @return IV Rating.
      */
     public static double ivRating(final Pokemon p) {
+        double Rating;
         if (ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION)) {
             final StatsAttributes statsAttributes = p.getSettings().getStats();
-            final double cpMax = (statsAttributes.getBaseAttack() + PokemonUtils.MAX_IV)
-                * Math.pow(statsAttributes.getBaseDefense() + PokemonUtils.MAX_IV, 0.5)
-                * Math.pow(statsAttributes.getBaseStamina() + PokemonUtils.MAX_IV, 0.5);
-            final double cpMin = statsAttributes.getBaseAttack()
-                * Math.pow(statsAttributes.getBaseDefense(), 0.5)
-                * Math.pow(statsAttributes.getBaseStamina(), 0.5);
-            final double cpIv = (statsAttributes.getBaseAttack() + p.getIndividualAttack())
-                * Math.pow(statsAttributes.getBaseDefense() + p.getIndividualDefense(), 0.5)
-                * Math.pow(statsAttributes.getBaseStamina() + p.getIndividualStamina(), 0.5);
-            return (cpIv - cpMin) / (cpMax - cpMin);
+            Rating =(calculateCpIvAdvanced(p, statsAttributes) - calculateCpMinAdvanced(statsAttributes)) / 
+                    (calculateCpMaxAdvanced(statsAttributes) - calculateCpMinAdvanced(statsAttributes));
         } else {
-            final double cpIv = p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina();
-            final double cpMax = PokemonUtils.MAX_IV + PokemonUtils.MAX_IV + PokemonUtils.MAX_IV;
-            return Utilities.percentage(cpIv, cpMax);
+            Rating = Utilities.percentage(calculateCpIv(p), calculateCpMax());
         }
+        return Rating;
+    }
+
+    private static int calculateCpMax() {
+        return PokemonUtils.MAX_IV + PokemonUtils.MAX_IV + PokemonUtils.MAX_IV;
+    }
+
+    private static int calculateCpIv(final Pokemon p) {
+        return p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina();
+    }
+
+    private static double calculateCpIvAdvanced(final Pokemon p, final StatsAttributes statsAttributes) {
+        return (statsAttributes.getBaseAttack() + p.getIndividualAttack())
+            * Math.pow(statsAttributes.getBaseDefense() + p.getIndividualDefense(), 0.5)
+            * Math.pow(statsAttributes.getBaseStamina() + p.getIndividualStamina(), 0.5);
+    }
+
+    private static double calculateCpMinAdvanced(final StatsAttributes statsAttributes) {
+        return statsAttributes.getBaseAttack()
+            * Math.pow(statsAttributes.getBaseDefense(), 0.5)
+            * Math.pow(statsAttributes.getBaseStamina(), 0.5);
+    }
+
+    private static double calculateCpMaxAdvanced(final StatsAttributes statsAttributes) {
+        return (statsAttributes.getBaseAttack() + PokemonUtils.MAX_IV)
+            * Math.pow(statsAttributes.getBaseDefense() + PokemonUtils.MAX_IV, 0.5)
+            * Math.pow(statsAttributes.getBaseStamina() + PokemonUtils.MAX_IV, 0.5);
     }
 
     /**
