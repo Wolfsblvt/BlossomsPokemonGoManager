@@ -51,6 +51,12 @@ public final class PokemonUtils {
      * @return The translated Pokémon name
      */
     public static String getLocalPokeName(final int id) {
+        final Locale locale = getLocale();
+
+        return PokeDictionary.getDisplayName(id, locale);
+    }
+
+    private static Locale getLocale() {
         final String lang = ConfigNew.getConfig().getString(ConfigKey.LANGUAGE);
 
         final Locale locale;
@@ -60,8 +66,7 @@ public final class PokemonUtils {
         } else {
             locale = new Locale(langar[0], langar[1]);
         }
-
-        return PokeDictionary.getDisplayName(id, locale);
+        return locale;
     }
 
     /**
@@ -71,7 +76,8 @@ public final class PokemonUtils {
      * @return The translated Pokémon name
      */
     public static String getLocalPokeName(final Pokemon pokemon) {
-        return getLocalPokeName(pokemon.getPokemonId().getNumber());
+        PokemonId pokemonId = pokemon.getPokemonId();
+        return getLocalPokeName(pokemonId.getNumber());
     }
 
     /**
@@ -81,14 +87,19 @@ public final class PokemonUtils {
      * @return team string value
      */
     public static String convertTeamColorToName(final int teamValue) {
-        final Team[] teams = Team.values();
+        String teamName = getTeamName(teamValue);
+        return teamName;
+    }
 
+    private static String getTeamName(final int teamValue) {
+        final Team[] teams = Team.values();
+        String teamName =  "UNKNOWN_TEAM";
         for (final Team team : teams) {
             if (team.getValue() == teamValue) {
-                return StringUtils.capitalize(team.toString().toLowerCase().replaceAll("team_", ""));
+                teamName = StringUtils.capitalize(team.toString().toLowerCase().replaceAll("team_", ""));
             }
         }
-        return "UNKNOWN_TEAM";
+        return teamName;
     }
 
     /**
@@ -152,7 +163,11 @@ public final class PokemonUtils {
     public static boolean hasStab(final PokemonId pokemonId, final PokemonMove move) {
         final PokemonSettings settings = PokemonMeta.getPokemonSettings(pokemonId);
         final MoveSettings moveSettings = PokemonMeta.getMoveSettings(move);
-        return settings.getType().equals(moveSettings.getPokemonType()) || settings.getType2().equals(moveSettings.getPokemonType());
+        
+        boolean hasStabWithType1 = settings.getType().equals(moveSettings.getPokemonType());
+        boolean hasStabWithType2 = settings.getType2().equals(moveSettings.getPokemonType());
+        
+        return hasStabWithType1 || hasStabWithType2;
     }
 }
 

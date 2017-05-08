@@ -10,7 +10,6 @@ import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.NoSuchItemException;
 
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
-import POGOProtos.Settings.Master.PokemonSettingsOuterClass.PokemonSettings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
@@ -21,14 +20,14 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import me.corriekay.pokegoutil.data.managers.AccountManager;
-import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
+import me.corriekay.pokegoutil.utils.pokemon.PokeHandler;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 public class PokemonModel {
     private static final String UNDERSCORE = "_";
+
     private PokemonModelData data = new PokemonModelData(new SimpleIntegerProperty(), new SimpleStringProperty(), new SimpleStringProperty(), new SimpleDoubleProperty(), new SimpleStringProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleStringProperty(),
             new SimpleStringProperty(), new SimpleStringProperty(), new SimpleStringProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(), new SimpleIntegerProperty(),
             new SimpleStringProperty(), new SimpleStringProperty(), new SimpleBooleanProperty(), new SimpleLongProperty(), new SimpleDoubleProperty(), new SimpleLongProperty(), new SimpleLongProperty(), new SimpleDoubleProperty(), new SimpleLongProperty(), new SimpleStringProperty(), new SimpleStringProperty(), AccountManager.getInstance());
@@ -41,8 +40,6 @@ public class PokemonModel {
     public IntegerProperty atkProperty() {
         return data.atk;
     }
-
-    // Bunch of getters and setters
 
     public IntegerProperty candies2EvlvProperty() {
         return data.candies2Evlv;
@@ -214,9 +211,9 @@ public class PokemonModel {
 
     public String getSummary() {
         return String.format(
-            "%s (%s) IV: %s CP: %d",
-            getNickname(), getSpecies(),
-            getIv(), getCp());
+                "%s (%s) IV: %s CP: %d",
+                getNickname(), getSpecies(),
+                getIv(), getCp());
     }
 
     public String getType1() {
@@ -248,97 +245,135 @@ public class PokemonModel {
     }
 
     private void initialize() {
-        final PokemonSettings settings = data.pokemon.getSettings();
+        initializePokemonCharacteristicData();
+        setMaxCp(getMaxCpForCurrentPokemon());
+        setMaxCpCurrent(getMaxCpCurrentForCurrentPokemon());
+        setMaxEvolvedCp(getMaxEvolvedCpForHighestEvolution());
+        setMaxEvolvedCpCurrent(getMaxEvolvedCpCurrentForHighestEvolution());
+        initializeCandiesStatus();
+        initializePokemonDataAssciatedWithTrainer();
+    }
 
-        settingsInitial(settings);
+    private void initializePokemonDataAssciatedWithTrainer() {
+        setDustToLevel(pokemon.getStardustCostsForPowerup());
+        setPokeball(getPokeballMessage());
+        setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(pokemon.getCreationTimeMs())));
+        setIsFavorite(pokemon.isFavorite());
+        setDuelAbility(PokemonCalculationUtils.duelAbility(pokemon));
+        setGymOffense(PokemonCalculationUtils.gymOffense(pokemon));
+        setGymDefense(PokemonCalculationUtils.gymDefense(pokemon));
+        setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
+        setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
+        setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
+    }
 
-        // Max CP calculation for current PokemonModel
-        setMaxCPCurrent();
+    private String getPokeballMessage() {
+        return WordUtils.capitalize(
+                getPokeballString().replaceAll("item_", "").replaceAll(UNDERSCORE, " "));
+    }
 
-        // Max CP calculation for highest evolution of current PokemonModel
-        setMaxCPHighest();
+    private String getPokeballString() {
+        return pokemon.getPokeball().toString().toLowerCase();
+    }
 
-        int pokemonCandies = data.pokemon.getCandy();
-
-        setCandies(pokemonCandies);
-        if (data.pokemon.getCandiesToEvolve() != 0) {
-            setCandies2Evlv(data.pokemon.getCandiesToEvolve());
-            // Rounded down candies / toEvolve
-            setEvolvable(String.valueOf((int) ((double) pokemonCandies / data.pokemon.getCandiesToEvolve())));
-
+    private void initializeCandiesStatus() {
+        setCandies(pokemon.getCandy());
+        if (pokemon.getCandiesToEvolve() != 0) {
+            setCandies2Evlv(pokemon.getCandiesToEvolve());
+            setEvolvable(String.valueOf((int) ((double) getCandies() / pokemon.getCandiesToEvolve())));
         } else {
             setCandies2Evlv(0);
             setEvolvable("-");
         }
-        setDustToLevel(data.pokemon.getStardustCostsForPowerup());
-        setPokeball(WordUtils.capitalize(
-            data.pokemon.getPokeball().toString().toLowerCase()
-                .replaceAll("item_", "").replaceAll(UNDERSCORE, " ")));
-        setCaughtDate(DateHelper.toString(DateHelper.fromTimestamp(data.pokemon.getCreationTimeMs())));
-        setIsFavorite(data.pokemon.isFavorite());
-        setDuelAbility(PokemonCalculationUtils.duelAbility(data.pokemon));
-        setGymOffense(PokemonCalculationUtils.gymOffense(data.pokemon));
-        setGymDefense(PokemonCalculationUtils.gymDefense(data.pokemon));
-
-        setDuelAbilityIv(PokemonCalculationUtils.duelAbility(data.pokemon));
-        setGymOffenseIv(PokemonCalculationUtils.gymOffense(data.pokemon));
-        setGymDefenseIv(PokemonCalculationUtils.gymDefense(data.pokemon));
     }
 
-    private void setMaxCPHighest() {
-        final List<PokemonId> highest = Evolutions.getHighest(data.pokemon.getPokemonId());
-        int maxEvolvedCpVar = 0;
-        int maxEvolvedCpCurrentVar = 0;
-        //If Evolutions, Evolutions.getHighest return all evolutions in list, otherwise return just 1 element with the top evolution
+    private int getMaxEvolvedCpForHighestEvolution() {
+        final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
+        int maxEvolvedCp = 0;
         for (final PokemonId pokemonId : highest) {
-            maxEvolvedCpVar = Math.max(maxEvolvedCpVar, data.pokemon.getCpFullEvolveAndPowerup(pokemonId));
-            maxEvolvedCpCurrentVar = Math.max(maxEvolvedCpCurrentVar, data.pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
+            maxEvolvedCp = Math.max(maxEvolvedCp, pokemon.getCpFullEvolveAndPowerup(pokemonId));
         }
-
-        setMaxEvolvedCp(maxEvolvedCpVar);
-        setMaxEvolvedCpCurrent(maxEvolvedCpCurrentVar);
+        return maxEvolvedCp;
     }
 
-    private void setMaxCPCurrent() {
-        int maxCpCurrentVar = 0;
-        int maxCpVar = 0;
+    private int getMaxEvolvedCpCurrentForHighestEvolution() {
+        final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
+        int maxEvolvedCpCurrent = 0;
+        for (final PokemonId pokemonId : highest) {
+            maxEvolvedCpCurrent = Math.max(maxEvolvedCpCurrent, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
+        }
+        return maxEvolvedCpCurrent;
+    }
+
+    private int getMaxCpForCurrentPokemon() {
+        int maxCp = 0;
         try {
-            maxCpCurrentVar = data.pokemon.getMaxCpForPlayer();
-            maxCpVar = data.pokemon.getMaxCp();
+            maxCp = pokemon.getMaxCp();
         } catch (NoSuchItemException e) {
             System.out.println(e.getMessage());
         }
-        setMaxCp(maxCpVar);
-        setMaxCpCurrent(maxCpCurrentVar);
+        return maxCp;
     }
 
-    private void settingsInitial(final PokemonSettings settings) {
-        setNumId(settings.getPokemonIdValue());
-        setNickname(data.pokemon.getNickname());
-        setSpecies(PokemonUtils.getLocalPokeName(data.pokemon));
-        setLevel(data.pokemon.getLevel());
-        setIv(Utilities.percentageWithTwoCharacters(PokemonCalculationUtils.ivRating(data.pokemon)));
-        setAtk(data.pokemon.getIndividualAttack());
-        setDef(data.pokemon.getIndividualDefense());
-        setStam(data.pokemon.getIndividualStamina());
-        setType1(StringUtils.capitalize(settings.getType().toString().toLowerCase()));
-        setType2(StringUtils.capitalize(settings.getType2().toString().toLowerCase()));
+    private int getMaxCpCurrentForCurrentPokemon() {
+        int maxCpCurrent = 0;
+        try {
+            maxCpCurrent = pokemon.getMaxCpForPlayer();
+        } catch (NoSuchItemException e) {
+            System.out.println(e.getMessage());
+        }
+        return maxCpCurrent;
+    }
 
-        final Double dps1 = PokemonCalculationUtils.dpsForMove(data.pokemon, true);
-        final Double dps2 = PokemonCalculationUtils.dpsForMove(data.pokemon, false);
+    private void initializePokemonCharacteristicData() {
+        setNumId(getPokemonIdValue());
+        setNickname(pokemon.getNickname());
+        setSpecies(PokemonUtils.getLocalPokeName(pokemon));
+        setLevel(pokemon.getLevel());
+        setIv(PokeHandler.ReplacePattern.IV_RATING.get(pokemon));
+        setAtk(pokemon.getIndividualAttack());
+        setDef(pokemon.getIndividualDefense());
+        setStam(pokemon.getIndividualStamina());
+        setType1(StringUtils.capitalize(getPokemonType()));
+        setType2(StringUtils.capitalize(getPokemonType2()));
         setMove1(String.format("%s (%.2fdps)",
-            WordUtils.capitalize(
-                data.pokemon.getMove1().toString().toLowerCase()
-                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-            dps1));
+                WordUtils.capitalize(getPokemonMove1Message()),
+                PokemonCalculationUtils.dpsForMove(pokemon, true)));
         setMove2(String.format("%s (%.2fdps)",
-            WordUtils.capitalize(
-                data.pokemon.getMove2().toString().toLowerCase()
-                    .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ")),
-            dps2));
+                WordUtils.capitalize(getPokemonMove2Message()),
+                PokemonCalculationUtils.dpsForMove(pokemon, false)));
+        setCp(pokemon.getCp());
+        setHp(pokemon.getMaxStamina());
+    }
 
-        setCp(data.pokemon.getCp());
-        setHp(data.pokemon.getMaxStamina());
+    private String getPokemonMove2Message() {
+        return getPokemonMove2()
+                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ");
+    }
+
+    private String getPokemonMove1Message() {
+        return getPokemonMove1()
+                .replaceAll("_fast", "").replaceAll(UNDERSCORE, " ");
+    }
+
+    private String getPokemonMove2() {
+        return pokemon.getMove2().toString().toLowerCase();
+    }
+
+    private String getPokemonMove1() {
+        return pokemon.getMove1().toString().toLowerCase();
+    }
+
+    private String getPokemonType2() {
+        return pokemon.getSettings().getType2().toString().toLowerCase();
+    }
+
+    private String getPokemonType() {
+        return pokemon.getSettings().getType().toString().toLowerCase();
+    }
+
+    private int getPokemonIdValue() {
+        return pokemon.getSettings().getPokemonIdValue();
     }
 
     public BooleanProperty isFavoriteProperty() {

@@ -27,7 +27,8 @@ public final class PokemonPerformanceCache {
 
         for (final PokemonId pokemonId : PokemonId.values()) {
             // We skip Pokemon that are currently not available for the global highest value collection
-            if (PokemonUtils.NOT_EXISTING_POKEMON_LIST.contains(pokemonId)) {
+            boolean isNotAvailablePokemonId = PokemonUtils.NOT_EXISTING_POKEMON_LIST.contains(pokemonId);
+            if (isNotAvailablePokemonId) {
                 continue;
             }
 
@@ -70,9 +71,17 @@ public final class PokemonPerformanceCache {
 
         HIGHEST_STATS = new PokemonPerformanceStats(null, globalHighestDuelAbility, globalHighestGymOffense, globalHighestGymDefense);
 
-        System.out.println("Highest Duel Ability: " + globalHighestDuelAbility.toString());
-        System.out.println("Highest Gym Offense: " + globalHighestGymOffense.toString());
-        System.out.println("Highest Gym Defense: " + globalHighestGymDefense.toString());
+        reportHighestStats();
+    }
+
+    private static void reportHighestStats() {
+        String HighestDuelAbility = HIGHEST_STATS.duelAbility.toString();
+        String HighestGymOffense = HIGHEST_STATS.gymOffense.toString();
+        String HighestGymDefense = HIGHEST_STATS.gymDefense.toString();
+        
+        System.out.println("Highest Duel Ability: " + HighestDuelAbility);
+        System.out.println("Highest Gym Offense: " + HighestGymOffense);
+        System.out.println("Highest Gym Defense: " + HighestGymDefense);
     }
 
     /** Prevent initializing this class. */

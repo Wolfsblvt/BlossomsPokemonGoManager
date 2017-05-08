@@ -46,22 +46,42 @@ public final class PokemonCalculationUtils {
      * @return IV Rating.
      */
     public static double ivRating(final Pokemon p) {
-        if (ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION)) {
+        double Rating;
+        boolean isAdvancedCalculation = ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION);
+        if (isAdvancedCalculation) {
             final StatsAttributes statsAttributes = p.getSettings().getStats();
-            final double cpMax = (statsAttributes.getBaseAttack() + PokemonUtils.MAX_IV)
-                * Math.pow(statsAttributes.getBaseDefense() + PokemonUtils.MAX_IV, 0.5)
-                * Math.pow(statsAttributes.getBaseStamina() + PokemonUtils.MAX_IV, 0.5);
-            final double cpMin = statsAttributes.getBaseAttack()
-                * Math.pow(statsAttributes.getBaseDefense(), 0.5)
-                * Math.pow(statsAttributes.getBaseStamina(), 0.5);
-            final double cpIv = (statsAttributes.getBaseAttack() + p.getIndividualAttack())
-                * Math.pow(statsAttributes.getBaseDefense() + p.getIndividualDefense(), 0.5)
-                * Math.pow(statsAttributes.getBaseStamina() + p.getIndividualStamina(), 0.5);
-            return (cpIv - cpMin) / (cpMax - cpMin);
+            Rating =(calculateCpIvAdvanced(p, statsAttributes) - calculateCpMinAdvanced(statsAttributes)) / 
+                    (calculateCpMaxAdvanced(statsAttributes) - calculateCpMinAdvanced(statsAttributes));
         } else {
-            return Utilities.percentage(p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina(),
-                PokemonUtils.MAX_IV + PokemonUtils.MAX_IV + PokemonUtils.MAX_IV);
+            Rating = Utilities.percentage(calculateCpIv(p), calculateCpMax());
         }
+        return Rating;
+    }
+
+    private static int calculateCpMax() {
+        return PokemonUtils.MAX_IV + PokemonUtils.MAX_IV + PokemonUtils.MAX_IV;
+    }
+
+    private static int calculateCpIv(final Pokemon p) {
+        return p.getIndividualAttack() + p.getIndividualDefense() + p.getIndividualStamina();
+    }
+
+    private static double calculateCpIvAdvanced(final Pokemon p, final StatsAttributes statsAttributes) {
+        return (statsAttributes.getBaseAttack() + p.getIndividualAttack())
+            * Math.pow(statsAttributes.getBaseDefense() + p.getIndividualDefense(), 0.5)
+            * Math.pow(statsAttributes.getBaseStamina() + p.getIndividualStamina(), 0.5);
+    }
+
+    private static double calculateCpMinAdvanced(final StatsAttributes statsAttributes) {
+        return statsAttributes.getBaseAttack()
+            * Math.pow(statsAttributes.getBaseDefense(), 0.5)
+            * Math.pow(statsAttributes.getBaseStamina(), 0.5);
+    }
+
+    private static double calculateCpMaxAdvanced(final StatsAttributes statsAttributes) {
+        return (statsAttributes.getBaseAttack() + PokemonUtils.MAX_IV)
+            * Math.pow(statsAttributes.getBaseDefense() + PokemonUtils.MAX_IV, 0.5)
+            * Math.pow(statsAttributes.getBaseStamina() + PokemonUtils.MAX_IV, 0.5);
     }
 
     /**
@@ -102,6 +122,13 @@ public final class PokemonCalculationUtils {
      * @return The percentage rating how good it is compared to the best.
      */
     public static double moveRating(final Pokemon p, final boolean primary) {
+        double highestDps = getHighestDps(p, primary);
+        // Now rate it
+        final double currentDps = dpsForMove(p, primary);
+        return Utilities.percentage(currentDps, highestDps);
+    }
+
+    private static double getHighestDps(final Pokemon p, final boolean primary) {
         final PokemonSettings pMeta = PokemonMeta.getPokemonSettings(p.getPokemonId());
         double highestDps = 0;
         final List<PokemonMove> moves = primary ? pMeta.getQuickMovesList() : pMeta.getCinematicMovesList();
@@ -111,9 +138,7 @@ public final class PokemonCalculationUtils {
                 highestDps = dps;
             }
         }
-        // Now rate it
-        final double currentDps = dpsForMove(p, primary);
-        return Utilities.percentage(currentDps, highestDps);
+        return highestDps;
     }
 
     /**

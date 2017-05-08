@@ -43,10 +43,12 @@ public final class ConfigNew {
             } catch (final IOException e) {
                 System.out.println(e.toString());
             }
-            json = new JSONObject();
+            //json = new JSONObject();
+            setJson(new JSONObject());
             saveConfig();
         } else {
-            json = new JSONObject(FileHelper.readFile(file));
+            //json = new JSONObject(FileHelper.readFile(file));
+            setJson(new JSONObject(FileHelper.readFile(file)));
         }
         cleanUpAndFill();
     }
@@ -151,7 +153,11 @@ public final class ConfigNew {
     public void setJSONObject(final ConfigKey configKey, final JSONObject value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            if (res.getNode().optJSONObject(res.getName()) != value || value.equals(configKey.getDefaultValue())) {
+            
+            //Introduce Explaining Variable
+            final boolean isValueDifferent = res.getNode().optJSONObject(res.getName()) != value ;
+            final boolean isValueEqualToDefalutValue = value.equals(configKey.getDefaultValue());
+            if ( isValueDifferent || isValueEqualToDefalutValue ) {
                 res.getNode().put(res.getName(), value);
                 saveConfig();
             }
@@ -196,10 +202,17 @@ public final class ConfigNew {
      */
     public void setBool(final ConfigKey configKey, final boolean value) {
         try {
+
             final FindResult res = findNode(configKey.keyName, true);
             // Set if value is different or if default value should be added
-            boolean defaultValue = configKey.getDefaultValue();
-            if (res.getNode().optBoolean(res.getName(), defaultValue) != value || value == defaultValue) {
+            
+            // change boolean to final boolean
+            final boolean defaultValue = configKey.getDefaultValue();
+            
+            //Introduce Explaining Variable
+            final boolean isValueDifferent = res.getNode().optBoolean(res.getName(), defaultValue) != value ;
+            final boolean isValueEqualToDefalutValue = (value == defaultValue);
+            if (isValueDifferent || isValueEqualToDefalutValue) {
                 res.getNode().put(res.getName(), value);
                 saveConfig();
             }
@@ -247,7 +260,11 @@ public final class ConfigNew {
         try {
             final FindResult res = findNode(configKey.keyName, true);
             // Set if value is different or if default value should be added
-            if (!res.getNode().optString(res.getName(), "." + configKey.getDefaultValue()).equals(value)) {
+            
+            //Introduce Explaining Variable
+            final String stringOfNode = res.getNode().optString(res.getName(), "." + configKey.getDefaultValue());
+            final boolean isStringOfNodeEqualToValue = stringOfNode.equals(value) ;
+            if (!isStringOfNodeEqualToValue) {
                 res.getNode().put(res.getName(), StringEscapeUtils.escapeJson(value));
                 saveConfig();
             }
@@ -294,7 +311,11 @@ public final class ConfigNew {
         try {
             final FindResult res = findNode(configKey.keyName, true);
             // Set if value is different or if default value should be added
-            if (res.getNode().optInt(res.getName(), 1 + (int) configKey.getDefaultValue()) != value) {
+            
+            //Introduce Explaining Variable
+            final int intOfNode = res.getNode().optInt(res.getName(), 1 + (int) configKey.getDefaultValue());
+            final boolean isValueDifferent = (intOfNode != value) ;
+            if ( isValueDifferent ) {
                 res.getNode().put(res.getName(), value);
                 saveConfig();
             }
@@ -340,7 +361,11 @@ public final class ConfigNew {
     public void setDouble(final ConfigKey configKey, final double value) {
         try {
             final FindResult res = findNode(configKey.keyName, true);
-            if (res.getNode().optDouble(res.getName(), 1 + (double) configKey.getDefaultValue()) != value) {
+            
+            //Introduce Explaining Variable
+            final double doubleOfNode = res.getNode().optDouble(res.getName(), 1 + (double) configKey.getDefaultValue());
+            final boolean isValueDifferent = (doubleOfNode != value) ;
+            if ( isValueDifferent ) {
                 res.getNode().put(res.getName(), value);
                 saveConfig();
             }
@@ -359,7 +384,8 @@ public final class ConfigNew {
     private FindResult findNode(final String path, final boolean create) {
         checkModified();
         final ArrayList<String> parts = new ArrayList<>(Arrays.asList(path.split("\\.")));
-        JSONObject current = json;
+        //JSONObject current = json;
+        JSONObject current = getJson();
         for (final String item : parts.subList(0, parts.size() - 1)) {
             if (!current.has(item) && create) {
                 current.put(item, new JSONObject());
@@ -376,14 +402,21 @@ public final class ConfigNew {
      */
     private void checkModified() {
         final long currentModifiedTime = file.lastModified();
-        if (currentModifiedTime != lastModified) {
+        
+        //Introduce Explaining Variable
+        final boolean isFileModified = (currentModifiedTime != getLastModified());
+        if (isFileModified) {
             System.out.print("Modified config.json externally. Will be reloaded now.");
             // Re-read the file now
-            final String content = FileHelper.readFile(file);
-            if (content != null) {
-                json = new JSONObject(content);
+            
+            // rename
+            final String reReadContent = FileHelper.readFile(file);
+            if (reReadContent != null) {
+                //json = new JSONObject(content);
+                setJson(new JSONObject(reReadContent));
             }
-            lastModified = currentModifiedTime;
+            //lastModified = currentModifiedTime;
+            setLastModified(currentModifiedTime);
         }
     }
 
@@ -391,17 +424,19 @@ public final class ConfigNew {
      * Removes json nodes that do not belong in the file and fills it with missing values' defaults then.
      */
     private void cleanUpAndFill() {
-        ConfigKey[] keys = ConfigKey.values();
-        Map<ConfigKey, Object> allConfigs = new HashMap<>(keys.length);
+
+        ConfigKey[] allConfigKeys = ConfigKey.values();
+        
+        Map<ConfigKey, Object> allConfigs = new HashMap<>(allConfigKeys.length);
 
         // Read all config values or take defaults
-        for (ConfigKey configKey : keys) {
+        for (ConfigKey configKey : allConfigKeys) {
             Object value = getAsObject(configKey);
             allConfigs.put(configKey, value);
         }
-
         // Reset the json file and fill it again
-        json = new JSONObject();
+        //json = new JSONObject();
+        setJson(new JSONObject());
         for (HashMap.Entry<ConfigKey, Object> entry : allConfigs.entrySet()) {
             setFromObject(entry.getKey(), entry.getValue());
         }
@@ -421,10 +456,40 @@ public final class ConfigNew {
      * Save the config file.
      */
     public void saveConfig() {
-        FileHelper.saveFile(file, json.toString(FileHelper.INDENT));
-        lastModified = file.lastModified();
+        //FileHelper.saveFile(file, json.toString(FileHelper.INDENT));
+        FileHelper.saveFile(file, getJson().toString(FileHelper.INDENT));
+        //lastModified = file.lastModified();
+        setLastModified(file.lastModified());
     }
-
+    
+    /**
+     * get json
+     */
+    public JSONObject getJson(){
+        return json;
+    }
+    
+    /**
+     *  set json
+     */
+    public void setJson(JSONObject aJson){
+        json = aJson;
+    }
+    
+    /**
+     * get lastModified
+     */
+    public long getLastModified(){
+        return lastModified;
+    }
+    
+    /**
+     * set lastModified
+     */
+    public void setLastModified(long modifiedTime){
+        lastModified = modifiedTime;
+    }
+    
     /**
      * The Result which combines a node with it's value.
      */
