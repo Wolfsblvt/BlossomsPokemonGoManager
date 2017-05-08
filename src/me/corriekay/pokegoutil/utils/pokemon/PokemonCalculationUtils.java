@@ -49,12 +49,24 @@ public final class PokemonCalculationUtils {
         double Rating;
         boolean isAdvancedCalculation = ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION);
         if (isAdvancedCalculation) {
-            final StatsAttributes statsAttributes = p.getSettings().getStats();
-            Rating =(calculateCpIvAdvanced(p, statsAttributes) - calculateCpMinAdvanced(statsAttributes)) / 
-                    (calculateCpMaxAdvanced(statsAttributes) - calculateCpMinAdvanced(statsAttributes));
+            Rating = calculateRatingAdvanced(p);
         } else {
-            Rating = Utilities.percentage(calculateCpIv(p), calculateCpMax());
+            Rating = calculateRating(p);
         }
+        return Rating;
+    }
+
+    private static double calculateRating(final Pokemon p) {
+        double Rating;
+        Rating = Utilities.percentage(calculateCpIv(p), calculateCpMax());
+        return Rating;
+    }
+
+    private static double calculateRatingAdvanced(final Pokemon p) {
+        double Rating;
+        final StatsAttributes statsAttributes = p.getSettings().getStats();
+        Rating =(calculateCpIvAdvanced(p, statsAttributes) - calculateCpMinAdvanced(statsAttributes)) / 
+                (calculateCpMaxAdvanced(statsAttributes) - calculateCpMinAdvanced(statsAttributes));
         return Rating;
     }
 
