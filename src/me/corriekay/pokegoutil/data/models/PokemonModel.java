@@ -285,16 +285,7 @@ public class PokemonModel {
         settingsInitial(settings);
 
         // Max CP calculation for current PokemonModel
-        int maxCpCurrentVar = 0;
-        int maxCpVar = 0;
-        try {
-            maxCpCurrentVar = pokemon.getMaxCpForPlayer();
-            maxCpVar = pokemon.getMaxCp();
-        } catch (NoSuchItemException e) {
-            System.out.println(e.getMessage());
-        }
-        setMaxCp(maxCpVar);
-        setMaxCpCurrent(maxCpCurrentVar);
+        setMaxCPCurrent();
 
         // Max CP calculation for highest evolution of current PokemonModel
         final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
@@ -334,6 +325,19 @@ public class PokemonModel {
         setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
+    }
+
+    private void setMaxCPCurrent() {
+        int maxCpCurrentVar = 0;
+        int maxCpVar = 0;
+        try {
+            maxCpCurrentVar = pokemon.getMaxCpForPlayer();
+            maxCpVar = pokemon.getMaxCp();
+        } catch (NoSuchItemException e) {
+            System.out.println(e.getMessage());
+        }
+        setMaxCp(maxCpVar);
+        setMaxCpCurrent(maxCpCurrentVar);
     }
 
     private void settingsInitial(final PokemonSettings settings) {
