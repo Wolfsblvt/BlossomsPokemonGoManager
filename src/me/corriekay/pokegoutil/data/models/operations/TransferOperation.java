@@ -45,27 +45,19 @@ public class TransferOperation extends Operation {
             transferResult = poke.transferPokemon();
         } catch (CaptchaActiveException e) {
             e.printStackTrace();
-            return new BpmOperationResult(String.format(
-                    errorTransferingString,
-                    PokemonUtils.getLocalPokeName(poke),
-                    "Captcha active in account"),
-                    OperationError.EVOLVE_FAIL);
+            return operationResultMessage(poke, errorTransferingString,"Captcha active in account",OperationError.EVOLVE_FAIL);
         } catch (HashException e) {
-            return new BpmOperationResult(String.format(
-                    errorTransferingString,
-                    pokemon.getSpecies(),
-                    "Error with Hash: " + e.getMessage()),
-                    OperationError.EVOLVE_FAIL);
+            return operationResultMessage(poke, errorTransferingString,"Error with Hash: " + e.getMessage(),OperationError.EVOLVE_FAIL);
         }
         
         if (transferResult != Result.SUCCESS) {
-            return new BpmOperationResult(String.format(
-                errorTransferingString,
-                PokemonUtils.getLocalPokeName(poke),
-                transferResult.toString()),
-                OperationError.TRANSFER_FAIL);
+            return operationResultMessage(poke, errorTransferingString,transferResult.toString(),OperationError.TRANSFER_FAIL);
         }
 
+        return trasferSuccessMessage(poke, candies);
+    }
+
+    private BpmOperationResult trasferSuccessMessage(final Pokemon poke, final int candies) {
         final int newCandies = poke.getCandy();
         final BpmOperationResult result = new BpmOperationResult();
 
@@ -79,6 +71,14 @@ public class TransferOperation extends Operation {
             (newCandies - candies)));
 
         return result;
+    }
+
+    private BpmOperationResult operationResultMessage(final Pokemon poke, final String errorTransferingString,
+            String errorContent, OperationError operErr) {
+        return new BpmOperationResult(String.format(
+                errorTransferingString,
+                PokemonUtils.getLocalPokeName(poke),
+                errorContent), operErr);
     }
 
     @Override
