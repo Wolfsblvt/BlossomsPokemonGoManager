@@ -375,14 +375,29 @@ public class PokeHandler {
          * @return The abbreviated type with two characters.
          */
         private static String abbreviateType(final String type) {
-            if ("none".equalsIgnoreCase(type)) {
-                return "__";
-            } else if ("fighting".equalsIgnoreCase(type) || "ground".equalsIgnoreCase(type)) {
-                // "Gr" is Grass, so we make Ground "Gd". "Fi" is Fire, so we make Fighting "Fg"
-                return type.substring(0, 1).toUpperCase() + type.substring(type.length() - 1).toLowerCase();
+            boolean isNoneString = "none".equalsIgnoreCase(type);
+            final String abbreviateTypeString;
+            if (isNoneString) {
+                abbreviateTypeString = "__";
             } else {
-                return StringUtils.capitalize(type.substring(0, 2).toLowerCase());
+                boolean hasDuplicationWithOtherAbbreviatedType = "fighting".equalsIgnoreCase(type) || "ground".equalsIgnoreCase(type);
+                if (hasDuplicationWithOtherAbbreviatedType) {
+                    // "Gr" is Grass, so we make Ground "Gd". "Fi" is Fire, so we make Fighting "Fg"
+                    abbreviateTypeString = abbreviateTypeInDuplicationCase(type);
+                } else {
+                    abbreviateTypeString = abbreviateTypeInNomarlCase(type);
+                }
+                
             }
+            return abbreviateTypeString;
+        }
+
+        private static String abbreviateTypeInNomarlCase(final String type) {
+            return StringUtils.capitalize(type.substring(0, 2).toLowerCase());
+        }
+
+        private static String abbreviateTypeInDuplicationCase(final String type) {
+            return type.substring(0, 1).toUpperCase() + type.substring(type.length() - 1).toLowerCase();
         }
 
         /**
