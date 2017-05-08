@@ -288,17 +288,7 @@ public class PokemonModel {
         setMaxCPCurrent();
 
         // Max CP calculation for highest evolution of current PokemonModel
-        final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
-        int maxEvolvedCpVar = 0;
-        int maxEvolvedCpCurrentVar = 0;
-        //If Evolutions, Evolutions.getHighest return all evolutions in list, otherwise return just 1 element with the top evolution
-        for (final PokemonId pokemonId : highest) {
-            maxEvolvedCpVar = Math.max(maxEvolvedCpVar, pokemon.getCpFullEvolveAndPowerup(pokemonId));
-            maxEvolvedCpCurrentVar = Math.max(maxEvolvedCpCurrentVar, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
-        }
-
-        setMaxEvolvedCp(maxEvolvedCpVar);
-        setMaxEvolvedCpCurrent(maxEvolvedCpCurrentVar);
+        setMaxCPHighest();
 
         int pokemonCandies = pokemon.getCandy();
 
@@ -325,6 +315,20 @@ public class PokemonModel {
         setDuelAbilityIv(PokemonCalculationUtils.duelAbility(pokemon));
         setGymOffenseIv(PokemonCalculationUtils.gymOffense(pokemon));
         setGymDefenseIv(PokemonCalculationUtils.gymDefense(pokemon));
+    }
+
+    private void setMaxCPHighest() {
+        final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
+        int maxEvolvedCpVar = 0;
+        int maxEvolvedCpCurrentVar = 0;
+        //If Evolutions, Evolutions.getHighest return all evolutions in list, otherwise return just 1 element with the top evolution
+        for (final PokemonId pokemonId : highest) {
+            maxEvolvedCpVar = Math.max(maxEvolvedCpVar, pokemon.getCpFullEvolveAndPowerup(pokemonId));
+            maxEvolvedCpCurrentVar = Math.max(maxEvolvedCpCurrentVar, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
+        }
+
+        setMaxEvolvedCp(maxEvolvedCpVar);
+        setMaxEvolvedCpCurrent(maxEvolvedCpCurrentVar);
     }
 
     private void setMaxCPCurrent() {
