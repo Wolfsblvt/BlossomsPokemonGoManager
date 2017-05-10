@@ -12,7 +12,6 @@ import com.pokegoapi.api.pokemon.Evolutions;
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.NoSuchItemException;
 import com.pokegoapi.google.common.geometry.S2CellId;
-import com.pokegoapi.main.PokemonMeta;
 
 import POGOProtos.Enums.PokemonIdOuterClass;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
@@ -29,6 +28,7 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonPerformanceCache;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 import me.corriekay.pokegoutil.utils.windows.renderer.CellRendererHelper;
+import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 import me.corriekay.pokegoutil.windows.PokemonTab;
 
 /**
@@ -144,7 +144,7 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             final PokemonMove move = p.getMove1();
-            final PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
+            final PokemonType type = PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(move).getPokemonType();
             return PokemonUtils.formatType(type);
         }
     },
@@ -152,7 +152,7 @@ public enum PokeColumn {
         @Override
         public Object get(final Pokemon p) {
             final PokemonMove move = p.getMove2();
-            final PokemonType type = PokemonMeta.getMoveSettings(move).getPokemonType();
+            final PokemonType type = PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(move).getPokemonType();
             return PokemonUtils.formatType(type);
         }
     },
@@ -271,7 +271,7 @@ public enum PokeColumn {
     MAX_CP_EVOLVED_CUR("Max CP Evolved (Cur)", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
-            final List<PokemonIdOuterClass.PokemonId> highest = Evolutions.getHighest(p.getPokemonId());
+            final List<PokemonIdOuterClass.PokemonId> highest = PokemonGoMainWindow.getPoGo().getItemTemplates().getEvolutions().getHighest(p.getPokemonId());
             final PokemonIdOuterClass.PokemonId highestUpgradedFamily = highest.get(0);
             return p.getMaxCpFullEvolveAndPowerupForPlayer(highestUpgradedFamily);
         }
@@ -279,7 +279,7 @@ public enum PokeColumn {
     MAX_CP_EVOLVED_40("Max CP Evolved (40)", ColumnType.INT) {
         @Override
         public Object get(final Pokemon p) {
-            final List<PokemonIdOuterClass.PokemonId> highest = Evolutions.getHighest(p.getPokemonId());
+            final List<PokemonIdOuterClass.PokemonId> highest = PokemonGoMainWindow.getPoGo().getItemTemplates().getEvolutions().getHighest(p.getPokemonId());
             final PokemonIdOuterClass.PokemonId highestUpgradedFamily = highest.get(0);
             return p.getCpFullEvolveAndPowerup(highestUpgradedFamily);
         }
@@ -287,7 +287,7 @@ public enum PokeColumn {
     CP_EVOLVED("CP Evolved", ColumnType.NULLABLE_INT) {
         @Override
         public Object get(final Pokemon p) {
-            final List<PokemonIdOuterClass.PokemonId> highest = Evolutions.getHighest(p.getPokemonId());
+            final List<PokemonIdOuterClass.PokemonId> highest = PokemonGoMainWindow.getPoGo().getItemTemplates().getEvolutions().getHighest(p.getPokemonId());
             final PokemonIdOuterClass.PokemonId highestUpgradedFamily = highest.get(0);
             final int cpAfterFullyEvolve;
             if (highest.contains(p.getPokemonId())) {     

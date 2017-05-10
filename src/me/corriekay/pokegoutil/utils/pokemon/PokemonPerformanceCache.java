@@ -2,11 +2,11 @@ package me.corriekay.pokegoutil.utils.pokemon;
 
 import java.util.EnumMap;
 
-import com.pokegoapi.main.PokemonMeta;
-
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
 import POGOProtos.Settings.Master.PokemonSettingsOuterClass.PokemonSettings;
+
+import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 
 /**
  * A Cache class which calculates and saves several values for Pokémon to make them easily available.
@@ -31,7 +31,7 @@ public final class PokemonPerformanceCache {
                 continue;
             }
 
-            final PokemonSettings settings = PokemonMeta.getPokemonSettings(pokemonId);
+            final PokemonSettings settings = PokemonGoMainWindow.getPoGo().getItemTemplates().getPokemonSettings(pokemonId);
 
             PokemonPerformance<Long> highestDuelAbility = PokemonPerformance.DEFAULT_LONG;
             PokemonPerformance<Double> highestGymOffense = PokemonPerformance.DEFAULT_DOUBLE;

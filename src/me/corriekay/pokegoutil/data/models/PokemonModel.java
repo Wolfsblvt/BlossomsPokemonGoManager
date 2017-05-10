@@ -26,6 +26,7 @@ import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonCalculationUtils;
 import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
+import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 
 public class PokemonModel {
     private static final String UNDERSCORE = "_";
@@ -322,7 +323,7 @@ public class PokemonModel {
         setMaxCpCurrent(maxCpCurrentVar);
 
         // Max CP calculation for highest evolution of current PokemonModel
-        final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
+        final List<PokemonId> highest = PokemonGoMainWindow.getPoGo().getItemTemplates().getEvolutions().getHighest(pokemon.getPokemonId());
         int maxEvolvedCpVar = 0;
         int maxEvolvedCpCurrentVar = 0;
         //If Eeveelutions, Evolutions.getHighest return all evolutions in list, otherwise return just 1 element with the top evolution
