@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.request.RequestFailedException;
-import com.pokegoapi.main.PokemonMeta;
+
 
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
@@ -18,6 +18,7 @@ import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.TriConsumer;
 import me.corriekay.pokegoutil.utils.helpers.UnicodeHelper;
+import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 
 public class PokeHandler {
 
@@ -284,28 +285,28 @@ public class PokeHandler {
         MOVE_TYPE_1("Move Type 1 abbreviated (Uppercase with STAB else lowercase) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonUtils.formatType(PokemonMeta.getMoveSettings(p.getMove1()).getPokemonType());
+                final String type = PokemonUtils.formatType(PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(p.getMove1()).getPokemonType());
                 return PokemonUtils.hasStab(p.getPokemonId(), p.getMove1()) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
         MOVE_TYPE_2("Move Type 2 abbreviated (Uppercase with STAB else lowercase) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonUtils.formatType(PokemonMeta.getMoveSettings(p.getMove2()).getPokemonType());
+                final String type = PokemonUtils.formatType(PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(p.getMove2()).getPokemonType());
                 return PokemonUtils.hasStab(p.getPokemonId(), p.getMove2()) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
         MOVE_TYPE_1_UNI("Move Type 1 abbreviated (Electric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonMeta.getMoveSettings(p.getMove1()).getPokemonType().toString();
+                final String type = PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(p.getMove1()).getPokemonType().toString();
                 return UnicodeHelper.get(type);
             }
         },
         MOVE_TYPE_2_UNI("Move Type 2 abbreviated (Electric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonMeta.getMoveSettings(p.getMove2()).getPokemonType().toString();
+                final String type = PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(p.getMove2()).getPokemonType().toString();
                 return UnicodeHelper.get(type);
             }
         },

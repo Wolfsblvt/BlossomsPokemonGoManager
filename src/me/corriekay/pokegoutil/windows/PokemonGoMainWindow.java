@@ -37,7 +37,7 @@ public class PokemonGoMainWindow extends JFrame {
     private static final long serialVersionUID = -6224748358995357643L;
     private static final int TEXT_AREA_HEIGHT = 150;
     
-    private final PokemonGo go;
+    private static PokemonGo go;
     private final PlayerProfile pp;
     private final JTabbedPane tab = new JTabbedPane();
 
@@ -137,7 +137,7 @@ public class PokemonGoMainWindow extends JFrame {
         return instance;
     }
 
-    public PokemonGo getPoGo() {
+    public static PokemonGo getPoGo() {
         return go;
     }
 

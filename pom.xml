@@ -67,7 +67,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <finalName>BlossomsPogoManager</finalName>
+                    <finalName>${project.name}_v${project.version}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                     <!-- MainClass in mainfest make a executable jar -->
                     <archive>
@@ -102,9 +102,9 @@
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>com.github.FernandoTBarros</groupId>
+            <groupId>com.github.gegy1000</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
-            <version>895cf2e70cc31d6f541346b54c2505821d09e002</version>
+            <version>8c3602493467a3d3ccd676b68711d41994b3d677</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -132,6 +132,11 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.7</version>
+        </dependency>
+		<dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>3.9</version>
         </dependency>
     </dependencies>
 </project>
