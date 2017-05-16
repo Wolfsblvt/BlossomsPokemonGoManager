@@ -53,7 +53,7 @@ public final class LoginHelper {
         final String pokeHashKey = ConfigNew.getConfig().getString(ConfigKey.LOGIN_POKEHASHKEY);
         if (pokeHashKey != null) {
             final PokeHashProvider pokeHashProvider = new PokeHashProvider(PokeHashKey.from(pokeHashKey), true);
-            pokeHashProvider.setEndpoint("http://pokehash.buddyauth.com/api/v131_0/hash");
+            pokeHashProvider.setEndpoint("http://pokehash.buddyauth.com/api/v133_1/hash");
             go.login(credentialProvider, pokeHashProvider);
         }
     }
