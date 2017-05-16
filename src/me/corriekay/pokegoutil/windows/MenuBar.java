@@ -40,7 +40,7 @@ public class MenuBar extends JMenuBar {
         });
         file.add(trainerStats);
 
-        JMenuItem logout = new JMenuItem("Logout");
+        JMenuItem logout = new JMenuItem("Exit");
         logout.addActionListener(al -> {
             try {
                 logout();
@@ -117,12 +117,12 @@ public class MenuBar extends JMenuBar {
         });
         help.add(checkUpdates);
 
-        JMenuItem about = new JMenuItem("About");
+        final JMenuItem about = new JMenuItem("About");
         about.addActionListener(l -> JOptionPane.showMessageDialog(null,
             "Version: " + Updater.getUpdater().currentVersion
                 + StringLiterals.NEWLINE
                 + StringLiterals.NEWLINE + "Original Author: Corrie 'Blossom' Kay"
-                + StringLiterals.NEWLINE + "Current Author: Wolfsblvt"
+                + StringLiterals.NEWLINE + "Current Authors: Wolfsblvt, FernandoTBarros"
                 + StringLiterals.NEWLINE
                 + StringLiterals.NEWLINE + "Collaborators: Ljay, naderki, wullxz,"
                 + StringLiterals.NEWLINE + "Cryptically, eralpsahin, weblue,"
@@ -138,6 +138,8 @@ public class MenuBar extends JMenuBar {
                 + StringLiterals.NEWLINE
                 + StringLiterals.NEWLINE + "Thanks to Grover for providing"
                 + StringLiterals.NEWLINE + "such a great API."
+                + StringLiterals.NEWLINE + "Thanks to gegy1000 for keeping up"
+                + StringLiterals.NEWLINE + "Grover's work."
                 + StringLiterals.NEWLINE
                 + StringLiterals.NEWLINE + "Thanks to Draseart for "
                 + "the icon art.",
@@ -148,7 +150,7 @@ public class MenuBar extends JMenuBar {
     }
 
     private void logout() throws Exception {
-        AccountController.logOff();
+        System.exit(0);
     }
 
     private void displayTrainerStats() throws Exception {

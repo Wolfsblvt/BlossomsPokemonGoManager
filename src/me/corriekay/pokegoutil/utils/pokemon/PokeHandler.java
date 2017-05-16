@@ -10,13 +10,15 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.pokegoapi.api.pokemon.Pokemon;
 import com.pokegoapi.exceptions.request.RequestFailedException;
-import com.pokegoapi.main.PokemonMeta;
+
 
 import POGOProtos.Networking.Responses.NicknamePokemonResponseOuterClass.NicknamePokemonResponse;
 import me.corriekay.pokegoutil.data.enums.PokeColumn;
+import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.Utilities;
 import me.corriekay.pokegoutil.utils.helpers.TriConsumer;
 import me.corriekay.pokegoutil.utils.helpers.UnicodeHelper;
+import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 
 public class PokeHandler {
 
@@ -42,7 +44,7 @@ public class PokeHandler {
     }
 
     /**
-     * Rename a single Pokemon based on a pattern
+     * Rename a single Pokemon based on a pattern.
      *
      * @param pattern The pattern to use for renaming
      * @param pokemon The Pokemon to rename
@@ -62,8 +64,8 @@ public class PokeHandler {
             return result;
         } catch (RequestFailedException e) {
             System.out.println("Error while renaming "
-                + PokemonUtils.getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
-                + Utilities.getRealExceptionMessage(e));
+                    + PokemonUtils.getLocalPokeName(pokemon) + "(" + pokemon.getNickname() + ")! "
+                    + Utilities.getRealExceptionMessage(e));
             return NicknamePokemonResponse.Result.UNRECOGNIZED;
         }
     }
@@ -155,7 +157,7 @@ public class PokeHandler {
                 return PokeColumn.CP.get(p).toString();
             }
         },
-        CP_EVOLVED("CP if pokemon was fully evolved (equals %cp% for highest species in the family)") {
+        CP_EVOLVED("CP if Pokémon was fully evolved (equals %cp% for highest species in the family)") {
             @Override
             public String get(final Pokemon p) {
                 return PokeColumn.CP_EVOLVED.get(p).toString();
@@ -164,13 +166,14 @@ public class PokeHandler {
         HP("Hit Points") {
             @Override
             public String get(final Pokemon p) {
-                return PokeColumn.HP.get(p).toString();
+                return String.valueOf(p.getMaxStamina());
             }
         },
         LEVEL("Pokémon Level") {
             @Override
             public String get(final Pokemon p) {
-                return PokeColumn.LEVEL.get(p).toString();
+                final int size = 4;
+                return StringUtils.leftPad(PokeColumn.LEVEL.get(p).toString(), size, '0');
             }
         },
         IV_RATING("IV Rating in two digits (XX for 100%) [2]") {
@@ -183,8 +186,8 @@ public class PokeHandler {
             @Override
             public String get(final Pokemon p) {
                 return (Integer.toHexString((int) PokeColumn.IV_ATTACK.get(p))
-                    + Integer.toHexString((int) PokeColumn.IV_DEFENSE.get(p))
-                    + Integer.toHexString((int) PokeColumn.IV_STAMINA.get(p))).toUpperCase();
+                        + Integer.toHexString((int) PokeColumn.IV_DEFENSE.get(p))
+                        + Integer.toHexString((int) PokeColumn.IV_STAMINA.get(p))).toUpperCase();
             }
         },
         IV_ATT("IV Attack [2]") {
@@ -265,31 +268,45 @@ public class PokeHandler {
                 return PokeColumn.MAX_CP_40.get(p).toString();
             }
         },
-        MOVE_TYPE_1("Move 1 abbreviated (Ghost = Gh) [2]") {
+        MOVE_1("Move 1 abbreviated (Uppercase with STAB else lowercase) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonUtils.formatType(PokemonMeta.getMoveSettings(p.getMove1()).getPokemonType());
+                final String move = PokemonUtils.formatMove(p.getMove1());
+                return PokemonUtils.hasStab(p.getPokemonId(), p.getMove1()) ? abbreviateMove(move).toUpperCase() : abbreviateMove(move).toLowerCase();
+            }
+        },
+        MOVE_2("Move 2 abbreviated (Uppercase with STAB else lowercase) [2]") {
+            @Override
+            public String get(final Pokemon p) {
+                final String move = PokemonUtils.formatMove(p.getMove2());
+                return PokemonUtils.hasStab(p.getPokemonId(), p.getMove2()) ? abbreviateMove(move).toUpperCase() : abbreviateMove(move).toLowerCase();
+            }
+        },
+        MOVE_TYPE_1("Move Type 1 abbreviated (Uppercase with STAB else lowercase) [2]") {
+            @Override
+            public String get(final Pokemon p) {
+                final String type = PokemonUtils.formatType(PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(p.getMove1()).getPokemonType());
                 return PokemonUtils.hasStab(p.getPokemonId(), p.getMove1()) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
-        MOVE_TYPE_2("Move 2 abbreviated (Ghost = Gh) [2]") {
+        MOVE_TYPE_2("Move Type 2 abbreviated (Uppercase with STAB else lowercase) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonUtils.formatType(PokemonMeta.getMoveSettings(p.getMove2()).getPokemonType());
+                final String type = PokemonUtils.formatType(PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(p.getMove2()).getPokemonType());
                 return PokemonUtils.hasStab(p.getPokemonId(), p.getMove2()) ? abbreviateType(type).toUpperCase() : abbreviateType(type).toLowerCase();
             }
         },
-        MOVE_TYPE_1_UNI("Move 1 abbreviated (Eletric = ⚡) [1]") {
+        MOVE_TYPE_1_UNI("Move Type 1 abbreviated (Electric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonMeta.getMoveSettings(p.getMove1()).getPokemonType().toString();
+                final String type = PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(p.getMove1()).getPokemonType().toString();
                 return UnicodeHelper.get(type);
             }
         },
-        MOVE_TYPE_2_UNI("Move 2 abbreviated (Eletric = ⚡) [1]") {
+        MOVE_TYPE_2_UNI("Move Type 2 abbreviated (Electric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = PokemonMeta.getMoveSettings(p.getMove2()).getPokemonType().toString();
+                final String type = PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(p.getMove2()).getPokemonType().toString();
                 return UnicodeHelper.get(type);
             }
         },
@@ -320,25 +337,27 @@ public class PokeHandler {
         TYPE_1("Pokémon Type 1 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = p.getSettings().getType().toString();
+                // need to strip "pokemon_type_" prefix or "pokemon_type_none" 
+                final String type = PokemonUtils.formatType(p.getSettings().getType());
                 return abbreviateType(type);
             }
         },
         TYPE_2("Pokémon Type 2 abbreviated (Ghost = Gh) [2]") {
             @Override
             public String get(final Pokemon p) {
-                final String type = p.getSettings().getType2().toString();
+                // need to strip "pokemon_type_" prefix or "pokemon_type_none" 
+                final String type = PokemonUtils.formatType(p.getSettings().getType2());
                 return abbreviateType(type);
             }
         },
-        TYPE_1_UNI("Pokémon Type 1 Unicode (Eletric = ⚡) [1]") {
+        TYPE_1_UNI("Pokémon Type 1 Unicode (Electric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = p.getSettings().getType().toString();
                 return UnicodeHelper.get(type);
             }
         },
-        TYPE_2_UNI("Pokémon Type 2 Unicode (Eletric = ⚡) [1]") {
+        TYPE_2_UNI("Pokémon Type 2 Unicode (Electric = ⚡) [1]") {
             @Override
             public String get(final Pokemon p) {
                 final String type = p.getSettings().getType2().toString();
@@ -363,7 +382,39 @@ public class PokeHandler {
                 final int length = 3;
                 return pad((int) PokeColumn.POKEDEX_ID.get(p), length);
             }
+        },
+        GENDER("Gender symbol [1]") {
+            @Override
+            public String get(final Pokemon p) {
+                final String gender = PokeColumn.GENDER.get(p).toString(); 
+                final String gChar;
+                if ("FEMALE".equals(gender)) { 
+                    gChar = UnicodeHelper.get("female");  
+                } else if ("MALE".equals(gender)) {
+                    gChar = UnicodeHelper.get("male");
+                } else {
+                    gChar = UnicodeHelper.get("none");
+                }
+                return gChar;
+            }
         };
+
+        /**
+         * Abbreviate Move to two characters.
+         * @param move The move.
+         * @return The abbreviated move with two characters.
+         */
+        private static String abbreviateMove(final String move) {
+            // check if move has two words
+            if (move.indexOf(StringLiterals.SPACE) > 0) {
+                final String[] moveWords = move.split(StringLiterals.SPACE);
+                // too many charge moves have the same initials so we do not make exceptions for them.
+                // this is further complicated because the moves can have STAB which is indicated by uppercase
+                return moveWords[0].substring(0, 1) + moveWords[1].substring(0, 1);  
+            } else {
+                return move.substring(0, 2);
+            }
+        }
 
         /**
          * Abbreviate Movement/Pokémon type, to two character.
@@ -373,10 +424,11 @@ public class PokeHandler {
          * @return The abbreviated type with two characters.
          */
         private static String abbreviateType(final String type) {
-            if ("none".equalsIgnoreCase(type)) {
+            //we need to check if the returned type is empty            
+            if (type.isEmpty()) {
                 return "__";
             } else if ("fighting".equalsIgnoreCase(type) || "ground".equalsIgnoreCase(type)) {
-                // "Gr" is Grass, so we make Ground "Gd". "Fi" is Fire, so we make Fighting "Fg"
+                //"Gr" is Grass, so we make Ground "Gd". "Fi" is Fire, so we make Fighting "Fg"
                 return type.substring(0, 1).toUpperCase() + type.substring(type.length() - 1).toLowerCase();
             } else {
                 return StringUtils.capitalize(type.substring(0, 2).toLowerCase());

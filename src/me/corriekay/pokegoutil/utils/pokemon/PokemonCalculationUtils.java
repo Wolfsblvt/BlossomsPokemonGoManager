@@ -3,7 +3,6 @@ package me.corriekay.pokegoutil.utils.pokemon;
 import java.util.List;
 
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.main.PokemonMeta;
 
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
 import POGOProtos.Enums.PokemonMoveOuterClass.PokemonMove;
@@ -13,6 +12,7 @@ import POGOProtos.Settings.Master.Pokemon.StatsAttributesOuterClass.StatsAttribu
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.Utilities;
+import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 
 /**
  * A Utility class providing several methods to calculate stats and values of Pokémon.
@@ -85,7 +85,7 @@ public final class PokemonCalculationUtils {
      * @return The clean dps.
      */
     private static double dpsForMove(final PokemonId pokemonId, final PokemonMove move, final boolean primary) {
-        final MoveSettings moveMeta = PokemonMeta.getMoveSettings(move);
+        final MoveSettings moveMeta = PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(move);
         final int moveDelay = primary ? 0 : MOVE2_CHARGE_DELAY_MS;
         double dps = (double) moveMeta.getPower() / (double) (moveMeta.getDurationMs() + moveDelay) * MILLISECONDS_FACTOR;
         if (PokemonUtils.hasStab(pokemonId, move)) {
@@ -102,7 +102,7 @@ public final class PokemonCalculationUtils {
      * @return The percentage rating how good it is compared to the best.
      */
     public static double moveRating(final Pokemon p, final boolean primary) {
-        final PokemonSettings pMeta = PokemonMeta.getPokemonSettings(p.getPokemonId());
+        final PokemonSettings pMeta = PokemonGoMainWindow.getPoGo().getItemTemplates().getPokemonSettings(p.getPokemonId());
         double highestDps = 0;
         final List<PokemonMove> moves = primary ? pMeta.getQuickMovesList() : pMeta.getCinematicMovesList();
         for (final PokemonMove move : moves) {
@@ -177,7 +177,7 @@ public final class PokemonCalculationUtils {
      * @link i607ch00
      */
     public static double gymOffense(final PokemonId pokemonId, final PokemonMove move1, final PokemonMove move2, final int attackIV) {
-        final PokemonSettings meta = PokemonMeta.getPokemonSettings(pokemonId);
+        final PokemonSettings meta = PokemonGoMainWindow.getPoGo().getItemTemplates().getPokemonSettings(pokemonId);
         return Math.max(
             PokemonCalculationUtils.dpsForMove(pokemonId, move1, true) * WEAVE_LENGTH_SECONDS,
             PokemonCalculationUtils.weaveDps(pokemonId, move1, move2, 0)
@@ -215,7 +215,7 @@ public final class PokemonCalculationUtils {
                                   final PokemonMove move1, final PokemonMove move2,
                                   final int attackIV, final int defenseIV, final int staminaIV) {
         final double gymDefense = PokemonCalculationUtils.weaveDps(pokemonId, move1, move2, MOVE_2_ADDITIONAL_DELAY)
-            * (PokemonMeta.getPokemonSettings(pokemonId).getStats().getBaseAttack() + attackIV)
+            * (PokemonGoMainWindow.getPoGo().getItemTemplates().getPokemonSettings(pokemonId).getStats().getBaseAttack() + attackIV)
             * PokemonCalculationUtils.tankiness(pokemonId, defenseIV, staminaIV);
         return Math.round(gymDefense);
     }
@@ -249,7 +249,7 @@ public final class PokemonCalculationUtils {
      * @link i607ch00
      */
     public static long tankiness(final PokemonId pokemonId, final int defenseIV, final int staminaIV) {
-        final PokemonSettings meta = PokemonMeta.getPokemonSettings(pokemonId);
+        final PokemonSettings meta = PokemonGoMainWindow.getPoGo().getItemTemplates().getPokemonSettings(pokemonId);
         return (meta.getStats().getBaseStamina() + staminaIV) * (meta.getStats().getBaseDefense() + defenseIV);
     }
 
@@ -284,8 +284,8 @@ public final class PokemonCalculationUtils {
      * @link i607ch00
      */
     public static double weaveDps(final PokemonId pokemonId, final PokemonMove move1, final PokemonMove move2, final int additionalDelay) {
-        final MoveSettings pm1 = PokemonMeta.getMoveSettings(move1);
-        final MoveSettings pm2 = PokemonMeta.getMoveSettings(move2);
+        final MoveSettings pm1 = PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(move1);
+        final MoveSettings pm2 = PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(move2);
         final double moveOneStab = PokemonUtils.hasStab(pokemonId, move1) ? STAB_MULTIPLIER : NORMAL_MULTIPLIER;
         final double moveTwoStab = PokemonUtils.hasStab(pokemonId, move2) ? STAB_MULTIPLIER : NORMAL_MULTIPLIER;
 
