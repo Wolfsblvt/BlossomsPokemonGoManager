@@ -354,7 +354,7 @@ public class LoginController extends BaseController<StackPane> {
         SwingUtilities.invokeLater(() -> {
             UIHelper.setNativeLookAndFeel();
             BlossomsPoGoManager.setNewMainWindow(new PokemonGoMainWindow(accountManager.getPokemonGo(), true));
-            BlossomsPoGoManager.getMainWindow().start();
+            BlossomsPoGoManager.getMainWindow().setVisible(true);
         });        
     }
 

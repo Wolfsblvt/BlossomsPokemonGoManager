@@ -1,17 +1,23 @@
 package me.corriekay.pokegoutil;
 
+import java.awt.event.WindowAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
 import me.corriekay.pokegoutil.data.managers.GlobalSettingsController;
 import me.corriekay.pokegoutil.gui.controller.LoginController;
 import me.corriekay.pokegoutil.utils.StringLiterals;
+import me.corriekay.pokegoutil.utils.helpers.FileHelper;
+import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
-import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 
 /**
  * The main project class. Contains the runtime stuff.
@@ -19,7 +25,7 @@ import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 public class BlossomsPoGoManager extends Application {
 
     private static Stage sPrimaryStage;
-    private static PokemonGoMainWindow mainWindow;
+    private static JFrame mainWindow;
 
     /**
      * Entry point of the application.
@@ -57,7 +63,7 @@ public class BlossomsPoGoManager extends Application {
      *
      * @return current main window
      */
-    public static PokemonGoMainWindow getMainWindow() {
+    public static JFrame getMainWindow() {
         return mainWindow;
     }
 
@@ -66,7 +72,10 @@ public class BlossomsPoGoManager extends Application {
      *
      * @param window main window
      */
-    public static void setNewMainWindow(final PokemonGoMainWindow window) {
+    public static void setNewMainWindow(final JFrame window) {
+        if(BlossomsPoGoManager.mainWindow != null && BlossomsPoGoManager.mainWindow.isVisible()) {
+            BlossomsPoGoManager.mainWindow.setVisible(false);
+        }
         BlossomsPoGoManager.mainWindow = window;
     }
 
@@ -74,7 +83,27 @@ public class BlossomsPoGoManager extends Application {
     public void start(final Stage primaryStage) {
         setupGlobalExceptionHandling();
         new LoginController();
-        BlossomsPoGoManager.getPrimaryStage().show();
+        SwingUtilities.invokeLater(() -> {
+            UIHelper.setNativeLookAndFeel();
+            JFrame frame = new JFrame();
+            final JFXPanel jfxPanel = new JFXPanel();
+            frame.getContentPane().add(jfxPanel);
+            frame.setSize(310, 370);
+            frame.setLocationRelativeTo(null);
+            frame.setIconImage(FileHelper.loadImage("icon/PokeBall-icon.png"));
+            frame.setTitle(BlossomsPoGoManager.getPrimaryStage().getTitle());
+            frame.setVisible(true);
+            setNewMainWindow(frame);
+            Platform.runLater(() -> {
+                jfxPanel.setScene(BlossomsPoGoManager.getPrimaryStage().getScene());
+                frame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        Platform.runLater(() -> System.exit(0));
+                    }
+                });
+            });
+        });
     }
 
     /**
@@ -112,4 +141,12 @@ public class BlossomsPoGoManager extends Application {
             }
         });
     }
+    
+//    private void openOldGui() {
+//        SwingUtilities.invokeLater(() -> {
+//            UIHelper.setNativeLookAndFeel();
+//            AccountController.initialize();
+//            AccountController.logOn();
+//        });
+//    }
 }
