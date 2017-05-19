@@ -106,7 +106,7 @@ public class PokeHandler {
      * serves as placeholder.
      * <p>
      * Example: String "%cp%_%name%" for a 200cp Magikarp will result in a
-     * renaming of that Magikarp to "200_Magicarp".
+     * renaming of that Magikarp to "200_Magikarp".
      */
     public enum ReplacePattern {
         NICK("Nickname") {
