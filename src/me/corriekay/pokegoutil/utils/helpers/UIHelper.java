@@ -82,9 +82,9 @@ public final class UIHelper {
             @Override
             public void windowStateChanged(final WindowEvent e) {
                 if ((e.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH) {
-                    config.setBool(ConfigKey.WINDOW_MAXIMIZE, true);
+                    config.setFromObject(ConfigKey.WINDOW_MAXIMIZE, true);
                 } else {
-                    config.setBool(ConfigKey.WINDOW_MAXIMIZE, false);
+                    config.setFromObject(ConfigKey.WINDOW_MAXIMIZE, false);
                 }
             }
         });
@@ -92,15 +92,15 @@ public final class UIHelper {
             @Override
             public void componentResized(final ComponentEvent e) {
                 final JFrame w = (JFrame) e.getComponent();
-                config.setInt(ConfigKey.WINDOW_WIDTH, w.getWidth());
-                config.setInt(ConfigKey.WINDOW_HEIGHT, w.getHeight());
+                config.setFromObject(ConfigKey.WINDOW_WIDTH, w.getWidth());
+                config.setFromObject(ConfigKey.WINDOW_HEIGHT, w.getHeight());
             }
 
             @Override
             public void componentMoved(final ComponentEvent e) {
                 final JFrame w = (JFrame) e.getComponent();
-                config.setInt(ConfigKey.WINDOW_POS_X, w.getX());
-                config.setInt(ConfigKey.WINDOW_POS_Y, w.getY());
+                config.setFromObject(ConfigKey.WINDOW_POS_X, w.getX());
+                config.setFromObject(ConfigKey.WINDOW_POS_Y, w.getY());
             }
         });
 

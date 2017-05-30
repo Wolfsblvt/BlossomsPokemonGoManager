@@ -101,12 +101,12 @@ public class EvolveOperation extends Operation {
 
     @Override
     protected int getMaxDelay() {
-        return config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
+        return config.getAsObject(ConfigKey.DELAY_EVOLVE_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
+        return config.getAsObject(ConfigKey.DELAY_EVOLVE_MIN);
     }
 
     @Override

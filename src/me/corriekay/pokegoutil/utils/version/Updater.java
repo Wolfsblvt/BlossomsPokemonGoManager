@@ -105,7 +105,7 @@ public final class Updater {
     public void checkForNewVersion() {
         queryLatestVersion();
         if (hasNewerVersion()) {
-            final String skipVersion = config.getString(ConfigKey.SKIP_VERSION);
+            final String skipVersion = (String) config.getAsObject(ConfigKey.SKIP_VERSION);
             if (!latestStable.toString().equals(skipVersion)) {
                 final String versionFoundString = "New version found! Version: ";
                 System.out.println(versionFoundString + latestStable.toString());
@@ -140,7 +140,7 @@ public final class Updater {
                         // We do nothing here
                         break;
                     case 2: // Ignore
-                        config.setString(ConfigKey.SKIP_VERSION, latestStable.toString());
+                        config.setFromObject(ConfigKey.SKIP_VERSION, latestStable.toString());
                         break;
                     default:
                         // Can't happen

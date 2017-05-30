@@ -63,7 +63,7 @@ public class BlossomsPoGoManager {
     public void start(final Stage primaryStage) {
         setupGlobalExceptionHandling();
 
-        if (ConfigNew.getConfig().getBool(ConfigKey.DEVELOPFLAG)) {
+        if ((boolean) ConfigNew.getConfig().getAsObject(ConfigKey.DEVELOPFLAG)) {
             new ChooseGuiWindowController();
             sPrimaryStage.show();
         } else {

@@ -98,7 +98,7 @@ public class PokemonGoMainWindow extends JFrame {
         List<String> errors = pokemonTab.getColumnErrors();
         if (!errors.isEmpty()) {
             System.out.println("WARNING: Some column names from config could not be recognized!");
-            String configString = ConfigNew.getConfig().getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
+            String configString = (String) ConfigNew.getConfig().getAsObject(ConfigKey.POKEMONTABLE_COLUMNORDER);
             System.out.printf("Config string is: '%s'\n", configString);
             for (String wrongColumn : errors) {
                 System.out.printf("  Name not recognized: '%s'\n", wrongColumn);

@@ -56,24 +56,24 @@ public class MenuBar extends JMenuBar {
         settings = new JMenu("Settings");
 
         JCheckBoxMenuItem tAfterE = new JCheckBoxMenuItem("Transfer After Evolve");
-        tAfterE.setSelected(config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE));
+        tAfterE.setSelected((boolean) config.getAsObject(ConfigKey.TRANSFER_AFTER_EVOLVE));
         tAfterE.addItemListener(e -> {
-            config.setBool(ConfigKey.TRANSFER_AFTER_EVOLVE, tAfterE.isSelected());
+            config.setFromObject(ConfigKey.TRANSFER_AFTER_EVOLVE, tAfterE.isSelected());
             SwingUtilities.invokeLater(pokemonTab::refreshList);
         });
         settings.add(tAfterE);
 
         JCheckBoxMenuItem doNotShowBulkPopup = new JCheckBoxMenuItem("Show Bulk Completion Window");
-        doNotShowBulkPopup.setSelected(config.getBool(ConfigKey.SHOW_BULK_POPUP));
+        doNotShowBulkPopup.setSelected((boolean) config.getAsObject(ConfigKey.SHOW_BULK_POPUP));
         doNotShowBulkPopup.addItemListener(
-            e -> config.setBool(ConfigKey.SHOW_BULK_POPUP, doNotShowBulkPopup.isSelected()));
+            e -> config.setFromObject(ConfigKey.SHOW_BULK_POPUP, doNotShowBulkPopup.isSelected()));
         settings.add(doNotShowBulkPopup);
 
         JCheckBoxMenuItem includeFamily = new JCheckBoxMenuItem("Include Family On Searchbar");
-        includeFamily.setSelected(config.getBool(ConfigKey.INCLUDE_FAMILY));
+        includeFamily.setSelected((boolean) config.getAsObject(ConfigKey.INCLUDE_FAMILY));
         includeFamily.addItemListener(
             e -> {
-                config.setBool(ConfigKey.INCLUDE_FAMILY, includeFamily.isSelected());
+                config.setFromObject(ConfigKey.INCLUDE_FAMILY, includeFamily.isSelected());
                 if (!pokemonTab.getSelectedPokemon().isEmpty()) {
                     SwingUtilities.invokeLater(pokemonTab::refreshList);
                 }
@@ -82,10 +82,10 @@ public class MenuBar extends JMenuBar {
 
         JCheckBoxMenuItem alternativeIVCalculation = new JCheckBoxMenuItem(
             "Use Alternative IV Calculation (weighted stats)");
-        alternativeIVCalculation.setSelected(config.getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION));
+        alternativeIVCalculation.setSelected((boolean) config.getAsObject(ConfigKey.ALTERNATIVE_IV_CALCULATION));
         alternativeIVCalculation.addItemListener(
             e -> {
-                config.setBool(ConfigKey.ALTERNATIVE_IV_CALCULATION, alternativeIVCalculation.isSelected());
+                config.setFromObject(ConfigKey.ALTERNATIVE_IV_CALCULATION, alternativeIVCalculation.isSelected());
                 SwingUtilities.invokeLater(pokemonTab::refreshList);
             });
         settings.add(alternativeIVCalculation);

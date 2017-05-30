@@ -83,12 +83,12 @@ public class TransferOperation extends Operation {
 
     @Override
     protected int getMaxDelay() {
-        return config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
+        return config.getAsObject(ConfigKey.DELAY_TRANSFER_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
+        return config.getAsObject(ConfigKey.DELAY_TRANSFER_MIN);
     }
 
     @Override

@@ -164,7 +164,7 @@ public enum PokeColumn {
 
                 int evolvable = (int) ((double) candies / candiesToEvolve);
                 int rest = candies % candiesToEvolve;
-                final boolean transferAfterEvolve = ConfigNew.getConfig().getBool(ConfigKey.TRANSFER_AFTER_EVOLVE);
+                final boolean transferAfterEvolve = (boolean) ConfigNew.getConfig().getAsObject(ConfigKey.TRANSFER_AFTER_EVOLVE);
 
                 // We iterate and get how many candies are added while evolving and if that can make up for some more evolves
                 int newEvolvable = evolvable;

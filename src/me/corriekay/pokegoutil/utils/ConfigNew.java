@@ -68,7 +68,7 @@ public final class ConfigNew {
      * @param configKey The config key.
      * @return The Object
      */
-    private Object getAsObject(final ConfigKey configKey) {
+    public Object getAsObject(final ConfigKey configKey) {
         Object obj;
         switch (configKey.type) {
             case BOOLEAN:
@@ -96,7 +96,7 @@ public final class ConfigNew {
      * @param configKey The config key.
      * @param obj       The object to set.
      */
-    private void setFromObject(final ConfigKey configKey, Object obj) {
+    public void setFromObject(final ConfigKey configKey, Object obj) {
         switch (configKey.type) {
             case BOOLEAN:
                 setBool(configKey, (Boolean) obj);

@@ -53,10 +53,10 @@ public final class LoginHelper {
                 captcha.setVisible(true);
             }
         });
-        if (ConfigNew.getConfig().getBool(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
+        if ((boolean) ConfigNew.getConfig().getAsObject(ConfigKey.DEVICE_INFO_USE_CUSTOM)) {
             go.setDeviceInfo(new DeviceInfo(new CustomDeviceInfo()));
         }
-        final String pokeHashKey = ConfigNew.getConfig().getString(ConfigKey.LOGIN_POKEHASHKEY);
+        final String pokeHashKey = (String) ConfigNew.getConfig().getAsObject(ConfigKey.LOGIN_POKEHASHKEY);
         try {
             if (pokeHashKey != null) {
                 final PokeHashProvider pokeHashProvider = new PokeHashProvider(PokeHashKey.from(pokeHashKey), true);

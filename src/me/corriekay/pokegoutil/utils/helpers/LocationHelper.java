@@ -132,7 +132,7 @@ public final class LocationHelper {
      * @throws JSONException json.
      */
     private static JSONObject queryJsonFromUrl(final String latLong) throws IOException, JSONException {
-        final String language = ConfigNew.getConfig().getString(ConfigKey.LANGUAGE);
+        final String language = (String) ConfigNew.getConfig().getAsObject(ConfigKey.LANGUAGE);
         final String apiUrl = "http://maps.googleapis.com/maps/api/geocode/json?latlng=%s&sensor=true&language=%s";
         final String formattedUrl = String.format(apiUrl, latLong.replace(" ", "%20"), language);
         try {

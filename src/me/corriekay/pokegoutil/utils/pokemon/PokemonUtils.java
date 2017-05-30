@@ -57,7 +57,7 @@ public final class PokemonUtils {
     }
 
     private static Locale getLocale() {
-        final String lang = ConfigNew.getConfig().getString(ConfigKey.LANGUAGE);
+        final String lang = (String) ConfigNew.getConfig().getAsObject(ConfigKey.LANGUAGE);
 
         final Locale locale;
         final String[] langar = lang.split(StringLiterals.UNDERSCORE);

@@ -218,7 +218,7 @@ public class PokemonTab extends JPanel {
         // Pokemon name language drop down
         final String[] locales = {"en", "de", "fr", "ru", "zh_CN", "zh_HK", "ja"};
         final JComboBox<String> pokelang = new JComboBox<>(locales);
-        pokelang.setSelectedItem(config.getString(ConfigKey.LANGUAGE));
+        pokelang.setSelectedItem(config.getAsObject(ConfigKey.LANGUAGE));
         pokelang.addActionListener(e -> new SwingWorker<Void, Void>() {
             @Override
             protected Void doInBackground() {
@@ -245,7 +245,7 @@ public class PokemonTab extends JPanel {
             protected Void doInBackground() {
                 final String size = fontSize.getSelectedItem().toString();
                 pt.setFont(pt.getFont().deriveFont(Float.parseFloat(size)));
-                config.setInt(ConfigKey.FONT_SIZE, Integer.parseInt(size));
+                config.setFromObject(ConfigKey.FONT_SIZE, Integer.parseInt(size));
                 return null;
             }
         }.execute());
@@ -261,7 +261,7 @@ public class PokemonTab extends JPanel {
     }
 
     private void changeLanguage(final String langCode) {
-        config.setString(ConfigKey.LANGUAGE, langCode);
+        config.setFromObject(ConfigKey.LANGUAGE, langCode);
 
         // Check if cached locations should be deleted, because they are language dependant
         if (LocationHelper.locationFileExists() && JOptionPane.showConfirmDialog(null,
@@ -297,7 +297,7 @@ public class PokemonTab extends JPanel {
             + (skipped.getValue() > 0 ? "\nSkipped: " + skipped.getValue() : "")
             + (err.getValue() > 0 ? "\nErrors: " + err.getValue() : "");
 
-        if (config.getBool(ConfigKey.SHOW_BULK_POPUP)) {
+        if ((boolean) config.getAsObject(ConfigKey.SHOW_BULK_POPUP)) {
             JOptionPane.showMessageDialog(null, finishText, "Finished Operation", JOptionPane.INFORMATION_MESSAGE);
         } else {
             System.out.println(finishText);
@@ -363,8 +363,8 @@ public class PokemonTab extends JPanel {
 
             // If not last element and API was queried, sleep until the next one
             if (!selection.get(selection.size() - 1).equals(pokemon)) {
-                final int sleepMin = config.getInt(ConfigKey.DELAY_RENAME_MIN);
-                final int sleepMax = config.getInt(ConfigKey.DELAY_RENAME_MAX);
+                final int sleepMin = (int) config.getAsObject(ConfigKey.DELAY_RENAME_MIN);
+                final int sleepMax = (int) config.getAsObject(ConfigKey.DELAY_RENAME_MAX);
                 Utilities.sleepRandom(sleepMin, sleepMax);
             }
         };
@@ -519,7 +519,7 @@ public class PokemonTab extends JPanel {
                         "Evolving %s. Evolve result: %s",
                         PokemonUtils.getLocalPokeName(poke),
                         evolutionResultWrapper.getResult().toString()));
-                    if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
+                    if ((boolean) config.getAsObject(ConfigKey.TRANSFER_AFTER_EVOLVE)) {
                         if (newPoke.isFavorite()) {
                             System.out.println(String.format(
                                 "Skipping \"Transfer After Evolve\" for %s because favorite.",
@@ -535,8 +535,8 @@ public class PokemonTab extends JPanel {
                                 newHp, (newHp - hp)));
                         } else {
                             // Sleep before transferring
-                            final int sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
-                            final int sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
+                            final int sleepMin = (int) config.getAsObject(ConfigKey.DELAY_EVOLVE_MIN);
+                            final int sleepMax = (int) config.getAsObject(ConfigKey.DELAY_EVOLVE_MAX);
                             Utilities.sleepRandom(sleepMin, sleepMax);
 
                             final ReleasePokemonResponse.Result result = newPoke
@@ -582,11 +582,11 @@ public class PokemonTab extends JPanel {
                     int sleepMin;
                     int sleepMax;
                     if (afterTransfer) {
-                        sleepMin = config.getInt(ConfigKey.DELAY_TRANSFER_MIN);
-                        sleepMax = config.getInt(ConfigKey.DELAY_TRANSFER_MAX);
+                        sleepMin = (int) config.getAsObject(ConfigKey.DELAY_TRANSFER_MIN);
+                        sleepMax = (int) config.getAsObject(ConfigKey.DELAY_TRANSFER_MAX);
                     } else {
-                        sleepMin = config.getInt(ConfigKey.DELAY_EVOLVE_MIN);
-                        sleepMax = config.getInt(ConfigKey.DELAY_EVOLVE_MAX);
+                        sleepMin = (int) config.getAsObject(ConfigKey.DELAY_EVOLVE_MIN);
+                        sleepMax = (int) config.getAsObject(ConfigKey.DELAY_EVOLVE_MAX);
                     }
                     Utilities.sleepRandom(sleepMin, sleepMax);
                 }
@@ -607,7 +607,7 @@ public class PokemonTab extends JPanel {
         SwingUtilities.invokeLater(this::refreshList);
         showFinishedText(String.format(
                 "Pokémon batch evolve%s complete!",
-                config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : ""),
+                (boolean) config.getAsObject(ConfigKey.TRANSFER_AFTER_EVOLVE) ? "/transfer" : ""),
             selection.size(), success, skipped, err);
     }
 
@@ -705,8 +705,8 @@ public class PokemonTab extends JPanel {
 
                 // If not last element, sleep until the next one
                 if (!selection.get(selection.size() - 1).equals(poke)) {
-                    final int sleepMin = config.getInt(ConfigKey.DELAY_POWERUP_MIN);
-                    final int sleepMax = config.getInt(ConfigKey.DELAY_POWERUP_MAX);
+                    final int sleepMin = (int) config.getAsObject(ConfigKey.DELAY_POWERUP_MIN);
+                    final int sleepMax = (int) config.getAsObject(ConfigKey.DELAY_POWERUP_MAX);
                     Utilities.sleepRandom(sleepMin, sleepMax);
                 }
             } catch (final Exception e) {
@@ -775,8 +775,8 @@ public class PokemonTab extends JPanel {
 
                 // If not last element, sleep until the next one
                 if (!selection.get(selection.size() - 1).equals(poke)) {
-                    final int sleepMin = config.getInt(ConfigKey.DELAY_FAVORITE_MIN);
-                    final int sleepMax = config.getInt(ConfigKey.DELAY_FAVORITE_MAX);
+                    final int sleepMin = (int) config.getAsObject(ConfigKey.DELAY_FAVORITE_MIN);
+                    final int sleepMax = (int) config.getAsObject(ConfigKey.DELAY_FAVORITE_MAX);
                     Utilities.sleepRandom(sleepMin, sleepMax);
                 }
             } catch (final Exception e) {
@@ -835,7 +835,7 @@ public class PokemonTab extends JPanel {
         switch (operation) {
             case RENAME:
                 panel = buildPanelForRename();
-                savedPattern = config.getString(ConfigKey.RENAME_PATTERN);
+                savedPattern = (String) config.getAsObject(ConfigKey.RENAME_PATTERN);
                 message = "Renaming " + pokes.size() + " Pokémon.";
                 break;
             default:
@@ -847,7 +847,7 @@ public class PokemonTab extends JPanel {
         if (input != null) {
             switch (operation) {
                 case RENAME:
-                    config.setString(ConfigKey.RENAME_PATTERN, input);
+                    config.setFromObject(ConfigKey.RENAME_PATTERN, input);
                 default:
                     break;
             }
@@ -1007,7 +1007,7 @@ public class PokemonTab extends JPanel {
             {
                 synchronized (go.getInventories().getPokebank().getLock()) {
                     go.getInventories().getPokebank().getPokemons().forEach(poke -> {
-                        final boolean useFamilyName = config.getBool(ConfigKey.INCLUDE_FAMILY);
+                        final boolean useFamilyName = (boolean) config.getAsObject(ConfigKey.INCLUDE_FAMILY);
                         String familyName = "";
                         if (useFamilyName) {
                             // Try translating family name

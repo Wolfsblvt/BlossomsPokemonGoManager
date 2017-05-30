@@ -47,7 +47,7 @@ public class ConfigNewTest {
         ConfigNew myCFG = ConfigNew.getConfig();
         ConfigKey myConfigKey = ConfigKey.values()[0];
             
-        assertEquals(false, myCFG.getBool(myConfigKey));
+        assertEquals(false, myCFG.getAsObject(myConfigKey));
     }
     
     /**
@@ -62,7 +62,7 @@ public class ConfigNewTest {
         ConfigNew myCFG = ConfigNew.getConfig();
         ConfigKey myConfigKey = ConfigKey.values()[2];
         
-        assertEquals(null, myCFG.getString(myConfigKey));
+        assertEquals(null, myCFG.getAsObject(myConfigKey));
     }
     
     /**
@@ -77,7 +77,7 @@ public class ConfigNewTest {
         ConfigNew myCFG = ConfigNew.getConfig();
         ConfigKey myConfigKey = ConfigKey.values()[8];
             
-        assertEquals(800, myCFG.getInt(myConfigKey));
+        assertEquals(800, myCFG.getAsObject(myConfigKey));
     }
     
     
@@ -92,8 +92,8 @@ public class ConfigNewTest {
 
         ConfigNew myCFG = ConfigNew.getConfig();
         ConfigKey myConfigKey = ConfigKey.values()[0];
-        myCFG.setBool(myConfigKey, true);
-        assertEquals(true, myCFG.getBool(myConfigKey));
+        myCFG.setFromObject(myConfigKey, true);
+        assertEquals(true, myCFG.getAsObject(myConfigKey));
     }
     
     /**
@@ -109,8 +109,8 @@ public class ConfigNewTest {
         ConfigNew myCFG = ConfigNew.getConfig();
         ConfigKey myConfigKey = ConfigKey.values()[3];
         String myString = "kbbn2001";
-        myCFG.setString(myConfigKey, myString);
-        assertEquals(myString, myCFG.getString(myConfigKey));
+        myCFG.setFromObject(myConfigKey, myString);
+        assertEquals(myString, myCFG.getAsObject(myConfigKey));
     }
     
     /**
@@ -126,8 +126,8 @@ public class ConfigNewTest {
         ConfigNew myCFG = ConfigNew.getConfig();
         ConfigKey myConfigKey = ConfigKey.values()[8];
         int value = 1000;
-        myCFG.setInt(myConfigKey, value);
-        assertEquals(value, myCFG.getInt(myConfigKey));
+        myCFG.setFromObject(myConfigKey, value);
+        assertEquals(value, myCFG.getAsObject(myConfigKey));
     }
     
     /**
@@ -143,9 +143,9 @@ public class ConfigNewTest {
         ConfigNew myCFG = ConfigNew.getConfig();
         ConfigKey myConfigKey = ConfigKey.values()[8];
         int value = 1900;
-        myCFG.setInt(myConfigKey, value);
+        myCFG.setFromObject(myConfigKey, value);
         myCFG.delete(myConfigKey);
-        assertEquals(800, myCFG.getInt(myConfigKey));
+        assertEquals(800, myCFG.getAsObject(myConfigKey));
     }
 
 }

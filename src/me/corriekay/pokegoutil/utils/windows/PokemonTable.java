@@ -34,7 +34,7 @@ public class PokemonTable extends JTable {
 
     // Global statics
     public static final int COLUMN_MARGIN = 3;
-    public static final int ROW_HEIGHT_PADDING = ConfigNew.getConfig().getInt(ConfigKey.ROW_PADDING);
+    public static final int ROW_HEIGHT_PADDING = (int) ConfigNew.getConfig().getAsObject(ConfigKey.ROW_PADDING);
 
     private static final String COLUMN_SEPARATOR = ",";
 
@@ -79,15 +79,15 @@ public class PokemonTable extends JTable {
                 final List<SortKey> keys = (List<SortKey>) trs.getSortKeys();
                 if (keys.size() > 0) {
                     final SortKey prim = keys.get(0);
-                    config.setString(ConfigKey.SORT_ORDER_1, prim.getSortOrder().toString());
+                    config.setFromObject(ConfigKey.SORT_ORDER_1, prim.getSortOrder().toString());
                     final String sortEnum = PokeColumn.getForHeading(ptm.getColumnName(prim.getColumn())).name();
-                    config.setString(ConfigKey.SORT_ENUM_1, sortEnum);
+                    config.setFromObject(ConfigKey.SORT_ENUM_1, sortEnum);
                 }
                 if (keys.size() > 1) {
                     final SortKey sec = keys.get(1);
-                    config.setString(ConfigKey.SORT_ORDER_2, sec.getSortOrder().toString());
+                    config.setFromObject(ConfigKey.SORT_ORDER_2, sec.getSortOrder().toString());
                     final String sortEnum = PokeColumn.getForHeading(ptm.getColumnName(sec.getColumn())).name();
-                    config.setString(ConfigKey.SORT_ENUM_2, sortEnum);
+                    config.setFromObject(ConfigKey.SORT_ENUM_2, sortEnum);
                 }
             });
 
@@ -109,7 +109,7 @@ public class PokemonTable extends JTable {
      */
     private void restoreColumnOrder() {
         List<String> myColumnEnumNames = new LinkedList<String>();
-        final String columnOrder = config.getString(ConfigKey.POKEMONTABLE_COLUMNORDER);
+        final String columnOrder = (String) config.getAsObject(ConfigKey.POKEMONTABLE_COLUMNORDER);
         if (columnOrder != null && !columnOrder.isEmpty()) {
             myColumnEnumNames.addAll(Arrays.asList(columnOrder.split(COLUMN_SEPARATOR)));
         } else {
@@ -154,7 +154,7 @@ public class PokemonTable extends JTable {
             }
         }
         final String columnOrderEnums = String.join(COLUMN_SEPARATOR, enumNames);
-        ConfigNew.getConfig().setString(ConfigKey.POKEMONTABLE_COLUMNORDER, columnOrderEnums);
+        ConfigNew.getConfig().setFromObject(ConfigKey.POKEMONTABLE_COLUMNORDER, columnOrderEnums);
     }
 
     /**
@@ -178,8 +178,8 @@ public class PokemonTable extends JTable {
     private void recreateSortKeyFromConfig(final List<SortKey> sortKeys,
             final ConfigKey sortcolumnCfgKey, final ConfigKey sortorderCfgKey) {
 
-        final String sortColumnEnumName = config.getString(sortcolumnCfgKey);
-        final String sortOrderConfigValue = config.getString(sortorderCfgKey);
+        final String sortColumnEnumName = (String) config.getAsObject(sortcolumnCfgKey);
+        final String sortOrderConfigValue = (String) config.getAsObject(sortorderCfgKey);
         if (sortColumnEnumName != null && sortOrderConfigValue != null) {
             try {
                 // resolving Column's enum name to it's heading,

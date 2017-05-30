@@ -47,7 +47,7 @@ public final class PokemonCalculationUtils {
      */
     public static double ivRating(final Pokemon p) {
         double Rating;
-        boolean isAdvancedCalculation = ConfigNew.getConfig().getBool(ConfigKey.ALTERNATIVE_IV_CALCULATION);
+        boolean isAdvancedCalculation = (boolean) ConfigNew.getConfig().getAsObject(ConfigKey.ALTERNATIVE_IV_CALCULATION);
         if (isAdvancedCalculation) {
             Rating = calculateRatingAdvanced(p);
         } else {

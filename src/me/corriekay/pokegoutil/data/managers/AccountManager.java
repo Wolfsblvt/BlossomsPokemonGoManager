@@ -103,9 +103,9 @@ public final class AccountManager {
 
     public LoginData getLoginData() {
         final LoginData loginData = new LoginData(
-                config.getString(ConfigKey.LOGIN_PTC_USERNAME),
-                config.getString(ConfigKey.LOGIN_PTC_PASSWORD),
-                config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN));
+                (String) config.getAsObject(ConfigKey.LOGIN_PTC_USERNAME),
+                (String) config.getAsObject(ConfigKey.LOGIN_PTC_PASSWORD),
+                (String) config.getAsObject(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN));
 
         if (loginData.isValidGoogleLogin()) {
             loginData.setSavedToken(true);
@@ -173,7 +173,7 @@ public final class AccountManager {
         http = new OkHttpClient();
 
         final String authCode = loginData.getToken();
-        final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
+        final boolean saveAuth = (boolean) config.getAsObject(ConfigKey.LOGIN_SAVE_AUTH);
 
         BpmResult result = new BpmResult();
         
@@ -197,7 +197,7 @@ public final class AccountManager {
 
             credentialProvider = provider;
             if (saveAuth && !shouldRefresh) {
-                config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
+                config.setFromObject(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
             } else if (!saveAuth) {
                 deleteLoginData(LoginType.GOOGLE_AUTH);
             }
@@ -231,15 +231,15 @@ public final class AccountManager {
 
         final String username = loginData.getUsername();
         final String password = loginData.getPassword();
-        final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
+        final boolean saveAuth = (boolean) config.getAsObject(ConfigKey.LOGIN_SAVE_AUTH);
 
         BpmResult result = new BpmResult();
         
         try {
             credentialProvider = new PtcCredentialProvider(http, username, password);
-            config.setString(ConfigKey.LOGIN_PTC_USERNAME, username);
+            config.setFromObject(ConfigKey.LOGIN_PTC_USERNAME, username);
             if (saveAuth) {
-                config.setString(ConfigKey.LOGIN_PTC_PASSWORD, password);
+                config.setFromObject(ConfigKey.LOGIN_PTC_PASSWORD, password);
             } else {
                 deleteLoginData(LoginType.PTC);
             }
@@ -285,6 +285,6 @@ public final class AccountManager {
      * @param shouldSave settings for saveAuth
      */
     public void setSaveLogin(final boolean shouldSave) {
-        config.setBool(ConfigKey.LOGIN_SAVE_AUTH, shouldSave);
+        config.setFromObject(ConfigKey.LOGIN_SAVE_AUTH, shouldSave);
     }
 }

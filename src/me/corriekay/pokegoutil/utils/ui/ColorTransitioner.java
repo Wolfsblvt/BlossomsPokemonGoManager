@@ -69,7 +69,7 @@ public class ColorTransitioner {
             (int) Math.round(lower.color.getRed() * (1 - spanned) + higher.color.getRed() * spanned),
             (int) Math.round(lower.color.getGreen() * (1 - spanned) + higher.color.getGreen() * spanned),
             (int) Math.round(lower.color.getBlue() * (1 - spanned) + higher.color.getBlue() * spanned),
-            Utilities.limit(0, ConfigNew.getConfig().getInt(ConfigKey.COLOR_ALPHA), ColorHelper.MAX_COLOR)
+            Utilities.limit(0, (int) ConfigNew.getConfig().getAsObject(ConfigKey.COLOR_ALPHA), ColorHelper.MAX_COLOR)
         );
     }
 

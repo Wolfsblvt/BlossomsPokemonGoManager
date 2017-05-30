@@ -85,8 +85,8 @@ public final class AccountController {
             credentialProvider = null;
             http = new OkHttpClient();
 
-            final JTextField ptcUsernameTextField = new JTextField(config.getString(ConfigKey.LOGIN_PTC_USERNAME));
-            final JTextField ptcPasswordTextField = new JPasswordField(config.getString(ConfigKey.LOGIN_PTC_PASSWORD));
+            final JTextField ptcUsernameTextField = new JTextField((String) config.getAsObject(ConfigKey.LOGIN_PTC_USERNAME));
+            final JTextField ptcPasswordTextField = new JPasswordField((String) config.getAsObject(ConfigKey.LOGIN_PTC_PASSWORD));
 
             int response = logOnSavedAccount(ptcUsernameTextField, ptcPasswordTextField);
 
@@ -155,9 +155,9 @@ public final class AccountController {
 
         // We to set up some vars that we may need later.
         // Those will be overwritten if data is entered, otherwise they should contain the correct values loaded from the config.
-        String googleAuthToken = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, null);
-        String googleUsername = config.getString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME, null);
-        String googlePassword = config.getString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD, null);
+        String googleAuthToken = (String) config.getAsObject(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+        String googleUsername = (String) config.getAsObject(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
+        String googlePassword = (String) config.getAsObject(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
         boolean authTokenRefresh = false;
 
         LoginType usedGoogleLoginType = checkSavedConfig();
@@ -232,16 +232,16 @@ public final class AccountController {
             }
 
             // Now check if the data should be saved in config. Asking the user.
-            if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
+            if ((boolean) config.getAsObject(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
                 // We save that auth is generally saved
-                config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
+                config.setFromObject(ConfigKey.LOGIN_SAVE_AUTH, true);
 
                 // We save the login data now
                 if (isLoginTypeGoogleAuth && !authTokenRefresh) {
-                    config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, googleProvider.getRefreshToken());
+                    config.setFromObject(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, googleProvider.getRefreshToken());
                 } else if (isLoginTypeAppPassword) {
-                    config.setString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME, googleUsername);
-                    config.setString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD, googlePassword);
+                    config.setFromObject(ConfigKey.LOGIN_GOOGLE_APP_USERNAME, googleUsername);
+                    config.setFromObject(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD, googlePassword);
                 }
             } else {
                 deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
@@ -264,10 +264,10 @@ public final class AccountController {
             throws LoginFailedException, CaptchaActiveException, RemoteServerException {
         CredentialProvider credentialProvider;
         credentialProvider = new PtcCredentialProvider(http, ptcUsernameTextField.getText(), ptcPasswordTextField.getText());
-        config.setString(ConfigKey.LOGIN_PTC_USERNAME, ptcUsernameTextField.getText());
-        if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
-            config.setString(ConfigKey.LOGIN_PTC_PASSWORD, ptcPasswordTextField.getText());
-            config.setBool(ConfigKey.LOGIN_SAVE_AUTH, true);
+        config.setFromObject(ConfigKey.LOGIN_PTC_USERNAME, ptcUsernameTextField.getText());
+        if ((boolean) config.getAsObject(ConfigKey.LOGIN_SAVE_AUTH) || checkSaveAuth()) {
+            config.setFromObject(ConfigKey.LOGIN_PTC_PASSWORD, ptcPasswordTextField.getText());
+            config.setFromObject(ConfigKey.LOGIN_SAVE_AUTH, true);
         } else {
             deleteLoginData(LoginType.PTC);
         }
@@ -453,7 +453,7 @@ public final class AccountController {
 
     private static LoginType checkSavedConfig() {
         LoginType result = LoginType.NONE;
-        if (config.getBool(ConfigKey.LOGIN_SAVE_AUTH)){ 
+        if ((boolean) config.getAsObject(ConfigKey.LOGIN_SAVE_AUTH)){ 
             if (getLoginData(LoginType.GOOGLE_AUTH) != null) {
                 result = LoginType.GOOGLE_AUTH;
             }else if (getLoginData(LoginType.GOOGLE_APP_PASSWORD) != null) {
@@ -470,21 +470,21 @@ public final class AccountController {
   
         switch (type) {
             case GOOGLE_AUTH:
-                final String token = config.getString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                final String token = (String) config.getAsObject(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
                 boolean isTokenNotNull = (token != null);
                 if(isTokenNotNull)
                     result = Collections.singletonList(token);
                 break;
             case GOOGLE_APP_PASSWORD:
-                final String googleUsername = config.getString(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
-                final String googlePassword = config.getString(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
+                final String googleUsername = (String) config.getAsObject(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
+                final String googlePassword = (String) config.getAsObject(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
                 boolean isGoogleAppAccountNotNull = (googleUsername != null && googlePassword != null);
                 if (isGoogleAppAccountNotNull)
                     result = Arrays.asList(googleUsername, googlePassword);
                 break;
             case PTC:
-                final String ptcUsername = config.getString(ConfigKey.LOGIN_PTC_USERNAME);
-                final String ptcPassword = config.getString(ConfigKey.LOGIN_PTC_PASSWORD);
+                final String ptcUsername = (String) config.getAsObject(ConfigKey.LOGIN_PTC_USERNAME);
+                final String ptcPassword = (String) config.getAsObject(ConfigKey.LOGIN_PTC_PASSWORD);
                 boolean isPtcAccountNotNull = (ptcUsername != null && ptcPassword != null);
                 if(isPtcAccountNotNull)
                     result = Arrays.asList(ptcUsername, ptcPassword);

@@ -75,7 +75,7 @@ public class PokemonTableController extends BaseController<GridPane> {
      */
     private ArrayList<ColumnId> getColumnOrderFromConfig() {
         final ArrayList<ColumnId> columnOrder = new ArrayList<>();
-        final String config = ConfigNew.getConfig().getString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE);
+        final String config = (String) ConfigNew.getConfig().getAsObject(ConfigKey.COLUMN_ORDER_POKEMON_TABLE);
         final ColumnId[] colIds = ColumnId.values();
 
         if (config == null || config.isEmpty()) {
@@ -295,7 +295,7 @@ public class PokemonTableController extends BaseController<GridPane> {
             i++;
         }
 
-        ConfigNew.getConfig().setString(ConfigKey.COLUMN_ORDER_POKEMON_TABLE, columnOrder);
+        ConfigNew.getConfig().setFromObject(ConfigKey.COLUMN_ORDER_POKEMON_TABLE, columnOrder);
     }
 
     @Override
