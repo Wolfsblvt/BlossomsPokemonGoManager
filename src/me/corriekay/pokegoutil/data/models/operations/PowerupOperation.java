@@ -37,12 +37,12 @@ public class PowerupOperation extends Operation {
 
     @Override
     protected int getMaxDelay() {
-        return config.getAsObject(ConfigKey.DELAY_POWERUP_MAX);
+        return (int) config.getAsObject(ConfigKey.DELAY_POWERUP_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return config.getAsObject(ConfigKey.DELAY_POWERUP_MIN);
+        return (int) config.getAsObject(ConfigKey.DELAY_POWERUP_MIN);
     }
 
     @Override

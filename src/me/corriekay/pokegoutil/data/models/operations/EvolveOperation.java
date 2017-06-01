@@ -16,7 +16,6 @@ import me.corriekay.pokegoutil.utils.pokemon.PokemonUtils;
 
 public class EvolveOperation extends Operation {
 
- 
     /**
      * Instantiate EvolveOperation. Only used in mocking.
      */
@@ -43,29 +42,56 @@ public class EvolveOperation extends Operation {
             evolutionResult = pokemon.getPokemon().evolve();
         } catch (CaptchaActiveException e) {
             e.printStackTrace();
-            return operationResultMessage(erroEvolvingString, 
-                    "Captcha active in account");
+            return new BpmOperationResult(String.format(
+                    erroEvolvingString,
+                    pokemon.getSpecies(),
+                    "Captcha active in account"),
+                    OperationError.EVOLVE_FAIL);
         } catch (HashException e) {
-            return operationResultMessage(erroEvolvingString, 
-                    "Error with Hash: " + e.getMessage());                   
+            return new BpmOperationResult(String.format(
+                    erroEvolvingString,
+                    pokemon.getSpecies(),
+                    "Error with Hash: " + e.getMessage()),
+                    OperationError.EVOLVE_FAIL);
         }
 
         if (!evolutionResult.isSuccessful()) {
-            return operationResultMessage(erroEvolvingString, 
-                    evolutionResult.getResult().toString());                     
+            return new BpmOperationResult(String.format(
+                    erroEvolvingString,
+                    pokemon.getSpecies(),
+                    evolutionResult.getResult().toString()),
+                    OperationError.EVOLVE_FAIL);
         }
-        
-        return evolveSuccessMessage(evolutionResult);
-    }
 
-    private BpmOperationResult evolveSuccessMessage(final EvolutionResult evolutionResult) {
-        EvolveElement ExEle = new EvolveElement(pokemon.getPokemon());
-        EvolveElement NewEle = new EvolveElement(evolutionResult.getEvolvedPokemon());
+        final Pokemon poke = pokemon.getPokemon();
+        final int candies = poke.getCandy();
+        final int candiesToEvolve = poke.getCandiesToEvolve();
+        final int cp = poke.getCp();
+        final int hp = poke.getMaxStamina();
 
-        pokemon.setPokemon(NewEle.getPokemon());
+        final Pokemon newPoke = evolutionResult.getEvolvedPokemon();
+        final int newCandies = newPoke.getCandy();
+        final int newCp = newPoke.getCp();
+        final int newHp = newPoke.getStamina();
+        final int candyRefund = 1;
+
+        pokemon.setPokemon(newPoke);
 
         final BpmOperationResult result = new BpmOperationResult();
-        successMessage(evolutionResult, ExEle, NewEle, result);
+
+        result.addSuccessMessage(String.format(
+                "Evolving %s. Evolve result: %s",
+                PokemonUtils.getLocalPokeName(poke),
+                evolutionResult.getResult().toString()));
+
+        result.addSuccessMessage(String.format(
+                "Stat changes: "
+                        + "(Candies: %d[%d-%d+%d], "
+                        + "CP: %d[+%d], "
+                        + "HP: %d[+%d])",
+                        newCandies, candies, candiesToEvolve, candyRefund,
+                        newCp, (newCp - cp),
+                        newHp, (newHp - hp)));
 
         if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)){
             result.setNextOperation(OperationId.TRANSFER);
@@ -74,39 +100,14 @@ public class EvolveOperation extends Operation {
         return result;
     }
 
-    private BpmOperationResult operationResultMessage(final String erroEvolvingString,
-            String whatError) {
-        return new BpmOperationResult(String.format(
-                erroEvolvingString,
-                pokemon.getSpecies(),
-                whatError),
-                OperationError.EVOLVE_FAIL);
-    }
-
-    private void successMessage(final EvolutionResult evolutionResult, EvolveElement ExEle, EvolveElement NewEle, final BpmOperationResult result) {
-        result.addSuccessMessage(String.format(
-                "Evolving %s. Evolve result: %s",
-                PokemonUtils.getLocalPokeName(ExEle.getPokemon()),
-                evolutionResult.getResult().toString()));
-
-        result.addSuccessMessage(String.format(
-                "Stat changes: "
-                        + "(Candies: %d[%d-%d+%d], "
-                        + "CP: %d[+%d], "
-                        + "HP: %d[+%d])",
-                        NewEle.candies, ExEle.candies, ExEle.candiesToEvolve, ExEle.candyRefund,
-                        NewEle.cp, (NewEle.cp - ExEle.cp),
-                        NewEle.hp, (NewEle.hp - ExEle.hp)));
-    }
-
     @Override
     protected int getMaxDelay() {
-        return config.getAsObject(ConfigKey.DELAY_EVOLVE_MAX);
+        return (int) config.getAsObject(ConfigKey.DELAY_EVOLVE_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return config.getAsObject(ConfigKey.DELAY_EVOLVE_MIN);
+        return (int) config.getAsObject(ConfigKey.DELAY_EVOLVE_MIN);
     }
 
     @Override

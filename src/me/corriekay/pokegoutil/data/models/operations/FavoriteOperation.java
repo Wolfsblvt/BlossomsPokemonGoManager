@@ -32,12 +32,12 @@ public class FavoriteOperation extends Operation {
 
     @Override
     protected int getMaxDelay() {
-        return config.getAsObject(ConfigKey.DELAY_FAVORITE_MAX);
+        return (int) config.getAsObject(ConfigKey.DELAY_FAVORITE_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return config.getAsObject(ConfigKey.DELAY_FAVORITE_MIN);
+        return (int) config.getAsObject(ConfigKey.DELAY_FAVORITE_MIN);
     }
 
     @Override

@@ -36,12 +36,12 @@ public class RenameOperation extends Operation {
 
     @Override
     protected int getMaxDelay() {
-        return config.getAsObject(ConfigKey.DELAY_RENAME_MAX);
+        return (int) config.getAsObject(ConfigKey.DELAY_RENAME_MAX);
     }
 
     @Override
     protected int getMinDelay() {
-        return config.getAsObject(ConfigKey.DELAY_RENAME_MIN);
+        return (int) config.getAsObject(ConfigKey.DELAY_RENAME_MIN);
     }
 
     @Override
