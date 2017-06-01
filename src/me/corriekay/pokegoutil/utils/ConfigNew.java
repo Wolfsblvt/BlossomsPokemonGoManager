@@ -24,9 +24,8 @@ public final class ConfigNew {
     private static final ConfigNew cfg = new ConfigNew();
 
     // Constants
-    private static final String CANNOT_FETCH_UNF_STRING = "Could not fetch config item '%s'! Fallback to default: %s%n";
-    private static final String CANNOT_SAVE_UNF_STRING = "Could not save '%s' to config (%s)!%n";
-
+    public static final String CANNOT_FETCH_UNF_STRING = "Could not fetch config item '%s'! Fallback to default: %s%n";
+    public static final String CANNOT_SAVE_UNF_STRING = "Could not save '%s' to config (%s)!%n";
     // Class properties
     private JSONObject json;
     private long lastModified = file.lastModified();
@@ -87,6 +86,7 @@ public final class ConfigNew {
                 obj = getJSONObject(configKey);
                 break;
         }
+        
         return obj;
     }
 
@@ -97,23 +97,16 @@ public final class ConfigNew {
      * @param obj       The object to set.
      */
     public void setFromObject(final ConfigKey configKey, Object obj) {
-        switch (configKey.type) {
-            case BOOLEAN:
-                setBool(configKey, (Boolean) obj);
-                break;
-            case STRING:
-                setString(configKey, (String) obj);
-                break;
-            case INTEGER:
-                setInt(configKey, (Integer) obj);
-                break;
-            case DOUBLE:
-                setDouble(configKey, (Double) obj);
-                break;
-            default:
-                setJSONObject(configKey, new JSONObject(obj));
-                break;
+        SetStrategy mySetStrategy;
+        mySetStrategy = SetFactory.createSetStrategy(configKey);
+        
+        final FindResult res = findNode(configKey.keyName, true);
+        try {
+            mySetStrategy.setJSONElement(configKey, obj, res);
+        } catch (final JSONException ignored) {
+            System.out.printf(CANNOT_SAVE_UNF_STRING, obj, configKey.keyName);
         }
+        saveConfig();
     }
 
     /**
@@ -493,37 +486,6 @@ public final class ConfigNew {
     /**
      * The Result which combines a node with it's value.
      */
-    private class FindResult {
-        private final JSONObject node;
-        private final String name;
-
-        /**
-         * Creates a Result object.
-         *
-         * @param node The node.
-         * @param name The value.
-         */
-        FindResult(final JSONObject node, final String name) {
-            this.node = node;
-            this.name = name;
-        }
-
-        /**
-         * Returns the node.
-         *
-         * @return The node.
-         */
-        public JSONObject getNode() {
-            return this.node;
-        }
-
-        /**
-         * Returns the name.
-         *
-         * @return The name.
-         */
-        public String getName() {
-            return this.name;
-        }
-    }
+   
+    
 }
