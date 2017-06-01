@@ -8,33 +8,26 @@ import me.corriekay.pokegoutil.data.models.PokemonModel;
 /*
  * This controller takes care of handling pokémon
  */
-public class PokemonBagManager {
+public class PokemonBagManager extends ManagerInitializer{
 
-    private static final PokemonBagManager S_INSTANCE = new PokemonBagManager();
-    private static boolean sIsInit = false;
+    private final PokemonBagManager S_INSTANCE = new PokemonBagManager();
     private PokemonBag pokemonBag;
 
     private PokemonBagManager() {
 
     }
 
-    public static void initialize(PokemonGo go) {
-        if (!sIsInit) {
-            try {
-                S_INSTANCE.pokemonBag = new PokemonBag(go.getInventories().getPokebank().getPokemons());
-                sIsInit = true;
-            } catch (Exception e) {
-                // TODO sumthin here
-            }
-        }
-        
-    }
-
-    public static ObservableList<PokemonModel> getAllPokemon() {
+    public ObservableList<PokemonModel> getAllPokemon() {
         return sIsInit ? S_INSTANCE.pokemonBag.getAllPokemon() : null;
     }
 
-    public static int getNbPokemon() {
+    public int getNbPokemon() {
         return sIsInit ? S_INSTANCE.pokemonBag.getNumberPokemon() : 0;
+    }
+
+    @Override
+    protected void mInitialize(PokemonGo go) {
+        // TODO Auto-generated method stub
+        S_INSTANCE.pokemonBag = new PokemonBag(go.getInventories().getPokebank().getPokemons());
     }
 }
