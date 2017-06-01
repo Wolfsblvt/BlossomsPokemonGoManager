@@ -70,8 +70,8 @@ public final class UIHelper {
      */
     public static void handleLayoutFromConfig(final JFrame frame) {
         final ConfigNew config = ConfigNew.getConfig();
-        frame.setBounds(0, 0, config.getInt(ConfigKey.WINDOW_WIDTH), config.getInt(ConfigKey.WINDOW_HEIGHT));
-        if (config.getBool(ConfigKey.WINDOW_MAXIMIZE)) {
+        frame.setBounds(0, 0, (int) config.getAsObject(ConfigKey.WINDOW_WIDTH), (int) config.getAsObject(ConfigKey.WINDOW_HEIGHT));
+        if ((boolean) config.getAsObject(ConfigKey.WINDOW_MAXIMIZE)) {
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         }
 
@@ -105,8 +105,8 @@ public final class UIHelper {
         });
 
         final Point pt = UIHelper.getLocationMidScreen(frame);
-        final int posx = config.getInt(ConfigKey.WINDOW_POS_X, pt.x);
-        final int posy = config.getInt(ConfigKey.WINDOW_POS_Y, pt.y);
+        final int posx = (int) config.getAsObject(ConfigKey.WINDOW_POS_X, pt.x);
+        final int posy = (int) config.getAsObject(ConfigKey.WINDOW_POS_Y, pt.y);
         frame.setLocation(posx, posy);
     }
 }

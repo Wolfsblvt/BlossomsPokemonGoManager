@@ -231,7 +231,7 @@ public class PokemonTab extends JPanel {
 
         // Set font size if specified in config
         final Font font = pt.getFont();
-        final int size = Math.max(MIN_FONT_SIZE, config.getInt(ConfigKey.FONT_SIZE, font.getSize()));
+        final int size = Math.max(MIN_FONT_SIZE, (int) config.getAsObject(ConfigKey.FONT_SIZE, font.getSize()));
         if (size != font.getSize()) {
             pt.setFont(font.deriveFont((float) size));
         }

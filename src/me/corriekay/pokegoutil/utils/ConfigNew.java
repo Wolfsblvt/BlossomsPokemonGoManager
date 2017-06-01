@@ -61,32 +61,35 @@ public final class ConfigNew {
         return cfg;
     }
 
+    
+    
+    public Object getAsObject(final ConfigKey configKey) {
+        return getAsObject(configKey, configKey.getDefaultValue());
+    }
+    
     /**
      * Returns the default value as Object, so that it may can added again. Just for internal use, NO TYP CHECKING!
-     *
-     * @param configKey The config key.
-     * @return The Object
-     */
-    public Object getAsObject(final ConfigKey configKey) {
+    *
+    * @param configKey The config key.
+    * @return The Object
+    */
+    
+    public Object getAsObject(final ConfigKey configKey, Object defaultValue) {
         Object obj;
-        switch (configKey.type) {
-            case BOOLEAN:
-                obj = getBool(configKey);
-                break;
-            case STRING:
-                obj = getString(configKey);
-                break;
-            case INTEGER:
-                obj = getInt(configKey);
-                break;
-            case DOUBLE:
-                obj = getDouble(configKey);
-                break;
-            default:
-                obj = getJSONObject(configKey);
-                break;
-        }
+        GetStrategy myGetStrategy;
+        myGetStrategy = GetFactory.createGetStrategy(configKey);
         
+        final FindResult res = findNode(configKey.keyName, true);
+        try {
+            obj = myGetStrategy.getJSONElement(res);
+        } catch (final JSONException ignored) {
+            //System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
+            SetStrategy mySetStrategy;
+            mySetStrategy = SetFactory.createSetStrategy(configKey);
+            mySetStrategy.setJSONElement(configKey, defaultValue, res);
+            return defaultValue;
+        }
+
         return obj;
     }
 
@@ -109,263 +112,7 @@ public final class ConfigNew {
         saveConfig();
     }
 
-    /**
-     * Returns the JSONObject for given key. The one in the config, or if it does not exist, the default one.
-     *
-     * @param configKey The config key.
-     * @return The JSONObject under the key, or default value.
-     */
-    public JSONObject getJSONObject(final ConfigKey configKey) {
-        return getJSONObject(configKey, configKey.getDefaultValue());
-    }
-
-    /**
-     * Returns the JSONObject for given key. The one in the config, or if it does not exist, the given default value.
-     *
-     * @param configKey    The config key.
-     * @param defaultValue The default value to choose if the key does not exist.
-     * @return The JSONObject under the key, or default value.
-     */
-    public JSONObject getJSONObject(final ConfigKey configKey, final JSONObject defaultValue) {
-        try {
-            final FindResult res = findNode(configKey.keyName, false);
-            return res.getNode().getJSONObject(res.getName());
-        } catch (final JSONException ignored) {
-            //System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
-            setJSONObject(configKey, defaultValue);
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Saves the given JSONObject under given key.
-     *
-     * @param configKey The config key.
-     * @param value     The value to save.
-     */
-    public void setJSONObject(final ConfigKey configKey, final JSONObject value) {
-        try {
-            final FindResult res = findNode(configKey.keyName, true);
-            
-            //Introduce Explaining Variable
-            final boolean isValueDifferent = res.getNode().optJSONObject(res.getName()) != value ;
-            final boolean isValueEqualToDefalutValue = value.equals(configKey.getDefaultValue());
-            if ( isValueDifferent || isValueEqualToDefalutValue ) {
-                res.getNode().put(res.getName(), value);
-                saveConfig();
-            }
-        } catch (final JSONException ignored) {
-            System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
-        }
-    }
-
-    /**
-     * Returns the Boolean for given key. The one in the config, or if it does not exist, the default one.
-     *
-     * @param configKey The config key.
-     * @return The Boolean under the key, or default value.
-     */
-    public boolean getBool(final ConfigKey configKey) {
-        return getBool(configKey, configKey.getDefaultValue());
-    }
-
-    /**
-     * Returns the Boolean for given key. The one in the config, or if it does not exist, the given default value.
-     *
-     * @param configKey    The config key.
-     * @param defaultValue The default value to choose if the key does not exist.
-     * @return The Boolean under the key, or default value.
-     */
-    public boolean getBool(final ConfigKey configKey, final boolean defaultValue) {
-        try {
-            final FindResult res = findNode(configKey.keyName, false);
-            return res.getNode().getBoolean(res.getName());
-        } catch (final JSONException ignored) {
-            //System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
-            setBool(configKey, defaultValue);
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Saves the given Boolean under given key.
-     *
-     * @param configKey The config key.
-     * @param value     The value to save.
-     */
-    public void setBool(final ConfigKey configKey, final boolean value) {
-        try {
-
-            final FindResult res = findNode(configKey.keyName, true);
-            // Set if value is different or if default value should be added
-            
-            // change boolean to final boolean
-            final boolean defaultValue = configKey.getDefaultValue();
-            
-            //Introduce Explaining Variable
-            final boolean isValueDifferent = res.getNode().optBoolean(res.getName(), defaultValue) != value ;
-            final boolean isValueEqualToDefalutValue = (value == defaultValue);
-            if (isValueDifferent || isValueEqualToDefalutValue) {
-                res.getNode().put(res.getName(), value);
-                saveConfig();
-            }
-        } catch (final JSONException ignored) {
-            System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
-        }
-    }
-
-    /**
-     * Returns the String for given key. The one in the config, or if it does not exist, the default one.
-     *
-     * @param configKey The config key.
-     * @return The String under the key, or default value.
-     */
-    public String getString(final ConfigKey configKey) {
-        return getString(configKey, configKey.getDefaultValue());
-    }
-
-    /**
-     * Returns the String for given key. The one in the config, or if it does not exist, the given default value.
-     *
-     * @param configKey    The config key.
-     * @param defaultValue The default value to choose if the key does not exist.
-     * @return The String under the key, or default value.
-     */
-    public String getString(final ConfigKey configKey, final String defaultValue) {
-        try {
-            final FindResult res = findNode(configKey.keyName, true);
-            final String value = res.getNode().getString(res.getName());
-            return StringEscapeUtils.unescapeJson(value);
-        } catch (final JSONException ignored) {
-            //System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
-            setString(configKey, defaultValue);
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Saves the given String under given key.
-     *
-     * @param configKey The config key.
-     * @param value     The value to save.
-     */
-    public void setString(final ConfigKey configKey, final String value) {
-        try {
-            final FindResult res = findNode(configKey.keyName, true);
-            // Set if value is different or if default value should be added
-            
-            //Introduce Explaining Variable
-            final String stringOfNode = res.getNode().optString(res.getName(), "." + configKey.getDefaultValue());
-            final boolean isStringOfNodeEqualToValue = stringOfNode.equals(value) ;
-            if (!isStringOfNodeEqualToValue) {
-                res.getNode().put(res.getName(), StringEscapeUtils.escapeJson(value));
-                saveConfig();
-            }
-        } catch (final JSONException ignored) {
-            System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
-        }
-    }
-
-    /**
-     * Returns the Int for given key. The one in the config, or if it does not exist, the default one.
-     *
-     * @param configKey The config key.
-     * @return The Int under the key, or default value.
-     */
-    public int getInt(final ConfigKey configKey) {
-        return getInt(configKey, configKey.getDefaultValue());
-    }
-
-    /**
-     * Returns the Int for given key. The one in the config, or if it does not exist, the given default value.
-     *
-     * @param configKey    The config key.
-     * @param defaultValue The default value to choose if the key does not exist.
-     * @return The Int under the key, or default value.
-     */
-    public int getInt(final ConfigKey configKey, final int defaultValue) {
-        try {
-            final FindResult res = findNode(configKey.keyName, true);
-            return res.getNode().getInt(res.getName());
-        } catch (final JSONException ignored) {
-            //System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
-            setInt(configKey, defaultValue);
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Saves the given Int under given key.
-     *
-     * @param configKey The config key.
-     * @param value     The value to save.
-     */
-    public void setInt(final ConfigKey configKey, final int value) {
-        try {
-            final FindResult res = findNode(configKey.keyName, true);
-            // Set if value is different or if default value should be added
-            
-            //Introduce Explaining Variable
-            final int intOfNode = res.getNode().optInt(res.getName(), 1 + (int) configKey.getDefaultValue());
-            final boolean isValueDifferent = (intOfNode != value) ;
-            if ( isValueDifferent ) {
-                res.getNode().put(res.getName(), value);
-                saveConfig();
-            }
-        } catch (final JSONException ignored) {
-            System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
-        }
-    }
-
-    /**
-     * Returns the Double for given key. The one in the config, or if it does not exist, the default one.
-     *
-     * @param configKey The config key.
-     * @return The Double under the key, or default value.
-     */
-    public double getDouble(final ConfigKey configKey) {
-        return getDouble(configKey, configKey.getDefaultValue());
-    }
-
-    /**
-     * Returns the Double for given key. The one in the config, or if it does not exist, the given default value.
-     *
-     * @param configKey    The config key.
-     * @param defaultValue The default value to choose if the key does not exist.
-     * @return The Double under the key, or default value.
-     */
-    public double getDouble(final ConfigKey configKey, final double defaultValue) {
-        try {
-            final FindResult res = findNode(configKey.keyName, true);
-            return res.getNode().getDouble(res.getName());
-        } catch (final JSONException ignored) {
-            //System.out.printf(CANNOT_FETCH_UNF_STRING, configKey.keyName, defaultValue);
-            setDouble(configKey, defaultValue);
-            return defaultValue;
-        }
-    }
-
-    /**
-     * Saves the given Double under given key.
-     *
-     * @param configKey The config key.
-     * @param value     The value to save.
-     */
-    public void setDouble(final ConfigKey configKey, final double value) {
-        try {
-            final FindResult res = findNode(configKey.keyName, true);
-            
-            //Introduce Explaining Variable
-            final double doubleOfNode = res.getNode().optDouble(res.getName(), 1 + (double) configKey.getDefaultValue());
-            final boolean isValueDifferent = (doubleOfNode != value) ;
-            if ( isValueDifferent ) {
-                res.getNode().put(res.getName(), value);
-                saveConfig();
-            }
-        } catch (final JSONException ignored) {
-            System.out.printf(CANNOT_SAVE_UNF_STRING, value, configKey.keyName);
-        }
-    }
+    
 
     /**
      * Internal function to find a node with its value.

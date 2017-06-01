@@ -93,7 +93,7 @@ public class EvolveOperation extends Operation {
                         newCp, (newCp - cp),
                         newHp, (newHp - hp)));
 
-        if (config.getBool(ConfigKey.TRANSFER_AFTER_EVOLVE)){
+        if ((boolean) config.getAsObject(ConfigKey.TRANSFER_AFTER_EVOLVE)){
             result.setNextOperation(OperationId.TRANSFER);
         }
 
