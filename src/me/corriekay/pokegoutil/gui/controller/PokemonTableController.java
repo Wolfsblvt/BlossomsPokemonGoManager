@@ -46,6 +46,7 @@ public class PokemonTableController extends BaseController<GridPane> {
 
     private final List<TableColumn<PokemonModel, ?>> columns = new ArrayList<>();
     private final GridPane gridPane;
+    private Context context;
 
     /**
      * Instantiate the PokemonTableController onto the parent pane.
@@ -126,102 +127,103 @@ public class PokemonTableController extends BaseController<GridPane> {
             final TableColumn<PokemonModel, Property> col = new TableColumn<>(c.getTitle());
             switch (c) {
                 case NICKNAME :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().nicknameProperty());
+                    context = new Context(new nicknameFactory());
                     break;
                 case NUMBER :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().numIdProperty());
+                    context = new Context(new numberFactory());
                     break;
                 case SPECIES :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().speciesProperty());
+                    context = new Context(new speciesFactory());
                     break;
                 case IV :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().ivProperty());
+                    context = new Context(new IVFactory());
                     break;
                 case LEVEL :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().levelProperty());
+                    context = new Context(new LevelFactory());
                     break;
                 case ATTACK :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().atkProperty());
+                    context = new Context(new attackFactory());
                     break;
                 case DEFENSE :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().defProperty());
+                    context = new Context(new DeffenseFactory());
                     break;
                 case STAMINA :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().stamProperty());
+                    context = new Context(new staminaFactory());
                     break;
                 case TYPE1 :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().type1Property());
+                    context = new Context(new type1Factory());
                     break;
                 case TYPE2 :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().type2Property());
+                    context = new Context(new type2Factory());
                     break;
                 case MOVE1 :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().move1Property());
+                    context = new Context(new move1Factory());
                     break;
                 case MOVE2 :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().move2Property());
+                    context = new Context(new move2Factory());
                     break;
                 case CP :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().cpProperty());
+                    context = new Context(new cpFactory());
                     break;
                 case HP :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().hpProperty());
+                    context = new Context(new hpFactory());
                     break;
                 case MAXCPCURRENT :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxCpCurrentProperty());
+                    context = new Context(new maxcpcurrentFactory());
                     break;
                 case MAXCP :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxCpProperty());
+                    context = new Context(new maxcpFactory());
                     break;
                 case MAXEVOLVEDCPCURRENT :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxEvolvedCpCurrentProperty());
+                    context = new Context(new maxevolvedcpcurrentFactory());
                     break;
                 case MAXEVOLVEDCP :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().maxEvolvedCpProperty());
+                    context = new Context(new maxevolvedcpFactory());
                     break;
                 case CANDIES :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().candiesProperty());
+                    context = new Context(new candiesFactory());
                     break;
                 case CANDIES2EVOLVE :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().candies2EvlvProperty());
+                    context = new Context(new candies2evolveFactory());
                     break;
                 case STARDUST2LVL :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().dustToLevelProperty());
+                    context = new Context(new stardust2lvlFactory());
                     break;
                 case CAUGHTPOKEBALL :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().pokeballProperty());
+                    context = new Context(new caughtpokeballFactory());
                     break;
                 case CAUGHTDATE :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().caughtDateProperty());
+                    context = new Context(new caughtdateFactory());
                     break;
                 case FAVORITE :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().isFavoriteProperty());
+                    context = new Context(new favoriteFactory());
                     break;
                 case DUELABILITY :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().duelAbilityProperty());
+                    context = new Context(new duelabilityFactory());
                     break;
                 case GYMOFFENSE :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymOffenseProperty());
+                    context = new Context(new gymoffenseFactory());
                     break;
                 case GYMDEFENSE :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymDefenseProperty());
+                    context = new Context(new gymdeffenseFactory());
                     break;
                 case CPEVOLVED :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().cpEvolvedProperty());
+                    context = new Context(new cpevolvedFactory());
                     break;
                 case EVOLVABLE :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().evolvableProperty());
+                    context = new Context(new evolvableFactory());
                     break;
                 case DUELABILITYIV :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().duelAbilityIvProperty());
+                    context = new Context(new duelabilityIVFactory());
                     break;
                 case GYMOFFENSEIV :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymOffenseIvProperty());
+                    context = new Context(new gymoffenseIVFactory());
                     break;
                 case GYMDEFENSEIV :
-                    col.setCellValueFactory(cellData -> (Property) cellData.getValue().gymDefenseIvProperty());
+                    context = new Context(new gymdeffenseIVFactory());
                     break;
             }
+            context.setColums(col);
             columns.add(col);
         });
     }
