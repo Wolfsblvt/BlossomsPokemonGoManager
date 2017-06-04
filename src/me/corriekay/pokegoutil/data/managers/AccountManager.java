@@ -61,30 +61,44 @@ public final class AccountManager {
      */
     private void deleteLoginData(final LoginType type, final boolean deleteSaveAuth) {
         if (deleteSaveAuth) {
-            config.delete(ConfigKey.LOGIN_SAVE_AUTH);
+            deleteSavedLoginData();
         }
 
         switch (type) {
             case ALL:
-                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
-                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
-                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+                deleteGoogleAuthLoginData();
+                deleteGoogleAppLoginData();
+                deletePtcLoginData();
                 break;
             case GOOGLE_AUTH:
-                config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+                deleteGoogleAuthLoginData();
                 break;
             case GOOGLE_APP_PASSWORD:
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
-                config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
+                deleteGoogleAppLoginData();
                 break;
             case PTC:
-                config.delete(ConfigKey.LOGIN_PTC_USERNAME);
-                config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+                deletePtcLoginData();
                 break;
             default:
         }
+    }
+
+    private void deleteGoogleAuthLoginData() {
+        config.delete(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN);
+    }
+
+    private void deleteSavedLoginData() {
+        config.delete(ConfigKey.LOGIN_SAVE_AUTH);
+    }
+
+    private void deletePtcLoginData() {
+        config.delete(ConfigKey.LOGIN_PTC_USERNAME);
+        config.delete(ConfigKey.LOGIN_PTC_PASSWORD);
+    }
+
+    private void deleteGoogleAppLoginData() {
+        config.delete(ConfigKey.LOGIN_GOOGLE_APP_USERNAME);
+        config.delete(ConfigKey.LOGIN_GOOGLE_APP_PASSWORD);
     }
 
     public LoginData getLoginData() {
@@ -110,7 +124,11 @@ public final class AccountManager {
     }
 
     public PlayerProfile getPlayerProfile() {
-        return go != null ? go.getPlayerProfile() : null;
+        PlayerProfile result = null;
+        if(go != null)
+            result = go.getPlayerProfile();
+        
+        return result;
     }
 
     private void initOtherControllers() {
@@ -126,20 +144,21 @@ public final class AccountManager {
      * @return results of the login
      */
     public BpmResult login(final LoginData loginData) {
+        BpmResult result = new BpmResult("Invalid Login Type");
         switch (loginData.getLoginType()) {
             case GOOGLE_AUTH:
                 if (loginData.isValidGoogleLogin()) {
-                    return logOnGoogleAuth(loginData);
+                    result = logOnGoogleAuth(loginData);
                 }
                 break;
             case PTC:
                 if (loginData.isValidPtcLogin()) {
-                    return logOnPtc(loginData);
+                    result = logOnPtc(loginData);
                 }
                 break;
             default:
         }
-        return new BpmResult("Invalid Login Type");
+        return result;
     }
 
     /**
@@ -150,12 +169,14 @@ public final class AccountManager {
      */
     private BpmResult logOnGoogleAuth(final LoginData loginData) {
         OkHttpClient http;
-        CredentialProvider cp;
+        CredentialProvider credentialProvider = null;
         http = new OkHttpClient();
 
         final String authCode = loginData.getToken();
         final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
 
+        BpmResult result = new BpmResult();
+        
         boolean shouldRefresh = false;
         if (loginData.isSavedToken() && saveAuth) {
             shouldRefresh = true;
@@ -174,7 +195,7 @@ public final class AccountManager {
                 throw new LoginFailedException();
             }
 
-            cp = provider;
+            credentialProvider = provider;
             if (saveAuth && !shouldRefresh) {
                 config.setString(ConfigKey.LOGIN_GOOGLE_AUTH_TOKEN, provider.getRefreshToken());
             } else if (!saveAuth) {
@@ -182,16 +203,19 @@ public final class AccountManager {
             }
         } catch (LoginFailedException | RemoteServerException | CaptchaActiveException e) {
             deleteLoginData(LoginType.GOOGLE_APP_PASSWORD);
-            return new BpmResult(e.getMessage());
+            result =  new BpmResult(e.getMessage());
         }
-
-        try {
-            prepareLogin(cp, http);
-            return new BpmResult();
-        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
-            deleteLoginData(LoginType.ALL);
-            return new BpmResult(e.getMessage());
+        
+        if (result.isSuccess()) {
+            try {
+                prepareLogin(credentialProvider, http);
+            } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
+                deleteLoginData(LoginType.ALL);
+                result = new BpmResult(e.getMessage());
+            }
         }
+        
+        return result;
     }
 
     /**
@@ -202,15 +226,17 @@ public final class AccountManager {
      */
     private BpmResult logOnPtc(final LoginData loginData) {
         OkHttpClient http;
-        CredentialProvider cp;
+        CredentialProvider credentialProvider = null;
         http = new OkHttpClient();
 
         final String username = loginData.getUsername();
         final String password = loginData.getPassword();
         final boolean saveAuth = config.getBool(ConfigKey.LOGIN_SAVE_AUTH);
 
+        BpmResult result = new BpmResult();
+        
         try {
-            cp = new PtcCredentialProvider(http, username, password);
+            credentialProvider = new PtcCredentialProvider(http, username, password);
             config.setString(ConfigKey.LOGIN_PTC_USERNAME, username);
             if (saveAuth) {
                 config.setString(ConfigKey.LOGIN_PTC_PASSWORD, password);
@@ -219,16 +245,19 @@ public final class AccountManager {
             }
         } catch (LoginFailedException | RemoteServerException | CaptchaActiveException e) {
             deleteLoginData(LoginType.PTC);
-            return new BpmResult(e.getMessage());
+            result = new BpmResult(e.getMessage());
         }
-
-        try {
-            prepareLogin(cp, http);
-            return new BpmResult();
-        } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
-            deleteLoginData(LoginType.ALL);
-            return new BpmResult(e.getMessage());
+        
+        if (result.isSuccess()) {
+            try {
+                prepareLogin(credentialProvider, http);
+            } catch (LoginFailedException | RemoteServerException | CaptchaActiveException | HashException e) {
+                deleteLoginData(LoginType.ALL);
+                result = new BpmResult(e.getMessage());
+            }
         }
+        
+        return result;
     }
 
     /**
