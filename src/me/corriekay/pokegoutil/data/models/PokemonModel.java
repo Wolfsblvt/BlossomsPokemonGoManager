@@ -318,41 +318,19 @@ public class PokemonModel {
     }
 
     private int getMaxEvolvedCpForHighestEvolution() {
-        final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
-        int maxEvolvedCp = 0;
-        for (final PokemonId pokemonId : highest) {
-            maxEvolvedCp = Math.max(maxEvolvedCp, pokemon.getCpFullEvolveAndPowerup(pokemonId));
-        }
-        return maxEvolvedCp;
+        return new PokemonCpOriginalProvider(pokemon).getMaxEvolvedCp();
     }
 
     private int getMaxEvolvedCpCurrentForHighestEvolution() {
-        final List<PokemonId> highest = Evolutions.getHighest(pokemon.getPokemonId());
-        int maxEvolvedCpCurrent = 0;
-        for (final PokemonId pokemonId : highest) {
-            maxEvolvedCpCurrent = Math.max(maxEvolvedCpCurrent, pokemon.getMaxCpFullEvolveAndPowerupForPlayer(pokemonId));
-        }
-        return maxEvolvedCpCurrent;
+        return new PokemonCpCurrentProvider(pokemon).getMaxEvolvedCp();
     }
 
     private int getMaxCpForCurrentPokemon() {
-        int maxCp = 0;
-        try {
-            maxCp = pokemon.getMaxCp();
-        } catch (NoSuchItemException e) {
-            System.out.println(e.getMessage());
-        }
-        return maxCp;
+        return new PokemonCpOriginalProvider(pokemon).getMaxCp();
     }
 
     private int getMaxCpCurrentForCurrentPokemon() {
-        int maxCpCurrent = 0;
-        try {
-            maxCpCurrent = pokemon.getMaxCpForPlayer();
-        } catch (NoSuchItemException e) {
-            System.out.println(e.getMessage());
-        }
-        return maxCpCurrent;
+        return new PokemonCpCurrentProvider(pokemon).getMaxCp();
     }
 
     private void initializePokemonCharacteristicData() {
