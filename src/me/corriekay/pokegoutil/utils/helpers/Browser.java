@@ -14,9 +14,10 @@ interface interfaceBrowser {
 //public final class Browser implements interfaceBrowser{
 public final class Browser{
     /** Prevent initializing this class. */
+    private static OpenUrlStrategy iOpenUrl = null;
+    
     private Browser() {
     }
-
     /***
      * Opens given URL in users default browser of his operating system.
      * Should work for all operating systems, with fallback.
@@ -46,61 +47,24 @@ public final class Browser{
     private static boolean tryCrossPlatformOpenUrl(String url) {
         // We need the OS
         String os = System.getProperty("os.name").toLowerCase();
-
         // Check for windows first
         if (os.contains("win")) {
-            try {
-                Runtime rt = Runtime.getRuntime();
-                rt.exec("rundll32 url.dll,FileProtocolHandler " + url);
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            iOpenUrl = new WindowOpenUrl();
         }
 
         // Now lets try Mac systems
         if (os.contains("mac")) {
-            try {
-                Runtime rt = Runtime.getRuntime();
-                rt.exec("open" + url);
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            iOpenUrl = new MacOpenUrl();
         }
 
         // That's like the best try for Linux systems
         if (os.contains("nix") || os.contains("nux")) {
-            try {
-                Runtime runtime = Runtime.getRuntime();
-                runtime.exec("xdg-open " + url);
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Last chance for Linux now
-        if (os.contains("nix") || os.contains("nux")) {
-            Runtime rt = Runtime.getRuntime();
-            String[] browsers = {"epiphany", "firefox", "mozilla", "konqueror",
-                    "netscape", "opera", "links", "lynx"};
-
-            StringBuilder cmd = new StringBuilder();
-            for (int i = 0; i < browsers.length; i++)
-                cmd.append(i == 0 ? "" : " || ").append(browsers[i]).append(" \"").append(url).append("\" ");
-
-            try {
-                rt.exec(new String[]{"sh", "-c", cmd.toString()});
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            iOpenUrl = new LinuxOpenUrl();
         }
 
         // Dear lord, everything has failed. No chance here anymore. I don't know what else I can do.
         // Mum, I have failed.
-        System.out.println("Found no chance to open Browser URL. Terminate now.");
-        return false;
+        
+        return iOpenUrl.tryOpenUrl(url);
     }
 }
