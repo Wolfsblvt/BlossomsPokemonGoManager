@@ -3,20 +3,24 @@ package me.corriekay.pokegoutil.data.managers;
 import com.pokegoapi.api.PokemonGo;
 import com.pokegoapi.api.player.PlayerProfile;
 
-public class ProfileManager extends ManagerInitializer{
+public class ProfileManager {
+    private static final ProfileManager S_INSTANCE = new ProfileManager();
+    private static boolean sIsInit = false;
+
     private PlayerProfile pp;
-    private final ProfileManager S_INSTANCE = new ProfileManager();
+
     private ProfileManager() {
 
     }
 
-    public PlayerProfile getProfile() {
-        return sIsInit ? S_INSTANCE.pp : null;
+    public static void initialize(PokemonGo go) {
+        if (!sIsInit) 
+            S_INSTANCE.pp = go.getPlayerProfile();
+       
+        sIsInit = true;
     }
 
-    @Override
-    protected void mInitialize(PokemonGo go) {
-        // TODO Auto-generated method stub
-        S_INSTANCE.pp = go.getPlayerProfile();
+    public static PlayerProfile getProfile() {
+        return sIsInit ? S_INSTANCE.pp : null;
     }
 }

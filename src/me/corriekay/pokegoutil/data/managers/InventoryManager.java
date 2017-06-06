@@ -8,8 +8,10 @@ import com.pokegoapi.exceptions.RemoteServerException;
 /*
  * This controller takes care of interactions with the inventory items
  */
-public final class InventoryManager extends ManagerInitializer {
-    private final InventoryManager S_INSTANCE = new InventoryManager();
+public final class InventoryManager {
+
+    private static final InventoryManager S_INSTANCE = new InventoryManager();
+    private static boolean sIsInit = false;
 
     private Inventories inventories;
 
@@ -17,13 +19,18 @@ public final class InventoryManager extends ManagerInitializer {
 
     }
 
-    public Inventories getInventories() throws LoginFailedException, RemoteServerException {
-        return sIsInit ? S_INSTANCE.inventories : null;
+    public static void initialize(PokemonGo go) {
+        if (!sIsInit) {
+            try {
+                S_INSTANCE.inventories = go.getInventories();
+                sIsInit = true;
+            } catch (Exception e) {
+                // TODO sumthin here
+            }
+        }
     }
 
-    @Override
-    protected void mInitialize(PokemonGo go) {
-        // TODO Auto-generated method stub
-        S_INSTANCE.inventories = go.getInventories();
+    public static Inventories getInventories() throws LoginFailedException, RemoteServerException {
+        return sIsInit ? S_INSTANCE.inventories : null;
     }
 }
