@@ -31,9 +31,6 @@ public final class PokemonUtils {
      * A list of all currently not existing Pokémon.
      */
     public static final List<PokemonId> NOT_EXISTING_POKEMON_LIST = Arrays.asList(
-        PokemonId.ARTICUNO,
-        PokemonId.ZAPDOS,
-        PokemonId.MOLTRES,
         PokemonId.MEWTWO,
         PokemonId.MEW,
         PokemonId.UNRECOGNIZED,
