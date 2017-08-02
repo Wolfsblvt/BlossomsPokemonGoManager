@@ -102,7 +102,7 @@
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>com.github.Furtif</groupId>
+            <groupId>com.github.j4ck0p3</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
             <version>update_protos-SNAPSHOT</version>
         </dependency>
