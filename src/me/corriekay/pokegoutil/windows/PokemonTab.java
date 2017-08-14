@@ -313,7 +313,7 @@ public class PokemonTab extends JPanel {
 
         handler.bulkRenameWithPattern(renamePattern, perPokeCallback);
 
-        SwingUtilities.invokeLater(this::refreshPkmn);
+        SwingUtilities.invokeLater(this::refreshList); // 
         showFinishedText("Pokémon batch rename complete!", selection.size(), success, skipped, err);
     }
 
