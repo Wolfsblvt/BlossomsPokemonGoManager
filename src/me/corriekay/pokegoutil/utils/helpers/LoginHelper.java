@@ -7,7 +7,6 @@ import com.pokegoapi.api.device.DeviceInfo;
 import com.pokegoapi.api.listener.LoginListener;
 import com.pokegoapi.auth.CredentialProvider;
 import com.pokegoapi.exceptions.request.RequestFailedException;
-import com.pokegoapi.util.hash.legacy.LegacyHashProvider;
 import com.pokegoapi.util.hash.pokehash.PokeHashKey;
 import com.pokegoapi.util.hash.pokehash.PokeHashProvider;
 
@@ -54,10 +53,8 @@ public final class LoginHelper {
         final String pokeHashKey = ConfigNew.getConfig().getString(ConfigKey.LOGIN_POKEHASHKEY);
         if (pokeHashKey != null) {
             final PokeHashProvider pokeHashProvider = new PokeHashProvider(PokeHashKey.from(pokeHashKey), true);
-            pokeHashProvider.setEndpoint("http://pokehash.buddyauth.com/api/v127_4/hash");
+            pokeHashProvider.setEndpoint("http://pokehash.buddyauth.com/api/v137_1/hash");
             go.login(credentialProvider, pokeHashProvider);
-        } else {
-            go.login(credentialProvider, new LegacyHashProvider());
         }
     }
 }

@@ -9,7 +9,6 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import com.pokegoapi.api.player.Team;
 import com.pokegoapi.api.pokemon.Pokemon;
-import com.pokegoapi.main.PokemonMeta;
 import com.pokegoapi.util.PokeDictionary;
 
 import POGOProtos.Enums.PokemonIdOuterClass.PokemonId;
@@ -20,6 +19,7 @@ import POGOProtos.Settings.Master.PokemonSettingsOuterClass.PokemonSettings;
 import me.corriekay.pokegoutil.utils.ConfigKey;
 import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
+import me.corriekay.pokegoutil.windows.PokemonGoMainWindow;
 
 /**
  * General Pokemon helper functions.
@@ -31,9 +31,6 @@ public final class PokemonUtils {
      * A list of all currently not existing Pokémon.
      */
     public static final List<PokemonId> NOT_EXISTING_POKEMON_LIST = Arrays.asList(
-        PokemonId.ARTICUNO,
-        PokemonId.ZAPDOS,
-        PokemonId.MOLTRES,
         PokemonId.MEWTWO,
         PokemonId.MEW,
         PokemonId.UNRECOGNIZED,
@@ -150,8 +147,8 @@ public final class PokemonUtils {
      * @return Weather or not the Pokémon has STAB.
      */
     public static boolean hasStab(final PokemonId pokemonId, final PokemonMove move) {
-        final PokemonSettings settings = PokemonMeta.getPokemonSettings(pokemonId);
-        final MoveSettings moveSettings = PokemonMeta.getMoveSettings(move);
+        final PokemonSettings settings = PokemonGoMainWindow.getPoGo().getItemTemplates().getPokemonSettings(pokemonId);
+        final MoveSettings moveSettings = PokemonGoMainWindow.getPoGo().getItemTemplates().getMoveSettings(move);
         return settings.getType().equals(moveSettings.getPokemonType()) || settings.getType2().equals(moveSettings.getPokemonType());
     }
 }

@@ -9,6 +9,7 @@ public final class CellRendererHelper {
     // Default renderer
     public static final DefaultCellRenderer DEFAULT = new DefaultCellRenderer();
     public static final NumberCellRenderer NUMBER = new NumberCellRenderer();
+    public static final NumberStringCellRenderer NUMBER_STRING = new NumberStringCellRenderer();
     public static final PercentageCellRenderer PERCENTAGE = new PercentageCellRenderer();
     public static final DpsCellRenderer DPS1VALUE = new DpsCellRenderer().withRatingColors(0, 17);
     public static final DpsCellRenderer DPS2VALUE = new DpsCellRenderer().withRatingColors(0, 45);

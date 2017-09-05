@@ -1,27 +1,31 @@
 package me.corriekay.pokegoutil;
 
+import java.awt.event.WindowAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import javafx.stage.Stage;
-import me.corriekay.pokegoutil.data.managers.AccountController;
 import me.corriekay.pokegoutil.data.managers.GlobalSettingsController;
-import me.corriekay.pokegoutil.gui.controller.ChooseGuiWindowController;
-import me.corriekay.pokegoutil.utils.ConfigKey;
-import me.corriekay.pokegoutil.utils.ConfigNew;
+import me.corriekay.pokegoutil.gui.controller.LoginController;
 import me.corriekay.pokegoutil.utils.StringLiterals;
+import me.corriekay.pokegoutil.utils.helpers.FileHelper;
 import me.corriekay.pokegoutil.utils.helpers.UIHelper;
 import me.corriekay.pokegoutil.utils.windows.WindowStuffHelper;
 
 /**
  * The main project class. Contains the runtime stuff.
  */
-public class BlossomsPoGoManager {
+public class BlossomsPoGoManager extends Application {
 
     private static Stage sPrimaryStage;
+    private static JFrame mainWindow;
 
     /**
      * Entry point of the application.
@@ -30,8 +34,7 @@ public class BlossomsPoGoManager {
      */
     public static void main(final String[] args) {
         GlobalSettingsController.setup();
-        //        launch(args);
-        new BlossomsPoGoManager().start(null);
+        launch(args);
     }
 
     /**
@@ -55,20 +58,52 @@ public class BlossomsPoGoManager {
         sPrimaryStage = stage;
     }
 
-    //    @Override
     /**
-     * Legacy start method from JavaFX nature. 
-     * @param primaryStage Received when have JavaFX nature
+     * Get the current main window.
+     *
+     * @return current main window
      */
+    public static JFrame getMainWindow() {
+        return mainWindow;
+    }
+
+    /**
+     * Set the new main window.
+     *
+     * @param window main window
+     */
+    public static void setNewMainWindow(final JFrame window) {
+        if(BlossomsPoGoManager.mainWindow != null && BlossomsPoGoManager.mainWindow.isVisible()) {
+            BlossomsPoGoManager.mainWindow.setVisible(false);
+        }
+        BlossomsPoGoManager.mainWindow = window;
+    }
+
+    @Override
     public void start(final Stage primaryStage) {
         setupGlobalExceptionHandling();
-
-        if (ConfigNew.getConfig().getBool(ConfigKey.DEVELOPFLAG)) {
-            new ChooseGuiWindowController();
-            sPrimaryStage.show();
-        } else {
-            openOldGui();
-        }
+        new LoginController();
+        SwingUtilities.invokeLater(() -> {
+            UIHelper.setNativeLookAndFeel();
+            JFrame frame = new JFrame();
+            final JFXPanel jfxPanel = new JFXPanel();
+            frame.getContentPane().add(jfxPanel);
+            frame.setSize(310, 370);
+            frame.setLocationRelativeTo(null);
+            frame.setIconImage(FileHelper.loadImage("icon/PokeBall-icon.png"));
+            frame.setTitle(BlossomsPoGoManager.getPrimaryStage().getTitle());
+            frame.setVisible(true);
+            setNewMainWindow(frame);
+            Platform.runLater(() -> {
+                jfxPanel.setScene(BlossomsPoGoManager.getPrimaryStage().getScene());
+                frame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        Platform.runLater(() -> System.exit(0));
+                    }
+                });
+            });
+        });
     }
 
     /**
@@ -85,37 +120,33 @@ public class BlossomsPoGoManager {
                 result.add(current.getClass().getSimpleName() + StringLiterals.COLON_SEPARATOR + current.getLocalizedMessage());
                 current = current.getCause();
             }
-            SwingUtilities.invokeLater(() -> {
-                final String[] options = new String[] {"Continue anyway", "Exit"};
-                final int continueChoice = JOptionPane.showOptionDialog(
-                        WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
-                        String.join(StringLiterals.NEWLINE, result)
-                        + StringLiterals.NEWLINE
-                        + StringLiterals.NEWLINE + "Application got a critical error."
-                        + StringLiterals.NEWLINE + "You can report the error on GitHub or Discord."
-                        + StringLiterals.NEWLINE
-                        + StringLiterals.NEWLINE + "It is possible to continue here, but do note that the application might not work as expected."
-                        + StringLiterals.NEWLINE + "Close and restart if that's the case.",
-                        "General Unhandled Error",
-                        JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.ERROR_MESSAGE,
-                        null, options, options[0]);
-                if (continueChoice == 1) {
-                    // If exit is chosen, we exit here.
-                    System.exit(-1);
-                }
-            });
+
+            final String[] options = new String[] {"Continue anyway", "Exit"};
+            final int continueChoice = JOptionPane.showOptionDialog(
+                    WindowStuffHelper.ALWAYS_ON_TOP_PARENT,
+                    String.join(StringLiterals.NEWLINE, result)
+                    + StringLiterals.NEWLINE
+                    + StringLiterals.NEWLINE + "Application got a critical error."
+                    + StringLiterals.NEWLINE + "You can report the error on GitHub or Discord."
+                    + StringLiterals.NEWLINE
+                    + StringLiterals.NEWLINE + "It is possible to continue here, but do note that the application might not work as expected."
+                    + StringLiterals.NEWLINE + "Close and restart if that's the case.",
+                    "General Unhandled Error",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.ERROR_MESSAGE,
+                    null, options, options[0]);
+            if (continueChoice == 1) {
+                // If exit is chosen, we exit here.
+                System.exit(-1);
+            }
         });
     }
-
-    /**
-     * Opens the old GUI.
-     */
-    private void openOldGui() {
-        //        SwingUtilities.invokeLater(() -> {
-        UIHelper.setNativeLookAndFeel();
-        AccountController.initialize();
-        AccountController.logOn();
-        //        });
-    }
+    
+//    private void openOldGui() {
+//        SwingUtilities.invokeLater(() -> {
+//            UIHelper.setNativeLookAndFeel();
+//            AccountController.initialize();
+//            AccountController.logOn();
+//        });
+//    }
 }

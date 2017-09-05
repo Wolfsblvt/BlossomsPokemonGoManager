@@ -1,9 +1,13 @@
 package me.corriekay.pokegoutil.utils.helpers;
 
 import POGOProtos.Enums.PokemonTypeOuterClass.PokemonType;
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 
-/** Class to Help get the Unicode character.
- * @author Fernando */
+/** 
+ * Class to Help get the Unicode character.
+ * @author FernandoTBarros
+ */
 public enum UnicodeHelper {
     NUMBER_0(0x24EA, "0"),
     NUMBER_1(0x2460, "1"),
@@ -21,44 +25,51 @@ public enum UnicodeHelper {
     NUMBER_13(0x24ED, "13"),
     NUMBER_14(0x24EE, "14"),
     NUMBER_15(0x24EF, "15"),
-    TYPE_BUG(0x2042, PokemonType.POKEMON_TYPE_BUG.toString()),
-    TYPE_DARK(0x263D, PokemonType.POKEMON_TYPE_DARK.toString()),
-    TYPE_DRAGON(0x26E9, PokemonType.POKEMON_TYPE_DRAGON.toString()),
-    TYPE_ELETRIC(0x2607, PokemonType.POKEMON_TYPE_ELECTRIC.toString()),
-    TYPE_FAIRY(0x2764, PokemonType.POKEMON_TYPE_FAIRY.toString()),
-    TYPE_FIGHTING(0x270A, PokemonType.POKEMON_TYPE_FIGHTING.toString()),
-    TYPE_FIRE(0x2668, PokemonType.POKEMON_TYPE_FIRE.toString()),
-    TYPE_FLYING(0x2708, PokemonType.POKEMON_TYPE_FLYING.toString()),
-    TYPE_GHOST(0x26B0, PokemonType.POKEMON_TYPE_GHOST.toString()),
-    TYPE_GRASS(0x2E19, PokemonType.POKEMON_TYPE_GRASS.toString()),
-    TYPE_GROUND(0x26F0, PokemonType.POKEMON_TYPE_GROUND.toString()),
-    TYPE_ICE(0x2744, PokemonType.POKEMON_TYPE_ICE.toString()),
-    TYPE_NORMAL(0x2734, PokemonType.POKEMON_TYPE_NORMAL.toString()),
-    TYPE_POISON(0x2620, PokemonType.POKEMON_TYPE_POISON.toString()),
-    TYPE_PSYCHIC(0x269B, PokemonType.POKEMON_TYPE_PSYCHIC.toString()),
-    TYPE_ROCK(0x25C9, PokemonType.POKEMON_TYPE_ROCK.toString()),
-    TYPE_STEEL(0x26D3, PokemonType.POKEMON_TYPE_STEEL.toString()),
-    TYPE_WATER(0x26C6, PokemonType.POKEMON_TYPE_WATER.toString()),
-    SHIELD(0x26E8, "shield"),
-    SWORD(0x2694, "sword");
+    TYPE_BUG(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_BUG), PokemonType.POKEMON_TYPE_BUG.toString()),
+    TYPE_DARK(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_DARK), PokemonType.POKEMON_TYPE_DARK.toString()),
+    TYPE_DRAGON(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_DRAGON), PokemonType.POKEMON_TYPE_DRAGON.toString()),
+    TYPE_ELETRIC(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_ELETRIC), PokemonType.POKEMON_TYPE_ELECTRIC.toString()),
+    TYPE_FAIRY(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_FAIRY), PokemonType.POKEMON_TYPE_FAIRY.toString()),
+    TYPE_FIGHTING(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_FIGHTING), PokemonType.POKEMON_TYPE_FIGHTING.toString()),
+    TYPE_FIRE(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_FIRE), PokemonType.POKEMON_TYPE_FIRE.toString()),
+    TYPE_FLYING(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_FLYING), PokemonType.POKEMON_TYPE_FLYING.toString()),
+    TYPE_GHOST(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_GHOST), PokemonType.POKEMON_TYPE_GHOST.toString()),
+    TYPE_GRASS(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_GRASS), PokemonType.POKEMON_TYPE_GRASS.toString()),
+    TYPE_GROUND(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_GROUND), PokemonType.POKEMON_TYPE_GROUND.toString()),
+    TYPE_ICE(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_ICE), PokemonType.POKEMON_TYPE_ICE.toString()),
+    TYPE_NORMAL(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_NORMAL), PokemonType.POKEMON_TYPE_NORMAL.toString()),
+    TYPE_POISON(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_POISON), PokemonType.POKEMON_TYPE_POISON.toString()),
+    TYPE_PSYCHIC(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_PSYCHIC), PokemonType.POKEMON_TYPE_PSYCHIC.toString()),
+    TYPE_ROCK(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_ROCK), PokemonType.POKEMON_TYPE_ROCK.toString()),
+    TYPE_STEEL(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_STEEL), PokemonType.POKEMON_TYPE_STEEL.toString()),
+    TYPE_WATER(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_TYPE_WATER), PokemonType.POKEMON_TYPE_WATER.toString()),
+    SHIELD(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_SHIELD), "shield"),
+    SWORD(ConfigNew.getConfig().getInt(ConfigKey.UNICODE_ICON_SWORD), "sword"),
+    FEMALE(0x2640, "female"),
+    MALE(0x2642, "male"),
+    NONE(0x2260, "none");
 
     private int hexaCode;
     private String identifier;
 
-    /** Default constructor.
+    /** 
+     * Default constructor.
      * @param paramHexaCode Unicode character of this Enum
-     * @param paramIdentifier String identifier of this Enum */
-    UnicodeHelper(int paramHexaCode, String paramIdentifier) {
+     * @param paramIdentifier String identifier of this Enum 
+     */
+    UnicodeHelper(final int paramHexaCode, final String paramIdentifier) {
         this.hexaCode = paramHexaCode;
         this.identifier = paramIdentifier;
     }
 
-    /** Method to get Unicode character based on String.
+    /** 
+     * Method to get Unicode character based on String.
      * @param identifier String to identify the Unicode Character that should be
      *        returned
-     * @return unicode character in String */
-    public static String get(String identifier) {
-        for (UnicodeHelper uni : values()) {
+     * @return unicode character in String 
+     */
+    public static String get(final String identifier) {
+        for (final UnicodeHelper uni : values()) {
             if (uni.identifier.equals(identifier)) {
                 return Character.toString((char) uni.hexaCode);
             }

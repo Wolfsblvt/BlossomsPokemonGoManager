@@ -9,6 +9,8 @@ public final class StringLiterals {
     public static final String UNDERSCORE = "_";
     public static final String PERCENTAGE = "%";
     public static final String DOT = ".";
+    public static final String MINUS_ONE = "-1";
+    public static final String SLASH = "/";
     public static final String NEWLINE = System.lineSeparator();
 
     // Situation specific string literals

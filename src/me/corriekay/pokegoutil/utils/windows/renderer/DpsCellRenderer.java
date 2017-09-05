@@ -8,12 +8,12 @@ import javax.swing.JTable;
 import me.corriekay.pokegoutil.utils.Utilities;
 
 /**
- * A cell renderer that displays DPS values in the format "xx.x".
+ * A cell renderer that displays DPS values in the format "xx.xx".
  */
 
 public class DpsCellRenderer extends NumberCellRenderer<DpsCellRenderer> {
-
-    private final DecimalFormat decimalFormatter = new DecimalFormat("0.0");
+    // add another decimal so it's consistent with how it was displayed with the move.
+    private final DecimalFormat decimalFormatter = new DecimalFormat("0.00");
 
     /**
      * Creates an instance of the PercentageCellRenderer, with rating colors between 0 and 1.

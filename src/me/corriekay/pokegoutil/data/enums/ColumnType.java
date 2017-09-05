@@ -6,6 +6,8 @@ import java.util.concurrent.CompletableFuture;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import me.corriekay.pokegoutil.utils.ConfigKey;
+import me.corriekay.pokegoutil.utils.ConfigNew;
 import me.corriekay.pokegoutil.utils.StringLiterals;
 import me.corriekay.pokegoutil.utils.helpers.DateHelper;
 import me.corriekay.pokegoutil.utils.helpers.EvolveHelper;
@@ -63,6 +65,11 @@ public enum ColumnType {
         String.class,
         Comparators.STRING
     ),
+    NUMBER_STRING(
+        String.class,
+        Comparators.NUMBER_STRING,
+        CellRendererHelper.NUMBER_STRING
+    ),
     FUTURE_STRING(
         String.class,
         Comparators.FUTURE_STRING,
@@ -101,6 +108,40 @@ public enum ColumnType {
                 right = String.valueOf(0);
             }
             return Integer.compare(Integer.parseInt(left), Integer.parseInt(right));
+        };
+        public static final Comparator<String> NUMBER_STRING = (left, right) -> {
+            // pre-initialize first split entries with "-1" so "-" (= NO_VALUE_SIGN) will be sorted separate from 0
+            String[] sLeft = {StringLiterals.MINUS_ONE, StringLiterals.MINUS_ONE};
+            String[] sRight = {StringLiterals.MINUS_ONE, StringLiterals.MINUS_ONE};
+            Integer iResult0 = 0;
+            Integer iResult1 = 0;
+
+            if (left.indexOf(StringLiterals.SLASH) > -1) {
+                sLeft = left.split(StringLiterals.SLASH);
+            }
+            if (right.indexOf(StringLiterals.SLASH) > -1) {
+                sRight = right.split(StringLiterals.SLASH);
+            }
+
+            iResult0 = Integer.compare(Integer.parseInt(sLeft[0]), Integer.parseInt(sRight[0]));
+            iResult1 = Integer.compare(Integer.parseInt(sLeft[1]), Integer.parseInt(sRight[1]));
+
+            final boolean useFullHP = ConfigNew.getConfig().getBool(ConfigKey.HP_SORT_ON_FULL);
+            final String sortEnum1 = ConfigNew.getConfig().getString(ConfigKey.SORT_ENUM_1);
+
+            if (useFullHP && "HP".equals(sortEnum1)) {
+                if (iResult1 == 0) { 
+                    return iResult0; 
+                } else { 
+                    return iResult1; 
+                }                              
+            } else {
+                if (iResult0 == 0) { 
+                    return iResult1;
+                } else {
+                    return iResult0;
+                }
+            }
         };
     }
 
