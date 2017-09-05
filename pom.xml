@@ -102,9 +102,9 @@
     </repositories>
     <dependencies>
         <dependency>
-            <groupId>com.github.Grover-c13</groupId>
+            <groupId>com.github.gegy1000</groupId>
             <artifactId>PokeGOAPI-Java</artifactId>
-            <version>5bb2c4f995</version>
+            <version>ff4ff66d19</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
