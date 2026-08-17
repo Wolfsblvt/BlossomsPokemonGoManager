@@ -1,3 +1,11 @@
+#### Disclaimer
+> [!CAUTION]
+> This project is preserved as historical source code only. It is no longer maintained, no longer works with current Pokémon Go services, and receives no support or updates.
+> 
+> Do not use it with a live account or provide it with current account credentials. All issues and pull requests have been closed as part of archiving the project.
+
+-----
+
 [![Travis Build Badge](https://img.shields.io/travis/Wolfsblvt/BlossomsPokemonGoManager.svg)](https://travis-ci.org/Wolfsblvt/BlossomsPokemonGoManager)
 [![Codacy](https://img.shields.io/codacy/grade/14b05062286f448fb5b59708c4936e42.svg)](https://www.codacy.com/app/wolfsblvt/BlossomsPokemonGoManager?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Wolfsblvt/BlossomsPokemonGoManager&amp;utm_campaign=Badge_Grade)
 [![Codacy Coverage](https://img.shields.io/codacy/coverage/14b05062286f448fb5b59708c4936e42.svg)](https://www.codacy.com/app/wolfsblvt/BlossomsPokemonGoManager?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Wolfsblvt/BlossomsPokemonGoManager&amp;utm_campaign=Badge_Grade)
@@ -10,7 +18,6 @@
 [![GitHub Latest Release](https://img.shields.io/github/release/Wolfsblvt/BlossomsPokemonGoManager.svg)](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases/latest)
 [![Github Releases](https://img.shields.io/github/downloads/Wolfsblvt/BlossomsPokemonGoManager/latest/total.svg)](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases/latest)
 [![Github All Releases](https://img.shields.io/github/downloads/Wolfsblvt/BlossomsPokemonGoManager/total.svg)](https://github.com/Wolfsblvt/BlossomsPokemonGoManager/releases)
-
 
 
 # BlossomsPokemonGoManager
