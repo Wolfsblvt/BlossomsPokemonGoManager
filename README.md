@@ -1,5 +1,5 @@
 #### Disclaimer
-> [!CAUTION]
+> [!WARNING]
 > This project is preserved as historical source code only. It is no longer maintained, no longer works with current Pokémon Go services, and receives no support or updates.
 > 
 > Do not use it with a live account or provide it with current account credentials. All issues and pull requests have been closed as part of archiving the project.
